@@ -10,6 +10,10 @@ public class Commander : MonoBehaviour
 	[SerializeField]
 	private Text selectedText;
 
+	[Header("Sound")]
+	[SerializeField]
+	private AudioClip moveSound;
+
 	[Header("Clicking")]
 	[SerializeField]
 	private Camera cam;
@@ -22,17 +26,27 @@ public class Commander : MonoBehaviour
 	[SerializeField]
 	private LayerMask gridLayerMask;
 
+	[Header("Using Abilities")]
+	[SerializeField]
+	private string why;
+
 	private Entity selected;
+	private AudioSource audioSource;
 
 	// Use this for initialization
 	void Start ()
 	{
+		audioSource = GetComponent<AudioSource>();
+
 		Select(null);
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
+		bool isUnit = selected ? selected.GetType() == typeof(Unit) : false;
+
+		// Clicking
 		bool notOverUI = !EventSystem.current.IsPointerOverGameObject();
 		Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
@@ -41,7 +55,7 @@ public class Commander : MonoBehaviour
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
 			{
-				Entity ent = hit.collider.gameObject.GetComponent<Entity>();
+				Entity ent = hit.collider.GetComponentInParent<Entity>();
 				if (ent)
 				{
 					Select(ent);
@@ -65,8 +79,8 @@ public class Commander : MonoBehaviour
 			// First check if we clicked on an entity, if not then cast through entities to a point on the grid
 			if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
 			{
-				Entity ent = hit.collider.gameObject.GetComponent<Entity>();
-				if (ent && ent != selected && selected.GetType() == typeof(Unit))
+				Entity ent = hit.collider.gameObject.GetComponentInParent<Entity>();
+				if (ent && ent != selected && isUnit)
 					Target(ent);
 				// Target persists even if you click off of it
 			}
@@ -76,6 +90,16 @@ public class Commander : MonoBehaviour
 					Move(hit.point);
 			} 
 		} //lmb
+
+		// Abilities
+		if (Input.GetButtonDown("Ability1"))
+		{
+			if (!selected || !isUnit)
+				return;
+
+			Debug.Log(why);
+			((Unit)selected).Damage(26.68f, 10);
+		}
 	}
 
 	public void Select(Entity newSel)
@@ -90,14 +114,13 @@ public class Commander : MonoBehaviour
 	public void Move(Vector3 newPos)
 	{
 		((Unit)selected).OrderMove(newPos);
+		AudioUtils.PlayClipAt(moveSound, transform.position, audioSource);
 		Instantiate(clickEffect, newPos, Quaternion.identity);
 	}
 
 	public void Target(Entity newTarg)
 	{
-		if (newTarg)
-			((Unit)selected).OrderAttack(newTarg);
-		else
-			Debug.LogError("Null target!");
+		if (newTarg && newTarg.GetType() == typeof(Unit))
+			((Unit)selected).OrderAttack((Unit)newTarg);
 	}
 }

@@ -6,6 +6,7 @@ public class StrategyController : MonoBehaviour
 	[Header("Settings")]
 	[SerializeField]
 	private float rotSpeed = 3;
+	private Quaternion initRot;
 	[SerializeField]
 	private float speed = 1;
 	[SerializeField]
@@ -18,8 +19,9 @@ public class StrategyController : MonoBehaviour
 	private GameObject camRoot; // Cam parent
 
 	// Use this for initialization
-	void Start () {
-	
+	void Start ()
+	{
+		initRot = cam.transform.rotation;
 	}
 	
 	// Update is called once per frame
@@ -31,9 +33,15 @@ public class StrategyController : MonoBehaviour
 		float yAxis = Input.GetAxis("Vertical");
 		camRoot.transform.Translate(new Vector3(0, 0, yAxis * speed), Space.Self);
 
-		float zoom = Input.GetAxis("Zoom");
-		cam.transform.Translate(new Vector3(0, 0, zoom * zoomSpeed), Space.Self);
+		float alt = Input.GetAxis("Altitude");
+		camRoot.transform.Translate(new Vector3(0, alt * speed, 0), Space.Self);
+
 		cam.transform.position = camRoot.transform.position;
+
+		/*// Zooming
+		float zoom = Input.GetAxis("Altitude");
+		cam.transform.Translate(new Vector3(0, 0, zoom * zoomSpeed), Space.Self);
+		*/
 
 		float rotAxis = Input.GetAxis("Rotate");
 		cam.transform.Rotate(new Vector3(0, rotAxis * rotSpeed, 0), Space.World);
@@ -41,9 +49,10 @@ public class StrategyController : MonoBehaviour
 		cam.transform.SetParent(null);
 		camRoot.transform.Rotate(new Vector3(0, rotAxis * rotSpeed, 0), Space.World);
 
-		if (Input.GetButtonDown("StopRotate"))
+		if (Input.GetButtonDown("ResetRotate"))
 		{
-			cam.transform.rotation = Quaternion.identity;
+			cam.transform.rotation = initRot;
+			camRoot.transform.rotation = Quaternion.identity;
 		}
 	}
 }
