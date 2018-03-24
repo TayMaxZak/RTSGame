@@ -22,9 +22,7 @@ public class Unit : Entity
 
 	[Header("Combat")]
 	[SerializeField]
-	private GameObject tempExplosion;
-	private int tempCounter = 0;
-	private bool isAttacking;
+	private Turret[] turrets;
 
 	[Header("Abilities")]
 	[SerializeField]
@@ -42,6 +40,7 @@ public class Unit : Entity
 	private float MSAccel = 1; // Time in seconds to reach full speed
 	[SerializeField]
 	private float MSDeccel = 2; // Time in seconds to reach full stop
+	private Vector3 velocity;
 
 	[Header("Turning")]
 	[SerializeField]
@@ -146,7 +145,8 @@ public class Unit : Entity
 		float MSdelta = Mathf.Sign(targetMSRatio - curMSRatio) * (1f / MSccel) * Time.deltaTime;
 		curMSRatio = Mathf.Clamp01(curMSRatio + MSdelta);
 
-		transform.position += MS * curMSRatio * new Vector3(transform.forward.x, 0, transform.forward.z) * Time.deltaTime;
+		Vector3 Hvel = MS * curMSRatio * new Vector3(transform.forward.x, 0, transform.forward.z);
+		//transform.position += Hvel * Time.deltaTime;
 
 		// Vertical Movement
 		float targetYMSRatio = (isPathing ? 1 : 0);
@@ -154,24 +154,9 @@ public class Unit : Entity
 		float YMSdelta = Mathf.Sign(targetYMSRatio - curYMSRatio) * (1f / MSAccel) * Time.deltaTime;
 		curYMSRatio = Mathf.Clamp01(curYMSRatio + YMSdelta);
 
-		transform.position += MS * curYMSRatio * Vector3.up * Mathf.Clamp(direction.y * 2, -1, 1) * MSverticalMod * Time.deltaTime;
-
-
-		// Combat
-		if (target)
-			isAttacking = true;
-		else
-			isAttacking = false;
-
-		if (isAttacking)
-		{
-			tempCounter++;
-			if (tempCounter == 50)
-			{
-				Instantiate(tempExplosion, target.transform.position, Quaternion.identity);
-				tempCounter = 0;
-			}
-		}
+		Vector3 Yvel = MS * curYMSRatio * Vector3.up * Mathf.Clamp(direction.y * 2, -1, 1) * MSverticalMod;
+		velocity = Yvel + Hvel;
+		transform.position += velocity * Time.deltaTime;
 	}
 
 	public void OrderMove(Vector3 newGoal)
@@ -186,23 +171,38 @@ public class Unit : Entity
 		}
 	}
 
+	public Vector3 GetVelocity()
+	{
+		return velocity;
+	}
+
+	public Vector4 GetHP()
+	{
+		return new Vector4(curHealth, maxHealth, curArmor, maxArmor);
+	}
+
 	public void OrderAttack(Unit newTarg)
 	{
 		target = newTarg;
+		for (int i = 0; i < turrets.Length; i++)
+			turrets[i].SetTarget(target);
 		Debug.Log("I, " + DisplayName + ", am going after " + target.DisplayName);
 	}
 
 	public bool Damage(float damageBase, float range)
 	{
 		float dmg = damageBase;
+		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / gameRules.ARMrangeMax);
 
-		if (dmg - gameRules.ARMrangeResist * range <= curArmor) // Range resist condition: if this shot wont break the armor, it will be range resisted
-			dmg = Mathf.Max(0, dmg - gameRules.ARMrangeResist * range); //Damage lost to falloff, incentivising shooting armor from up close
+		if (dmg - dmg * rangeRatio <= curArmor) // Range resist condition: if this shot wont break the armor, it will be range resisted
+			dmg = Mathf.Max(0, dmg - dmg * rangeRatio); //Damage lost to falloff, incentivising shooting armor from up close
 		else
 			dmg = Mathf.Max(0, dmg); // Not enough armor left, no longer grants range resist
 
 		if (dmg <= 0)
+		{
 			return false;
+		}
 
 		float absorbLim = Mathf.Min(curArmor, (curArmor / maxArmor) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat); // Absorbtion limit formula
 
@@ -249,6 +249,6 @@ public class Unit : Entity
 
 	private void HPLog()
 	{
-		Debug.Log((int)(curHealth * 10) + " " + (int)(maxHealth * 10) + " :: " + (int)(curArmor * 10) + " " + (int)(maxArmor * 10));
+		//Debug.Log((int)(curHealth * 10) + " " + (int)(maxHealth * 10) + " :: " + (int)(curArmor * 10) + " " + (int)(maxArmor * 10));
 	}
 }

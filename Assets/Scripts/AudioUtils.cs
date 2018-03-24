@@ -8,6 +8,11 @@ public static class AudioUtils
 {
 	public static AudioSource PlayClipAt(AudioClip clip, Vector3 pos, AudioSource reference)
 	{
+		return PlayClipAt(clip, pos, reference, 0);
+	}
+
+	public static AudioSource PlayClipAt(AudioClip clip, Vector3 pos, AudioSource reference, float pitchVariance)
+	{
 		if (clip == null)
 		{
 			//Debug.Log("No AudioClip was passed in!");
@@ -27,7 +32,7 @@ public static class AudioUtils
 		aSource.rolloffMode = reference.rolloffMode;
 		aSource.dopplerLevel = reference.dopplerLevel;
 		aSource.spread = reference.spread;
-		aSource.pitch = reference.pitch;
+		aSource.pitch = reference.pitch + pitchVariance * RandomValue();
 		aSource.volume = reference.volume;
 
 		aSource.Play(); // start the sound
@@ -78,5 +83,11 @@ public static class AudioUtils
 			finfo.SetValue(comp, finfo.GetValue(other));
 		}
 		return comp as T;
+	}
+
+	static float RandomValue()
+	{
+		return UnityEngine.Random.value * 2 - 1;
+		//return 1;
 	}
 }

@@ -12,7 +12,7 @@ public class Commander : MonoBehaviour
 
 	[Header("Sound")]
 	[SerializeField]
-	private AudioClip moveSound;
+	private AudioClip soundMove;
 
 	[Header("Clicking")]
 	[SerializeField]
@@ -100,13 +100,30 @@ public class Commander : MonoBehaviour
 			Debug.Log(why);
 			((Unit)selected).Damage(26.68f, 10);
 		}
+
+		UpdateUI();
+	}
+
+	public void UpdateUI()
+	{
+		Unit unit = null;
+		if (selected && selected.GetType() == typeof(Unit))
+		{
+			unit = (Unit)selected;
+			selectedText.text = selected.DisplayName + (unit ? " " + (int)unit.GetHP().x + "|" + (int)unit.GetHP().z : "");
+		}
 	}
 
 	public void Select(Entity newSel)
 	{
 		selected = newSel;
+
+		Unit unit = null;
+		if (selected && selected.GetType() == typeof(Unit))
+			unit = (Unit)selected;
+
 		if (newSel)
-			selectedText.text = selected.DisplayName;
+			selectedText.text = selected.DisplayName + (unit ? " " + (int)unit.GetHP().x : "");
 		else
 			selectedText.text = "";
 	}
@@ -114,7 +131,7 @@ public class Commander : MonoBehaviour
 	public void Move(Vector3 newPos)
 	{
 		((Unit)selected).OrderMove(newPos);
-		AudioUtils.PlayClipAt(moveSound, transform.position, audioSource);
+		AudioUtils.PlayClipAt(soundMove, transform.position, audioSource);
 		Instantiate(clickEffect, newPos, Quaternion.identity);
 	}
 
