@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Circle
-  m_Shader: {fileID: 4800000, guid: cf8636eb219e4df4ea5b7a68219b0b89, type: 3}
+  m_Shader: {fileID: 4800000, guid: 757b826453006414abaa9d97f4ada591, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -18,22 +18,29 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _ForegroundMask:
+        m_Texture: {fileID: 2800000, guid: f265ed5adba65a44eb497864d4d6ec0e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: dc9ef30a6496fe7499b679206cad5302, type: 3}
+        m_Texture: {fileID: 2800000, guid: f265ed5adba65a44eb497864d4d6ec0e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Amount: 1
     - _Amplitude: 10
-    - _Cutoff: 0.5
+    - _Cutoff: 0.015
+    - _Cutoff1: 0.85
+    - _Cutoff2: 0.1
     - _CutoutThresh: 0
     - _Distance: 10
     - _Hardness: 1
     - _InnerRadius: -0.5
+    - _Mult: 1
     - _OuterRadius: 0.5
     - _Speed: 10
     - _Transparency: 0.5
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.062175613, g: 0.8455882, b: 0.5862517, a: 1}
     - _Distort: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _TintColor: {r: 1, g: 1, b: 1, a: 1}

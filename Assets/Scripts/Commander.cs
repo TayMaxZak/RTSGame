@@ -36,6 +36,8 @@ public class Commander : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		//Time.timeScale = 0.51f;
+
 		audioSource = GetComponent<AudioSource>();
 
 		Select(null);
@@ -44,6 +46,8 @@ public class Commander : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		UpdateUI();
+
 		bool isUnit = selected ? selected.GetType() == typeof(Unit) : false;
 
 		// Clicking
@@ -94,14 +98,26 @@ public class Commander : MonoBehaviour
 		// Abilities
 		if (Input.GetButtonDown("Ability1"))
 		{
-			if (!selected || !isUnit)
-				return;
-
-			Debug.Log(why);
-			((Unit)selected).Damage(26.68f, 10);
+			RaycastHit hit;
+			if (selected && isUnit)
+			{
+				Unit user = (Unit)selected;
+				if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
+				{
+					Entity ent = hit.collider.gameObject.GetComponentInParent<Entity>();
+					Unit targ = (ent && ent.GetType() == typeof(Unit)) ? targ = (Unit)ent : null;
+					if (targ)
+						user.UseAbility(0, new Ability_Target(targ));
+				}
+				else if (Physics.Raycast(ray, out hit, clickRayLength, gridLayerMask))
+				{
+					user.UseAbility(0, new Ability_Target(hit.point));
+				}
+				//Debug.Log(why);
+				//Unit unit = (Unit)selected;
+				//unit.UseAbility(0);
+			}
 		}
-
-		UpdateUI();
 	}
 
 	public void UpdateUI()
@@ -110,20 +126,24 @@ public class Commander : MonoBehaviour
 		if (selected && selected.GetType() == typeof(Unit))
 		{
 			unit = (Unit)selected;
-			selectedText.text = selected.DisplayName + (unit ? " " + (int)unit.GetHP().x + "|" + (int)unit.GetHP().z : "");
+			selectedText.text = "Selected: " + selected.DisplayName;
 		}
 	}
 
 	public void Select(Entity newSel)
 	{
+		if (selected)
+			selected.OnSelect(this, false);
 		selected = newSel;
+		if(selected)
+			selected.OnSelect(this, true);
 
-		Unit unit = null;
-		if (selected && selected.GetType() == typeof(Unit))
-			unit = (Unit)selected;
+		//Unit unit = null;
+		//if (selected && selected.GetType() == typeof(Unit))
+		//	unit = (Unit)selected;
 
 		if (newSel)
-			selectedText.text = selected.DisplayName + (unit ? " " + (int)unit.GetHP().x : "");
+			UpdateUI();
 		else
 			selectedText.text = "";
 	}

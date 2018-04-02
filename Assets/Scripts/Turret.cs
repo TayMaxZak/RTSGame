@@ -5,6 +5,7 @@ using UnityEngine;
 public class Turret : MonoBehaviour
 {
 	[Header("Targeting")]
+	[SerializeField]
 	private Unit target;
 	[SerializeField]
 	private float range = 25;
@@ -19,9 +20,15 @@ public class Turret : MonoBehaviour
 	[Header("Shooting")]
 	[SerializeField]
 	private Transform firePos;
+	[SerializeField]
+	private float accuracy = 1;
+	
+	[SerializeField]
+	private int pelletCount = 1;
 	private int curAmmo = 4;
 	[SerializeField]
 	private int maxAmmo = 4;
+
 	[SerializeField]
 	private float reloadCooldown = 4;
 	private float reloadTimer;
@@ -30,6 +37,8 @@ public class Turret : MonoBehaviour
 	private float rateOfFire = 120; // In RPM
 	private float shootCooldown;
 	private float shootTimer = 0;
+	[SerializeField]
+	private float firingOffset = 0.0f;
 
 	[Header("Turning")]
 	[SerializeField]
@@ -53,8 +62,8 @@ public class Turret : MonoBehaviour
 	private bool isTargeting;
 	private Quaternion lookRotation;
 	private Vector3 direction;
-	[SerializeField]
-	private float allowShootThresh = 0.1f;
+	//[SerializeField]
+	//private float allowShootThresh = 0.1f;
 
 	private GameRules gameRules;
 	private Manager_Projectiles projs;
@@ -70,6 +79,8 @@ public class Turret : MonoBehaviour
 		shootCooldown = 1f / (rateOfFire / 60f);
 
 		audioSource = GetComponent<AudioSource>();
+
+		shootTimer = -firingOffset;
 	}
 
 	// Banking
@@ -90,13 +101,16 @@ public class Turret : MonoBehaviour
 			else
 				isTargeting = false;
 
+			
 
 			// Intercept code TODO: Limit how far ahead it can aim by rotation speed
 			// How far to aim ahead given how long it would take to reach current position
-			Vector3 offsetTarget = target.transform.position + target.GetVelocity() * (dif.magnitude / projTemplate.speed);
+			Vector3 offsetTarget = target.transform.position + target.GetVelocity() * (dif.magnitude / projTemplate.GetSpeed());
 			// How far to aim ahead given how long it would take to reach predicted position
-			Vector3 offsetTargetAdj = target.transform.position + target.GetVelocity() * ((offsetTarget - transform.position).magnitude / projTemplate.speed);
+			Vector3 offsetTargetAdj = target.transform.position + target.GetVelocity() * ((offsetTarget - transform.position).magnitude / projTemplate.GetSpeed());
 			dif = offsetTargetAdj - transform.position;
+
+			dif = isTargeting ? offsetTargetAdj - transform.position : transform.forward;
 		}
 		else
 			isTargeting = false;
@@ -109,8 +123,16 @@ public class Turret : MonoBehaviour
 
 		direction = dif.normalized;
 		lookRotation = Quaternion.LookRotation(direction, Vector3.up);
+		//Debug.Log(Time.deltaTime);
+		Vector3 oldRot = rotation.eulerAngles;
 		rotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * RS * curRSRatio);
+		Vector3 newRot = rotation.eulerAngles;
+		//Debug.Log(lookRotation.eulerAngles + " " + oldRot + " " + newRot + " " + (oldRot - newRot).magnitude + " " + (Time.deltaTime * RS * curRSRatio));
 
+		if (Time.frameCount == 1)
+		{
+			rotation = Quaternion.identity;
+		}
 		//model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, targetBank));
 		if (baseRotatesOnY)
 		{
@@ -123,10 +145,13 @@ public class Turret : MonoBehaviour
 			pivotX.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
 		}
 
+
 		// Ammo
 		bool outOfAmmo = maxAmmo > 0 ? curAmmo <= 0 : false;
 
-		shootTimer += Time.deltaTime;
+		if (shootTimer >= 0 || isTargeting)
+			shootTimer += Time.deltaTime;
+
 		if (outOfAmmo)
 		{
 
@@ -142,7 +167,6 @@ public class Turret : MonoBehaviour
 			// Aimed at target?
 			Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
 			float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
-			Debug.DrawRay(transform.position, forward, Color.white);
 
 
 			if (dot >= 0.999f)
@@ -152,7 +176,13 @@ public class Turret : MonoBehaviour
 
 				if (shootTimer >= shootCooldown)
 				{
-					projs.SpawnProjectile(projTemplate, firePos.position, forward);
+					for (int i = 0; i < pelletCount; i++)
+					{
+						Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
+						Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y));
+
+						projs.SpawnProjectile(projTemplate, firePos.position, errForward);
+					}
 
 					AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource, gameRules.AUDpitchVariance);
 
@@ -162,6 +192,8 @@ public class Turret : MonoBehaviour
 
 			} //dot
 		} //isTargeting
+		else
+			shootTimer = -firingOffset;
 	}
 
 	public void SetTarget(Unit newTarg)

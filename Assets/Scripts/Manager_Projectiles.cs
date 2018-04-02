@@ -8,21 +8,22 @@ using EmitParams = UnityEngine.ParticleSystem.EmitParams;
 public class Manager_Projectiles : MonoBehaviour
 {
 	[SerializeField]
-	private int maxProjectiles = 99; // TODO: Change
-	[SerializeField]
 	public List<Projectile> projectiles;
 	[SerializeField]
 	private LayerMask layerMask;
 	[SerializeField]
 	private ParticleSystem pS;
 	private Particle[] particles;
-	private MainModule main;
+	//private MainModule main;
+
+	private GameRules gameRules;
 
 	void Start()
 	{
 		particles = new Particle[pS.main.maxParticles];
-		main = pS.main;
+		//main = pS.main;
 		projectiles = new List<Projectile>();
+		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 	}
 
 	public void Update()
@@ -35,29 +36,39 @@ public class Manager_Projectiles : MonoBehaviour
 
 		int numAlive = pS.GetParticles(particles);
 
+		//LogParticles();
+
 		for (int i = 0; i < projectiles.Count; i++)
 		{
 
 			Projectile proj = projectiles[i];
-			proj.position += proj.direction * proj.speed * Time.deltaTime;
+			proj.position += proj.direction * proj.GetSpeed() * Time.deltaTime;
+			proj.UpdateTimeAlive(Time.deltaTime);
+			if (proj.GetTimeAlive() > gameRules.PRJmaxTimeAlive)
+			{
+				Remove(i);
+				continue;
+			}
+
 			particles[i].position = proj.position;
 			particles[i].velocity = proj.direction;
 
-			Debug.DrawRay(proj.position, proj.direction, Color.red);
+			//Debug.DrawRay(proj.position, proj.direction, Color.red);
 
 			RaycastHit hit;
-			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.speed * Time.fixedDeltaTime, layerMask))
+			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.GetSpeed() * Time.fixedDeltaTime, layerMask))
 			{
 				if (!hit.collider.transform.parent) // Unit just died
 					return;
 				Unit unit = hit.collider.transform.parent.GetComponent<Unit>();
 				if (unit)
 				{
-					unit.Damage(proj.damage, proj.Range());
+					unit.Damage(proj.GetDamage(), proj.CalcRange());
 				}
 
-				projectiles.RemoveAt(i);
-				particles[i].remainingLifetime = 0;
+				Remove(i);
+				continue;
+
 				//FillHole(i);
 				//i--;
 				//numAlive--;
@@ -66,6 +77,28 @@ public class Manager_Projectiles : MonoBehaviour
 
 		pS.SetParticles(particles, numAlive);
 	} //Update()
+
+	void Remove(int i)
+	{
+		projectiles.RemoveAt(i);
+		particles[i].remainingLifetime = 0;
+	}
+
+	void LogParticles()
+	{
+		if ((int)(Time.time * 100) % 100 == 0)
+		{
+			int count = pS.subEmitters.subEmittersCount;
+			int subTotal = 0;
+
+			for (int i = 1; i < count; i++)
+			{
+				//Debug.Log("count = " + count);
+				subTotal += pS.subEmitters.GetSubEmitterSystem(i).particleCount;
+			}
+			Debug.Log("NUM ALIVE: " + (pS.particleCount) + " -> " + (pS.particleCount + subTotal));
+		}
+	}
 
 	public void SpawnProjectile(Projectile temp, Vector3 position, Vector3 direction)
 	{

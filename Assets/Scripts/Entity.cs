@@ -4,8 +4,16 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
+	[Header("Entity Properties")]
 	[SerializeField]
 	private string displayName = "Default Name";
+	[SerializeField]
+	private Transform swarmTarget;
+	[SerializeField]
+	private float selCircleSize = 1;
+
+	protected GameObject selCircle;
+	private float selCircleSpeed;
 
 	public string DisplayName
 	{
@@ -18,16 +26,31 @@ public class Entity : MonoBehaviour
 	// Use this for initialization
 	protected void Start ()
 	{
-		Debug.Log(DisplayName + " BTW");
+		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>();
+		selCircle = Instantiate(uiManager.UnitSelCircle, transform.position, Quaternion.identity);
+		//selCircle.transform.SetParent(transform);
+		selCircle.SetActive(false);
+		selCircle.transform.localScale = new Vector3(selCircleSize, selCircleSize, selCircleSize);
+		selCircleSpeed = uiManager.UIRules.SELrotateSpeed;
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	protected void Update ()
 	{
-		
+		selCircle.transform.position = transform.position;
+		//for (int i = 1; i <= selCircle.transform.childCount; i++)
+		//{
+		//	Transform tran = selCircle.GetComponentsInChildren<Transform>()[i];
+		//	float posOrNeg = (i % selCircle.transform.childCount + 1);
+		//	Debug.Log(selCircle.transform.childCount);
+		//	tran.eulerAngles = new Vector3(0, tran.eulerAngles.y + selCircleSpeed * Time.deltaTime * posOrNeg, 0);
+		//	tran.position = transform.position;
+		//}
 	}
 
-	void OnSelect(Commander selector)
+	public void OnSelect(Commander selector, bool selectOrDeselect)
 	{
+		selCircle.SetActive(selectOrDeselect);
+		Debug.Log(DisplayName + " BTW");
 	}
 }

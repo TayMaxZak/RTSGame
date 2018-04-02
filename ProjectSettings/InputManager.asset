@@ -297,13 +297,13 @@ InputManager:
     m_Name: Rotate
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: e
-    positiveButton: q
+    negativeButton: o
+    positiveButton: i
     altNegativeButton: 
     altPositiveButton: 
     gravity: 3
     dead: 0.001
-    sensitivity: 1000
+    sensitivity: 10
     snap: 0
     invert: 0
     type: 0

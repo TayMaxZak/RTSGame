@@ -9,11 +9,11 @@ public class Particles_AlphaByAngle : MonoBehaviour
 	float bias = 0;
 
 	[SerializeField]
-	Transform parent;
+	private Transform parent;
 
 	[SerializeField]
-	Camera cam;
-	Transform camTrans;
+	private Camera cam;
+	private Transform camTrans;
 
 	private ParticleSystem pS;
 	private Particle[] particles;
@@ -23,6 +23,7 @@ public class Particles_AlphaByAngle : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		cam = Camera.main;
 		camTrans = cam.transform;
 		pS = GetComponent<ParticleSystem>();
 		particles = new Particle[pS.main.maxParticles];

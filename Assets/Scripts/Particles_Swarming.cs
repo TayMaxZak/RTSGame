@@ -19,12 +19,12 @@ public class Particles_Swarming : MonoBehaviour {
 	[SerializeField]
 	private Vector3 randomDistribution = Vector3.one;
 	[SerializeField]
-	private int randomFreq = 10; // How often new random vectors are chosen
+	private int randomFreq = 3; // How often new random vectors are chosen
 
 
 
 	[SerializeField]
-	private float distanceSpeed = 1;
+	private float distanceSpeed = 0.03f;
 
 	[SerializeField]
 	private float maxSpeed = 5f;
@@ -73,14 +73,14 @@ public class Particles_Swarming : MonoBehaviour {
 			Vector3 distanceVel;
 
 
-			distanceVel = (particles[i].position - targetTransform.position) * distanceSpeed;
+			distanceVel = (particles[i].position - targetTransform.position) * -distanceSpeed;
 			particles[i].velocity += distanceVel;
 
 			Vector3 randomVel = randomVectors[i] * randomSpeed;
 			particles[i].velocity += randomVel;
 
 			particles[i].velocity = Vector3.ClampMagnitude(particles[i].velocity, maxSpeed);
-			avgPos += distanceVel / distanceSpeed;
+			avgPos += distanceVel / -distanceSpeed;
 		}
 
 		avgPos /= numAlive;

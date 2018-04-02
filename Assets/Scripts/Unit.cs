@@ -49,8 +49,8 @@ public class Unit : Entity
 	private float RSAccel = 1;
 	private float curRSRatio = 0;
 	//private float targetRSRatio = 0;
-	[SerializeField]
-	private float bankAngle = 30;
+	//[SerializeField]
+	//private float bankAngle = 30;
 	[SerializeField]
 	private Transform model;
 
@@ -59,6 +59,8 @@ public class Unit : Entity
 	private float reachGoalThresh = 1;
 	[SerializeField]
 	private float YMSResetThresh = 1;
+	[SerializeField]
+	private float deltaBias = 99999;
 	private bool isPathing;
 	private Vector3 goal;
 
@@ -68,9 +70,13 @@ public class Unit : Entity
 	private float allowMoveThresh = 0.1f;
 
 	private GameRules gameRules;
+	private bool selected;
+	private UI_HPBar hpBar;
+
+	private Vector2 HPBarOffset;
 
 	// Use this for initialization
-	new void Start()
+	protected new void Start()
 	{
 		base.Start(); // Init Entity base class
 
@@ -78,10 +84,13 @@ public class Unit : Entity
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
+		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
+		hpBar = Instantiate(uiManager.UnitHPBar);
+		hpBar.transform.SetParent(uiManager.Canvas.transform, false);
+		HPBarOffset = uiManager.UIRules.HPBoffset;
+
 		curHealth = maxHealth; // Reset HP values
 		curArmor = maxArmor;
-
-
 	}
 
 	// Banking
@@ -89,8 +98,11 @@ public class Unit : Entity
 	//banker.localRotation = Quaternion.AngleAxis(bankAngle, Vector3.forward);
 
 	// Update is called once per frame
-	void Update ()
+	protected new void Update ()
 	{
+		base.Update(); // Entity base class
+		UpdateUI();
+
 		Vector3 dif = goal - transform.position;
 		
 		if (dif.magnitude <= reachGoalThresh)
@@ -115,19 +127,21 @@ public class Unit : Entity
 		// Rotation
 		float targetRSRatio = isPathing ? 1 : 0;
 
-		float RSdelta = Mathf.Sign(targetRSRatio - curRSRatio) * (1f / RSAccel) * Time.deltaTime;
+		//float RSdelta = Mathf.Sign(targetRSRatio - curRSRatio) * (1f / RSAccel) * Time.deltaTime;
+
+		float RSdelta = Mathf.Clamp((targetRSRatio - curRSRatio) * deltaBias, -1, 1) * (1f / RSAccel) * Time.deltaTime;
 		curRSRatio = Mathf.Clamp01(curRSRatio + RSdelta);
 
 		direction = dif.normalized;
-		lookRotation = Quaternion.LookRotation(direction);
-		float oldRotY = transform.eulerAngles.y;
+		lookRotation = Quaternion.LookRotation(direction == Vector3.zero ? transform.forward : direction);
+		//float oldRotY = transform.eulerAngles.y;
 		transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, Time.deltaTime * RS * curRSRatio);
-		float difRot = transform.eulerAngles.y - oldRotY;
+		//float difRot = transform.eulerAngles.y - oldRotY;
 
-		float oldBank = model.localEulerAngles.z;
-		float newBank = bankAngle * (difRot / (Time.deltaTime * RS)) * curRSRatio;
-		float diffBank = ((oldBank - newBank + 180 + 360) % 360) - 180;
-		float targetBank = (360 + newBank + (diffBank / 2)) % 360;
+		//float oldBank = model.localEulerAngles.z;
+		//float newBank = bankAngle * (difRot / (Time.deltaTime * RS)) * curRSRatio;
+		//float diffBank = ((oldBank - newBank + 180 + 360) % 360) - 180;
+		//float targetBank = (360 + newBank + (diffBank / 2)) % 360;
 
 		//model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, targetBank));
 		model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, 0));
@@ -141,8 +155,11 @@ public class Unit : Entity
 
 		float targetMSRatio = dot * (isPathing ? 1 : 0);
 
+		//float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel;
+		//float MSdelta = Mathf.Sign(targetMSRatio - curMSRatio) * (1f / MSccel) * Time.deltaTime;
+
 		float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel;
-		float MSdelta = Mathf.Sign(targetMSRatio - curMSRatio) * (1f / MSccel) * Time.deltaTime;
+		float MSdelta = Mathf.Clamp((targetMSRatio - curMSRatio) * deltaBias, -1, 1) * (1f / MSccel) * Time.deltaTime;
 		curMSRatio = Mathf.Clamp01(curMSRatio + MSdelta);
 
 		Vector3 Hvel = MS * curMSRatio * new Vector3(transform.forward.x, 0, transform.forward.z);
@@ -157,6 +174,29 @@ public class Unit : Entity
 		Vector3 Yvel = MS * curYMSRatio * Vector3.up * Mathf.Clamp(direction.y * 2, -1, 1) * MSverticalMod;
 		velocity = Yvel + Hvel;
 		transform.position += velocity * Time.deltaTime;
+	}
+
+	void UpdateUI()
+	{
+		Vector3 barPosition = new Vector3(model.position.x + HPBarOffset.x, model.position.y + HPBarOffset.y, model.position.z + HPBarOffset.x);
+		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
+
+		float dot = Vector3.Dot((barPosition - Camera.main.transform.position).normalized, Camera.main.transform.forward);
+		if (dot < 0)
+		{
+			if (hpBar.gameObject.activeSelf)
+				hpBar.gameObject.SetActive(false);
+		}
+		else
+		{
+			if (!hpBar.gameObject.activeSelf)
+				hpBar.gameObject.SetActive(true);
+
+			RectTransform rect = hpBar.GetComponent<RectTransform>();
+			rect.position = new Vector2(screenPoint.x, screenPoint.y);
+			//rect.localScale = ;
+			hpBar.UpdateHPBar(curHealth / maxHealth, curArmor / maxArmor);
+		}
 	}
 
 	public void OrderMove(Vector3 newGoal)
@@ -220,7 +260,6 @@ public class Unit : Entity
 		curArmor += -critflowDmg; // Don't want critflow damage to wrap around and damage health twice, so we put this step after health step
 
 		curArmor = Mathf.Max(curArmor, 0);
-		HPLog();
 		if (curHealth <= 0)
 		{
 			Die();
@@ -233,7 +272,6 @@ public class Unit : Entity
 	public void TrueDamage(float damageBase) // Ignores armor
 	{
 		curHealth -= damageBase;
-		HPLog();
 		if (curHealth <= 0)
 		{
 			Die();
@@ -241,14 +279,22 @@ public class Unit : Entity
 		
 	}
 
+	public void UseAbility(int i, Ability_Target targ)
+	{
+
+	}
+
 	public void Die()
 	{
-		Instantiate(deathClone, model.transform.position, model.rotation);
+		if (deathClone)
+			Instantiate(deathClone, model.transform.position, model.rotation);
+		Destroy(hpBar.gameObject);
+		Destroy(selCircle);
 		Destroy(gameObject);
 	}
 
 	private void HPLog()
 	{
-		//Debug.Log((int)(curHealth * 10) + " " + (int)(maxHealth * 10) + " :: " + (int)(curArmor * 10) + " " + (int)(maxArmor * 10));
+		Debug.Log((int)(curHealth * 10) + " " + (int)(maxHealth * 10) + " :: " + (int)(curArmor * 10) + " " + (int)(maxArmor * 10));
 	}
 }

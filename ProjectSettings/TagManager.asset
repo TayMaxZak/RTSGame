@@ -6,6 +6,7 @@ TagManager:
   tags:
   - GameManager
   - ProjsManager
+  - UIManager
   layers:
   - Default
   - TransparentFX
