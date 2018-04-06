@@ -46,9 +46,7 @@ public class Commander : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		UpdateUI();
-
-		bool isUnit = selected ? selected.GetType() == typeof(Unit) : false;
+		//UpdateUI(false);
 
 		// Clicking
 		bool notOverUI = !EventSystem.current.IsPointerOverGameObject();
@@ -56,6 +54,7 @@ public class Commander : MonoBehaviour
 
 		if (Input.GetMouseButtonDown(0) && notOverUI)
 		{
+			Debug.Log(Raycast());
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
 			{
@@ -84,13 +83,13 @@ public class Commander : MonoBehaviour
 			if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
 			{
 				Entity ent = hit.collider.gameObject.GetComponentInParent<Entity>();
-				if (ent && ent != selected && isUnit)
+				if (ent && ent != selected && IsUnit(ent))
 					Target(ent);
 				// Target persists even if you click off of it
 			}
 			else if (Physics.Raycast(ray, out hit, clickRayLength, gridLayerMask))
 			{
-				if (selected.GetType() == typeof(Unit))
+				if (IsUnit(selected))
 					Move(hit.point);
 			} 
 		} //lmb
@@ -99,13 +98,13 @@ public class Commander : MonoBehaviour
 		if (Input.GetButtonDown("Ability1"))
 		{
 			RaycastHit hit;
-			if (selected && isUnit)
+			if (selected && IsUnit(selected))
 			{
 				Unit user = (Unit)selected;
 				if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
 				{
 					Entity ent = hit.collider.gameObject.GetComponentInParent<Entity>();
-					Unit targ = (ent && ent.GetType() == typeof(Unit)) ? targ = (Unit)ent : null;
+					Unit targ = (ent && IsUnit(ent)) ? targ = (Unit)ent : null;
 					if (targ)
 						user.UseAbility(0, new Ability_Target(targ));
 				}
@@ -120,14 +119,41 @@ public class Commander : MonoBehaviour
 		}
 	}
 
-	public void UpdateUI()
+	void UpdateUI(bool newUnit)
 	{
 		Unit unit = null;
-		if (selected && selected.GetType() == typeof(Unit))
+		if (newUnit && selected && IsUnit(selected))
 		{
 			unit = (Unit)selected;
 			selectedText.text = "Selected: " + selected.DisplayName;
+
+			Flagship flag = unit.gameObject.GetComponent<Flagship>();
+
+			if (flag)
+			{
+				selectedText.text = "|| FLAGSHIP ||";
+			}
 		}
+	}
+
+	bool IsUnit(Entity ent)
+	{
+		return ent.GetType() == typeof(Unit) || ent.GetType().IsSubclassOf(typeof(Unit));
+	}
+
+	RaycastHit Raycast()
+	{
+		Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+		RaycastHit hit;
+		if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
+		{
+
+		}
+		else if (Physics.Raycast(ray, out hit, clickRayLength, gridLayerMask))
+		{
+
+		}
+		return hit;
 	}
 
 	public void Select(Entity newSel)
@@ -138,12 +164,8 @@ public class Commander : MonoBehaviour
 		if(selected)
 			selected.OnSelect(this, true);
 
-		//Unit unit = null;
-		//if (selected && selected.GetType() == typeof(Unit))
-		//	unit = (Unit)selected;
-
 		if (newSel)
-			UpdateUI();
+			UpdateUI(true);
 		else
 			selectedText.text = "";
 	}
@@ -157,7 +179,7 @@ public class Commander : MonoBehaviour
 
 	public void Target(Entity newTarg)
 	{
-		if (newTarg && newTarg.GetType() == typeof(Unit))
+		if (newTarg && IsUnit(newTarg))
 			((Unit)selected).OrderAttack((Unit)newTarg);
 	}
 }

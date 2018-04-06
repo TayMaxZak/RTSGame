@@ -51,6 +51,6 @@ public class Entity : MonoBehaviour
 	public void OnSelect(Commander selector, bool selectOrDeselect)
 	{
 		selCircle.SetActive(selectOrDeselect);
-		Debug.Log(DisplayName + " BTW");
+		//Debug.Log(DisplayName + " BTW");
 	}
 }

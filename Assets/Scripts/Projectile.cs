@@ -58,6 +58,11 @@ public class Projectile
 		timeAlive += deltaTime;
 	}
 
+	public void SetTimeAlive(float time)
+	{
+		timeAlive = time;
+	}
+
 	public float CalcRange()
 	{
 		return (startPosition - position).magnitude;
