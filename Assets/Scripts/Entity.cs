@@ -14,6 +14,7 @@ public class Entity : MonoBehaviour
 
 	protected GameObject selCircle;
 	private float selCircleSpeed;
+	protected bool isSelected;
 
 	public string DisplayName
 	{
@@ -51,6 +52,7 @@ public class Entity : MonoBehaviour
 	public void OnSelect(Commander selector, bool selectOrDeselect)
 	{
 		selCircle.SetActive(selectOrDeselect);
+		isSelected = selectOrDeselect;
 		//Debug.Log(DisplayName + " BTW");
 	}
 }

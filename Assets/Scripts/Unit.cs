@@ -26,7 +26,7 @@ public class Unit : Entity
 
 	[Header("Abilities")]
 	[SerializeField]
-	private List<Ability> abilities;
+	public List<Ability> abilities;
 
 	[Header("Moving")]
 	[SerializeField]
@@ -178,6 +178,12 @@ public class Unit : Entity
 
 	void UpdateUI()
 	{
+		if (!isSelected)
+		{
+			hpBar.gameObject.SetActive(false);
+			return;
+		}
+
 		Vector3 barPosition = new Vector3(model.position.x + HPBarOffset.x, model.position.y + HPBarOffset.y, model.position.z + HPBarOffset.x);
 		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
 
@@ -281,7 +287,7 @@ public class Unit : Entity
 
 	public void UseAbility(int i, Ability_Target targ)
 	{
-
+		abilities[i].Use(this, targ);
 	}
 
 	public void Die()

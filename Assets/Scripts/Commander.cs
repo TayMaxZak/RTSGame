@@ -19,12 +19,18 @@ public class Commander : MonoBehaviour
 	private Camera cam;
 	[SerializeField]
 	private GameObject clickEffect;
-	[SerializeField]
-	private float clickRayLength = 100;
+	private float clickRayLength = 200;
 	[SerializeField]
 	private LayerMask entityLayerMask;
 	[SerializeField]
 	private LayerMask gridLayerMask;
+
+	[Header("Grids")]
+	[SerializeField]
+	private GameObject[] grids;
+	[SerializeField]
+	private int defaultGrid = 1;
+	private int curGrid;
 
 	[Header("Using Abilities")]
 	[SerializeField]
@@ -41,82 +47,141 @@ public class Commander : MonoBehaviour
 		audioSource = GetComponent<AudioSource>();
 
 		Select(null);
+
+		curGrid = defaultGrid;
+		foreach (GameObject go in grids)
+			go.SetActive(false);
+		UpdateGrid(curGrid);
 	}
-	
+
+	RaycastHit RaycastFromCursor()
+	{
+		Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+		if (!EventSystem.current.IsPointerOverGameObject())
+		{
+			RaycastHit hit;
+			if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask)) {}
+			else if (Physics.Raycast(ray, out hit, clickRayLength, gridLayerMask)) {}
+			return hit;
+		}
+		return new RaycastHit();
+	}
+
+	Entity GetEntityFromHit(RaycastHit hit)
+	{
+		if (hit.collider)
+		{
+			return hit.collider.GetComponentInParent<Entity>();
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	// Update is called once per frame
 	void Update ()
 	{
 		//UpdateUI(false);
 
 		// Clicking
-		bool notOverUI = !EventSystem.current.IsPointerOverGameObject();
-		Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-
-		if (Input.GetMouseButtonDown(0) && notOverUI)
+		if (Input.GetMouseButtonDown(0))
 		{
-			Debug.Log(Raycast());
-			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
-			{
-				Entity ent = hit.collider.GetComponentInParent<Entity>();
-				if (ent)
-				{
-					Select(ent);
-				}
-				else
-				{
-					Select(null);
-				}
-			}
+			//Debug.Log(RayFromMouse());
+			RaycastHit hit = RaycastFromCursor();
+
+			Entity ent = GetEntityFromHit(hit);
+			if (ent)
+				Select(ent);
 			else
-			{
 				Select(null);
-			}
 		} //lmb
-		else if (Input.GetMouseButtonDown(1) && notOverUI)
+		else if (selected && Input.GetMouseButtonDown(1))
 		{
-			if (!selected)
-				return;
-
 			RaycastHit hit;
-			// First check if we clicked on an entity, if not then cast through entities to a point on the grid
-			if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
+
+			hit = RaycastFromCursor();
+			Entity ent = GetEntityFromHit(hit);
+			if (ent)
 			{
-				Entity ent = hit.collider.gameObject.GetComponentInParent<Entity>();
-				if (ent && ent != selected && IsUnit(ent))
+				if (ent != selected && IsUnit(ent))
 					Target(ent);
-				// Target persists even if you click off of it
 			}
-			else if (Physics.Raycast(ray, out hit, clickRayLength, gridLayerMask))
-			{
-				if (IsUnit(selected))
-					Move(hit.point);
-			} 
-		} //lmb
+			else if (hit.collider && IsUnit(selected))
+				Move(hit.point);
+		} //rmb
+
+		// Raise/Lower Grid
+		if (Input.GetButtonDown("RaiseGrid"))
+		{
+			UpdateGrid(Mathf.Clamp(curGrid + 1, 0, grids.Length - 1));
+		}
+		else if (Input.GetButtonDown("LowerGrid"))
+		{
+			UpdateGrid(Mathf.Clamp(curGrid - 1, 0, grids.Length - 1));
+		}
+		else if (Input.GetButtonDown("DefaultGrid"))
+		{
+			UpdateGrid(defaultGrid);
+		}
 
 		// Abilities
 		if (Input.GetButtonDown("Ability1"))
 		{
-			RaycastHit hit;
-			if (selected && IsUnit(selected))
+			UseAbility(0);
+		}
+		if (Input.GetButtonDown("Ability2"))
+		{
+			UseAbility(1);
+		}
+		if (Input.GetButtonDown("Ability3"))
+		{
+			UseAbility(2);
+		}
+	}
+
+	void UseAbility(int index)
+	{
+		if (!selected || !IsUnit(selected))
+			return;
+
+		Unit unit = (Unit)selected;
+
+		if (unit.abilities.Count < index + 1)
+			return;
+
+		Ability current = unit.abilities[index];
+
+		if (AbilityUtils.RequiresTarget(current.GetAbilityType()) == 0) // Targets nothing
+		{
+			unit.UseAbility(index, null);
+		}
+		else if(AbilityUtils.RequiresTarget(current.GetAbilityType()) == 1) // Targets a unit
+		{
+			Entity ent = GetEntityFromHit(RaycastFromCursor());
+			if (IsUnit(ent))
 			{
-				Unit user = (Unit)selected;
-				if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
-				{
-					Entity ent = hit.collider.gameObject.GetComponentInParent<Entity>();
-					Unit targ = (ent && IsUnit(ent)) ? targ = (Unit)ent : null;
-					if (targ)
-						user.UseAbility(0, new Ability_Target(targ));
-				}
-				else if (Physics.Raycast(ray, out hit, clickRayLength, gridLayerMask))
-				{
-					user.UseAbility(0, new Ability_Target(hit.point));
-				}
-				//Debug.Log(why);
-				//Unit unit = (Unit)selected;
-				//unit.UseAbility(0);
+				Ability_Target targ = new Ability_Target((Unit)ent);
+				unit.UseAbility(index, targ);
 			}
 		}
+		else if(AbilityUtils.RequiresTarget(current.GetAbilityType()) == 2) // Targets a position
+		{
+			RaycastHit hit = RaycastFromCursor();
+			if (hit.collider)
+			{
+				Ability_Target targ = new Ability_Target(hit.point);
+				unit.UseAbility(index, targ);
+			}
+		}
+
+	}
+
+	void UpdateGrid(int newGrid)
+	{
+		grids[curGrid].SetActive(false);
+		curGrid = newGrid;
+		grids[curGrid].SetActive(true);
 	}
 
 	void UpdateUI(bool newUnit)
@@ -139,21 +204,6 @@ public class Commander : MonoBehaviour
 	bool IsUnit(Entity ent)
 	{
 		return ent.GetType() == typeof(Unit) || ent.GetType().IsSubclassOf(typeof(Unit));
-	}
-
-	RaycastHit Raycast()
-	{
-		Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask))
-		{
-
-		}
-		else if (Physics.Raycast(ray, out hit, clickRayLength, gridLayerMask))
-		{
-
-		}
-		return hit;
 	}
 
 	public void Select(Entity newSel)

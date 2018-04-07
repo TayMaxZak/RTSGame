@@ -1,18 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StrategyController : MonoBehaviour
+public class StrategyControllerOld : MonoBehaviour
 {
 	[Header("Settings")]
 	[SerializeField]
-	private float rotSpeed = 100;
+	private float rotSpeed = 3;
 	private Quaternion initRot;
 	[SerializeField]
-	private float speed = 10;
+	private float speed = 1;
 	//[SerializeField]
 	//private float zoomSpeed = 1;
-	[SerializeField]
-	private int screenBorderSize = 50;
 
 	[Header("Objects")]
 	[SerializeField]
@@ -29,31 +27,19 @@ public class StrategyController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		float xAxis = Input.GetAxis("Horizontal");
+		camRoot.transform.Translate(new Vector3(xAxis * speed * Time.deltaTime, 0, 0), Space.Self);
+		
+		float yAxis = Input.GetAxis("Vertical");
+		camRoot.transform.Translate(new Vector3(0, 0, yAxis * speed * Time.deltaTime), Space.Self);
+
 		float alt = Input.GetAxis("Altitude");
 		camRoot.transform.Translate(new Vector3(0, alt * speed * Time.deltaTime, 0), Space.Self);
 
 		cam.transform.position = camRoot.transform.position;
 
-		Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
-		if (true/*screenRect.Contains(Input.mousePosition)*/)
-		{
-			Vector3 velocityVector = Vector3.zero;
-
-			if (Input.mousePosition.x < screenBorderSize)
-				velocityVector.x = -speed * Time.deltaTime;
-			else if (Input.mousePosition.x > Screen.width - screenBorderSize)
-				velocityVector.x = speed * Time.deltaTime;
-
-			if (Input.mousePosition.y < screenBorderSize)
-				velocityVector.z = -speed * Time.deltaTime;
-			else if (Input.mousePosition.y > Screen.height - screenBorderSize)
-				velocityVector.z = speed * Time.deltaTime;
-
-			camRoot.transform.Translate(velocityVector, Space.Self);
-		}
-
-		/*// TODO: Zooming
-		float zoom = Input.GetAxis("Zoom");
+		/*// Zooming
+		float zoom = Input.GetAxis("Altitude");
 		cam.transform.Translate(new Vector3(0, 0, zoom * zoomSpeed), Space.Self);
 		*/
 

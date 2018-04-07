@@ -16,4 +16,9 @@ public class Manager_UI : MonoBehaviour
 
 	[SerializeField]
 	public GameObject UnitSelCircle;
+
+	void Update()
+	{
+		Cursor.lockState = CursorLockMode.Confined;
+	}
 }

@@ -155,6 +155,12 @@ public class Turret : MonoBehaviour
 		if (outOfAmmo)
 		{
 
+			if (audioSource.clip && audioSource.isPlaying)
+			{
+				audioSource.Stop();
+				AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource, gameRules.AUDpitchVariance);
+			}
+
 			reloadTimer += Time.deltaTime;
 			if (reloadTimer >= reloadCooldown)
 			{
@@ -184,7 +190,10 @@ public class Turret : MonoBehaviour
 						projs.SpawnProjectile(projTemplate, firePos.position, errForward);
 					}
 
-					AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource, gameRules.AUDpitchVariance);
+					if (audioSource.clip == null)
+						AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource, gameRules.AUDpitchVariance);
+					else if (!audioSource.isPlaying)
+						audioSource.Play();
 
 					shootTimer = 0;
 					curAmmo--;
