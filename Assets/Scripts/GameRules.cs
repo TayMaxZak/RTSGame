@@ -15,7 +15,15 @@ public class GameRules
 	public float HLTHburnMin = 2; // Burn damage per second
 	public float HLTHburnMax = 3;
 
+	public float ABLYarmorDrainRange = 20;
+	public float ABLYarmorDrainDPSEnemy = 10;
+	public float ABLYarmorDrainDPSAlly = 5;
+	public float ABLYarmorDrainRegen = 2;
+	public float ABLYarmorDrainMaxVictims = 5;
+
 	public float AUDpitchVariance = 0.05f;
 
 	public float PRJmaxTimeAlive = 9f;
+
+	public LayerMask entityLayerMask;
 }

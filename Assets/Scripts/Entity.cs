@@ -39,6 +39,7 @@ public class Entity : MonoBehaviour
 	protected void Update ()
 	{
 		selCircle.transform.position = transform.position;
+		selCircle.transform.Rotate(Vector3.up * selCircleSpeed * Time.deltaTime);
 		//for (int i = 1; i <= selCircle.transform.childCount; i++)
 		//{
 		//	Transform tran = selCircle.GetComponentsInChildren<Transform>()[i];

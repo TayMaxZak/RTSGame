@@ -6,6 +6,7 @@ public class Unit : Entity
 {
 
 	private Unit target;
+	public int team = 0; 
 
 	[Header("Health Pool")]
 	[SerializeField]
@@ -91,6 +92,11 @@ public class Unit : Entity
 
 		curHealth = maxHealth; // Reset HP values
 		curArmor = maxArmor;
+
+		foreach (Ability ab in abilities)
+		{
+			ab.Init(this, gameRules);
+		}
 	}
 
 	// Banking
@@ -102,13 +108,8 @@ public class Unit : Entity
 	{
 		base.Update(); // Entity base class
 		UpdateUI();
-
-		Vector3 dif = goal - transform.position;
-		
-		if (dif.magnitude <= reachGoalThresh)
-			isPathing = false;
-		else
-			isPathing = true;
+		UpdateMovement();
+		UpdateAbilities();
 
 		// Health
 		bool isBurning = curHealth / maxHealth <= gameRules.HLTHthreshBurn;
@@ -119,10 +120,48 @@ public class Unit : Entity
 			if (curBurnCounter >= 1)
 			{
 				curBurnCounter = 0;
-				TrueDamage(Mathf.RoundToInt(Random.Range(gameRules.HLTHburnMin, gameRules.HLTHburnMax)));
+				TrueDamage(Mathf.RoundToInt(Random.Range(gameRules.HLTHburnMin, gameRules.HLTHburnMax)), 0);
 			}
-			
 		}
+	}
+
+	void UpdateUI()
+	{
+		if (!isSelected)
+		{
+			hpBar.gameObject.SetActive(false);
+			return;
+		}
+
+		Vector3 barPosition = new Vector3(model.position.x + HPBarOffset.x, model.position.y + HPBarOffset.y, model.position.z + HPBarOffset.x);
+		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
+
+		float dot = Vector3.Dot((barPosition - Camera.main.transform.position).normalized, Camera.main.transform.forward);
+		if (dot < 0)
+		{
+			if (hpBar.gameObject.activeSelf)
+				hpBar.gameObject.SetActive(false);
+		}
+		else
+		{
+			if (!hpBar.gameObject.activeSelf)
+				hpBar.gameObject.SetActive(true);
+
+			RectTransform rect = hpBar.GetComponent<RectTransform>();
+			rect.position = new Vector2(screenPoint.x, screenPoint.y);
+			//rect.localScale = ;
+			hpBar.UpdateHPBar(curHealth / maxHealth, curArmor / maxArmor);
+		}
+	}
+
+	void UpdateMovement()
+	{
+		Vector3 dif = goal - transform.position;
+
+		if (dif.magnitude <= reachGoalThresh)
+			isPathing = false;
+		else
+			isPathing = true;
 
 		// Rotation
 		float targetRSRatio = isPathing ? 1 : 0;
@@ -145,7 +184,7 @@ public class Unit : Entity
 
 		//model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, targetBank));
 		model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, 0));
-		
+
 
 
 		// Horizontal Movement
@@ -176,32 +215,12 @@ public class Unit : Entity
 		transform.position += velocity * Time.deltaTime;
 	}
 
-	void UpdateUI()
+	void UpdateAbilities()
 	{
-		if (!isSelected)
+		for (int i = 0; i < abilities.Count; i++)
 		{
-			hpBar.gameObject.SetActive(false);
-			return;
-		}
-
-		Vector3 barPosition = new Vector3(model.position.x + HPBarOffset.x, model.position.y + HPBarOffset.y, model.position.z + HPBarOffset.x);
-		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
-
-		float dot = Vector3.Dot((barPosition - Camera.main.transform.position).normalized, Camera.main.transform.forward);
-		if (dot < 0)
-		{
-			if (hpBar.gameObject.activeSelf)
-				hpBar.gameObject.SetActive(false);
-		}
-		else
-		{
-			if (!hpBar.gameObject.activeSelf)
-				hpBar.gameObject.SetActive(true);
-
-			RectTransform rect = hpBar.GetComponent<RectTransform>();
-			rect.position = new Vector2(screenPoint.x, screenPoint.y);
-			//rect.localScale = ;
-			hpBar.UpdateHPBar(curHealth / maxHealth, curArmor / maxArmor);
+			//if (abilities[i].isActive)
+				abilities[i].AbilityTick();
 		}
 	}
 
@@ -275,9 +294,11 @@ public class Unit : Entity
 		return true;
 	}
 
-	public void TrueDamage(float damageBase) // Ignores armor
+	public void TrueDamage(float healthDmg, float armorDmg) // Simple damage to armor and health
 	{
-		curHealth -= damageBase;
+		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
+
+		curHealth = Mathf.Min(curHealth - healthDmg, maxHealth);
 		if (curHealth <= 0)
 		{
 			Die();
@@ -287,7 +308,7 @@ public class Unit : Entity
 
 	public void UseAbility(int i, Ability_Target targ)
 	{
-		abilities[i].Use(this, targ);
+		abilities[i].Activate(targ);
 	}
 
 	public void Die()
