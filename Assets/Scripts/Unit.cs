@@ -20,6 +20,7 @@ public class Unit : Entity
 	[SerializeField]
 	private GameObject deathClone; // Object to spawn on death
 	private float curBurnCounter;
+	private bool dead;
 
 	[Header("Combat")]
 	[SerializeField]
@@ -76,6 +77,8 @@ public class Unit : Entity
 
 	private Vector2 HPBarOffset;
 
+	//private List<Unit> killers; // Units that assisted in this unit's death TODO: IMPLEMENT
+
 	// Use this for initialization
 	protected new void Start()
 	{
@@ -90,8 +93,10 @@ public class Unit : Entity
 		hpBar.transform.SetParent(uiManager.Canvas.transform, false);
 		HPBarOffset = uiManager.UIRules.HPBoffset;
 
-		curHealth = maxHealth; // Reset HP values
-		curArmor = maxArmor;
+		//curHealth = maxHealth; // Reset HP values
+		//curArmor = maxArmor;
+
+		UpdateUI(); // Make sure healthbar is hidden until the unit is first selected
 
 		foreach (Ability ab in abilities)
 		{
@@ -129,7 +134,8 @@ public class Unit : Entity
 	{
 		if (!isSelected)
 		{
-			hpBar.gameObject.SetActive(false);
+			if (hpBar.gameObject.activeSelf)
+				hpBar.gameObject.SetActive(false);
 			return;
 		}
 
@@ -251,7 +257,7 @@ public class Unit : Entity
 		target = newTarg;
 		for (int i = 0; i < turrets.Length; i++)
 			turrets[i].SetTarget(target);
-		Debug.Log("I, " + DisplayName + ", am going after " + target.DisplayName);
+		//Debug.Log("I, " + DisplayName + ", am going after " + target.DisplayName);
 	}
 
 	public bool Damage(float damageBase, float range)
@@ -259,7 +265,8 @@ public class Unit : Entity
 		float dmg = damageBase;
 		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / gameRules.ARMrangeMax);
 
-		if (dmg - dmg * rangeRatio <= curArmor) // Range resist condition: if this shot wont break the armor, it will be range resisted
+		// TODO: If past max range resist range, shots do 0 damage against armor and therefore wont penetrate even 0 curArmor
+		if (dmg - dmg * rangeRatio <= curArmor - 1) // Range resist condition: if this shot wont break the armor, it will be range resisted
 			dmg = Mathf.Max(0, dmg - dmg * rangeRatio); //Damage lost to falloff, incentivising shooting armor from up close
 		else
 			dmg = Mathf.Max(0, dmg); // Not enough armor left, no longer grants range resist
@@ -269,7 +276,8 @@ public class Unit : Entity
 			return false;
 		}
 
-		float absorbLim = Mathf.Min(curArmor, (curArmor / maxArmor) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat); // Absorbtion limit formula
+
+		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : (curArmor / maxArmor) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat); // Absorbtion limit formula
 
 		float dmgToArmor = Mathf.Min(absorbLim, dmg); // How much damage armor takes
 
@@ -290,6 +298,8 @@ public class Unit : Entity
 			Die();
 			return true;
 		}
+
+		
 
 		return true;
 	}
@@ -313,6 +323,11 @@ public class Unit : Entity
 
 	public void Die()
 	{
+		Debug.Log("Random " + Random.value);
+		if (dead)
+			return;
+		dead = true; // Prevents multiple death clones
+
 		if (deathClone)
 			Instantiate(deathClone, model.transform.position, model.rotation);
 		Destroy(hpBar.gameObject);

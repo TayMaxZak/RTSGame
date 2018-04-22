@@ -100,14 +100,14 @@ MonoBehaviour:
     m_Enabled: 1
     m_Settings:
       bloom:
-        intensity: 0.95
+        intensity: 0.05
         threshold: 1.2
         softKnee: 0.06
         radius: 4
         antiFlicker: 0
       lensDirt:
         texture: {fileID: 2800000, guid: 0406afabc90465648b88ffda0ff3962a, type: 3}
-        intensity: 3
+        intensity: 10
   colorGrading:
     m_Enabled: 0
     m_Settings:
@@ -278,7 +278,7 @@ MonoBehaviour:
   userLut:
     m_Enabled: 0
     m_Settings:
-      lut: {fileID: 2800000, guid: 08b03e4b3cfb5a841a59b0482e7806ff, type: 3}
+      lut: {fileID: 2800000, guid: 67b43a2af805dd349af587f2ce312714, type: 3}
       contribution: 1
   chromaticAberration:
     m_Enabled: 0
@@ -309,7 +309,7 @@ MonoBehaviour:
   monitors:
     currentMonitorID: 0
     refreshOnPlay: 0
-    histogramMode: 3
+    histogramMode: 4
     waveformExposure: 0.12
     waveformY: 0
     waveformR: 1

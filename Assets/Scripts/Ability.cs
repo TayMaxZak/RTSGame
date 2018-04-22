@@ -77,19 +77,24 @@ public static class AbilityUtils
 		switch (ability.type)
 		{
 			case AbilityType.ArmorDrain:
-				GameObject go = Object.Instantiate(Resources.Load("ArmorDrainEffect") as GameObject, ability.user.transform.position, Quaternion.identity);
-				ability.effect = go.GetComponent<Ability_Effect>();
+				{
+					GameObject go = Object.Instantiate(Resources.Load("ArmorDrainEffect") as GameObject, ability.user.transform.position, Quaternion.identity);
+					ability.effect = go.GetComponent<Ability_Effect>();
+				}
 				break;
 			case AbilityType.Swarm:
 				break;
 			case AbilityType.SelfDamage:
-				ability.user.TrueDamage(50, 100);
+				{
+					
+				}
 				break;
 			default:
 				break;
 		}
 
-		ability.effect.SetEffectActive(ability.isActive);
+		if (ability.effect)
+			ability.effect.SetEffectActive(ability.isActive);
 	}
 
 	public static void StartAbility(Ability ability)
@@ -103,38 +108,18 @@ public static class AbilityUtils
 		else
 			ability.isActive = !ability.isActive;
 
-		ability.effect.SetEffectActive(ability.isActive);
+		if (ability.effect)
+			ability.effect.SetEffectActive(ability.isActive);
 
 		switch (ability.type)
 		{
 			case AbilityType.ArmorDrain:
-				/*
-				Collider[] cols = Physics.OverlapSphere(ability.user.transform.position, ability.gameRules.ABLYarmorDrainRange, ability.gameRules.entityLayerMask);
-				for (int i = 0; i < cols.Length; i++)
-				{
-					ability.unitList.Add(GetUnitFromCol(cols[i]));
-				}
-				
-
-				//GameObject go = Object.Instantiate(Resources.Load("ArmorDrainEffect") as GameObject, ability.user.transform.position, Quaternion.identity);
-				//go.transform.SetParent(ability.user.transform);
-
-				if (ability.isActive)
-				{
-					AudioSource aS = AudioUtils.PlayClipAt(Resources.Load("ArmorDrainOnSFX") as AudioClip, ability.user.transform.position);
-					aS.transform.SetParent(ability.user.transform);
-				}
-				else
-				{
-					AudioSource aS = AudioUtils.PlayClipAt(Resources.Load("ArmorDrainOffSFX") as AudioClip, ability.user.transform.position);
-					aS.transform.SetParent(ability.user.transform);
-				}
-				*/
 				break;
 			case AbilityType.Swarm:
 				break;
 			case AbilityType.SelfDamage:
-				ability.user.TrueDamage(50, 100);
+				Object.Instantiate(Resources.Load("SelfDamageEffect") as GameObject, ability.user.transform.position, Quaternion.identity);
+				ability.user.TrueDamage(ability.user.GetHP().y * 0.8f, 0);
 				break;
 			default:
 				break;
@@ -148,7 +133,8 @@ public static class AbilityUtils
 		if (ability.isActive && ability.curEnergy < 0) // Out of energy
 		{
 			ability.isActive = false;
-			ability.effect.SetEffectActive(ability.isActive);
+			if (ability.effect)
+				ability.effect.SetEffectActive(ability.isActive);
 			//StartAbility(ability); // This would expel cooldown or fail entirely
 			return;
 		}
@@ -173,34 +159,44 @@ public static class AbilityUtils
 		switch (ability.type)
 		{
 			case AbilityType.ArmorDrain: // Find all enemies in a radius and damage them over time
-				ability.effect.transform.position = ability.user.transform.position; // Move effect to center of user
-
-				Collider[] cols = Physics.OverlapSphere(ability.user.transform.position, ability.gameRules.ABLYarmorDrainRange, ability.gameRules.entityLayerMask);
-				List<Unit> units = new List<Unit>();
-				for (int i = 0; i < cols.Length; i++)
 				{
-					Unit unit = GetUnitFromCol(cols[i]);
-					if (unit && unit != ability.user) // Don't add ourselves
-						units.Add(unit);
-				}
+					ability.effect.transform.position = ability.user.transform.position; // Move effect to center of user
 
-				// TODO: Sort unit list to have allies first
+					Collider[] cols = Physics.OverlapSphere(ability.user.transform.position, ability.gameRules.ABLYarmorDrainRange, ability.gameRules.entityLayerMask);
+					List<Unit> units = new List<Unit>();
+					for (int i = 0; i < cols.Length; i++)
+					{
+						bool hasDrainAbility = false;
+						Unit unit = GetUnitFromCol(cols[i]);
 
-				for (int i = 0; i < units.Count && i < ability.gameRules.ABLYarmorDrainMaxVictims; i++) // For each unit, subtract apropriate armor and add armor to us
-				{
-					if (units[i].team == ability.user.team)
-						units[i].TrueDamage(0, ability.gameRules.ABLYarmorDrainDPSAlly * Time.deltaTime);
+						if (!unit)
+							continue;
+
+						foreach (Ability a in unit.abilities)
+							if (a.type == AbilityType.ArmorDrain) // Can't drain another drain-capable unit
+								hasDrainAbility = true;
+
+						if (unit != ability.user && !hasDrainAbility) // Don't add ourselves
+							units.Add(unit);
+					}
+
+					// TODO: Sort unit list to have allies first
+
+					for (int i = 0; i < units.Count && i < ability.gameRules.ABLYarmorDrainMaxVictims; i++) // For each unit, subtract apropriate armor and add armor to us
+					{
+						if (units[i].team == ability.user.team)
+							units[i].TrueDamage(0, ability.gameRules.ABLYarmorDrainDPSAlly * Time.deltaTime);
+						else
+							units[i].TrueDamage(0, ability.gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
+						if (units[i].GetHP().z > 0)
+							ability.user.TrueDamage(0, -ability.gameRules.ABLYarmorDrainRegen * Time.deltaTime);
+					}
+
+					if (units.Count == 0)
+						ability.effect.SetEffectActive(ability.isActive, false);
 					else
-						units[i].TrueDamage(0, ability.gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
-					if (units[i].GetHP().z > 0)
-					ability.user.TrueDamage(0, -ability.gameRules.ABLYarmorDrainRegen * Time.deltaTime);
+						ability.effect.SetEffectActive(ability.isActive, true);
 				}
-
-				if (units.Count == 0)
-					ability.effect.SetEffectActive(ability.isActive, false);
-				else
-					ability.effect.SetEffectActive(ability.isActive, true);
-
 				break;
 			case AbilityType.Swarm:
 				break;

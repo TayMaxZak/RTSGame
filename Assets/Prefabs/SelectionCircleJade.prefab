@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33898215179506800}
   - component: {fileID: 23025039644546312}
   m_Layer: 0
-  m_Name: SelectionCircle
+  m_Name: SelectionCircleJade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

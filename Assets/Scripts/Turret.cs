@@ -58,6 +58,7 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private Transform pivotX;
 
+	private int state = 0; // 0 = standby, 2 = 
 
 	private bool isTargeting;
 	private Quaternion lookRotation;
@@ -144,14 +145,56 @@ public class Turret : MonoBehaviour
 			pivotY.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
 			pivotX.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
 		}
+		/*
+		if (shootTimer >= 0 || isTargeting)
+			shootTimer += Time.deltaTime;
+
+		if (isTargeting) // Has something to shoot at
+		{
+			bool hasAmmo = maxAmmo > 0 ? curAmmo > 0 : true;
+			if (hasAmmo)
+			{
+				// Aimed at target?
+				Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
+				float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
 
 
+				if (dot >= 0.999f)
+				{
+					dot = 1;
+
+
+					if (shootTimer >= shootCooldown)
+					{
+						for (int i = 0; i < pelletCount; i++)
+						{
+							Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
+							Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y));
+
+							projs.SpawnProjectile(projTemplate, firePos.position, errForward);
+						}
+
+						if (audioSource.clip == null)
+							AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource, gameRules.AUDpitchVariance);
+						else if (!audioSource.isPlaying)
+							audioSource.Play();
+
+						shootTimer = 0;
+						curAmmo--;
+					}
+
+				} //dot
+			}
+		}
+		*/
+		
 		// Ammo
 		bool outOfAmmo = maxAmmo > 0 ? curAmmo <= 0 : false;
 
 		if (shootTimer >= 0 || isTargeting)
 			shootTimer += Time.deltaTime;
 
+		
 		if (outOfAmmo)
 		{
 
@@ -203,11 +246,14 @@ public class Turret : MonoBehaviour
 		} //isTargeting
 		else
 			shootTimer = -firingOffset;
+		
+
+
 	}
 
 	public void SetTarget(Unit newTarg)
 	{
 		target = newTarg;
-		Debug.Log("Turret aiming at " + target.DisplayName);
+		//Debug.Log("Turret aiming at " + target.DisplayName);
 	}
 }

@@ -8,7 +8,18 @@ public class Commander : MonoBehaviour
 {
 	[Header("GUI")]
 	[SerializeField]
-	private Text selectedText;
+	private Text resPointCounter;
+	[SerializeField]
+	private GameObject buildButtons;
+	[SerializeField]
+	private bool buildModeActive;
+	private int buildIndex;
+	[SerializeField]
+	private Unit[] buildUnits;
+
+	[Header("Objectives")]
+	[SerializeField]
+	private int resPoints = 20;
 
 	[Header("Sound")]
 	[SerializeField]
@@ -47,6 +58,7 @@ public class Commander : MonoBehaviour
 		audioSource = GetComponent<AudioSource>();
 
 		Select(null);
+		UpdateUI(false);
 
 		curGrid = defaultGrid;
 		foreach (GameObject go in grids)
@@ -90,11 +102,24 @@ public class Commander : MonoBehaviour
 			//Debug.Log(RayFromMouse());
 			RaycastHit hit = RaycastFromCursor();
 
-			Entity ent = GetEntityFromHit(hit);
-			if (ent)
-				Select(ent);
-			else
-				Select(null);
+			
+			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
+			{
+				Entity ent = GetEntityFromHit(hit);
+				if (!buildModeActive) // Normal select mode
+				{
+					if (ent)
+						Select(ent);
+					else
+						Select(null);
+				}
+				else if (hit.collider) // Building mode
+				{
+					if (!ent) // Make sure we didn't click on top of an existing entity
+						Build(hit);
+				}
+			}
+			
 		} //lmb
 		else if (selected && Input.GetMouseButtonDown(1))
 		{
@@ -184,21 +209,41 @@ public class Commander : MonoBehaviour
 		grids[curGrid].SetActive(true);
 	}
 
-	void UpdateUI(bool newUnit)
+	void UpdateUI(bool selectingNewUnit)
 	{
-		Unit unit = null;
-		if (newUnit && selected && IsUnit(selected))
+		resPointCounter.text = resPoints.ToString();
+
+		if (selectingNewUnit && selected && IsUnit(selected))
 		{
-			unit = (Unit)selected;
-			selectedText.text = "Selected: " + selected.DisplayName;
+			Unit unit = (Unit)selected;
+			//selectedText.text = "Selected: " + selected.DisplayName;
 
 			Flagship flag = unit.gameObject.GetComponent<Flagship>();
 
 			if (flag)
 			{
-				selectedText.text = "|| FLAGSHIP ||";
+				buildButtons.SetActive(true);
+				//selectedText.text = "|| FLAGSHIP ||";
 			}
+			else
+				buildButtons.SetActive(false);
 		}
+		else
+			buildButtons.SetActive(false);
+	}
+
+	public void BuildButton(int id)
+	{
+		buildModeActive = true;
+		buildIndex = id;
+		
+	}
+
+	void Build(RaycastHit hit)
+	{
+		Debug.Log("my id is " + buildIndex);
+		Instantiate(buildUnits[buildIndex], hit.point, Quaternion.identity);
+		buildModeActive = false;
 	}
 
 	bool IsUnit(Entity ent)
@@ -214,10 +259,10 @@ public class Commander : MonoBehaviour
 		if(selected)
 			selected.OnSelect(this, true);
 
-		if (newSel)
-			UpdateUI(true);
-		else
-			selectedText.text = "";
+		//if (newSel)
+		UpdateUI(true);
+		//else
+			//selectedText.text = "";
 	}
 
 	public void Move(Vector3 newPos)

@@ -28,7 +28,6 @@ public class Manager_Projectiles : MonoBehaviour
 
 	public void Update()
 	{
-
 		if (particles == null || pS == null)
 		{
 			return;
@@ -40,23 +39,10 @@ public class Manager_Projectiles : MonoBehaviour
 
 		for (int i = 0; i < projectiles.Count; i++)
 		{
-
 			Projectile proj = projectiles[i];
-			proj.position += proj.direction * proj.GetSpeed() * Time.deltaTime;
-			proj.UpdateTimeAlive(Time.deltaTime);
-			if (proj.GetTimeAlive() > gameRules.PRJmaxTimeAlive)
-			{
-				Remove(i);
-				continue;
-			}
-
-			particles[i].position = proj.position;
-			particles[i].velocity = proj.direction;
-
-			//Debug.DrawRay(proj.position, proj.direction, Color.red);
 
 			RaycastHit hit;
-			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.GetSpeed() * Time.fixedDeltaTime, layerMask))
+			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.GetSpeed() * Time.deltaTime, layerMask))
 			{
 				if (!hit.collider.transform.parent) // Unit just died
 					return;
@@ -73,6 +59,19 @@ public class Manager_Projectiles : MonoBehaviour
 				//i--;
 				//numAlive--;
 			}
+
+			proj.position += proj.direction * proj.GetSpeed() * Time.deltaTime;
+			proj.UpdateTimeAlive(Time.deltaTime);
+			if (proj.GetTimeAlive() > gameRules.PRJmaxTimeAlive)
+			{
+				Remove(i);
+				continue;
+			}
+
+			particles[i].position = proj.position;
+			particles[i].velocity = proj.direction;
+
+			//Debug.DrawRay(proj.position, proj.direction, Color.red);
 		}
 
 		pS.SetParticles(particles, numAlive);
