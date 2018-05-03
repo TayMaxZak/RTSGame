@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeathClone : MonoBehaviour
+public class Clone_Death : MonoBehaviour
 {
 	[SerializeField]
 	private GameObject startEffect;

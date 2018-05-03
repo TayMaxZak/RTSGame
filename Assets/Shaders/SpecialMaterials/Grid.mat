@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Grid
-  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 73894410809452d42840f762af5d3962, type: 3}
   m_ShaderKeywords: _ALPHABLEND_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
@@ -20,6 +20,10 @@ Material:
     m_TexEnvs:
     - _BumpMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Color:
+        m_Texture: {fileID: 2800000, guid: dc9ef30a6496fe7499b679206cad5302, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -48,7 +52,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: dc9ef30a6496fe7499b679206cad5302, type: 3}
-        m_Scale: {x: 1000, y: 100}
+        m_Scale: {x: 50, y: 50}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -63,6 +67,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AlphaDistance: 19.9
+    - _AlphaDistance2: 10.3
+    - _AlphaFresnel: 0.23
+    - _AlphaFresnel2: 0.62
+    - _BaseMult: 0.06
     - _BumpScale: 1
     - _Cutoff: 1
     - _Cutoff1: 0
@@ -74,14 +83,19 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _InvFade: 0.99
+    - _MainAlphaOffset: -0.7
+    - _MainAlphaScale: 5.6
+    - _MainMult: 0.3
     - _Metallic: 0
     - _Mode: 2
-    - _Mult: 1.25
+    - _Mult: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Shininess: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _SpeedX: 0.5
+    - _SpeedY: 0
     - _SrcBlend: 5
     - _UVSec: 0
     - _ZWrite: 0

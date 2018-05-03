@@ -63,7 +63,8 @@ public class UI_HPBar : MonoBehaviour
 		healthFill.rectTransform.sizeDelta = new Vector2(healthWidth * healthCur, healthFill.rectTransform.sizeDelta.y);
 		armorFill.rectTransform.sizeDelta = new Vector2(armorWidth * armorCur, armorFill.rectTransform.sizeDelta.y);
 
-		borderFill.color = armorCur > uiRules.HPBbordColorThresh ? armorOrigColor : healthOrigColor;
+		//borderFill.color = armorCur > uiRules.HPBbordColorThresh ? armorOrigColor : healthOrigColor;
+		borderFill.color = armorTarg > uiRules.HPBbordColorThresh ? armorOrigColor : healthOrigColor;
 
 		if (healthCur < gameRules.HLTHthreshBurn)
 		{

@@ -136,6 +136,7 @@ public static class AbilityUtils
 			if (ability.effect)
 				ability.effect.SetEffectActive(ability.isActive);
 			//StartAbility(ability); // This would expel cooldown or fail entirely
+
 			return;
 		}
 
@@ -143,9 +144,22 @@ public static class AbilityUtils
 		if (!ability.isActive) // If ability is not being used
 		{
 			
-			//Debug.Log("In TICK ABILITY NOT ACTIVE: " + ability.curEnergy);
 			if (!InstantOrToggle(ability.type)) // If it's a toggle ability
 				ability.curEnergy = Mathf.Min(ability.curEnergy + Time.deltaTime * DeltaDurations(ability.type).z, 1); // Restore energy according to its reset duration
+
+
+			switch (ability.type)
+			{
+				case AbilityType.ArmorDrain: // Find all enemies in a radius and damage them over time
+					{
+						ability.effect.transform.position = ability.user.transform.position; // Move effect to center of user
+					}
+					break;
+				case AbilityType.Swarm:
+					break;
+				default:
+					break;
+			}
 			return; // Leave, ability isn't being used
 		}
 
@@ -154,8 +168,7 @@ public static class AbilityUtils
 			ability.curEnergy -= Time.deltaTime * DeltaDurations(ability.type).y; // Consume energy
 		}
 
-		//Debug.Log("In TICK ABILITY ACTIVE: " + ability.curEnergy);
-
+		// Active ability tick
 		switch (ability.type)
 		{
 			case AbilityType.ArmorDrain: // Find all enemies in a radius and damage them over time
@@ -222,7 +235,7 @@ public static class AbilityUtils
 		switch (type)
 		{
 			case AbilityType.ArmorDrain:
-				return DeltaOf(new Vector3(2.0f, 12.0f, 30.0f));
+				return DeltaOf(new Vector3(2.0f, 15.0f, 30.0f));
 			case AbilityType.Swarm:
 				return DeltaOf(new Vector3(24.0f, 0, 0));
 			case AbilityType.SelfDamage:

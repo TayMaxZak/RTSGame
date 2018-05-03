@@ -1,13 +1,14 @@
-﻿Shader "Example/Shading Test" {
+﻿Shader "Custom/Entity" {
 	Properties{
 		_MainTex("Diffuse Map", 2D) = "white" {}
 		_Color("Color", Color) = (1,1,1,1)
-		_AOTex("AO Map", 2D) = "white" {}
+		//_NoiseSteps("Dissolve Resolution", Range(1, 1000)) = 200
+
 		_SSSTex("SSS Map", 2D) = "black" {}
 		_SSSStrength("SSS Strength", Range(0, 4)) = 0.5
 		_SSSColor("SSS Color", Color) = (1,1,1,1)
 		
-
+		_AOTex("AO Map", 2D) = "white" {}
 		_AmbientMult("Ambient Multiplier", Range(0,4)) = 1
 		_AmbientFallL("Ambient Falloff Light", Range(0,1)) = 0.5
 		_AmbientFallD("Ambient Falloff Dark", Range(0,1)) = 0
@@ -16,13 +17,16 @@
 		Tags{ "RenderType" = "Opaque" }
 		CGPROGRAM
 #pragma surface surf Custom noambient
-
+//#pragma target 3.0
+//#pragma debug
 	sampler2D _MainTex;
-	sampler2D _AOTex;
-	sampler2D _SSSTex;
 	fixed4 _Color;
+
+	sampler2D _SSSTex;
 	fixed4 _SSSColor;
 	half _SSSStrength;
+
+	sampler2D _AOTex;
 	half _AmbientMult;
 	half _AmbientFallL;
 	half _AmbientFallD;
@@ -56,11 +60,12 @@
 
 	struct Input {
 		float2 uv_MainTex;
-		float2 uv_AOTex;
-		float2 uv_SSSTex;
+		//float2 uv_AOTex;
+		//float2 uv_SSSTex;
 		float4 screenPos;
 		float3 worldPos;
 		float3 viewDir;
+		//float4 _ScreenParams;
 	};
 
 	float4 screenPos;
@@ -74,7 +79,7 @@
 		half acMult = (clamp(1 - NdotL * _AmbientFallL, 0, 1) + clamp(1 - -NdotL * _AmbientFallD, 0, 1) - 1);
 
 		ac *= acMult;
-		return clamp(ac * _AmbientMult * 0.5, 0, 1);
+		return clamp(ac * _AmbientMult * 0.5, 0, _AmbientMult);
 	}
 
 	half4 LightingCustom(SurfaceOutputCustom s, half3 lightDir, half atten) {
@@ -91,8 +96,22 @@
 		half light = NdotL * atten;
 		half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
 
-		c.rgb = s.AmbientOcclusion * (shade * s.Albedo + ac(s, NdotL)) + sss;
-		c.a = s.Alpha;
+		c.rgb = s.AmbientOcclusion * (shade * s.Albedo + ac(s, NdotL) * (s.Albedo + 1) * 0.5) + sss;
+		//c.rgb = s.AmbientOcclusion * (shade * s.Albedo + ac(s, NdotL)) + sss;
+		//c.rgb += (1 - s.AmbientOcclusion) * _SSSColor * _SSSStrength;
+
+		/*
+		half missingAlpha = ((1 - s.Alpha));
+		half dissolve = rand(s.screenUV); // Random noise
+		clip(1 - (missingAlpha * clamp(dissolve, 0, 1) + missingAlpha));
+		*/
+		half dissolveAlpha = (1 - s.Alpha);
+		half dissolveNoise = rand(s.screenUV);
+		half dissolve = dissolveAlpha + ceil(clamp(dissolveNoise - (1 - dissolveAlpha), 0, 1)) + 0.0001;
+		dissolve = (1 - dissolve);
+		c.a = dissolve;
+		clip(c.a);
+		c.a = clamp(dissolve, 0, 1);
 		
 		return c;
 	}
@@ -102,12 +121,20 @@
 
 
 	void surf(Input IN, inout SurfaceOutputCustom o) {
-		o.Albedo = tex2D(_MainTex, IN.uv_MainTex).rgb * _Color;
-		o.AmbientOcclusion = tex2D(_AOTex, IN.uv_AOTex).rgb;
-		o.SSS = tex2D(_SSSTex, IN.uv_SSSTex).rgb;
-		o.screenUV = IN.screenPos;
+		float2 uv = IN.uv_MainTex;
+		o.Albedo = tex2D(_MainTex, uv).rgb * _Color;
+		o.Alpha = _Color.a;
+		o.AmbientOcclusion = 1;
+		o.AmbientOcclusion = tex2D(_AOTex, uv).rgb;
+		o.SSS = tex2D(_SSSTex, uv).rgb;
 
 		o.viewDir = IN.viewDir;
+
+		float4 screenParams = _ScreenParams;
+		float2 screenUV = IN.screenPos.xy / (IN.screenPos.w == 0 ? 1 : IN.screenPos.w);
+		o.screenUV = screenUV;
+		o.screenUV.x = floor(screenUV.x * screenParams.x) / screenParams.x;
+		o.screenUV.y = floor(screenUV.y * screenParams.y) / screenParams.y;
 	}
 	ENDCG
 		}

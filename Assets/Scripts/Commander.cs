@@ -11,11 +11,17 @@ public class Commander : MonoBehaviour
 	private Text resPointCounter;
 	[SerializeField]
 	private GameObject buildButtons;
+
+	// Building //
 	[SerializeField]
-	private bool buildModeActive;
-	private int buildIndex;
-	[SerializeField]
-	private Unit[] buildUnits;
+	private BuildUnit[] buildUnits;
+	private int buildUnitIndex;
+
+	private GameObject buildPreview;
+	private List<GameObject> pendingBuilds;
+
+	private int buildState; // 0 = standby, 1 = moving preview, 2 = rotating preview
+	private Coroutine buildHappening;
 
 	[Header("Objectives")]
 	[SerializeField]
@@ -30,11 +36,7 @@ public class Commander : MonoBehaviour
 	private Camera cam;
 	[SerializeField]
 	private GameObject clickEffect;
-	private float clickRayLength = 200;
-	[SerializeField]
-	private LayerMask entityLayerMask;
-	[SerializeField]
-	private LayerMask gridLayerMask;
+	private float clickRayLength = 1000;
 
 	[Header("Grids")]
 	[SerializeField]
@@ -49,12 +51,13 @@ public class Commander : MonoBehaviour
 
 	private Entity selected;
 	private AudioSource audioSource;
+	private GameRules gameRules;
 
 	// Use this for initialization
 	void Start ()
 	{
 		//Time.timeScale = 0.51f;
-
+		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 		audioSource = GetComponent<AudioSource>();
 
 		Select(null);
@@ -72,8 +75,8 @@ public class Commander : MonoBehaviour
 		if (!EventSystem.current.IsPointerOverGameObject())
 		{
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, clickRayLength, entityLayerMask)) {}
-			else if (Physics.Raycast(ray, out hit, clickRayLength, gridLayerMask)) {}
+			if (Physics.Raycast(ray, out hit, clickRayLength, gameRules.entityLayerMask)) {}
+			else if (Physics.Raycast(ray, out hit, clickRayLength, gameRules.gridLayerMask)) {}
 			return hit;
 		}
 		return new RaycastHit();
@@ -99,42 +102,92 @@ public class Commander : MonoBehaviour
 		// Clicking
 		if (Input.GetMouseButtonDown(0))
 		{
-			//Debug.Log(RayFromMouse());
 			RaycastHit hit = RaycastFromCursor();
 
-			
+
 			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
 			{
 				Entity ent = GetEntityFromHit(hit);
-				if (!buildModeActive) // Normal select mode
+				if (buildState == 0) // Normal select mode
 				{
 					if (ent)
 						Select(ent);
 					else
 						Select(null);
 				}
-				else if (hit.collider) // Building mode
+
+			}
+
+		} //lmb
+		else if (Input.GetMouseButtonUp(0))
+		{
+			RaycastHit hit = RaycastFromCursor();
+
+
+			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
+			{
+				Entity ent = GetEntityFromHit(hit);
+
+				if (buildState == 1) // Currently moving around preview, left clicking now will place the preview and let us start rotating it
 				{
-					if (!ent) // Make sure we didn't click on top of an existing entity
-						Build(hit);
+					if (hit.collider && !ent) // Make sure we clicked the grid and not an entity
+						PlacePreview();
+				}
+				else if (buildState == 2) // Currently rotating preview, left clicking now will finalize preview
+				{
+					if (hit.collider && !ent) // Make sure we clicked the grid and not an entity
+						BuildStart();
 				}
 			}
-			
-		} //lmb
-		else if (selected && Input.GetMouseButtonDown(1))
-		{
-			RaycastHit hit;
+		}
 
-			hit = RaycastFromCursor();
-			Entity ent = GetEntityFromHit(hit);
-			if (ent)
+		if (Input.GetMouseButtonDown(1))
+		{
+			if (buildState > 0)
+				BuildCancel();
+			else if (selected)
 			{
-				if (ent != selected && IsUnit(ent))
-					Target(ent);
-			}
-			else if (hit.collider && IsUnit(selected))
-				Move(hit.point);
+				RaycastHit hit;
+
+				hit = RaycastFromCursor();
+				Entity ent = GetEntityFromHit(hit);
+				if (ent)
+				{
+					if (ent != selected && IsUnit(ent))
+						Target(ent);
+				}
+				else if (hit.collider && IsUnit(selected))
+					Move(hit.point);
+			} //selected
 		} //rmb
+
+		// Cursor position code
+		if (buildState == 0)
+		{
+		}
+		else if (buildState == 1)
+		{
+			RaycastHit hit = RaycastFromCursor();
+			if (hit.collider && !GetEntityFromHit(hit))
+			{
+				buildPreview.transform.position = hit.point;
+				if (!buildPreview.activeSelf)
+					buildPreview.SetActive(true);
+			}
+			else
+			{
+				if (buildPreview.activeSelf)
+					buildPreview.SetActive(false);
+			}
+		}
+		else if (buildState == 2)
+		{
+			RaycastHit hit = RaycastFromCursor();
+			if (hit.collider && !GetEntityFromHit(hit))
+			{
+				buildPreview.transform.LookAt(hit.point);
+			}
+		}
 
 		// Raise/Lower Grid
 		if (Input.GetButtonDown("RaiseGrid"))
@@ -234,17 +287,47 @@ public class Commander : MonoBehaviour
 
 	public void BuildButton(int id)
 	{
-		buildModeActive = true;
-		buildIndex = id;
-		
+		if (buildState != 0)
+			return;
+		buildState = 1;
+		buildUnitIndex = id;
+		buildPreview = Instantiate(buildUnits[buildUnitIndex].previewObject, Vector3.zero, Quaternion.identity);
+		buildPreview.SetActive(false);
 	}
 
-	void Build(RaycastHit hit)
+	void PlacePreview()
 	{
-		Debug.Log("my id is " + buildIndex);
-		Instantiate(buildUnits[buildIndex], hit.point, Quaternion.identity);
-		buildModeActive = false;
+		buildState = 2;
 	}
+
+	void BuildCancel()
+	{
+		buildState = 0;
+		Destroy(buildPreview);
+	}
+
+	void BuildStart()
+	{
+		buildState = 0;
+		Debug.Log("Build " + buildUnitIndex + " started.");
+		Clone_Build pendingBuild = buildPreview.GetComponent<Clone_Build>();
+		pendingBuild.buildUnit = buildUnits[buildUnitIndex];
+		pendingBuild.Build();
+		//buildHappening = StartCoroutine(BuildHappening());
+	}
+	/*
+	IEnumerator BuildHappening()
+	{
+		Clone_Build pendingBuild = buildPreview.GetComponent<Clone_Build>();
+		pendingBuild.buildTime = 99;
+		pendingBuild.Build();
+		yield return new WaitForSeconds(buildUnits[buildUnitIndex].buildTime);
+		buildState = 0;
+		Debug.Log("Build " + buildUnitIndex + " complete.");
+		Destroy(buildPreview);
+		Instantiate(buildUnits[buildUnitIndex].spawnObject, buildPreview.transform.position, buildPreview.transform.rotation);
+		buildUnitIndex = -1;
+	}*/
 
 	bool IsUnit(Entity ent)
 	{

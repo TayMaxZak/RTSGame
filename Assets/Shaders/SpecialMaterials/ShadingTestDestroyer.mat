@@ -36,10 +36,10 @@ Material:
     - _AmbientMult: 1
     - _LightSteps: 8
     - _NoiseAmount: 1
-    - _NoiseSteps: 16
+    - _NoiseSteps: 1000
     - _NoiseStretch: 1
     - _NoiseSubSteps: 50
-    - _SSSStrength: 0.4
+    - _SSSStrength: 0.5
     m_Colors:
-    - _Color: {r: 0.6764706, g: 0.6764706, b: 0.6764706, a: 1}
-    - _SSSColor: {r: 1, g: 0.948073, b: 0.88235295, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _SSSColor: {r: 1, g: 0.9696755, b: 0.9044118, a: 1}

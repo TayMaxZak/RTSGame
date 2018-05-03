@@ -21,9 +21,12 @@ public class GameRules
 	public float ABLYarmorDrainRegen = 2;
 	public float ABLYarmorDrainMaxVictims = 5;
 
+	public float SPWNwarpTime = 0.05f;
+
 	public float AUDpitchVariance = 0.05f;
 
 	public float PRJmaxTimeAlive = 9f;
 
 	public LayerMask entityLayerMask;
+	public LayerMask gridLayerMask;
 }
