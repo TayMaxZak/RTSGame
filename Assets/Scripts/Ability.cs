@@ -58,6 +58,14 @@ public class Ability
 		AbilityUtils.StartAbility(this);
 	}
 
+	public void End()
+	{
+		// Should never happen
+		if (!effect)
+			AbilityUtils.InitAbility(this);
+		AbilityUtils.EndAbility(this);
+	}
+
 	public void AbilityTick()
 	{
 		AbilityUtils.TickAbility(this);
@@ -189,7 +197,7 @@ public static class AbilityUtils
 							if (a.type == AbilityType.ArmorDrain) // Can't drain another drain-capable unit
 								hasDrainAbility = true;
 
-						if (unit != ability.user && !hasDrainAbility) // Don't add ourselves
+						if (unit != ability.user && !hasDrainAbility && unit.GetHP().z > 0) // Don't add ourselves
 							units.Add(unit);
 					}
 
@@ -217,6 +225,29 @@ public static class AbilityUtils
 				break;
 		}
 	}
+
+
+	public static void EndAbility(Ability ability)
+	{
+		switch (ability.type)
+		{
+			case AbilityType.ArmorDrain:
+				{
+					ability.effect.End();
+				}
+				break;
+			case AbilityType.Swarm:
+				break;
+			case AbilityType.SelfDamage:
+				{
+
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
 
 	public static bool InstantOrToggle(AbilityType type)
 	{

@@ -10,6 +10,7 @@ public enum ProjectileType
 [System.Serializable]
 public class Projectile
 {
+	[SerializeField]
 	private ProjectileType type = ProjectileType.Bullet;
 	[SerializeField]
 	private float speed = 0;
@@ -19,10 +20,12 @@ public class Projectile
 	private Vector3 startPosition = Vector3.zero;
 	private float timeAlive = 0;
 
-
+	[HideInInspector]
 	public Vector3 position = Vector3.zero;
+	[HideInInspector]
 	public Vector3 direction = Vector3.forward;
 
+	private int team = 0;
 
 	public Projectile(Projectile copy)
 	{
@@ -36,6 +39,16 @@ public class Projectile
 	public void SetStartPosition(Vector3 startPos)
 	{
 		startPosition = startPos;
+	}
+
+	public float GetTeam()
+	{
+		return team;
+	}
+
+	public void SetTeam(int newTeam)
+	{
+		team = newTeam;
 	}
 
 	public float GetSpeed()

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Turret : MonoBehaviour
 {
+	public int team = 0;
+
+	private int state = 0; // 0 = standby, 1 = shooting, 2 = reloading
+
 	[Header("Targeting")]
 	[SerializeField]
 	private Unit target;
@@ -58,7 +62,6 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private Transform pivotX;
 
-	private int state = 0; // 0 = standby, 2 = 
 
 	private bool isTargeting;
 	private Quaternion lookRotation;
@@ -81,7 +84,7 @@ public class Turret : MonoBehaviour
 
 		audioSource = GetComponent<AudioSource>();
 
-		shootTimer = -firingOffset;
+		shootTimer = shootCooldown - firingOffset;
 	}
 
 	// Banking
@@ -95,14 +98,10 @@ public class Turret : MonoBehaviour
 
 		if (target)
 		{
-
-
 			if (dif.sqrMagnitude <= range * range)
 				isTargeting = true;
 			else
 				isTargeting = false;
-
-			
 
 			// Intercept code TODO: Limit how far ahead it can aim by rotation speed
 			// How far to aim ahead given how long it would take to reach current position
@@ -218,7 +217,7 @@ public class Turret : MonoBehaviour
 			float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
 
 
-			if (dot >= 0.999f)
+			if (dot >= 0.999f) //
 			{
 				dot = 1;
 
@@ -230,7 +229,7 @@ public class Turret : MonoBehaviour
 						Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
 						Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y));
 
-						projs.SpawnProjectile(projTemplate, firePos.position, errForward);
+						projs.SpawnProjectile(projTemplate, team, firePos.position, errForward);
 					}
 
 					if (audioSource.clip == null)

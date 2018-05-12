@@ -8,6 +8,7 @@ public class FPSCounter : MonoBehaviour
 	float lowestFPS = 1000f;
 	public float LFPSresetTime = 10.0f;
 	float LFPSresetCounter = 10.0f;
+	public Color textColor = new Color(0.1f, 0.6f, 1f, 1.0f);
 
 	void Start()
 	{
@@ -37,7 +38,7 @@ public class FPSCounter : MonoBehaviour
 		Rect rect = new Rect(20, 20, w, h * 2 / 100);
 		style.alignment = TextAnchor.UpperLeft;
 		style.fontSize = h * 2 / 75;
-		style.normal.textColor = new Color(0.1f, 0.6f, 1f, 1.0f);
+		style.normal.textColor = textColor;
 		float msec = deltaTime * 1000.0f;
 		float fps = 1.0f / deltaTime;
 

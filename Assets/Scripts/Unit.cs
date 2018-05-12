@@ -88,20 +88,20 @@ public class Unit : Entity
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
+		//curHealth = maxHealth; // Reset HP values
+		//curArmor = maxArmor;
+
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
 		hpBar = Instantiate(uiManager.UnitHPBar);
 		hpBar.transform.SetParent(uiManager.Canvas.transform, false);
 		HPBarOffset = uiManager.UIRules.HPBoffset;
-
-		//curHealth = maxHealth; // Reset HP values
-		//curArmor = maxArmor;
-
 		UpdateUI(); // Make sure healthbar is hidden until the unit is first selected
 
-		foreach (Ability ab in abilities)
-		{
+		foreach (Ability ab in abilities) // Init abilities
 			ab.Init(this, gameRules);
-		}
+
+		foreach (Turret tur in turrets) // Init turrets
+			tur.team = team;
 	}
 
 	// Banking
@@ -180,6 +180,7 @@ public class Unit : Entity
 		direction = dif.normalized;
 		lookRotation = Quaternion.LookRotation(direction == Vector3.zero ? transform.forward : direction);
 		//float oldRotY = transform.eulerAngles.y;
+		//transform.Rotate(new Vector3(0, RS * Time.deltaTime, 0));
 		transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, Time.deltaTime * RS * curRSRatio);
 		//float difRot = transform.eulerAngles.y - oldRotY;
 
@@ -242,6 +243,13 @@ public class Unit : Entity
 		}
 	}
 
+	public void OrderAttack(Unit newTarg)
+	{
+		target = newTarg;
+		foreach (Turret tur in turrets)
+			tur.SetTarget(target);
+	}
+
 	public Vector3 GetVelocity()
 	{
 		return velocity;
@@ -252,25 +260,17 @@ public class Unit : Entity
 		return new Vector4(curHealth, maxHealth, curArmor, maxArmor);
 	}
 
-	public void OrderAttack(Unit newTarg)
-	{
-		target = newTarg;
-		for (int i = 0; i < turrets.Length; i++)
-			turrets[i].SetTarget(target);
-		//Debug.Log("I, " + DisplayName + ", am going after " + target.DisplayName);
-	}
-
 	public bool Damage(float damageBase, float range)
 	{
 		float dmg = damageBase;
 		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / gameRules.ARMrangeMax);
 
 		// TODO: If past max range resist range, shots do 0 damage against armor and therefore wont penetrate even 0 curArmor
-		if (dmg - dmg * rangeRatio <= curArmor - 1) // Range resist condition: if this shot wont break the armor, it will be range resisted
+		if (curArmor > Mathf.Max(0, dmg - dmg * rangeRatio)) // Range resist condition: if this shot wont break the armor, it will be range resisted
 			dmg = Mathf.Max(0, dmg - dmg * rangeRatio); //Damage lost to falloff, incentivising shooting armor from up close
 		else
 			dmg = Mathf.Max(0, dmg); // Not enough armor left, no longer grants range resist
-
+		//Debug.Log("org dmg = " + damageBase + " range = " + range + " cur dmg = " + dmg + " Mathf.Max(curArmor - 1, 0) = " + Mathf.Max(curArmor - 1, 0));
 		if (dmg <= 0)
 		{
 			return false;
@@ -299,7 +299,6 @@ public class Unit : Entity
 			return true;
 		}
 
-		
 
 		return true;
 	}
@@ -326,7 +325,12 @@ public class Unit : Entity
 		Debug.Log("Random " + Random.value);
 		if (dead)
 			return;
-		dead = true; // Prevents multiple death clones
+		dead = true; // Prevents multiple death clones (hopefully)
+
+		foreach (Ability ab in abilities)
+		{
+			ab.End();
+		}
 
 		if (deathClone)
 			Instantiate(deathClone, model.transform.position, model.rotation);

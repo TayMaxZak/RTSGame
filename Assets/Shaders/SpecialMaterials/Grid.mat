@@ -88,14 +88,14 @@ Material:
     - _MainMult: 0.3
     - _Metallic: 0
     - _Mode: 2
-    - _Mult: 1
+    - _Mult: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Shininess: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpeedX: 0.5
-    - _SpeedY: 0
+    - _SpeedY: 0.5
     - _SrcBlend: 5
     - _UVSec: 0
     - _ZWrite: 0

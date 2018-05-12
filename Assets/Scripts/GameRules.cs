@@ -21,11 +21,13 @@ public class GameRules
 	public float ABLYarmorDrainRegen = 2;
 	public float ABLYarmorDrainMaxVictims = 5;
 
-	public float SPWNwarpTime = 0.05f;
+	public float SPWNeffectTime = 1f; // How long before the spawn should the spawn effect start
+	public float SPWNwarpTime = 0.05f; // How long the actual warping of the model takes
 
 	public float AUDpitchVariance = 0.05f;
 
 	public float PRJmaxTimeAlive = 9f;
+	public float PRJhitOffset = 0.05f; // When hitting an object, a projectile always detonates this far from the hit point
 
 	public LayerMask entityLayerMask;
 	public LayerMask gridLayerMask;

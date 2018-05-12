@@ -112,7 +112,7 @@ Material:
     - _SpeedX: 0.1
     - _SpeedY: 0
     - _SrcBlend: 1
-    - _TexBlend: 0
+    - _TexBlend: 0.01
     - _UVSec: 0
     - _UseEnvironment: 0
     - _ZWrite: 1

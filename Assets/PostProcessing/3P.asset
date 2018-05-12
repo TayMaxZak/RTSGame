@@ -286,12 +286,12 @@ MonoBehaviour:
       spectralTexture: {fileID: 0}
       intensity: 0.1
   grain:
-    m_Enabled: 0
+    m_Enabled: 1
     m_Settings:
       colored: 1
-      intensity: 0.409
-      size: 0.73
-      luminanceContribution: 0.869
+      intensity: 0.25
+      size: 0.7
+      luminanceContribution: 1
   vignette:
     m_Enabled: 0
     m_Settings:
@@ -305,11 +305,11 @@ MonoBehaviour:
       opacity: 1
       rounded: 0
   dithering:
-    m_Enabled: 1
+    m_Enabled: 0
   monitors:
     currentMonitorID: 0
     refreshOnPlay: 0
-    histogramMode: 4
+    histogramMode: 0
     waveformExposure: 0.12
     waveformY: 0
     waveformR: 1

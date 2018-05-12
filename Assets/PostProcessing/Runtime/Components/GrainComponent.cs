@@ -44,13 +44,13 @@ namespace UnityEngine.PostProcessing
             rndOffsetX = 0f;
             rndOffsetY = 0f;
 #else
-            float time = Time.realtimeSinceStartup;
-            rndOffsetX = Random.value;
-            rndOffsetY = Random.value;
+            float time = Time.realtimeSinceStartup / 200f; //Time.realtimeSinceStartup
+			rndOffsetX = Random.value / 80f; //Random.value
+			rndOffsetY = Random.value / 80f; //Random.value
 #endif
 
-            // Generate the grain lut for the current frame first
-            if (m_GrainLookupRT == null || !m_GrainLookupRT.IsCreated())
+			// Generate the grain lut for the current frame first
+			if (m_GrainLookupRT == null || !m_GrainLookupRT.IsCreated())
             {
                 GraphicsUtils.Destroy(m_GrainLookupRT);
 

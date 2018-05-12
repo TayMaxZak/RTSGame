@@ -121,6 +121,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 909cc28e4979c0049bf03c93be042824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startEffect: {fileID: 1145660427499920, guid: c9960a2c3577d104080e98c6ddf70372,
+  startEffect: {fileID: 1585526066841278, guid: 02958a76742ac29499c03ee63d233153,
     type: 2}
   randomSpinFactor: 0.2

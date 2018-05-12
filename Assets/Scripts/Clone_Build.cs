@@ -6,9 +6,11 @@ public class Clone_Build : MonoBehaviour
 {
 	public BuildUnit buildUnit;
 	[SerializeField]
-	private GameObject previewEffect;
+	private GameObject previewModel;
 	[SerializeField]
-	private GameObject warpEffect;
+	private GameObject warpModel;
+	[SerializeField]
+	private GameObject spawnEffect;
 
 	private float warpingTime;
 	private float warpingAmount;
@@ -18,8 +20,8 @@ public class Clone_Build : MonoBehaviour
 	{
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 		//warpingTime = gameRules.SPWNwarpTime;
-		warpingAmount = warpEffect.transform.localScale.z;
-		warpEffect.SetActive(false);
+		warpingAmount = warpModel.transform.localScale.z;
+		warpModel.SetActive(false);
 	}
 
 	public void Build()
@@ -29,26 +31,35 @@ public class Clone_Build : MonoBehaviour
 
 	IEnumerator Building()
 	{
-		yield return new WaitForSeconds(buildUnit.buildTime - gameRules.SPWNwarpTime);
+		yield return new WaitForSeconds(buildUnit.buildTime - gameRules.SPWNeffectTime);
+		Effect();
+		yield return new WaitForSeconds(gameRules.SPWNeffectTime - gameRules.SPWNwarpTime);
 		StartCoroutine(Warp());
 		yield return new WaitForSeconds(gameRules.SPWNwarpTime);
 		Finish();
 	}
 
+	void Effect()
+	{
+		previewModel.SetActive(false);
+		if (spawnEffect)
+			Instantiate(spawnEffect, transform.position, transform.rotation);
+	}
+
 	IEnumerator Warp()
 	{
-		previewEffect.SetActive(false);
-		warpEffect.SetActive(true);
+		
+		warpModel.SetActive(true);
 		yield return new WaitForSeconds(gameRules.SPWNwarpTime);
-		warpEffect.SetActive(false);
+		warpModel.SetActive(false);
 	}
 
 	void Update()
 	{
-		if (warpEffect.activeSelf)
+		if (warpModel.activeSelf)
 		{
 			warpingTime += Time.deltaTime / gameRules.SPWNwarpTime;
-			warpEffect.transform.localScale = new Vector3(1, 1, Mathf.Lerp(warpingAmount, 0, warpingTime));
+			warpModel.transform.localScale = new Vector3(1, 1, Mathf.Lerp(warpingAmount, 1, warpingTime));
 		}
 	}
 

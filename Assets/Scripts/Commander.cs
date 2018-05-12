@@ -56,7 +56,7 @@ public class Commander : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		//Time.timeScale = 0.51f;
+		//Time.timeScale = 1;
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 		audioSource = GetComponent<AudioSource>();
 
@@ -69,14 +69,15 @@ public class Commander : MonoBehaviour
 		UpdateGrid(curGrid);
 	}
 
-	RaycastHit RaycastFromCursor()
+	RaycastHit RaycastFromCursor(int targetLayer) // 0 = entity, 1 = grid, 2 = anything else
 	{
 		Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 		if (!EventSystem.current.IsPointerOverGameObject())
 		{
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, clickRayLength, gameRules.entityLayerMask)) {}
-			else if (Physics.Raycast(ray, out hit, clickRayLength, gameRules.gridLayerMask)) {}
+			if ((targetLayer == 2 || targetLayer == 0) && Physics.Raycast(ray, out hit, clickRayLength, gameRules.entityLayerMask) && GetEntityFromHit(hit)) {}
+			else if ((targetLayer == 2 || targetLayer == 1) && Physics.Raycast(ray, out hit, clickRayLength, gameRules.gridLayerMask)) {}
+			else hit = new RaycastHit();
 			return hit;
 		}
 		return new RaycastHit();
@@ -102,7 +103,7 @@ public class Commander : MonoBehaviour
 		// Clicking
 		if (Input.GetMouseButtonDown(0))
 		{
-			RaycastHit hit = RaycastFromCursor();
+			RaycastHit hit = RaycastFromCursor(0);
 
 
 			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
@@ -121,7 +122,7 @@ public class Commander : MonoBehaviour
 		} //lmb
 		else if (Input.GetMouseButtonUp(0))
 		{
-			RaycastHit hit = RaycastFromCursor();
+			RaycastHit hit = RaycastFromCursor(1);
 
 
 			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
@@ -130,12 +131,12 @@ public class Commander : MonoBehaviour
 
 				if (buildState == 1) // Currently moving around preview, left clicking now will place the preview and let us start rotating it
 				{
-					if (hit.collider && !ent) // Make sure we clicked the grid and not an entity
+					if (hit.collider) // Make sure we clicked the grid
 						PlacePreview();
 				}
 				else if (buildState == 2) // Currently rotating preview, left clicking now will finalize preview
 				{
-					if (hit.collider && !ent) // Make sure we clicked the grid and not an entity
+					if (hit.collider) // Make sure we clicked the grid
 						BuildStart();
 				}
 			}
@@ -149,7 +150,7 @@ public class Commander : MonoBehaviour
 			{
 				RaycastHit hit;
 
-				hit = RaycastFromCursor();
+				hit = RaycastFromCursor(2);
 				Entity ent = GetEntityFromHit(hit);
 				if (ent)
 				{
@@ -167,8 +168,8 @@ public class Commander : MonoBehaviour
 		}
 		else if (buildState == 1)
 		{
-			RaycastHit hit = RaycastFromCursor();
-			if (hit.collider && !GetEntityFromHit(hit))
+			RaycastHit hit = RaycastFromCursor(1);
+			if (hit.collider)
 			{
 				buildPreview.transform.position = hit.point;
 				if (!buildPreview.activeSelf)
@@ -182,7 +183,7 @@ public class Commander : MonoBehaviour
 		}
 		else if (buildState == 2)
 		{
-			RaycastHit hit = RaycastFromCursor();
+			RaycastHit hit = RaycastFromCursor(1);
 			if (hit.collider && !GetEntityFromHit(hit))
 			{
 				buildPreview.transform.LookAt(hit.point);
@@ -236,7 +237,7 @@ public class Commander : MonoBehaviour
 		}
 		else if(AbilityUtils.RequiresTarget(current.GetAbilityType()) == 1) // Targets a unit
 		{
-			Entity ent = GetEntityFromHit(RaycastFromCursor());
+			Entity ent = GetEntityFromHit(RaycastFromCursor(0));
 			if (IsUnit(ent))
 			{
 				Ability_Target targ = new Ability_Target((Unit)ent);
@@ -245,7 +246,7 @@ public class Commander : MonoBehaviour
 		}
 		else if(AbilityUtils.RequiresTarget(current.GetAbilityType()) == 2) // Targets a position
 		{
-			RaycastHit hit = RaycastFromCursor();
+			RaycastHit hit = RaycastFromCursor(1);
 			if (hit.collider)
 			{
 				Ability_Target targ = new Ability_Target(hit.point);

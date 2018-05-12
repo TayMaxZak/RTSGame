@@ -57,4 +57,12 @@ public class Ability_Effect : MonoBehaviour
 	{
 		return audioSource;
 	}
+
+	public void End()
+	{
+		float duration = Mathf.Max(pS.main.duration, secondaryPS.main.duration);
+		Debug.Log("duration" + duration);
+		SetEffectActive(false);
+		Destroy(gameObject, duration);
+	}
 }

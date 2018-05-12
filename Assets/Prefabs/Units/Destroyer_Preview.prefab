@@ -291,5 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildUnit: {fileID: 0}
-  previewEffect: {fileID: 1797337594609010}
-  warpEffect: {fileID: 1761835630865440}
+  previewModel: {fileID: 1797337594609010}
+  warpModel: {fileID: 1761835630865440}
+  spawnEffect: {fileID: 1066343051820292, guid: afa7ce3108449e44088fb5da9a078d9c,
+    type: 2}
