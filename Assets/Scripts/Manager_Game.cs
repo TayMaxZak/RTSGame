@@ -6,4 +6,7 @@ public class Manager_Game : MonoBehaviour
 {
 	[SerializeField]
 	public GameRules GameRules;
+
+	[SerializeField]
+	public Commander[] Commanders;
 }

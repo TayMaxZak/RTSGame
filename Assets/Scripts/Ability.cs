@@ -5,6 +5,7 @@ using UnityEngine;
 public enum AbilityType
 {
 	ArmorDrain,
+	ArmorRegen,
 	Swarm,
 	SelfDamage
 }
@@ -26,7 +27,7 @@ public class Ability
 	[HideInInspector]
 	public Unit user;
 	[HideInInspector]
-	public Ability_Target target;
+	public AbilityTarget target;
 	[HideInInspector]
 	public List<Unit> unitList; // If ability involves finding multiple units, they are stored in this field
 	//[HideInInspector]
@@ -52,7 +53,7 @@ public class Ability
 		AbilityUtils.InitAbility(this);
 	}
 
-	public void Activate(Ability_Target target)
+	public void Activate(AbilityTarget target)
 	{
 		this.target = target;
 		AbilityUtils.StartAbility(this);
@@ -111,9 +112,9 @@ public static class AbilityUtils
 			return;
 		ability.curCooldown = 1;
 
-		if (InstantOrToggle(ability.type))
+		if (ActivationStyle(ability.type) == 1)
 			ability.isActive = true;
-		else
+		else if (ActivationStyle(ability.type) == 2)
 			ability.isActive = !ability.isActive;
 
 		if (ability.effect)
@@ -148,22 +149,25 @@ public static class AbilityUtils
 			return;
 		}
 
-		// TODO: Fix
-		if (!ability.isActive) // If ability is not being used
+		if (!ability.isActive) // If ability is not being used. Passives are always off
 		{
 			
-			if (!InstantOrToggle(ability.type)) // If it's a toggle ability
+			if (ActivationStyle(ability.type) == 2) // If it's a toggle ability
 				ability.curEnergy = Mathf.Min(ability.curEnergy + Time.deltaTime * DeltaDurations(ability.type).z, 1); // Restore energy according to its reset duration
 
 
 			switch (ability.type)
 			{
-				case AbilityType.ArmorDrain: // Find all enemies in a radius and damage them over time
+				case AbilityType.ArmorDrain:
 					{
 						ability.effect.transform.position = ability.user.transform.position; // Move effect to center of user
 					}
 					break;
-				case AbilityType.Swarm:
+				case AbilityType.ArmorRegen: // Regenerate armor over time based on missing armor
+					{
+						int regenIndex = Mathf.Max(Mathf.CeilToInt(5 * (1 - (ability.user.GetHP().z / ability.user.GetHP().w))) - 1, 0);
+						ability.user.TrueDamage(0, -ability.gameRules.ABLYarmorRegenHPS[regenIndex] * Time.deltaTime);
+					}
 					break;
 				default:
 					break;
@@ -171,7 +175,7 @@ public static class AbilityUtils
 			return; // Leave, ability isn't being used
 		}
 
-		if (!InstantOrToggle(ability.type)) // If it's a toggle ability
+		if (ActivationStyle(ability.type) == 2) // If it's a toggle ability
 		{
 			ability.curEnergy -= Time.deltaTime * DeltaDurations(ability.type).y; // Consume energy
 		}
@@ -193,6 +197,9 @@ public static class AbilityUtils
 						if (!unit)
 							continue;
 
+						if (units.Contains(unit)) // Multiple colliders for one unit
+							continue;
+
 						foreach (Ability a in unit.abilities)
 							if (a.type == AbilityType.ArmorDrain) // Can't drain another drain-capable unit
 								hasDrainAbility = true;
@@ -210,7 +217,7 @@ public static class AbilityUtils
 						else
 							units[i].TrueDamage(0, ability.gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
 						if (units[i].GetHP().z > 0)
-							ability.user.TrueDamage(0, -ability.gameRules.ABLYarmorDrainRegen * Time.deltaTime);
+							ability.user.TrueDamage(0, -ability.gameRules.ABLYarmorDrainHPS * Time.deltaTime);
 					}
 
 					if (units.Count == 0)
@@ -249,14 +256,16 @@ public static class AbilityUtils
 	}
 
 
-	public static bool InstantOrToggle(AbilityType type)
+	public static int ActivationStyle(AbilityType type) // 0 = passive, 1 = instant, 2 = toggle
 	{
 		switch (type)
 		{
 			case AbilityType.ArmorDrain:
-				return false;
+				return 2;
+			case AbilityType.ArmorRegen:
+				return 0;
 			default:
-				return true; // Most abilities are instant actives
+				return 1; // Most abilities are instant actives
 		}
 	}
 

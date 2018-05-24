@@ -30,10 +30,17 @@ public class UI_HPBar : MonoBehaviour
 	[SerializeField]
 	private float armorWidth = 98;
 	[SerializeField]
-	private Color armorBurnColor1 = Color.magenta;
-	[SerializeField]
-	private Color armorBurnColor2 = Color.white;
+	private Color armorScorchColor = Color.black;
 	private Color armorOrigColor = Color.blue;
+
+	[SerializeField]
+	private Image shieldFill;
+	private float shieldCur = 0;
+	private float shieldTarg = 1;
+	private float shieldT = 0;
+	[SerializeField]
+	private float shieldWidth = 98;
+	//private Color shieldOrigColor = Color.blue;
 
 	[SerializeField]
 	private Image borderFill;
@@ -48,6 +55,7 @@ public class UI_HPBar : MonoBehaviour
 
 		healthOrigColor = healthFill.color;
 		armorOrigColor = armorFill.color;
+		//shieldOrigColor = shieldFill.color;
 	}
 
 	void Update()
@@ -58,10 +66,13 @@ public class UI_HPBar : MonoBehaviour
 		armorT += Time.deltaTime / uiRules.HPBvalUpdateTime;
 		armorCur = Mathf.Lerp(armorCur, armorTarg, armorT);
 
+		shieldT += Time.deltaTime / uiRules.HPBvalUpdateTime;
+		shieldCur = Mathf.Lerp(shieldCur, shieldTarg, shieldT);
 
 
 		healthFill.rectTransform.sizeDelta = new Vector2(healthWidth * healthCur, healthFill.rectTransform.sizeDelta.y);
 		armorFill.rectTransform.sizeDelta = new Vector2(armorWidth * armorCur, armorFill.rectTransform.sizeDelta.y);
+		shieldFill.rectTransform.sizeDelta = new Vector2(shieldWidth * shieldCur, shieldFill.rectTransform.sizeDelta.y);
 
 		//borderFill.color = armorCur > uiRules.HPBbordColorThresh ? armorOrigColor : healthOrigColor;
 		borderFill.color = armorTarg > uiRules.HPBbordColorThresh ? armorOrigColor : healthOrigColor;

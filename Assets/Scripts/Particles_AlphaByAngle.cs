@@ -44,7 +44,7 @@ public class Particles_AlphaByAngle : MonoBehaviour
 
 		int numAlive = pS.GetParticles(particles);
 
-		Debug.Log(cam.WorldToScreenPoint(transform.position));
+		//Debug.Log(cam.WorldToScreenPoint(transform.position));
 		//transform.localScale = new Vector3(val, val, val);
 
 		for (int i = 0; i < numAlive; i++)

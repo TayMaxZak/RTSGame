@@ -6,9 +6,11 @@ using UnityEngine.EventSystems;
 
 public class Commander : MonoBehaviour
 {
+	public int team;
+
 	[Header("GUI")]
 	[SerializeField]
-	private Text resPointCounter;
+	private Text resPointsCounter;
 	[SerializeField]
 	private GameObject buildButtons;
 
@@ -25,7 +27,7 @@ public class Commander : MonoBehaviour
 
 	[Header("Objectives")]
 	[SerializeField]
-	private int resPoints = 20;
+	private float resPoints = 20;
 
 	[Header("Sound")]
 	[SerializeField]
@@ -100,14 +102,44 @@ public class Commander : MonoBehaviour
 	{
 		//UpdateUI(false);
 
+
+		// Cursor position code
+		// Should be done before clicking code
+		if (buildState == 1)
+		{
+			RaycastHit hit = RaycastFromCursor(1);
+			if (hit.collider)
+			{
+				buildPreview.transform.position = hit.point;
+				if (!buildPreview.activeSelf)
+				{
+					buildPreview.SetActive(true);
+				}
+			}
+			else
+			{
+				if (buildPreview.activeSelf)
+				{
+					//buildPreview.SetActive(false);
+				}
+			}
+		}
+		else if (buildState == 2)
+		{
+			buildPreview.SetActive(true);
+			RaycastHit hit = RaycastFromCursor(1);
+			if (hit.collider && !GetEntityFromHit(hit))
+			{
+				buildPreview.transform.LookAt(hit.point);
+			}
+		}
+
 		// Clicking
 		if (Input.GetMouseButtonDown(0))
 		{
-			RaycastHit hit = RaycastFromCursor(0);
-
-
 			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
 			{
+				RaycastHit hit = RaycastFromCursor(0);
 				Entity ent = GetEntityFromHit(hit);
 				if (buildState == 0) // Normal select mode
 				{
@@ -116,79 +148,48 @@ public class Commander : MonoBehaviour
 					else
 						Select(null);
 				}
-
 			}
-
 		} //lmb
-		else if (Input.GetMouseButtonUp(0))
+
+		bool previewingBuild = buildState == 1 || buildState == 2;
+		if (previewingBuild && Input.GetMouseButtonUp(0))
 		{
 			RaycastHit hit = RaycastFromCursor(1);
+			//Entity ent = GetEntityFromHit(hit);
 
-
-			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
+			if (hit.collider)
 			{
-				Entity ent = GetEntityFromHit(hit);
-
 				if (buildState == 1) // Currently moving around preview, left clicking now will place the preview and let us start rotating it
 				{
-					if (hit.collider) // Make sure we clicked the grid
-						PlacePreview();
+					PlacePreview();
 				}
 				else if (buildState == 2) // Currently rotating preview, left clicking now will finalize preview
 				{
-					if (hit.collider) // Make sure we clicked the grid
-						BuildStart();
+					BuildStart();
 				}
 			}
-		}
+		} //lmb up
 
 		if (Input.GetMouseButtonDown(1))
 		{
-			if (buildState > 0)
-				BuildCancel();
-			else if (selected)
+			if (!EventSystem.current.IsPointerOverGameObject()) // Right clicks should not do anything if we are over UI, regardless of clicking on grid or not
 			{
-				RaycastHit hit;
-
-				hit = RaycastFromCursor(2);
-				Entity ent = GetEntityFromHit(hit);
-				if (ent)
+				if (buildState > 0)
+					BuildCancel();
+				else if (selected)
 				{
-					if (ent != selected && IsUnit(ent))
-						Target(ent);
-				}
-				else if (hit.collider && IsUnit(selected))
-					Move(hit.point);
-			} //selected
+					RaycastHit hit = RaycastFromCursor(2);
+					Entity ent = GetEntityFromHit(hit);
+					if (ent)
+					{
+						if (ent != selected && IsUnit(ent))
+							Target(ent);
+					}
+					else if (hit.collider && IsUnit(selected))
+						Move(hit.point);
+				} //selected
+			}
 		} //rmb
-
-		// Cursor position code
-		if (buildState == 0)
-		{
-		}
-		else if (buildState == 1)
-		{
-			RaycastHit hit = RaycastFromCursor(1);
-			if (hit.collider)
-			{
-				buildPreview.transform.position = hit.point;
-				if (!buildPreview.activeSelf)
-					buildPreview.SetActive(true);
-			}
-			else
-			{
-				if (buildPreview.activeSelf)
-					buildPreview.SetActive(false);
-			}
-		}
-		else if (buildState == 2)
-		{
-			RaycastHit hit = RaycastFromCursor(1);
-			if (hit.collider && !GetEntityFromHit(hit))
-			{
-				buildPreview.transform.LookAt(hit.point);
-			}
-		}
 
 		// Raise/Lower Grid
 		if (Input.GetButtonDown("RaiseGrid"))
@@ -217,6 +218,11 @@ public class Commander : MonoBehaviour
 		{
 			UseAbility(2);
 		}
+
+		if (Input.GetButtonDown("CommandWheel"))
+		{
+			UseCommandWheel();
+		}
 	}
 
 	void UseAbility(int index)
@@ -233,15 +239,15 @@ public class Commander : MonoBehaviour
 
 		if (AbilityUtils.RequiresTarget(current.GetAbilityType()) == 0) // Targets nothing
 		{
-			unit.UseAbility(index, null);
+			unit.OrderAbility(index, null);
 		}
 		else if(AbilityUtils.RequiresTarget(current.GetAbilityType()) == 1) // Targets a unit
 		{
 			Entity ent = GetEntityFromHit(RaycastFromCursor(0));
 			if (IsUnit(ent))
 			{
-				Ability_Target targ = new Ability_Target((Unit)ent);
-				unit.UseAbility(index, targ);
+				AbilityTarget targ = new AbilityTarget((Unit)ent);
+				unit.OrderAbility(index, targ);
 			}
 		}
 		else if(AbilityUtils.RequiresTarget(current.GetAbilityType()) == 2) // Targets a position
@@ -249,11 +255,28 @@ public class Commander : MonoBehaviour
 			RaycastHit hit = RaycastFromCursor(1);
 			if (hit.collider)
 			{
-				Ability_Target targ = new Ability_Target(hit.point);
-				unit.UseAbility(index, targ);
+				AbilityTarget targ = new AbilityTarget(hit.point);
+				unit.OrderAbility(index, targ);
 			}
 		}
 
+	}
+
+	void UseCommandWheel()
+	{
+		if (!selected || !IsUnit(selected))
+			return;
+
+		Unit unit = (Unit)selected;
+
+		RaycastHit hit = RaycastFromCursor(1);
+		if (hit.collider)
+		{
+			AbilityTarget targ = new AbilityTarget(hit.point);
+			unit.OrderCommandWheel(2, targ);
+		}
+		else
+			unit.OrderCommandWheel(2, null);
 	}
 
 	void UpdateGrid(int newGrid)
@@ -265,7 +288,7 @@ public class Commander : MonoBehaviour
 
 	void UpdateUI(bool selectingNewUnit)
 	{
-		resPointCounter.text = resPoints.ToString();
+		resPointsCounter.text = resPoints.ToString();
 
 		if (selectingNewUnit && selected && IsUnit(selected))
 		{
@@ -310,25 +333,47 @@ public class Commander : MonoBehaviour
 	void BuildStart()
 	{
 		buildState = 0;
-		Debug.Log("Build " + buildUnitIndex + " started.");
+
 		Clone_Build pendingBuild = buildPreview.GetComponent<Clone_Build>();
 		pendingBuild.buildUnit = buildUnits[buildUnitIndex];
-		pendingBuild.Build();
-		//buildHappening = StartCoroutine(BuildHappening());
+
+		if (SubtractResources(pendingBuild.buildUnit.cost))
+		{
+			//Debug.Log("Build " + buildUnitIndex + " started.");
+			pendingBuild.Build(buildUnitIndex);
+		}
+		else
+			BuildCancel();
 	}
-	/*
-	IEnumerator BuildHappening()
+
+	void UpdateResources()
 	{
-		Clone_Build pendingBuild = buildPreview.GetComponent<Clone_Build>();
-		pendingBuild.buildTime = 99;
-		pendingBuild.Build();
-		yield return new WaitForSeconds(buildUnits[buildUnitIndex].buildTime);
-		buildState = 0;
-		Debug.Log("Build " + buildUnitIndex + " complete.");
-		Destroy(buildPreview);
-		Instantiate(buildUnits[buildUnitIndex].spawnObject, buildPreview.transform.position, buildPreview.transform.rotation);
-		buildUnitIndex = -1;
-	}*/
+		resPointsCounter.text = "" + (int)resPoints;
+	}
+
+	bool SubtractResources(float cost)
+	{
+		float newResPoints = resPoints - cost;
+
+		if (newResPoints >= 0)
+		{
+			resPoints = newResPoints;
+			UpdateResources();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public void RefundResources(Unit unit)
+	{
+		if (unit.buildUnitIndex < 0)
+			return;
+		resPoints += buildUnits[unit.buildUnitIndex].cost;
+		UpdateResources();
+	}
 
 	bool IsUnit(Entity ent)
 	{

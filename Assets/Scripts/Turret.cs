@@ -6,7 +6,7 @@ public class Turret : MonoBehaviour
 {
 	public int team = 0;
 
-	private int state = 0; // 0 = standby, 1 = shooting, 2 = reloading
+	private int state = 0; // 0 = standby, 1 = shooting
 
 	[Header("Targeting")]
 	[SerializeField]
@@ -16,7 +16,7 @@ public class Turret : MonoBehaviour
 
 	[Header("Sound")]
 	[SerializeField]
-	private AudioClip soundShoot;
+	private AudioClip soundShoot; // Played on each shot or, if there is an audio loop, when the loop ends
 
 	[SerializeField]
 	private Projectile projTemplate;
@@ -35,25 +35,18 @@ public class Turret : MonoBehaviour
 
 	[SerializeField]
 	private float reloadCooldown = 4;
-	private float reloadTimer;
 
 	[SerializeField]
 	private float rateOfFire = 120; // In RPM
 	private float shootCooldown;
-	private float shootTimer = 0;
 	[SerializeField]
-	private float firingOffset = 0.0f;
+	private float shootOffsetRatio = 0.0f;
+	private float shootOffset;
 
 	[Header("Turning")]
 	[SerializeField]
 	private float RS = 90;
-	[SerializeField]
-	private float RSAccel = 1;
-	private float curRSRatio = 0;
-	/*
-	[SerializeField]
-	private float bankAngle = 30;
-	*/
+
 	private Quaternion rotation;
 	[SerializeField]
 	private bool baseRotatesOnY = true;
@@ -62,78 +55,287 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private Transform pivotX;
 
+	// If we manually clear target, this should immediately trigger an early reload
+	// If the target goes out of range, this should immediately trigger a early reload
+	// This coroutine references the specific reload we want to cancel
+	private Coroutine reloadCoroutine;
+	private bool isReloadCancellable;
 
-	private bool isTargeting;
+	private bool targetInRange;
+	private bool isReloading;
+	private bool isShooting;
 	private Quaternion lookRotation;
 	private Vector3 direction;
-	//[SerializeField]
-	//private float allowShootThresh = 0.1f;
+	[SerializeField]
+	private float allowShootThressh = 0.001f;
 
 	private GameRules gameRules;
 	private Manager_Projectiles projs;
 
 	private AudioSource audioSource;
 
+	private int resetRotFrame;
+
 	// Use this for initialization
 	void Start()
 	{
 		curAmmo = maxAmmo;
+
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 		projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab copy of Projectiles Manager
-		shootCooldown = 1f / (rateOfFire / 60f);
-
 		audioSource = GetComponent<AudioSource>();
 
-		shootTimer = shootCooldown - firingOffset;
+		shootCooldown = 1f / (rateOfFire / 60f);
+		shootOffset = shootCooldown * shootOffsetRatio;
 	}
-
-	// Banking
-	//float bank = bankAngle * -Vector3.Dot(transform.right, direction);
-	//banker.localRotation = Quaternion.AngleAxis(bankAngle, Vector3.forward);
 
 	// Update is called once per frame
 	void Update()
 	{
-		Vector3 dif = target ? target.transform.position - transform.position : transform.forward;
+		if (!target && targetInRange)
+			UpdateTarget(target);
 
-		if (target)
+		//Debug.Log("STATE = " + state);
+
+		// 0 = standby, 1 = shooting
+		if (state == 0)
 		{
-			if (dif.sqrMagnitude <= range * range)
-				isTargeting = true;
-			else
-				isTargeting = false;
+			targetInRange = false;
+			AttemptEarlyReload();
 
-			// Intercept code TODO: Limit how far ahead it can aim by rotation speed
-			// How far to aim ahead given how long it would take to reach current position
-			Vector3 offsetTarget = target.transform.position + target.GetVelocity() * (dif.magnitude / projTemplate.GetSpeed());
-			// How far to aim ahead given how long it would take to reach predicted position
-			Vector3 offsetTargetAdj = target.transform.position + target.GetVelocity() * ((offsetTarget - transform.position).magnitude / projTemplate.GetSpeed());
-			dif = offsetTargetAdj - transform.position;
-
-			dif = isTargeting ? offsetTargetAdj - transform.position : transform.forward;
+			Rotate(transform.forward); // Default aim
 		}
 		else
-			isTargeting = false;
+		{
+			Aim(); // Rotate towards target if possible
+			StartShooting();
+		}
+	}
 
-		// Rotation
-		float targetRSRatio = isTargeting ? 1 : 1;
+	void Aim()
+	{
+		Vector3 difference = target ? target.transform.position - transform.position : transform.forward * 0.25f; // To make sure its always in range
 
+		if (difference.sqrMagnitude <= range * range)
+		{
+			targetInRange = true;
+		}
+		else
+		{
+			targetInRange = false;
+			AttemptEarlyReload();
+		}
+
+		Rotate(difference.normalized);
+	}
+
+	void StartShooting()
+	{
+		if (!targetInRange) // Don't start shooting while out of range
+		{
+			return;
+		}
+
+		if (isShooting) // Don't start shooting if we are already shooting
+		{
+			return;
+		}
+
+		if (isReloading) // Don't start shooting if we are reloading
+		{
+			if (!isReloadCancellable)
+				return;
+			else
+			{
+				StopCoroutine(reloadCoroutine);
+				isReloadCancellable = false;
+				isReloading = false;
+			}
+		}
+
+		// Are we pointed at the target?
+		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
+		float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
+
+		if (dot < 1 - allowShootThressh)
+		{
+			return;
+		}
+
+		isShooting = true;
+		StartCoroutine(CoroutineToggleFiringAudio(true, shootOffset)); // Start firing audio loop
+		AttemptShot(shootOffset); // Start first shot, which then calls the next shot recursively
+	}
+
+	IEnumerator CoroutineToggleFiringAudio(bool play, float delay)
+	{
+		yield return new WaitForSeconds(delay);
+		ToggleFiringAudio(play);
+	}
+
+	void ToggleFiringAudio(bool play)
+	{
+		if (!audioSource.clip)
+			return;
+
+		if (play)
+		{
+			if (!audioSource.isPlaying)
+			{
+				audioSource.Play();
+			}
+		}
+		else
+		{
+			if (audioSource.isPlaying)
+			{
+				//Debug.Log(audioSource.time);
+				audioSource.Stop();
+				
+				AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource);
+			}
+		}
+	}
+
+	void AttemptShot(float delay)
+	{
+		if (curAmmo <= 0 && maxAmmo > 0) // If we run out of ammo mid-shooting, start reload
+		{
+			isShooting = false;
+			ToggleFiringAudio(false); // Stop firing audio loop
+
+			if (!isReloading) // Reload
+				Reload();
+			return;
+		}
+
+		if (!targetInRange) // If we end up out of range mid-shooting, stop
+		{
+			isShooting = false;
+			ToggleFiringAudio(false); // Stop firing audio loop
+			return;
+		}
+
+		if (isReloading) // If we have ammo left and are in range, cancel the current reload
+		{
+			if (!isReloadCancellable)
+				return;
+			else // Shot after manually clearing target
+			{
+				StopCoroutine(reloadCoroutine);
+				isReloadCancellable = false;
+				isReloading = false;
+			}
+		}
+
+		// Are we pointed at the target?
+		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
+		float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
+
+		if (dot < 1 - allowShootThressh)
+		{
+			isShooting = false;
+			ToggleFiringAudio(false); // Stop firing audio loop
+			return;
+		}
+
+		StartCoroutine(CoroutineShoot());
+	}
+
+	void AttemptEarlyReload()
+	{
+		if (isReloading)
+			return;
+
+		if (curAmmo >= maxAmmo)
+			return;
+
+		Reload();
+		isReloadCancellable = true;
+	}
+
+	void Reload()
+	{
+		isReloading = true;
+		reloadCoroutine = StartCoroutine(CoroutineReload());
+	}
+
+	IEnumerator CoroutineShoot()
+	{
+		yield return null;
+		StartCoroutine(CoroutineShoot(0));
+	}
+
+	IEnumerator CoroutineShoot(float delay)
+	{
+		yield return new WaitForSeconds(delay);
+		Fire();
+		yield return new WaitForSeconds(shootCooldown);
+		AttemptShot(0);
+	}
+
+	IEnumerator CoroutineReload()
+	{
+		yield return new WaitForSeconds(reloadCooldown);
+
+		isReloading = false;
+		isReloadCancellable = false; // Cancellable status should not carry over to the next reload
+		curAmmo = maxAmmo;
+	}
+
+	void Fire()
+	{
+		curAmmo--;
+
+		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
+		// Projectile
+		for (int i = 0; i < pelletCount; i++)
+		{
+			Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
+			Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y)).normalized;
+
+			projs.SpawnProjectile(projTemplate, team, firePos.position, errForward);
+		}
+
+		// Sound
+		if (!audioSource.clip)
+			AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource);
+	}
+
+	void Rotate(Vector3 difference)
+	{
+		// What do we rotate towards?
+		if (targetInRange)
+		{
+			// How far to aim ahead given how long it would take to reach current position
+			Vector3 offsetTarget = target.transform.position + target.GetVelocity() * (difference.magnitude / projTemplate.GetSpeed());
+			// How far to aim ahead given how long it would take to reach predicted position
+			Vector3 offsetTargetAdj = target.transform.position + target.GetVelocity() * ((offsetTarget - transform.position).magnitude / projTemplate.GetSpeed());
+			difference = offsetTargetAdj - transform.position;
+		}
+		else
+			difference = transform.forward;
+		/*
+		float targetRSRatio = 1;
 		float RSdelta = Mathf.Sign(targetRSRatio - curRSRatio) * (1f / RSAccel) * Time.deltaTime;
-		curRSRatio = Mathf.Clamp01(curRSRatio + RSdelta);
+		curRSRatio = Mathf.Clamp01(curRSRatio + RSdelta);*/
+		float curRSRatio = 1;
 
-		direction = dif.normalized;
+		// Fixes strange RotateTowards bug
+		Quaternion resetRot = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
+
+		// Rotate towards our target
+		direction = difference.normalized;
 		lookRotation = Quaternion.LookRotation(direction, Vector3.up);
-		//Debug.Log(Time.deltaTime);
 		Vector3 oldRot = rotation.eulerAngles;
 		rotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * RS * curRSRatio);
 		Vector3 newRot = rotation.eulerAngles;
-		//Debug.Log(lookRotation.eulerAngles + " " + oldRot + " " + newRot + " " + (oldRot - newRot).magnitude + " " + (Time.deltaTime * RS * curRSRatio));
 
-		if (Time.frameCount == 1)
-		{
-			rotation = Quaternion.identity;
-		}
-		//model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, targetBank));
+		// Fixes strange RotateTowards bug
+		if (Time.frameCount == resetRotFrame)
+			rotation = resetRot;
+
+		// Apply rotation to object
 		if (baseRotatesOnY)
 		{
 			pivotY.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
@@ -144,115 +346,29 @@ public class Turret : MonoBehaviour
 			pivotY.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
 			pivotX.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
 		}
-		/*
-		if (shootTimer >= 0 || isTargeting)
-			shootTimer += Time.deltaTime;
-
-		if (isTargeting) // Has something to shoot at
-		{
-			bool hasAmmo = maxAmmo > 0 ? curAmmo > 0 : true;
-			if (hasAmmo)
-			{
-				// Aimed at target?
-				Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
-				float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
-
-
-				if (dot >= 0.999f)
-				{
-					dot = 1;
-
-
-					if (shootTimer >= shootCooldown)
-					{
-						for (int i = 0; i < pelletCount; i++)
-						{
-							Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
-							Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y));
-
-							projs.SpawnProjectile(projTemplate, firePos.position, errForward);
-						}
-
-						if (audioSource.clip == null)
-							AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource, gameRules.AUDpitchVariance);
-						else if (!audioSource.isPlaying)
-							audioSource.Play();
-
-						shootTimer = 0;
-						curAmmo--;
-					}
-
-				} //dot
-			}
-		}
-		*/
-		
-		// Ammo
-		bool outOfAmmo = maxAmmo > 0 ? curAmmo <= 0 : false;
-
-		if (shootTimer >= 0 || isTargeting)
-			shootTimer += Time.deltaTime;
-
-		
-		if (outOfAmmo)
-		{
-
-			if (audioSource.clip && audioSource.isPlaying)
-			{
-				audioSource.Stop();
-				AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource, gameRules.AUDpitchVariance);
-			}
-
-			reloadTimer += Time.deltaTime;
-			if (reloadTimer >= reloadCooldown)
-			{
-				reloadTimer = 0;
-				curAmmo = maxAmmo;
-			}
-		}
-		else if (isTargeting) // Has ammo, should be shooting
-		{
-			// Aimed at target?
-			Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
-			float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
-
-
-			if (dot >= 0.999f) //
-			{
-				dot = 1;
-
-
-				if (shootTimer >= shootCooldown)
-				{
-					for (int i = 0; i < pelletCount; i++)
-					{
-						Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
-						Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y));
-
-						projs.SpawnProjectile(projTemplate, team, firePos.position, errForward);
-					}
-
-					if (audioSource.clip == null)
-						AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource, gameRules.AUDpitchVariance);
-					else if (!audioSource.isPlaying)
-						audioSource.Play();
-
-					shootTimer = 0;
-					curAmmo--;
-				}
-
-			} //dot
-		} //isTargeting
-		else
-			shootTimer = -firingOffset;
-		
-
-
 	}
 
 	public void SetTarget(Unit newTarg)
 	{
 		target = newTarg;
-		//Debug.Log("Turret aiming at " + target.DisplayName);
+
+		Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
+
+		UpdateTarget(newTarg);
+	}
+
+	void UpdateTarget(Unit newTarg)
+	{
+		resetRotFrame = Time.frameCount;
+
+		if (target)
+		{
+			if (state == 0)
+				state = 1;
+		}
+		else
+		{
+			state = 0;
+		}
 	}
 }

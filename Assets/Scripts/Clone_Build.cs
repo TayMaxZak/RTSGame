@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Clone_Build : MonoBehaviour
 {
+	[HideInInspector]
 	public BuildUnit buildUnit;
 	[SerializeField]
 	private GameObject previewModel;
@@ -16,6 +17,8 @@ public class Clone_Build : MonoBehaviour
 	private float warpingAmount;
 	private GameRules gameRules;
 
+	private int buildUnitIndex;
+
 	void Start()
 	{
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
@@ -24,8 +27,9 @@ public class Clone_Build : MonoBehaviour
 		warpModel.SetActive(false);
 	}
 
-	public void Build()
+	public void Build(int index)
 	{
+		buildUnitIndex = index;
 		StartCoroutine(Building());
 	}
 
@@ -66,6 +70,10 @@ public class Clone_Build : MonoBehaviour
 	void Finish()
 	{
 		Instantiate(buildUnit.spawnObject, transform.position, transform.rotation);
+
+		Unit unit = buildUnit.spawnObject.GetComponent<Unit>();
+		if (unit)
+			unit.buildUnitIndex = buildUnitIndex;
 		Destroy(gameObject);
 	}
 

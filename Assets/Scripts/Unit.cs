@@ -6,7 +6,8 @@ public class Unit : Entity
 {
 
 	private Unit target;
-	public int team = 0; 
+	public int team = 0;
+	public int buildUnitIndex = -1;
 
 	[Header("Health Pool")]
 	[SerializeField]
@@ -71,6 +72,7 @@ public class Unit : Entity
 	[SerializeField]
 	private float allowMoveThresh = 0.1f;
 
+	private Manager_Game gameManager;
 	private GameRules gameRules;
 	private bool selected;
 	private UI_HPBar hpBar;
@@ -86,7 +88,8 @@ public class Unit : Entity
 
 		goal = transform.position; // Path towards current location (ie nowhere)
 
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
+		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
+		gameRules = gameManager.GameRules; // Grab copy of Game Rules
 
 		//curHealth = maxHealth; // Reset HP values
 		//curArmor = maxArmor;
@@ -222,15 +225,6 @@ public class Unit : Entity
 		transform.position += velocity * Time.deltaTime;
 	}
 
-	void UpdateAbilities()
-	{
-		for (int i = 0; i < abilities.Count; i++)
-		{
-			//if (abilities[i].isActive)
-				abilities[i].AbilityTick();
-		}
-	}
-
 	public void OrderMove(Vector3 newGoal)
 	{
 		Vector3 prevGoal = goal;
@@ -250,14 +244,25 @@ public class Unit : Entity
 			tur.SetTarget(target);
 	}
 
-	public Vector3 GetVelocity()
+	public void OrderAbility(int i, AbilityTarget targ)
 	{
-		return velocity;
+		abilities[i].Activate(targ);
 	}
 
-	public Vector4 GetHP()
+	public void OrderCommandWheel(int i, AbilityTarget targ)
 	{
-		return new Vector4(curHealth, maxHealth, curArmor, maxArmor);
+		if (i == 2)
+			foreach (Turret tur in turrets)
+				tur.SetTarget(null);
+	}
+
+	void UpdateAbilities()
+	{
+		for (int i = 0; i < abilities.Count; i++)
+		{
+			//if (abilities[i].isActive)
+			abilities[i].AbilityTick();
+		}
 	}
 
 	public bool Damage(float damageBase, float range)
@@ -266,16 +271,16 @@ public class Unit : Entity
 		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / gameRules.ARMrangeMax);
 
 		// TODO: If past max range resist range, shots do 0 damage against armor and therefore wont penetrate even 0 curArmor
-		if (curArmor > Mathf.Max(0, dmg - dmg * rangeRatio)) // Range resist condition: if this shot wont break the armor, it will be range resisted
-			dmg = Mathf.Max(0, dmg - dmg * rangeRatio); //Damage lost to falloff, incentivising shooting armor from up close
+		float rangeDamage = Mathf.Min(dmg * rangeRatio, dmg) * gameRules.ARMrangeMult;
+		if (curArmor > Mathf.Max(0, dmg - rangeDamage)) // Range resist condition: if this shot wont break the armor, it will be range resisted
+			dmg = Mathf.Max(0, dmg - rangeDamage); //Damage lost to falloff, incentivising shooting armor from up close
 		else
 			dmg = Mathf.Max(0, dmg); // Not enough armor left, no longer grants range resist
-		//Debug.Log("org dmg = " + damageBase + " range = " + range + " cur dmg = " + dmg + " Mathf.Max(curArmor - 1, 0) = " + Mathf.Max(curArmor - 1, 0));
+
 		if (dmg <= 0)
 		{
 			return false;
 		}
-
 
 		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : (curArmor / maxArmor) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat); // Absorbtion limit formula
 
@@ -299,7 +304,6 @@ public class Unit : Entity
 			return true;
 		}
 
-
 		return true;
 	}
 
@@ -312,20 +316,14 @@ public class Unit : Entity
 		{
 			Die();
 		}
-		
 	}
 
-	public void UseAbility(int i, Ability_Target targ)
-	{
-		abilities[i].Activate(targ);
-	}
 
 	public void Die()
 	{
-		Debug.Log("Random " + Random.value);
 		if (dead)
 			return;
-		dead = true; // Prevents multiple death clones (hopefully)
+		dead = true; // Prevents multiple deaths
 
 		foreach (Ability ab in abilities)
 		{
@@ -337,6 +335,18 @@ public class Unit : Entity
 		Destroy(hpBar.gameObject);
 		Destroy(selCircle);
 		Destroy(gameObject);
+
+		gameManager.Commanders[team].RefundResources(this);
+	}
+
+	public Vector3 GetVelocity()
+	{
+		return velocity;
+	}
+
+	public Vector4 GetHP()
+	{
+		return new Vector4(curHealth, maxHealth, curArmor, maxArmor);
 	}
 
 	private void HPLog()
