@@ -91,8 +91,8 @@ public static class AbilityUtils
 		{
 			case AbilityType.ArmorDrain:
 				{
-					//GameObject go = Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
-					//ability.pointEffect = go.GetComponent<Ability_Effect>();
+					GameObject go = Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
+					ability.pointEffect = go.GetComponent<Ability_Effect>();
 				}
 				break;
 			case AbilityType.SpawnSwarm:
@@ -139,7 +139,7 @@ public static class AbilityUtils
 				{
 					if (ability.stacks > 0) // If we have swarms in reserve, spawn one and tell all swarms to move
 					{
-						Particles_Swarming swarmManager = ability.user.GetComponent<Particles_Swarming>();
+						Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>();
 
 						swarmManager.SetTarget(ability.target);
 					
@@ -150,13 +150,13 @@ public static class AbilityUtils
 				break;
 			case AbilityType.MoveSwarm:
 				{
-					Particles_Swarming swarmManager = ability.user.GetComponent<Particles_Swarming>();
+					Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>();
 					swarmManager.SetTarget(ability.target);
 				}
 				break;
 			case AbilityType.SelfDamage:
 				Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
-				ability.user.TrueDamage(ability.user.GetHP().y * 0.8f, 0);
+				ability.user.DamageSimple(ability.user.GetHP().y * 0.8f, 0);
 				break;
 			case AbilityType.ShieldProject:
 				{
@@ -235,20 +235,13 @@ public static class AbilityUtils
 			{
 				case AbilityType.ArmorDrain:
 					{
-						if (!ability.pointEffect)
-						{
-							GameObject go = Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
-							ability.pointEffect = go.GetComponent<Ability_Effect>();
-							ability.pointEffect.SetEffectActive(ability.isActive);
-						}
-
 						ability.pointEffect.transform.position = ability.user.transform.position; // Move effect to center of user
 					}
 					break;
 				case AbilityType.ArmorRegen: // Regenerate armor over time based on missing armor
 					{
 						int regenIndex = Mathf.Max(Mathf.CeilToInt(5 * (1 - (ability.user.GetHP().z / ability.user.GetHP().w))) - 1, 0);
-						ability.user.TrueDamage(0, -ability.gameRules.ABLYarmorRegenHPS[regenIndex] * Time.deltaTime);
+						ability.user.DamageSimple(0, -ability.gameRules.ABLYarmorRegenHPS[regenIndex] * Time.deltaTime);
 					}
 					break;
 				
@@ -296,11 +289,11 @@ public static class AbilityUtils
 					for (int i = 0; i < units.Count && i < ability.gameRules.ABLYarmorDrainMaxVictims; i++) // For each unit, subtract apropriate armor and add armor to us
 					{
 						if (units[i].team == ability.user.team)
-							units[i].TrueDamage(0, ability.gameRules.ABLYarmorDrainDPSAlly * Time.deltaTime);
+							units[i].DamageSimple(0, ability.gameRules.ABLYarmorDrainDPSAlly * Time.deltaTime);
 						else
-							units[i].TrueDamage(0, ability.gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
+							units[i].DamageSimple(0, ability.gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
 						if (units[i].GetHP().z > 0)
-							ability.user.TrueDamage(0, -(ability.gameRules.ABLYarmorDrainAPS + ability.gameRules.ABLYarmorDrainAPSBonusMult * units.Count) * Time.deltaTime);
+							ability.user.DamageSimple(0, -(ability.gameRules.ABLYarmorDrainGPS + ability.gameRules.ABLYarmorDrainGPSBonusMult * units.Count) * Time.deltaTime);
 					}
 
 					if (units.Count == 0)
@@ -316,7 +309,7 @@ public static class AbilityUtils
 					{
 						if (ability.unitList[0] == ability.user) // Regenerate pool rapidly while shield is inacive
 						{
-							ability.pool = Mathf.Clamp(ability.pool + ability.gameRules.ABLYshieldProjectInactivePPS * Time.deltaTime, 0, ability.gameRules.ABLYshieldProjectMaxPool);
+							ability.pool = Mathf.Clamp(ability.pool + ability.gameRules.ABLYshieldProjectInactiveGPS * Time.deltaTime, 0, ability.gameRules.ABLYshieldProjectMaxPool);
 						}
 						else if (!ability.unitList[0]) // If the shield is active but our charge accidentally dies, self-cast
 						{
@@ -330,7 +323,7 @@ public static class AbilityUtils
 				{
 					if (ability.stacks < ability.gameRules.ABLYswarmMaxUses) // If we've already used the ability (so we should have a target already set)
 					{
-						Particles_Swarming swarmManager = ability.user.GetComponent<Particles_Swarming>();
+						Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>();
 						if (!swarmManager.GetTarget().unit) // Self-cast if the target dies
 						{
 							swarmManager.SetTarget(new AbilityTarget(ability.user));

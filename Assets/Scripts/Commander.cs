@@ -48,10 +48,6 @@ public class Commander : MonoBehaviour
 	private int defaultGrid = 1;
 	private int curGrid;
 
-	[Header("Using Abilities")]
-	[SerializeField]
-	private string why;
-
 	private Entity selected;
 	private AudioSource audioSource;
 	private GameRules gameRules;
@@ -113,7 +109,10 @@ public class Commander : MonoBehaviour
 			RaycastHit hit = RaycastFromCursor(1);
 			if (hit.collider)
 			{
-				buildPreview.transform.position = hit.point;
+				Vector3 dif = Vector3.ClampMagnitude(hit.point - selected.transform.position, gameRules.SPWNflagshipRadius);
+				Vector3 pos = selected.transform.position + dif;
+
+				buildPreview.transform.position = pos;
 				if (!buildPreview.activeSelf)
 				{
 					buildPreview.SetActive(true);

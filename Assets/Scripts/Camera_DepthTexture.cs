@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Particle = UnityEngine.ParticleSystem.Particle;
 
 public class Camera_DepthTexture: MonoBehaviour
 {

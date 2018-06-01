@@ -21,7 +21,7 @@ public class Unit : Entity
 	[SerializeField]
 	private float maxHealth = 100;
 	[SerializeField]
-	private float curShield = 0;
+	protected float curShield = 0;
 	protected float maxShield = 0;
 	[SerializeField]
 	private int shieldTeam = 0;
@@ -144,7 +144,7 @@ public class Unit : Entity
 			if (curBurnCounter >= 1)
 			{
 				curBurnCounter = 0;
-				TrueDamage(Mathf.RoundToInt(Random.Range(gameRules.HLTHburnMin, gameRules.HLTHburnMax)), 0);
+				DamageSimple(Mathf.RoundToInt(Random.Range(gameRules.HLTHburnMin, gameRules.HLTHburnMax)), 0);
 			}
 		}
 	}
@@ -391,14 +391,21 @@ public class Unit : Entity
 		curArmor += -dmgToArmor;
 		curHealth += Mathf.Min(curArmor /*ie armor is negative*/, 0) - overflowDmg - critflowDmg;
 		curArmor += -critflowDmg; // Don't want critflow damage to wrap around and damage health twice, so we put this step after health step
-
 		curArmor = Mathf.Max(curArmor, 0);
+
+		OnDamage();
+
 		if (curHealth <= 0)
 		{
 			Die();
 		}
 
 		return true;
+	}
+
+	protected void OnDamage()
+	{
+
 	}
 
 	public float DamageShield(float dmg)
@@ -437,7 +444,7 @@ public class Unit : Entity
 		return dmg;
 	}
 
-	public void TrueDamage(float healthDmg, float armorDmg) // Simple subtraction to armor and health
+	public void DamageSimple(float healthDmg, float armorDmg) // Simple subtraction to armor and health
 	{
 		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
 

@@ -24,8 +24,9 @@ GameObject:
   - component: {fileID: 65914140576387210}
   - component: {fileID: 54915688936467290}
   - component: {fileID: 114176263203680696}
+  - component: {fileID: 114173183134879932}
   m_Layer: 0
-  m_Name: Corvette_Dead
+  m_Name: Frigate_Dead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,7 +83,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1796662562453436}
-  m_Mesh: {fileID: 4300000, guid: 0490c27aa76c95f4ab24076a62fcd2f8, type: 3}
+  m_Mesh: {fileID: 4300000, guid: cbe2153955c26834d8671985706f6134, type: 3}
 --- !u!54 &54915688936467290
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -108,8 +109,20 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.25850353, y: 1.7264345, z: 1.4584053}
-  m_Center: {x: 0, y: -0.081014484, z: 0.21045849}
+  m_Size: {x: 1.8310696, y: 0.71664184, z: 7.3999996}
+  m_Center: {x: 0, y: 0.044179082, z: 0.19999993}
+--- !u!114 &114173183134879932
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1796662562453436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e6a6ce55ae2c5d4ebe931af8e29a007, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  time: 10
 --- !u!114 &114176263203680696
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -121,6 +134,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 909cc28e4979c0049bf03c93be042824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startEffect: {fileID: 1585526066841278, guid: 02958a76742ac29499c03ee63d233153,
+  startEffect: {fileID: 1585526066841278, guid: 5ec9b2a7e56df29459740847dc3b35a6,
     type: 2}
-  randomSpinFactor: 0.4
+  randomSpinFactor: 0.3

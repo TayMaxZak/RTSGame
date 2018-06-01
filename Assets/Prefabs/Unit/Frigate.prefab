@@ -1641,7 +1641,8 @@ MonoBehaviour:
   randomSpeed: 0.05
   randomDistribution: {x: 1, y: 0, z: 1}
   randomFreq: 1
-  distanceSpeed: 0.09
+  distanceSpeed: 0.04
+  distanceSpeedMaxMult: 4
   maxSpeed: 5
 --- !u!114 &114451669362268560
 MonoBehaviour:
@@ -1861,16 +1862,18 @@ MonoBehaviour:
       HLTHthreshBurn: 0
       HLTHburnMin: 0
       HLTHburnMax: 0
-      FLAGshieldPool: 500
+      FLAGshieldMax: 500
+      FLAGshieldRegenGPS: 5
+      FLAGshieldRegenDelay: 10
       ABLYarmorDrainRange: 0
       ABLYarmorDrainDPSEnemy: 0
       ABLYarmorDrainDPSAlly: 0
-      ABLYarmorDrainAPS: 1
-      ABLYarmorDrainAPSBonusMult: 1
+      ABLYarmorDrainGPS: 1
+      ABLYarmorDrainGPSBonusMult: 1
       ABLYarmorDrainMaxVictims: 0
       ABLYarmorRegenHPS: []
       ABLYshieldProjectMaxPool: 0
-      ABLYshieldProjectInactivePPS: 0
+      ABLYshieldProjectInactiveGPS: 8
       ABLYswarmMaxUses: 3
       ABLYswarmDPS: 3
       ABLYswarmDamageRadius: 8
@@ -1878,6 +1881,7 @@ MonoBehaviour:
       STATswarmShieldMaxStacks: 4
       SPWNeffectTime: 0
       SPWNwarpTime: 0
+      SPWNflagshipRadius: 20
       AUDpitchVariance: 0
       PRJmaxTimeAlive: 0
       PRJhitOffset: 0
@@ -1903,16 +1907,18 @@ MonoBehaviour:
       HLTHthreshBurn: 0
       HLTHburnMin: 0
       HLTHburnMax: 0
-      FLAGshieldPool: 500
+      FLAGshieldMax: 500
+      FLAGshieldRegenGPS: 5
+      FLAGshieldRegenDelay: 10
       ABLYarmorDrainRange: 0
       ABLYarmorDrainDPSEnemy: 0
       ABLYarmorDrainDPSAlly: 0
-      ABLYarmorDrainAPS: 1
-      ABLYarmorDrainAPSBonusMult: 1
+      ABLYarmorDrainGPS: 1
+      ABLYarmorDrainGPSBonusMult: 1
       ABLYarmorDrainMaxVictims: 0
       ABLYarmorRegenHPS: []
       ABLYshieldProjectMaxPool: 0
-      ABLYshieldProjectInactivePPS: 0
+      ABLYshieldProjectInactiveGPS: 8
       ABLYswarmMaxUses: 3
       ABLYswarmDPS: 3
       ABLYswarmDamageRadius: 8
@@ -1920,6 +1926,7 @@ MonoBehaviour:
       STATswarmShieldMaxStacks: 4
       SPWNeffectTime: 0
       SPWNwarpTime: 0
+      SPWNflagshipRadius: 20
       AUDpitchVariance: 0
       PRJmaxTimeAlive: 0
       PRJhitOffset: 0
@@ -1936,7 +1943,7 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0}
     unitList: []
   MS: 3.5
-  MSverticalMod: 0.4
+  MSVerticalMod: 0.4
   MSAccel: 1
   MSDeccel: 1
   RS: 15

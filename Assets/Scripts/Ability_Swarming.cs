@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Particle = UnityEngine.ParticleSystem.Particle;
 
-public class Particles_Swarming : MonoBehaviour {
+public class Ability_Swarming : MonoBehaviour {
 	private int team; // Doesn't need to be public
 
 	[SerializeField]
@@ -34,6 +34,8 @@ public class Particles_Swarming : MonoBehaviour {
 
 	[SerializeField]
 	private float distanceSpeed = 0.03f;
+	[SerializeField]
+	private float distanceSpeedMaxMult = 4;
 
 	[SerializeField]
 	private float maxSpeed = 5f;
@@ -103,12 +105,8 @@ public class Particles_Swarming : MonoBehaviour {
 				//randomVectors[i].w = 0;
 			}
 
-
-			Vector3 distanceVel;
-
-
-			distanceVel = (particles[i].position - targPos) * -distanceSpeed;
-			particles[i].velocity += distanceVel;
+			Vector3 distanceVel = (particles[i].position - targPos) * -distanceSpeed;
+			particles[i].velocity += Vector3.ClampMagnitude(distanceVel, distanceSpeed * distanceSpeedMaxMult);
 
 			Vector3 randomVel = randomVectors[i] * randomSpeed;
 			particles[i].velocity += randomVel;

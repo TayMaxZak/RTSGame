@@ -4,11 +4,17 @@ using System.Collections;
 //Credit to Dave Hampson
 public class FPSCounter : MonoBehaviour
 {
-	float deltaTime = 0.0f;
-	float lowestFPS = 1000f;
-	public float LFPSresetTime = 10.0f;
-	float LFPSresetCounter = 10.0f;
-	public Color textColor = new Color(0.1f, 0.6f, 1f, 1.0f);
+	[SerializeField]
+	private float LFPSresetTime = 7.0f;
+	[SerializeField]
+	private Color textColor = new Color(1f, 0f, 0f, 1f);
+	[SerializeField]
+	private int textSize = 15;
+
+	private float deltaTime = 0.0f;
+	private float lowestFPS = 1000f;
+	private float LFPSresetCounter = 10.0f;
+	
 
 	void Start()
 	{
@@ -35,9 +41,9 @@ public class FPSCounter : MonoBehaviour
 
 		GUIStyle style = new GUIStyle();
 
-		Rect rect = new Rect(20, 20, w, h * 2 / 100);
+		Rect rect = new Rect(textSize, textSize, w, h - 10 - textSize);
 		style.alignment = TextAnchor.UpperLeft;
-		style.fontSize = h * 2 / 75;
+		style.fontSize = textSize;
 		style.normal.textColor = textColor;
 		float msec = deltaTime * 1000.0f;
 		float fps = 1.0f / deltaTime;

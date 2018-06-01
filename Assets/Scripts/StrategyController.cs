@@ -40,26 +40,44 @@ public class StrategyController : MonoBehaviour
 		{
 			Vector3 velocityVector = Vector3.zero;
 
-			// TOREMOVE
+			// TOREMOVE:
+			//if (Input.mousePosition.x < screenBorderSize)
+			//	velocityVector.x = -speed * Time.deltaTime;
+			//else if (Input.mousePosition.x > Screen.width - screenBorderSize)
+			//	velocityVector.x = speed * Time.deltaTime;
+
+			//if (Input.mousePosition.y < screenBorderSize)
+			//	velocityVector.z = -speed * Time.deltaTime;
+			//else if (Input.mousePosition.y > Screen.height - screenBorderSize)
+			//	velocityVector.z = speed * Time.deltaTime;
+
 			if (Input.mousePosition.x < screenBorderSize)
-				velocityVector.x = -speed * Time.deltaTime;
+			{
+				float mult = (screenBorderSize - Input.mousePosition.x) / screenBorderSize;
+				mult = Mathf.Clamp01(mult);
+				velocityVector.x = -Time.deltaTime * mult;
+			}
 			else if (Input.mousePosition.x > Screen.width - screenBorderSize)
-				velocityVector.x = speed * Time.deltaTime;
+			{
+				float mult = (Input.mousePosition.x - (Screen.width - screenBorderSize) + 1) / screenBorderSize;
+				mult = Mathf.Clamp01(mult);
+				velocityVector.x = Time.deltaTime * mult;
+			}
 
 			if (Input.mousePosition.y < screenBorderSize)
-				velocityVector.z = -speed * Time.deltaTime;
+			{
+				float mult = (screenBorderSize - Input.mousePosition.y) / screenBorderSize;
+				mult = Mathf.Clamp01(mult);
+				velocityVector.z = -Time.deltaTime * mult;
+			}
 			else if (Input.mousePosition.y > Screen.height - screenBorderSize)
-				velocityVector.z = speed * Time.deltaTime;
-
-			if (Input.mousePosition.x < screenBorderSize)
 			{
-				Debug.Log((screenBorderSize - Input.mousePosition.x) / screenBorderSize);
-			}
-			else if (Input.mousePosition.x > Screen.width - screenBorderSize)
-			{
-				Debug.Log((Input.mousePosition.x - (Screen.width - screenBorderSize) + 1) / screenBorderSize);
+				float mult = (Input.mousePosition.y - (Screen.height - screenBorderSize) + 1) / screenBorderSize;
+				mult = Mathf.Clamp01(mult);
+				velocityVector.z = Time.deltaTime * mult;
 			}
 
+			velocityVector = Vector3.ClampMagnitude(velocityVector, 1) * speed;
 			camRoot.transform.Translate(velocityVector, Space.Self);
 		}
 
