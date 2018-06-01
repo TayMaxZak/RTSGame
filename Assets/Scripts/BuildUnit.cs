@@ -6,7 +6,9 @@ public enum BuildUnitType
 {
 	Destroyer,
 	Corvette,
-	Bomber
+	Bomber,
+	Frigate,
+	Apollo
 }
 
 public class BuildUnit : MonoBehaviour

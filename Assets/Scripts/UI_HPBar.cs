@@ -56,6 +56,8 @@ public class UI_HPBar : MonoBehaviour
 		healthOrigColor = healthFill.color;
 		armorOrigColor = armorFill.color;
 		//shieldOrigColor = shieldFill.color;
+
+		transform.SetSiblingIndex(0); // Draw behind other UI elements
 	}
 
 	void Update()
@@ -89,12 +91,15 @@ public class UI_HPBar : MonoBehaviour
 			healthFill.color = healthOrigColor;
 	}
 
-	public void UpdateHPBar(float health, float armor)
+	public void UpdateHPBar(float health, float armor, float shield)
 	{
 		healthTarg = health;
 		healthT = 0;
 
 		armorTarg = armor;
 		armorT = 0;
+
+		shieldTarg = shield;
+		shieldT = 0;
 	}
 }

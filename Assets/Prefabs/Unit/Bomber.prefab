@@ -31,7 +31,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &1289778607615092
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
@@ -218,12 +218,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1289778607615092}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.53, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.5300001, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4263520892279030}
-  m_RootOrder: 1
+  m_Father: {fileID: 4212249755303906}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4212249755303906
 Transform:
@@ -240,6 +240,7 @@ Transform:
   - {fileID: 4264688647334746}
   - {fileID: 4038189623413936}
   - {fileID: 4341353428511248}
+  - {fileID: 4143572596103136}
   m_Father: {fileID: 4263520892279030}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
@@ -249,12 +250,11 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1636488470890702}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -16.86, y: 0, z: -39.42}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4212249755303906}
-  - {fileID: 4143572596103136}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -473,7 +473,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 256
   DopplerLevel: 0
-  MinDistance: 3
+  MinDistance: 1
   MaxDistance: 75
   Pan2D: 0
   rolloffMode: 0
@@ -706,12 +706,15 @@ MonoBehaviour:
   displayName: Bomber
   swarmTarget: {fileID: 4143572596103136}
   selCircleSize: 3
+  printStatus: 0
   team: 0
   buildUnitIndex: -1
   curArmor: 500
   maxArmor: 550
   curHealth: 450
   maxHealth: 450
+  curShield: 0
+  shieldTeam: 0
   deathClone: {fileID: 1796662562453436, guid: e0a178192bcadcf4fb2a750f04cbefeb, type: 2}
   turrets:
   - {fileID: 114837227991256422}
@@ -721,15 +724,17 @@ MonoBehaviour:
       ARMabsorbFlat: 0
       ARMabsorbMax: 0
       ARMrangeMin: 0
-      ARMrangeMax: 0
+      ARMrangeMax: 100
       ARMrangeMult: 0.5
       HLTHthreshBurn: 0
       HLTHburnMin: 0
       HLTHburnMax: 0
+      FLAGshieldPool: 500
       ABLYarmorDrainRange: 0
       ABLYarmorDrainDPSEnemy: 0
       ABLYarmorDrainDPSAlly: 0
-      ABLYarmorDrainHPS: 2
+      ABLYarmorDrainAPS: 1
+      ABLYarmorDrainAPSBonusMult: 1
       ABLYarmorDrainMaxVictims: 0
       ABLYarmorRegenHPS:
       - 4
@@ -737,6 +742,13 @@ MonoBehaviour:
       - 16
       - 16
       - 2
+      ABLYshieldProjectMaxPool: 500
+      ABLYshieldProjectInactivePPS: 8
+      ABLYswarmMaxUses: 3
+      ABLYswarmDPS: 4
+      ABLYswarmDamageRadius: 7
+      STATswarmShieldDmgReduce: 0.1
+      STATswarmShieldMaxStacks: 2
       SPWNeffectTime: 1
       SPWNwarpTime: 0.05
       AUDpitchVariance: 0
@@ -748,11 +760,14 @@ MonoBehaviour:
       gridLayerMask:
         serializedVersion: 2
         m_Bits: 0
-    effect: {fileID: 0}
+    pointEffect: {fileID: 0}
     user: {fileID: 0}
+    target:
+      unit: {fileID: 0}
+      position: {x: 0, y: 0, z: 0}
     unitList: []
   MS: 4
-  MSverticalMod: 1.1
+  MSverticalMod: 0.8
   MSAccel: 4
   MSDeccel: 3
   RS: 10
@@ -760,7 +775,6 @@ MonoBehaviour:
   model: {fileID: 4212249755303906}
   reachGoalThresh: 4
   YMSResetThresh: 1
-  deltaBias: 99999
   allowMoveThresh: 0.6
 --- !u!114 &114753942986423710
 MonoBehaviour:
@@ -788,27 +802,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
-  target: {fileID: 0}
-  range: 75
-  soundShoot: {fileID: 8300000, guid: eda9325462e16d44b9a0353b74109972, type: 3}
   projTemplate:
     type: 0
     speed: 30
     damage: 7
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
+  target: {fileID: 0}
+  range: 75
+  soundShoot: {fileID: 8300000, guid: eda9325462e16d44b9a0353b74109972, type: 3}
   firePos: {fileID: 4688031616820946}
-  accuracy: 0
-  pelletCount: 1
   maxAmmo: 0
+  pelletCount: 1
+  accuracy: 0
   reloadCooldown: 4
   rateOfFire: 308
-  firingOffset: 0
+  shootOffsetRatio: 0
   RS: 60
-  RSAccel: 0
   baseRotatesOnY: 1
   pivotY: {fileID: 4370010889557524}
   pivotX: {fileID: 4535406925067012}
+  minX: 0
+  maxX: 0
 --- !u!165 &165724297247437708
 AudioHighPassFilter:
   m_ObjectHideFlags: 1
@@ -10645,7 +10660,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 316809571
+  randomSeed: 1896927475
   InitialModule:
     serializedVersion: 3
     enabled: 1

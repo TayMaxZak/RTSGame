@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Unit : Entity
 {
+	public bool printStatus = false;
 
 	private Unit target;
 	public int team = 0;
+	[HideInInspector]
 	public int buildUnitIndex = -1;
 
 	[Header("Health Pool")]
@@ -18,6 +20,11 @@ public class Unit : Entity
 	private float curHealth = 100;
 	[SerializeField]
 	private float maxHealth = 100;
+	[SerializeField]
+	private float curShield = 0;
+	protected float maxShield = 0;
+	[SerializeField]
+	private int shieldTeam = 0;
 	[SerializeField]
 	private GameObject deathClone; // Object to spawn on death
 	private float curBurnCounter;
@@ -36,7 +43,7 @@ public class Unit : Entity
 	private float MS = 7;
 	private float curMSRatio = 0;
 	[SerializeField]
-	private float MSverticalMod = 2;
+	private float MSVerticalMod = 0.4f;
 	private float curYMSRatio = 0;
 	//private float targetMSRatio = 0;
 	[SerializeField]
@@ -59,10 +66,9 @@ public class Unit : Entity
 
 	[Header("Pathing")]
 	[SerializeField]
-	private float reachGoalThresh = 1;
+	private float reachGoalThresh = 1; // How close to the goal position is close enough?
 	[SerializeField]
 	private float YMSResetThresh = 1;
-	[SerializeField]
 	private float deltaBias = 99999;
 	private bool isPathing;
 	private Vector3 goal;
@@ -70,14 +76,19 @@ public class Unit : Entity
 	private Quaternion lookRotation;
 	private Vector3 direction;
 	[SerializeField]
-	private float allowMoveThresh = 0.1f;
+	private float allowMoveThresh = 0.1f; // How early during a turn can we start moving forward
+
+	private bool selected;
 
 	private Manager_Game gameManager;
-	private GameRules gameRules;
-	private bool selected;
+	protected GameRules gameRules;
 	private UI_HPBar hpBar;
-
 	private Vector2 HPBarOffset;
+
+	private List<Status> statuses;
+	private List<Unit> notifyOnDeath; // These units will be messaged when we die
+
+	private List<Unit> damageTaken;
 
 	//private List<Unit> killers; // Units that assisted in this unit's death TODO: IMPLEMENT
 
@@ -86,13 +97,14 @@ public class Unit : Entity
 	{
 		base.Start(); // Init Entity base class
 
-		goal = transform.position; // Path towards current location (ie nowhere)
+		goal = transform.position; // Path towards current location (i.e. nowhere)
 
 		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
 		gameRules = gameManager.GameRules; // Grab copy of Game Rules
 
 		//curHealth = maxHealth; // Reset HP values
 		//curArmor = maxArmor;
+		maxShield = gameRules.ABLYshieldProjectMaxPool;
 
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
 		hpBar = Instantiate(uiManager.UnitHPBar);
@@ -105,6 +117,9 @@ public class Unit : Entity
 
 		foreach (Turret tur in turrets) // Init turrets
 			tur.team = team;
+
+		statuses = new List<Status>();
+		notifyOnDeath = new List<Unit>();
 	}
 
 	// Banking
@@ -118,6 +133,7 @@ public class Unit : Entity
 		UpdateUI();
 		UpdateMovement();
 		UpdateAbilities();
+		UpdateStatuses();
 
 		// Health
 		bool isBurning = curHealth / maxHealth <= gameRules.HLTHthreshBurn;
@@ -142,7 +158,7 @@ public class Unit : Entity
 			return;
 		}
 
-		Vector3 barPosition = new Vector3(model.position.x + HPBarOffset.x, model.position.y + HPBarOffset.y, model.position.z + HPBarOffset.x);
+		Vector3 barPosition = new Vector3(model.position.x + HPBarOffset.x, swarmTarget.position.y + HPBarOffset.y, model.position.z + HPBarOffset.x);
 		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
 
 		float dot = Vector3.Dot((barPosition - Camera.main.transform.position).normalized, Camera.main.transform.forward);
@@ -159,8 +175,13 @@ public class Unit : Entity
 			RectTransform rect = hpBar.GetComponent<RectTransform>();
 			rect.position = new Vector2(screenPoint.x, screenPoint.y);
 			//rect.localScale = ;
-			hpBar.UpdateHPBar(curHealth / maxHealth, curArmor / maxArmor);
+			UpdateHPBar();
 		}
+	}
+
+	void UpdateHPBar()
+	{
+		hpBar.UpdateHPBar(curHealth / maxHealth, curArmor / maxArmor, curShield / maxShield);
 	}
 
 	void UpdateMovement()
@@ -207,7 +228,7 @@ public class Unit : Entity
 		//float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel;
 		//float MSdelta = Mathf.Sign(targetMSRatio - curMSRatio) * (1f / MSccel) * Time.deltaTime;
 
-		float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel;
+		float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel; // MSccel is not a typo
 		float MSdelta = Mathf.Clamp((targetMSRatio - curMSRatio) * deltaBias, -1, 1) * (1f / MSccel) * Time.deltaTime;
 		curMSRatio = Mathf.Clamp01(curMSRatio + MSdelta);
 
@@ -217,12 +238,44 @@ public class Unit : Entity
 		// Vertical Movement
 		float targetYMSRatio = (isPathing ? 1 : 0);
 
-		float YMSdelta = Mathf.Sign(targetYMSRatio - curYMSRatio) * (1f / MSAccel) * Time.deltaTime;
+		//float YMSdelta = Mathf.Sign(targetYMSRatio - curYMSRatio) * (1f / MSAccel) * Time.deltaTime;
+		float YMSdelta = Mathf.Clamp((targetYMSRatio - curYMSRatio) * deltaBias, -1, 1) * (1f / MSAccel) * Time.deltaTime;
 		curYMSRatio = Mathf.Clamp01(curYMSRatio + YMSdelta);
 
-		Vector3 Yvel = MS * curYMSRatio * Vector3.up * Mathf.Clamp(direction.y * 2, -1, 1) * MSverticalMod;
+		Vector3 Yvel = MS * curYMSRatio * Vector3.up * Mathf.Clamp(direction.y * 2, -1, 1) * MSVerticalMod;
 		velocity = Yvel + Hvel;
 		transform.position += velocity * Time.deltaTime;
+	}
+
+	void UpdateAbilities()
+	{
+		for (int i = 0; i < abilities.Count; i++)
+		{
+			//if (abilities[i].isActive)
+			abilities[i].AbilityTick();
+		}
+	}
+
+	void UpdateStatuses()
+	{
+		string output = "Current statuses are: ";
+		List<Status> toRemove = new List<Status>();
+
+		foreach (Status s in statuses)
+		{
+			if (!s.UpdateTimeLeft(Time.deltaTime))
+				toRemove.Add(s);
+
+			output += s.statusType + " ";
+		}
+
+		foreach (Status s in toRemove)
+		{
+			statuses.Remove(s);
+		}
+
+		if (printStatus && statuses.Count > 0)
+			Debug.Log(output);
 	}
 
 	public void OrderMove(Vector3 newGoal)
@@ -256,31 +309,73 @@ public class Unit : Entity
 				tur.SetTarget(null);
 	}
 
-	void UpdateAbilities()
+	public float GetShieldPool()
 	{
-		for (int i = 0; i < abilities.Count; i++)
-		{
-			//if (abilities[i].isActive)
-			abilities[i].AbilityTick();
-		}
+		return curShield;
 	}
 
-	public bool Damage(float damageBase, float range)
+	public void AddStatus(Status status)
+	{
+		bool alreadyHave = false;
+		foreach (Status s in statuses) // Check all current statuses
+		{
+			if (s.from != status.from)
+				continue;
+			if (s.statusType != status.statusType)
+				continue;
+			alreadyHave = true;
+			s.RefreshTimeLeft(); // If we already have this instance of a status effect, refresh its timer
+		}
+
+		if (!alreadyHave) // Otherwise add it
+			statuses.Add(status);
+	}
+
+	public bool RecieveShield(float amount, int projectorTeam)
+	{
+		if (curShield > 0)
+			return false;
+
+		shieldTeam = projectorTeam;
+		curShield = amount;
+		return true;
+	}
+
+	public void UpdateShield(float amount)
+	{
+		curShield = amount;
+	}
+
+	public void RemoveShield()
+	{
+		curShield = 0;
+	}
+
+	public bool Damage(float damageBase, float range) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
 	{
 		float dmg = damageBase;
+
+		dmg = StatusDamageMod(dmg); // Apply status modifiers to damage first
+
+		if (dmg <= 0)
+			return false;
+
+		dmg = DamageShield(dmg); // Try to damage shield before damaging main health pool
+
+		if (dmg <= 0)
+			return false;
+
+		//Damage lost to range resist / damage falloff, incentivising shooting armor from up close
 		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / gameRules.ARMrangeMax);
 
-		// TODO: If past max range resist range, shots do 0 damage against armor and therefore wont penetrate even 0 curArmor
 		float rangeDamage = Mathf.Min(dmg * rangeRatio, dmg) * gameRules.ARMrangeMult;
 		if (curArmor > Mathf.Max(0, dmg - rangeDamage)) // Range resist condition: if this shot wont break the armor, it will be range resisted
-			dmg = Mathf.Max(0, dmg - rangeDamage); //Damage lost to falloff, incentivising shooting armor from up close
+			dmg = Mathf.Max(0, dmg - rangeDamage);
 		else
 			dmg = Mathf.Max(0, dmg); // Not enough armor left, no longer grants range resist
 
 		if (dmg <= 0)
-		{
 			return false;
-		}
 
 		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : (curArmor / maxArmor) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat); // Absorbtion limit formula
 
@@ -301,13 +396,48 @@ public class Unit : Entity
 		if (curHealth <= 0)
 		{
 			Die();
-			return true;
 		}
 
 		return true;
 	}
 
-	public void TrueDamage(float healthDmg, float armorDmg) // Simple damage to armor and health
+	public float DamageShield(float dmg)
+	{
+		if (shieldTeam == team)
+		{
+			float newShield = curShield - dmg;
+			curShield = newShield;
+			if (newShield < 0)
+			{
+				curShield = 0;
+				return -newShield;
+			}
+			else
+				return -newShield;
+		}
+		else
+		{
+			return dmg;
+		}
+	}
+
+	private float StatusDamageMod(float dmgOrg)
+	{
+		float dmg = dmgOrg;
+		int swarmShieldCounter = 0;
+
+		foreach (Status s in statuses)
+		{
+			if (s.statusType == StatusType.SwarmShield)
+				swarmShieldCounter++;
+		}
+
+		// Apply swarm shield damage reduction, which can stack a limited number of times
+		dmg -= dmg * gameRules.STATswarmShieldDmgReduce * Mathf.Clamp(swarmShieldCounter, 0, gameRules.STATswarmShieldMaxStacks);
+		return dmg;
+	}
+
+	public void TrueDamage(float healthDmg, float armorDmg) // Simple subtraction to armor and health
 	{
 		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
 
@@ -330,13 +460,36 @@ public class Unit : Entity
 			ab.End();
 		}
 
+		foreach (Unit un in notifyOnDeath)
+		{
+			un.DeathMessage(this);
+		}
+
 		if (deathClone)
 			Instantiate(deathClone, model.transform.position, model.rotation);
 		Destroy(hpBar.gameObject);
 		Destroy(selCircle);
 		Destroy(gameObject);
 
-		gameManager.Commanders[team].RefundResources(this);
+		//gameManager.Commanders[team].RefundUnit(this);
+		gameManager.Commanders[0].RefundUnit(this); // TODO: While we have 1 commander
+	}
+
+	public void SubscribeToDeath(Unit u)
+	{
+		if (notifyOnDeath.Contains(u))
+			return;
+		else
+			notifyOnDeath.Add(u);
+	}
+
+	public void DeathMessage(Unit u)
+	{
+		if (u.team != team)
+		{
+			// TODO: Hellrazor stack increase
+
+		}
 	}
 
 	public Vector3 GetVelocity()
@@ -347,6 +500,11 @@ public class Unit : Entity
 	public Vector4 GetHP()
 	{
 		return new Vector4(curHealth, maxHealth, curArmor, maxArmor);
+	}
+
+	public Transform GetSwarmTarget()
+	{
+		return swarmTarget;
 	}
 
 	private void HPLog()

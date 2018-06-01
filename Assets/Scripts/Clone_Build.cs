@@ -52,7 +52,6 @@ public class Clone_Build : MonoBehaviour
 
 	IEnumerator Warp()
 	{
-		
 		warpModel.SetActive(true);
 		yield return new WaitForSeconds(gameRules.SPWNwarpTime);
 		warpModel.SetActive(false);
@@ -69,9 +68,7 @@ public class Clone_Build : MonoBehaviour
 
 	void Finish()
 	{
-		Instantiate(buildUnit.spawnObject, transform.position, transform.rotation);
-
-		Unit unit = buildUnit.spawnObject.GetComponent<Unit>();
+		Unit unit = Instantiate(buildUnit.spawnObject, transform.position, transform.rotation).GetComponent<Unit>();
 		if (unit)
 			unit.buildUnitIndex = buildUnitIndex;
 		Destroy(gameObject);

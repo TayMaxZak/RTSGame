@@ -6,8 +6,10 @@ public enum AbilityType
 {
 	ArmorDrain,
 	ArmorRegen,
-	Swarm,
-	SelfDamage
+	SpawnSwarm,
+	MoveSwarm,
+	SelfDamage,
+	ShieldProject
 }
 
 [System.Serializable]
@@ -23,7 +25,7 @@ public class Ability
 	public bool isActive;
 
 	[HideInInspector]
-	public Ability_Effect effect;
+	public Ability_Effect pointEffect; // Ability VFX and SFX at a particular position
 	[HideInInspector]
 	public Unit user;
 	[HideInInspector]
@@ -39,9 +41,12 @@ public class Ability
 	[System.NonSerialized]
 	[HideInInspector]
 	public float curCooldown = 0; // Cooldown for reactivating / deactivating ability
-
-	// TODO: How to give stacks to an ability?
-	private int stacks = 0;
+	[System.NonSerialized]
+	[HideInInspector]
+	public int stacks = 0;
+	[System.NonSerialized]
+	[HideInInspector]
+	public float pool = 0; // Arbitrary float pool which sits alongside energy pool
 
 	public void Init(Unit user, GameRules gameRules)
 	{
@@ -61,8 +66,7 @@ public class Ability
 
 	public void End()
 	{
-		// Should never happen
-		if (!effect)
+		if (!pointEffect) // Should never happen
 			AbilityUtils.InitAbility(this);
 		AbilityUtils.EndAbility(this);
 	}
@@ -87,29 +91,36 @@ public static class AbilityUtils
 		{
 			case AbilityType.ArmorDrain:
 				{
-					GameObject go = Object.Instantiate(Resources.Load("ArmorDrainEffect") as GameObject, ability.user.transform.position, Quaternion.identity);
-					ability.effect = go.GetComponent<Ability_Effect>();
+					//GameObject go = Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
+					//ability.pointEffect = go.GetComponent<Ability_Effect>();
 				}
 				break;
-			case AbilityType.Swarm:
-				break;
-			case AbilityType.SelfDamage:
+			case AbilityType.SpawnSwarm:
 				{
-					
+					ability.stacks = ability.gameRules.ABLYswarmMaxUses;
+					//ability.unitList.Add(ability.user);
+				}
+				break;
+			case AbilityType.ShieldProject:
+				{
+					ability.pool = ability.gameRules.ABLYshieldProjectMaxPool;
 				}
 				break;
 			default:
 				break;
 		}
 
-		if (ability.effect)
-			ability.effect.SetEffectActive(ability.isActive);
+		if (ability.pointEffect)
+			ability.pointEffect.SetEffectActive(ability.isActive);
 	}
 
 	public static void StartAbility(Ability ability)
 	{
 		if (ability.curCooldown > 0)
+		{
 			return;
+		}
+			
 		ability.curCooldown = 1;
 
 		if (ActivationStyle(ability.type) == 1)
@@ -117,19 +128,84 @@ public static class AbilityUtils
 		else if (ActivationStyle(ability.type) == 2)
 			ability.isActive = !ability.isActive;
 
-		if (ability.effect)
-			ability.effect.SetEffectActive(ability.isActive);
+		if (ability.pointEffect)
+			ability.pointEffect.SetEffectActive(ability.isActive);
 
-		switch (ability.type)
+		switch (ability.type) // Ability is off cooldown
 		{
 			case AbilityType.ArmorDrain:
 				break;
-			case AbilityType.Swarm:
+			case AbilityType.SpawnSwarm:
+				{
+					if (ability.stacks > 0) // If we have swarms in reserve, spawn one and tell all swarms to move
+					{
+						Particles_Swarming swarmManager = ability.user.GetComponent<Particles_Swarming>();
+
+						swarmManager.SetTarget(ability.target);
+					
+						ability.stacks--;
+						swarmManager.SpawnSwarm();
+					}
+				}
+				break;
+			case AbilityType.MoveSwarm:
+				{
+					Particles_Swarming swarmManager = ability.user.GetComponent<Particles_Swarming>();
+					swarmManager.SetTarget(ability.target);
+				}
 				break;
 			case AbilityType.SelfDamage:
-				Object.Instantiate(Resources.Load("SelfDamageEffect") as GameObject, ability.user.transform.position, Quaternion.identity);
+				Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
 				ability.user.TrueDamage(ability.user.GetHP().y * 0.8f, 0);
 				break;
+			case AbilityType.ShieldProject:
+				{
+					// TODO: Clean code up
+					if (ability.target.unit.GetShieldPool() <= Mathf.Epsilon || ability.target.unit == ability.user)
+					{
+						Flagship flag = ability.target.unit.gameObject.GetComponent<Flagship>();
+
+						if (!flag)
+						{
+							if (ability.target.unit != ability.user)
+								Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.target.unit.transform.position, Quaternion.identity);
+							else
+							{
+								if (ability.unitList.Count > 0 && ability.unitList[0] != ability.user)
+									Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.target.unit.transform.position, Quaternion.identity);
+							}
+
+							if (ability.unitList.Count > 0)
+							{
+								if (ability.unitList[0] != ability.user)
+								{
+									ability.pool = ability.unitList[0].GetShieldPool();
+									ability.unitList[0].RemoveShield(); // Remove shield from previous user ONLY IF ITS OUR SHIELD
+								}
+							}
+
+							if (ability.target.unit == ability.user)
+							{
+
+
+								if (ability.unitList.Count > 0)
+									ability.unitList[0] = ability.target.unit; // Remember this user as "previous user" for the future
+								else
+									ability.unitList.Add(ability.target.unit); // Remember this user as "previous user" for the future
+							}
+							else
+							{
+								ability.target.unit.RecieveShield(ability.pool, ability.user.team); // Apply shield to new user
+
+								if (ability.unitList.Count > 0)
+									ability.unitList[0] = ability.target.unit; // Remember this user as "previous user" for the future
+								else
+									ability.unitList.Add(ability.target.unit); // Remember this user as "previous user" for the future
+							}
+						}
+					}
+					break;
+				}
 			default:
 				break;
 		}
@@ -142,9 +218,8 @@ public static class AbilityUtils
 		if (ability.isActive && ability.curEnergy < 0) // Out of energy
 		{
 			ability.isActive = false;
-			if (ability.effect)
-				ability.effect.SetEffectActive(ability.isActive);
-			//StartAbility(ability); // This would expel cooldown or fail entirely
+			if (ability.pointEffect)
+				ability.pointEffect.SetEffectActive(ability.isActive);
 
 			return;
 		}
@@ -160,7 +235,14 @@ public static class AbilityUtils
 			{
 				case AbilityType.ArmorDrain:
 					{
-						ability.effect.transform.position = ability.user.transform.position; // Move effect to center of user
+						if (!ability.pointEffect)
+						{
+							GameObject go = Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
+							ability.pointEffect = go.GetComponent<Ability_Effect>();
+							ability.pointEffect.SetEffectActive(ability.isActive);
+						}
+
+						ability.pointEffect.transform.position = ability.user.transform.position; // Move effect to center of user
 					}
 					break;
 				case AbilityType.ArmorRegen: // Regenerate armor over time based on missing armor
@@ -169,6 +251,7 @@ public static class AbilityUtils
 						ability.user.TrueDamage(0, -ability.gameRules.ABLYarmorRegenHPS[regenIndex] * Time.deltaTime);
 					}
 					break;
+				
 				default:
 					break;
 			}
@@ -185,7 +268,7 @@ public static class AbilityUtils
 		{
 			case AbilityType.ArmorDrain: // Find all enemies in a radius and damage them over time
 				{
-					ability.effect.transform.position = ability.user.transform.position; // Move effect to center of user
+					ability.pointEffect.transform.position = ability.user.transform.position; // Move effect to center of user
 
 					Collider[] cols = Physics.OverlapSphere(ability.user.transform.position, ability.gameRules.ABLYarmorDrainRange, ability.gameRules.entityLayerMask);
 					List<Unit> units = new List<Unit>();
@@ -217,16 +300,43 @@ public static class AbilityUtils
 						else
 							units[i].TrueDamage(0, ability.gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
 						if (units[i].GetHP().z > 0)
-							ability.user.TrueDamage(0, -ability.gameRules.ABLYarmorDrainHPS * Time.deltaTime);
+							ability.user.TrueDamage(0, -(ability.gameRules.ABLYarmorDrainAPS + ability.gameRules.ABLYarmorDrainAPSBonusMult * units.Count) * Time.deltaTime);
 					}
 
 					if (units.Count == 0)
-						ability.effect.SetEffectActive(ability.isActive, false);
+						ability.pointEffect.SetEffectActive(ability.isActive, false);
 					else
-						ability.effect.SetEffectActive(ability.isActive, true);
+						ability.pointEffect.SetEffectActive(ability.isActive, true);
 				}
 				break;
-			case AbilityType.Swarm:
+			case AbilityType.ShieldProject:
+				{
+					// TODO: Fix pool zeroing bug!
+					if (ability.unitList.Count > 0)
+					{
+						if (ability.unitList[0] == ability.user) // Regenerate pool rapidly while shield is inacive
+						{
+							ability.pool = Mathf.Clamp(ability.pool + ability.gameRules.ABLYshieldProjectInactivePPS * Time.deltaTime, 0, ability.gameRules.ABLYshieldProjectMaxPool);
+						}
+						else if (!ability.unitList[0]) // If the shield is active but our charge accidentally dies, self-cast
+						{
+							ability.target.unit = ability.user; // Avoid manually setting target if possible, but necessary here
+							StartAbility(ability);
+						}
+					}
+				}
+				break;
+			case AbilityType.SpawnSwarm:
+				{
+					if (ability.stacks < ability.gameRules.ABLYswarmMaxUses) // If we've already used the ability (so we should have a target already set)
+					{
+						Particles_Swarming swarmManager = ability.user.GetComponent<Particles_Swarming>();
+						if (!swarmManager.GetTarget().unit) // Self-cast if the target dies
+						{
+							swarmManager.SetTarget(new AbilityTarget(ability.user));
+						}
+					}
+				}
 				break;
 			default:
 				break;
@@ -240,10 +350,26 @@ public static class AbilityUtils
 		{
 			case AbilityType.ArmorDrain:
 				{
-					ability.effect.End();
+					ability.pointEffect.End();
 				}
 				break;
-			case AbilityType.Swarm:
+			case AbilityType.ShieldProject:
+				{
+					if (ability.unitList.Count > 0)
+					{
+						Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.target.unit.transform.position, Quaternion.identity);
+
+						if (ability.unitList[0] != ability.user)
+						{
+							ability.pool = ability.unitList[0].GetShieldPool();
+							ability.unitList[0].RemoveShield(); // Remove shield from previous user ONLY IF ITS OUR SHIELD
+						}
+					}
+					else
+					{
+						Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
+					}
+				}
 				break;
 			case AbilityType.SelfDamage:
 				{
@@ -270,14 +396,17 @@ public static class AbilityUtils
 	}
 
 	// X = Cooldown, Y = Active Duration, Z = Reset Duration
+	// All default to 1 second
 	public static Vector3 DeltaDurations(AbilityType type)
 	{
 		switch (type)
 		{
 			case AbilityType.ArmorDrain:
 				return DeltaOf(new Vector3(2.0f, 15.0f, 30.0f));
-			case AbilityType.Swarm:
-				return DeltaOf(new Vector3(24.0f, 0, 0));
+			case AbilityType.SpawnSwarm:
+				return DeltaOf(new Vector3(3.0f, 0, 0));
+			case AbilityType.MoveSwarm:
+				return DeltaOf(new Vector3(0.5f, 0, 0));
 			case AbilityType.SelfDamage:
 				return DeltaOf(new Vector3(2.0f, 0, 0));
 			default:
@@ -306,22 +435,26 @@ public static class AbilityUtils
 		{
 			case AbilityType.ArmorDrain:
 				return 0;
-			case AbilityType.Swarm:
+			case AbilityType.SpawnSwarm:
+				return 1;
+			case AbilityType.MoveSwarm:
+				return 1;
+			case AbilityType.ShieldProject:
 				return 1;
 			default:
 				return 0;
 		}
 	}
 
-	// 0 = no, 1 = unit, 2 = position
+	// Display name of ability
 	public static string AbilityName(AbilityType type)
 	{
 		switch (type)
 		{
 			case AbilityType.ArmorDrain:
-				return "Degrade";
-			case AbilityType.Swarm:
-				return "Swarm";
+				return "Disintegrate";
+			case AbilityType.SpawnSwarm:
+				return "Deploy Swarm";
 			default:
 				return "default";
 		}

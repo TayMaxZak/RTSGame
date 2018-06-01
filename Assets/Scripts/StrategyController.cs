@@ -40,6 +40,7 @@ public class StrategyController : MonoBehaviour
 		{
 			Vector3 velocityVector = Vector3.zero;
 
+			// TOREMOVE
 			if (Input.mousePosition.x < screenBorderSize)
 				velocityVector.x = -speed * Time.deltaTime;
 			else if (Input.mousePosition.x > Screen.width - screenBorderSize)
@@ -49,6 +50,15 @@ public class StrategyController : MonoBehaviour
 				velocityVector.z = -speed * Time.deltaTime;
 			else if (Input.mousePosition.y > Screen.height - screenBorderSize)
 				velocityVector.z = speed * Time.deltaTime;
+
+			if (Input.mousePosition.x < screenBorderSize)
+			{
+				Debug.Log((screenBorderSize - Input.mousePosition.x) / screenBorderSize);
+			}
+			else if (Input.mousePosition.x > Screen.width - screenBorderSize)
+			{
+				Debug.Log((Input.mousePosition.x - (Screen.width - screenBorderSize) + 1) / screenBorderSize);
+			}
 
 			camRoot.transform.Translate(velocityVector, Space.Self);
 		}

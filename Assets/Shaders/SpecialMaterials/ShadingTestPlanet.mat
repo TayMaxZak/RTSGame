@@ -31,15 +31,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _AmbientFallD: 0.375
-    - _AmbientFallL: 1
+    - _AmbientFallD: 0
+    - _AmbientFallL: 0.5
     - _AmbientMult: 1
-    - _LightSteps: 8
-    - _NoiseAmount: 1
-    - _NoiseSteps: 16
-    - _NoiseStretch: 1
-    - _NoiseSubSteps: 50
-    - _SSSStrength: 1
+    - _SSSStrength: 0.5
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _SSSColor: {r: 1, g: 1, b: 1, a: 1}

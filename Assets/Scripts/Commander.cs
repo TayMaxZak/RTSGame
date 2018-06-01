@@ -17,6 +17,7 @@ public class Commander : MonoBehaviour
 	// Building //
 	[SerializeField]
 	private BuildUnit[] buildUnits;
+	private int[] buildUnitCounters; // Tracks number of times corresponding build unit was built
 	private int buildUnitIndex;
 
 	private GameObject buildPreview;
@@ -69,6 +70,8 @@ public class Commander : MonoBehaviour
 		foreach (GameObject go in grids)
 			go.SetActive(false);
 		UpdateGrid(curGrid);
+
+		buildUnitCounters = new int[buildUnits.Length];
 	}
 
 	RaycastHit RaycastFromCursor(int targetLayer) // 0 = entity, 1 = grid, 2 = anything else
@@ -191,6 +194,14 @@ public class Commander : MonoBehaviour
 			}
 		} //rmb
 
+		if (Input.GetButton("Control"))
+		{
+			if (Input.GetButtonDown("Select All"))
+			{
+
+			}
+		}
+
 		// Raise/Lower Grid
 		if (Input.GetButtonDown("RaiseGrid"))
 		{
@@ -244,7 +255,7 @@ public class Commander : MonoBehaviour
 		else if(AbilityUtils.RequiresTarget(current.GetAbilityType()) == 1) // Targets a unit
 		{
 			Entity ent = GetEntityFromHit(RaycastFromCursor(0));
-			if (IsUnit(ent))
+			if (ent && IsUnit(ent))
 			{
 				AbilityTarget targ = new AbilityTarget((Unit)ent);
 				unit.OrderAbility(index, targ);
@@ -313,8 +324,16 @@ public class Commander : MonoBehaviour
 	{
 		if (buildState != 0)
 			return;
-		buildState = 1;
+
 		buildUnitIndex = id;
+
+		if (buildUnitCounters[buildUnitIndex] >= buildUnits[buildUnitIndex].unitCap)
+			return;
+
+		if (!SubtractResources(buildUnits[buildUnitIndex].cost))
+			return;
+
+		buildState = 1;
 		buildPreview = Instantiate(buildUnits[buildUnitIndex].previewObject, Vector3.zero, Quaternion.identity);
 		buildPreview.SetActive(false);
 	}
@@ -326,6 +345,7 @@ public class Commander : MonoBehaviour
 
 	void BuildCancel()
 	{
+		RefundResources(buildUnits[buildUnitIndex].cost);
 		buildState = 0;
 		Destroy(buildPreview);
 	}
@@ -337,13 +357,8 @@ public class Commander : MonoBehaviour
 		Clone_Build pendingBuild = buildPreview.GetComponent<Clone_Build>();
 		pendingBuild.buildUnit = buildUnits[buildUnitIndex];
 
-		if (SubtractResources(pendingBuild.buildUnit.cost))
-		{
-			//Debug.Log("Build " + buildUnitIndex + " started.");
-			pendingBuild.Build(buildUnitIndex);
-		}
-		else
-			BuildCancel();
+		pendingBuild.Build(buildUnitIndex);
+		buildUnitCounters[buildUnitIndex]++;
 	}
 
 	void UpdateResources()
@@ -355,7 +370,7 @@ public class Commander : MonoBehaviour
 	{
 		float newResPoints = resPoints - cost;
 
-		if (newResPoints >= 0)
+		if (CheckResources(cost))
 		{
 			resPoints = newResPoints;
 			UpdateResources();
@@ -367,12 +382,38 @@ public class Commander : MonoBehaviour
 		}
 	}
 
-	public void RefundResources(Unit unit)
+	bool CheckResources(float cost)
+	{
+		float newResPoints = resPoints - cost;
+
+		if (newResPoints >= 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	void RefundResources(float resources)
+	{
+		resPoints += resources;
+		UpdateResources();
+	}
+
+	void RefundBuildCap(int index)
+	{
+		buildUnitCounters[index]--;
+		Debug.Log(buildUnitCounters[index]);
+	}
+
+	public void RefundUnit(Unit unit)
 	{
 		if (unit.buildUnitIndex < 0)
 			return;
-		resPoints += buildUnits[unit.buildUnitIndex].cost;
-		UpdateResources();
+		RefundResources(buildUnits[unit.buildUnitIndex].cost);
+		RefundBuildCap(unit.buildUnitIndex);
 	}
 
 	bool IsUnit(Entity ent)

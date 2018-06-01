@@ -5,8 +5,10 @@ using UnityEngine;
 public class Turret : MonoBehaviour
 {
 	public int team = 0;
-
 	private int state = 0; // 0 = standby, 1 = shooting
+
+	[SerializeField]
+	private Projectile projTemplate;
 
 	[Header("Targeting")]
 	[SerializeField]
@@ -18,35 +20,37 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private AudioClip soundShoot; // Played on each shot or, if there is an audio loop, when the loop ends
 
-	[SerializeField]
-	private Projectile projTemplate;
-
 	[Header("Shooting")]
 	[SerializeField]
 	private Transform firePos;
-	[SerializeField]
-	private float accuracy = 1;
-	
-	[SerializeField]
-	private int pelletCount = 1;
 	private int curAmmo = 4;
 	[SerializeField]
 	private int maxAmmo = 4;
+	[SerializeField]
+	private int pelletCount = 1;
+	[SerializeField]
+	private float accuracy = 1;
+	private float allowShootThressh = 0.001f;
 
 	[SerializeField]
 	private float reloadCooldown = 4;
+	// If we manually clear target, this should immediately trigger an early reload
+	// If the target goes out of range, this should immediately trigger a early reload
+	// This coroutine references the specific reload we want to cancel
+	private Coroutine reloadCoroutine;
+	private bool isReloadCancellable;
 
 	[SerializeField]
+	[Tooltip("Rate of fire measured in rounds per minute")]
 	private float rateOfFire = 120; // In RPM
 	private float shootCooldown;
 	[SerializeField]
 	private float shootOffsetRatio = 0.0f;
 	private float shootOffset;
 
-	[Header("Turning")]
+	[Header("Rotating")]
 	[SerializeField]
 	private float RS = 90;
-
 	private Quaternion rotation;
 	[SerializeField]
 	private bool baseRotatesOnY = true;
@@ -55,26 +59,26 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private Transform pivotX;
 
-	// If we manually clear target, this should immediately trigger an early reload
-	// If the target goes out of range, this should immediately trigger a early reload
-	// This coroutine references the specific reload we want to cancel
-	private Coroutine reloadCoroutine;
-	private bool isReloadCancellable;
+	[Header("Rotation Limits")]
+	[SerializeField]
+	private float minX;
+	[SerializeField]
+	private float maxX;
+
 
 	private bool targetInRange;
 	private bool isReloading;
 	private bool isShooting;
+
 	private Quaternion lookRotation;
+	private Quaternion forwardRotation;
 	private Vector3 direction;
-	[SerializeField]
-	private float allowShootThressh = 0.001f;
+
+	private int resetRotFrame;
 
 	private GameRules gameRules;
 	private Manager_Projectiles projs;
-
 	private AudioSource audioSource;
-
-	private int resetRotFrame;
 
 	// Use this for initialization
 	void Start()
@@ -92,8 +96,8 @@ public class Turret : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		if (!target && targetInRange)
-			UpdateTarget(target);
+		if (state == 1 && !target)
+			UpdateTarget();
 
 		//Debug.Log("STATE = " + state);
 
@@ -239,7 +243,7 @@ public class Turret : MonoBehaviour
 			return;
 		}
 
-		StartCoroutine(CoroutineShoot());
+		StartCoroutine(CoroutineShoot(delay));
 	}
 
 	void AttemptEarlyReload()
@@ -258,12 +262,6 @@ public class Turret : MonoBehaviour
 	{
 		isReloading = true;
 		reloadCoroutine = StartCoroutine(CoroutineReload());
-	}
-
-	IEnumerator CoroutineShoot()
-	{
-		yield return null;
-		StartCoroutine(CoroutineShoot(0));
 	}
 
 	IEnumerator CoroutineShoot(float delay)
@@ -315,11 +313,6 @@ public class Turret : MonoBehaviour
 		}
 		else
 			difference = transform.forward;
-		/*
-		float targetRSRatio = 1;
-		float RSdelta = Mathf.Sign(targetRSRatio - curRSRatio) * (1f / RSAccel) * Time.deltaTime;
-		curRSRatio = Mathf.Clamp01(curRSRatio + RSdelta);*/
-		float curRSRatio = 1;
 
 		// Fixes strange RotateTowards bug
 		Quaternion resetRot = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
@@ -327,13 +320,14 @@ public class Turret : MonoBehaviour
 		// Rotate towards our target
 		direction = difference.normalized;
 		lookRotation = Quaternion.LookRotation(direction, Vector3.up);
-		Vector3 oldRot = rotation.eulerAngles;
-		rotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * RS * curRSRatio);
-		Vector3 newRot = rotation.eulerAngles;
+		
+		rotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * RS);
 
 		// Fixes strange RotateTowards bug
 		if (Time.frameCount == resetRotFrame)
 			rotation = resetRot;
+
+		//LimitRotation();
 
 		// Apply rotation to object
 		if (baseRotatesOnY)
@@ -348,16 +342,27 @@ public class Turret : MonoBehaviour
 		}
 	}
 
+	void LimitRotation()
+	{
+		forwardRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
+
+		Vector3 rotationEuler = new Vector3(0, ClampAngle(rotation.eulerAngles.y, forwardRotation.eulerAngles.y - 90, forwardRotation.eulerAngles.y + 90), 0);
+		rotation = Quaternion.Euler(rotationEuler);
+	}
+
+	float ClampAngle(float angle, float min, float max)
+	{
+		return angle;
+	}
+
 	public void SetTarget(Unit newTarg)
 	{
 		target = newTarg;
 
-		Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
-
-		UpdateTarget(newTarg);
+		UpdateTarget();
 	}
 
-	void UpdateTarget(Unit newTarg)
+	private void UpdateTarget()
 	{
 		resetRotFrame = Time.frameCount;
 
@@ -370,5 +375,7 @@ public class Turret : MonoBehaviour
 		{
 			state = 0;
 		}
+
+		//Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
 	}
 }

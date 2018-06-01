@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class AbilityTarget
 {
-	[SerializeField]
 	public Unit unit;
-	[SerializeField]
 	public Vector3 position;
 
 	public AbilityTarget(Unit u)
@@ -19,11 +18,11 @@ public class AbilityTarget
 		position = pos;
 	}
 
-	public bool UnitOrPos()
-	{
-		if (unit)
-			return true;
-		else
-			return false;
-	}
+	//public bool UnitOrPos()
+	//{
+	//	if (unit)
+	//		return true;
+	//	else
+	//		return false;
+	//}
 }

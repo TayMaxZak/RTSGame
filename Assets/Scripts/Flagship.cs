@@ -9,21 +9,14 @@ public class Flagship : Unit
 	new void Start()
 	{
 		base.Start(); // Init Unit base class
+		maxShield = gameRules.FLAGshieldPool;
 	}
 
-	// Banking
-	//float bank = bankAngle * -Vector3.Dot(transform.right, direction);
-	//banker.localRotation = Quaternion.AngleAxis(bankAngle, Vector3.forward);
-
 	// Update is called once per frame
+	/*
 	new void Update ()
 	{
 		base.Update(); // Unit base class
-		UpdateUI();
 	}
-
-	void UpdateUI()
-	{
-
-	}
+	*/
 }

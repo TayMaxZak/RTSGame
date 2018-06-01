@@ -8,7 +8,7 @@ public class Entity : MonoBehaviour
 	[SerializeField]
 	private string displayName = "Default Name";
 	[SerializeField]
-	private Transform swarmTarget;
+	protected Transform swarmTarget;
 	[SerializeField]
 	private float selCircleSize = 1;
 
