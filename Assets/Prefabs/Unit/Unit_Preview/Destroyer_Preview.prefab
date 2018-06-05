@@ -295,3 +295,7 @@ MonoBehaviour:
   warpModel: {fileID: 1761835630865440}
   spawnEffect: {fileID: 1354150930089102, guid: aad66cec036493a44bb12fb356fb91a0,
     type: 2}
+  warpTime: 0.1
+  spawnEffectTime: 1
+  progBarPrefab: {fileID: 114328720982762972, guid: 43871807618b826478d22ff0bb0b85ec,
+    type: 2}

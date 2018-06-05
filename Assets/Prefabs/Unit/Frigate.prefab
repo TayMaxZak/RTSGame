@@ -1837,8 +1837,11 @@ MonoBehaviour:
   swarmTarget: {fileID: 4907543980749030}
   selCircleSize: 2.5
   printStatus: 0
+  hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
+    type: 2}
+  hpEffects: {fileID: 0}
   team: 0
-  buildUnitIndex: -1
+  buildIndex: -1
   curArmor: 300
   maxArmor: 300
   curHealth: 250
@@ -1862,9 +1865,26 @@ MonoBehaviour:
       HLTHthreshBurn: 0
       HLTHburnMin: 0
       HLTHburnMax: 0
+      WRCKfallSpeedMax: 10
+      WRCKfallSpeedAccel: 3
+      WRCKlifetime: 8
+      WRCKmassHealthMult: 1
+      WRCKmassArmorMult: 0.5
+      WRCKcollisionSpeedPenalty: 0.6
       FLAGshieldMax: 500
       FLAGshieldRegenGPS: 5
       FLAGshieldRegenDelay: 10
+      RESreclaimTime: 10
+      SPWNflagshipRadius: 20
+      AUDpitchVariance: 0
+      PRJmaxTimeAlive: 0
+      PRJhitOffset: 0
+      entityLayerMask:
+        serializedVersion: 2
+        m_Bits: 0
+      gridLayerMask:
+        serializedVersion: 2
+        m_Bits: 0
       ABLYarmorDrainRange: 0
       ABLYarmorDrainDPSEnemy: 0
       ABLYarmorDrainDPSAlly: 0
@@ -1877,20 +1897,14 @@ MonoBehaviour:
       ABLYswarmMaxUses: 3
       ABLYswarmDPS: 3
       ABLYswarmDamageRadius: 8
+      ABLYhealFieldRange: 25
+      ABLYhealFieldAllyGPS: 2
+      ABLYhealFieldAllyGPSBonusMult: 0.005
+      ABLYhealFieldUserGPS: 4
+      ABLYhealFieldResCost: 3
+      ABLYhealFieldResTime: 5
       STATswarmShieldDmgReduce: 0.1
       STATswarmShieldMaxStacks: 4
-      SPWNeffectTime: 0
-      SPWNwarpTime: 0
-      SPWNflagshipRadius: 20
-      AUDpitchVariance: 0
-      PRJmaxTimeAlive: 0
-      PRJhitOffset: 0
-      entityLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      gridLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
     pointEffect: {fileID: 0}
     user: {fileID: 0}
     target:
@@ -1907,9 +1921,26 @@ MonoBehaviour:
       HLTHthreshBurn: 0
       HLTHburnMin: 0
       HLTHburnMax: 0
+      WRCKfallSpeedMax: 10
+      WRCKfallSpeedAccel: 3
+      WRCKlifetime: 8
+      WRCKmassHealthMult: 1
+      WRCKmassArmorMult: 0.5
+      WRCKcollisionSpeedPenalty: 0.6
       FLAGshieldMax: 500
       FLAGshieldRegenGPS: 5
       FLAGshieldRegenDelay: 10
+      RESreclaimTime: 10
+      SPWNflagshipRadius: 20
+      AUDpitchVariance: 0
+      PRJmaxTimeAlive: 0
+      PRJhitOffset: 0
+      entityLayerMask:
+        serializedVersion: 2
+        m_Bits: 0
+      gridLayerMask:
+        serializedVersion: 2
+        m_Bits: 0
       ABLYarmorDrainRange: 0
       ABLYarmorDrainDPSEnemy: 0
       ABLYarmorDrainDPSAlly: 0
@@ -1922,26 +1953,21 @@ MonoBehaviour:
       ABLYswarmMaxUses: 3
       ABLYswarmDPS: 3
       ABLYswarmDamageRadius: 8
+      ABLYhealFieldRange: 25
+      ABLYhealFieldAllyGPS: 2
+      ABLYhealFieldAllyGPSBonusMult: 0.005
+      ABLYhealFieldUserGPS: 4
+      ABLYhealFieldResCost: 3
+      ABLYhealFieldResTime: 5
       STATswarmShieldDmgReduce: 0.1
       STATswarmShieldMaxStacks: 4
-      SPWNeffectTime: 0
-      SPWNwarpTime: 0
-      SPWNflagshipRadius: 20
-      AUDpitchVariance: 0
-      PRJmaxTimeAlive: 0
-      PRJhitOffset: 0
-      entityLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      gridLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
     pointEffect: {fileID: 0}
     user: {fileID: 0}
     target:
       unit: {fileID: 0}
       position: {x: 0, y: 0, z: 0}
     unitList: []
+  velocityMod: {x: 0, y: 0, z: 0}
   MS: 3.5
   MSVerticalMod: 0.4
   MSAccel: 1

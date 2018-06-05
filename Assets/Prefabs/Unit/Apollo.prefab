@@ -275,7 +275,6 @@ GameObject:
   - component: {fileID: 33934732127134688}
   - component: {fileID: 23257035969092386}
   - component: {fileID: 65606189105715982}
-  - component: {fileID: 65105821549240842}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -784,18 +783,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1068458054660790}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &65105821549240842
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1853842422680514}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.64, y: 1.08, z: 1.15}
-  m_Center: {x: 0, y: -0.95, z: -0.06}
 --- !u!65 &65606189105715982
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -806,8 +793,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.61, y: 1.38, z: 2.71}
-  m_Center: {x: 0, y: 0.23, z: -0.1}
+  m_Size: {x: 1.61, y: 2.92, z: 2.71}
+  m_Center: {x: 0, y: -0.12, z: -0.1}
 --- !u!82 &82244398850110840
 AudioSource:
   m_ObjectHideFlags: 1
@@ -1297,8 +1284,11 @@ MonoBehaviour:
   swarmTarget: {fileID: 4671991824821066}
   selCircleSize: 1.2
   printStatus: 0
+  hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
+    type: 2}
+  hpEffects: {fileID: 0}
   team: 0
-  buildUnitIndex: -1
+  buildIndex: -1
   curArmor: 150
   maxArmor: 150
   curHealth: 250
@@ -1321,23 +1311,17 @@ MonoBehaviour:
       HLTHthreshBurn: 0
       HLTHburnMin: 0
       HLTHburnMax: 0
-      FLAGshieldPool: 500
-      ABLYarmorDrainRange: 0
-      ABLYarmorDrainDPSEnemy: 0
-      ABLYarmorDrainDPSAlly: 0
-      ABLYarmorDrainAPS: 1
-      ABLYarmorDrainAPSBonusMult: 1
-      ABLYarmorDrainMaxVictims: 0
-      ABLYarmorRegenHPS: []
-      ABLYshieldProjectMaxPool: 500
-      ABLYshieldProjectInactivePPS: 8
-      ABLYswarmMaxUses: 3
-      ABLYswarmDPS: 3
-      ABLYswarmDamageRadius: 8
-      STATswarmShieldDmgReduce: 0.1
-      STATswarmShieldMaxStacks: 4
-      SPWNeffectTime: 0
-      SPWNwarpTime: 0
+      WRCKfallSpeedMax: 5
+      WRCKfallSpeedAccel: 2
+      WRCKlifetime: 8
+      WRCKmassHealthMult: 1
+      WRCKmassArmorMult: 0.5
+      WRCKcollisionSpeedPenalty: 0.5
+      FLAGshieldMax: 500
+      FLAGshieldRegenGPS: 5
+      FLAGshieldRegenDelay: 10
+      RESreclaimTime: 1
+      SPWNflagshipRadius: 20
       AUDpitchVariance: 0
       PRJmaxTimeAlive: 0
       PRJhitOffset: 0
@@ -1347,20 +1331,41 @@ MonoBehaviour:
       gridLayerMask:
         serializedVersion: 2
         m_Bits: 0
+      ABLYarmorDrainRange: 0
+      ABLYarmorDrainDPSEnemy: 0
+      ABLYarmorDrainDPSAlly: 0
+      ABLYarmorDrainGPS: 1
+      ABLYarmorDrainGPSBonusMult: 1
+      ABLYarmorDrainMaxVictims: 0
+      ABLYarmorRegenHPS: []
+      ABLYshieldProjectMaxPool: 500
+      ABLYshieldProjectInactiveGPS: 8
+      ABLYswarmMaxUses: 3
+      ABLYswarmDPS: 3
+      ABLYswarmDamageRadius: 8
+      ABLYhealFieldRange: 25
+      ABLYhealFieldAllyGPS: 2
+      ABLYhealFieldAllyGPSBonusMult: 0.005
+      ABLYhealFieldUserGPS: 4
+      ABLYhealFieldResCost: 3
+      ABLYhealFieldResTime: 5
+      STATswarmShieldDmgReduce: 0.1
+      STATswarmShieldMaxStacks: 4
     pointEffect: {fileID: 0}
     user: {fileID: 0}
     target:
       unit: {fileID: 0}
       position: {x: 0, y: 0, z: 0}
     unitList: []
+  velocityMod: {x: 0, y: 0, z: 0}
   MS: 3
-  MSverticalMod: 0.4
+  MSVerticalMod: 0.4
   MSAccel: 0.5
   MSDeccel: 1
   RS: 50
   RSAccel: 1.25
   model: {fileID: 4917791186809190}
-  reachGoalThresh: 1.3
+  reachGoalThresh: 1.6
   YMSResetThresh: 1
   allowMoveThresh: 0.6
 --- !u!114 &114574471153303864

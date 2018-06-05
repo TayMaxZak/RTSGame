@@ -944,8 +944,11 @@ MonoBehaviour:
   swarmTarget: {fileID: 4283069539521836}
   selCircleSize: 0.6
   printStatus: 0
+  hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
+    type: 2}
+  hpEffects: {fileID: 0}
   team: 0
-  buildUnitIndex: -1
+  buildIndex: -1
   curArmor: 100
   maxArmor: 100
   curHealth: 100
@@ -957,14 +960,15 @@ MonoBehaviour:
   - {fileID: 114533801953351042}
   - {fileID: 114332884733111768}
   abilities: []
+  velocityMod: {x: 0, y: 0, z: 0}
   MS: 5
   MSVerticalMod: 0.4
   MSAccel: 0.5
-  MSDeccel: 1
-  RS: 100
-  RSAccel: 0.5
+  MSDeccel: 1.5
+  RS: 50
+  RSAccel: 1
   model: {fileID: 4723779402802132}
-  reachGoalThresh: 1.5
+  reachGoalThresh: 2
   YMSResetThresh: 1
   allowMoveThresh: 0.6
 --- !u!114 &114319464697193732

@@ -7,8 +7,6 @@ public class UI_HPBar : MonoBehaviour
 {
 	[SerializeField]
 	private Image healthFill;
-	[SerializeField]
-	private Image healthBkg;
 	private float healthCur = 0;
 	private float healthTarg = 1;
 	private float healthT = 0;
@@ -22,15 +20,11 @@ public class UI_HPBar : MonoBehaviour
 
 	[SerializeField]
 	private Image armorFill;
-	[SerializeField]
-	private Image armorBkg;
 	private float armorCur = 0;
 	private float armorTarg = 1;
 	private float armorT = 0;
 	[SerializeField]
 	private float armorWidth = 98;
-	[SerializeField]
-	private Color armorScorchColor = Color.black;
 	private Color armorOrigColor = Color.blue;
 
 	[SerializeField]
@@ -62,13 +56,13 @@ public class UI_HPBar : MonoBehaviour
 
 	void Update()
 	{
-		healthT += Time.deltaTime / uiRules.HPBvalUpdateTime;
+		healthT += Time.deltaTime / uiRules.HPBupdateTime;
 		healthCur = Mathf.Lerp(healthCur, healthTarg, healthT);
 
-		armorT += Time.deltaTime / uiRules.HPBvalUpdateTime;
+		armorT += Time.deltaTime / uiRules.HPBupdateTime;
 		armorCur = Mathf.Lerp(armorCur, armorTarg, armorT);
 
-		shieldT += Time.deltaTime / uiRules.HPBvalUpdateTime;
+		shieldT += Time.deltaTime / uiRules.HPBupdateTime;
 		shieldCur = Mathf.Lerp(shieldCur, shieldTarg, shieldT);
 
 

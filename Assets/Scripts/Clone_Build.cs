@@ -13,16 +13,28 @@ public class Clone_Build : MonoBehaviour
 	[SerializeField]
 	private GameObject spawnEffect;
 
+	[SerializeField]
+	private float warpTime = 0.05f;
+	[SerializeField]
+	private float spawnEffectTime = 1;
+
+	[SerializeField]
+	private UI_ProgBar progBarPrefab;
+	private UI_ProgBar progBar;
+	private Vector2 progBarOffset;
+
 	private float warpingTime;
 	private float warpingAmount;
-	private GameRules gameRules;
+	//private GameRules gameRules;
 
 	private int buildUnitIndex;
 
+	private float startTime;
+	private float finishTime;
+
 	void Start()
 	{
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
-		//warpingTime = gameRules.SPWNwarpTime;
+		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 		warpingAmount = warpModel.transform.localScale.z;
 		warpModel.SetActive(false);
 	}
@@ -30,16 +42,26 @@ public class Clone_Build : MonoBehaviour
 	public void Build(int index)
 	{
 		buildUnitIndex = index;
+		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
+		progBar = Instantiate(progBarPrefab);
+		progBar.transform.SetParent(uiManager.Canvas.transform, false);
+		progBarOffset = uiManager.UIRules.BPBoffset;
+
+		startTime = Time.time;
+		finishTime = buildUnit.buildTime;
+
+		UpdateUI();
+
 		StartCoroutine(Building());
 	}
 
 	IEnumerator Building()
 	{
-		yield return new WaitForSeconds(buildUnit.buildTime - gameRules.SPWNeffectTime);
+		yield return new WaitForSeconds(buildUnit.buildTime - spawnEffectTime);
 		Effect();
-		yield return new WaitForSeconds(gameRules.SPWNeffectTime - gameRules.SPWNwarpTime);
+		yield return new WaitForSeconds(spawnEffectTime - warpTime);
 		StartCoroutine(Warp());
-		yield return new WaitForSeconds(gameRules.SPWNwarpTime);
+		yield return new WaitForSeconds(warpTime);
 		Finish();
 	}
 
@@ -53,16 +75,42 @@ public class Clone_Build : MonoBehaviour
 	IEnumerator Warp()
 	{
 		warpModel.SetActive(true);
-		yield return new WaitForSeconds(gameRules.SPWNwarpTime);
+		yield return new WaitForSeconds(warpTime);
 		warpModel.SetActive(false);
 	}
 
 	void Update()
 	{
+		if (progBar)
+			UpdateUI();
+
 		if (warpModel.activeSelf)
 		{
-			warpingTime += Time.deltaTime / gameRules.SPWNwarpTime;
+			warpingTime += Time.deltaTime / warpTime;
 			warpModel.transform.localScale = new Vector3(1, 1, Mathf.Lerp(warpingAmount, 1, warpingTime));
+		}
+	}
+
+	void UpdateUI()
+	{
+		Vector3 barPosition = new Vector3(transform.position.x + progBarOffset.x, transform.position.y + progBarOffset.y, transform.position.z + progBarOffset.x);
+		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
+
+		float dot = Vector3.Dot((barPosition - Camera.main.transform.position).normalized, Camera.main.transform.forward);
+		if (dot < 0)
+		{
+			if (progBar.gameObject.activeSelf)
+				progBar.gameObject.SetActive(false);
+		}
+		else
+		{
+			if (!progBar.gameObject.activeSelf)
+				progBar.gameObject.SetActive(true);
+
+			RectTransform rect = progBar.GetComponent<RectTransform>();
+			rect.position = new Vector2(screenPoint.x, screenPoint.y);
+			//rect.localScale = ;
+			progBar.UpdateProgBar((Time.time - startTime) / finishTime); // BUG: FINISH TIME IS ZERO
 		}
 	}
 
@@ -70,7 +118,9 @@ public class Clone_Build : MonoBehaviour
 	{
 		Unit unit = Instantiate(buildUnit.spawnObject, transform.position, transform.rotation).GetComponent<Unit>();
 		if (unit)
-			unit.buildUnitIndex = buildUnitIndex;
+			unit.buildIndex = buildUnitIndex;
+
+		Destroy(progBar.gameObject);
 		Destroy(gameObject);
 	}
 

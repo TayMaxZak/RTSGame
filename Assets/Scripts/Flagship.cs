@@ -9,8 +9,11 @@ public class Flagship : Unit
 	// Use this for initialization
 	new void Start()
 	{
+		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
+		gameRules = gameManager.GameRules; // Grab copy of Game Rules
 		base.Start(); // Init Unit base class
 		maxShield = gameRules.FLAGshieldMax;
+		UpdateHPBarVal();
 	}
 
 	// Update is called once per frame
@@ -22,10 +25,8 @@ public class Flagship : Unit
 		base.Update(); // Unit base class
 	}
 
-	new void OnDamage()
+	protected override void OnDamage()
 	{
-		base.OnDamage();
 		shieldRegenTimer = gameRules.FLAGshieldRegenDelay; // Reset shield regen out-of-combat timer
-		Debug.Log("OnDamage");
 	}
 }

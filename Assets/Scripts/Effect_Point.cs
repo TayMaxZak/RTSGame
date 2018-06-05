@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ability_Effect : MonoBehaviour
+public class Effect_Point : MonoBehaviour
 {
 	private AudioSource audioSource;
 	[SerializeField]
@@ -14,7 +14,6 @@ public class Ability_Effect : MonoBehaviour
 	{
 		audioSource = GetComponent<AudioSource>();
 	}
-
 
 	public void SetEffectActive(bool state)
 	{

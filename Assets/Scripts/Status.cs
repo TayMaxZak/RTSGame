@@ -4,7 +4,8 @@ using UnityEngine;
 
 public enum StatusType
 {
-	SwarmShield
+	SwarmShield,
+	CriticalBurnImmune
 }
 
 [System.Serializable]
@@ -50,6 +51,8 @@ public static class StatusUtils
 		{
 			case StatusType.SwarmShield:
 				return 2;
+			case StatusType.CriticalBurnImmune:
+				return 1;
 			default:
 				return 1;
 		}

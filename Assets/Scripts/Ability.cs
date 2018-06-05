@@ -9,7 +9,8 @@ public enum AbilityType
 	SpawnSwarm,
 	MoveSwarm,
 	SelfDamage,
-	ShieldProject
+	ShieldProject,
+	HealField
 }
 
 [System.Serializable]
@@ -25,7 +26,7 @@ public class Ability
 	public bool isActive;
 
 	[HideInInspector]
-	public Ability_Effect pointEffect; // Ability VFX and SFX at a particular position
+	public Effect_Point pointEffect; // Ability VFX and SFX at a particular position
 	[HideInInspector]
 	public Unit user;
 	[HideInInspector]
@@ -92,7 +93,7 @@ public static class AbilityUtils
 			case AbilityType.ArmorDrain:
 				{
 					GameObject go = Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
-					ability.pointEffect = go.GetComponent<Ability_Effect>();
+					ability.pointEffect = go.GetComponent<Effect_Point>();
 				}
 				break;
 			case AbilityType.SpawnSwarm:
@@ -204,8 +205,15 @@ public static class AbilityUtils
 							}
 						}
 					}
-					break;
 				}
+				break;
+			case AbilityType.HealField:
+				{
+					Ability_HealField healManager = ability.user.GetComponent<Ability_HealField>();
+					if (!healManager.ToggleActive())
+						ability.curCooldown = 0; // Refund cooldown if we fail to activate
+				}
+				break;
 			default:
 				break;
 		}
@@ -323,7 +331,7 @@ public static class AbilityUtils
 				{
 					if (ability.stacks < ability.gameRules.ABLYswarmMaxUses) // If we've already used the ability (so we should have a target already set)
 					{
-						Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>();
+						Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>(); // TODO: Optimize
 						if (!swarmManager.GetTarget().unit) // Self-cast if the target dies
 						{
 							swarmManager.SetTarget(new AbilityTarget(ability.user));
@@ -364,9 +372,16 @@ public static class AbilityUtils
 					}
 				}
 				break;
-			case AbilityType.SelfDamage:
+			case AbilityType.HealField:
 				{
-
+					Ability_HealField healManager = ability.user.GetComponent<Ability_HealField>();
+					healManager.End();
+				}
+				break;
+			case AbilityType.SpawnSwarm:
+				{
+					Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>();
+					swarmManager.End();
 				}
 				break;
 			default:
@@ -397,11 +412,9 @@ public static class AbilityUtils
 			case AbilityType.ArmorDrain:
 				return DeltaOf(new Vector3(2.0f, 15.0f, 30.0f));
 			case AbilityType.SpawnSwarm:
-				return DeltaOf(new Vector3(3.0f, 0, 0));
+				return DeltaOf(new Vector3(5.0f, 0, 0));
 			case AbilityType.MoveSwarm:
 				return DeltaOf(new Vector3(0.5f, 0, 0));
-			case AbilityType.SelfDamage:
-				return DeltaOf(new Vector3(2.0f, 0, 0));
 			default:
 				return DeltaOf(new Vector3());
 		}

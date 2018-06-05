@@ -6,10 +6,16 @@ public class Unit : Entity
 {
 	public bool printStatus = false;
 
+	[Header("Feedback")]
+	[SerializeField]
+	private UI_HPBar hpBarPrefab;
+	[SerializeField]
+	private Effect_HP hpEffects;
+
 	private Unit target;
 	public int team = 0;
 	[HideInInspector]
-	public int buildUnitIndex = -1;
+	public int buildIndex = -1;
 
 	[Header("Health Pool")]
 	[SerializeField]
@@ -37,6 +43,8 @@ public class Unit : Entity
 	[Header("Abilities")]
 	[SerializeField]
 	public List<Ability> abilities;
+	[SerializeField]
+	private Vector3 velocityMod;
 
 	[Header("Moving")]
 	[SerializeField]
@@ -80,10 +88,10 @@ public class Unit : Entity
 
 	private bool selected;
 
-	private Manager_Game gameManager;
+	protected Manager_Game gameManager;
 	protected GameRules gameRules;
 	private UI_HPBar hpBar;
-	private Vector2 HPBarOffset;
+	private Vector2 hpBarOffset;
 
 	private List<Status> statuses;
 	private List<Unit> notifyOnDeath; // These units will be messaged when we die
@@ -99,18 +107,19 @@ public class Unit : Entity
 
 		goal = transform.position; // Path towards current location (i.e. nowhere)
 
-		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
-		gameRules = gameManager.GameRules; // Grab copy of Game Rules
+		if (gameManager == null)
+			gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
+		if (gameRules == null) // Subclass may have already set this field
+			gameRules = gameManager.GameRules; // Grab copy of Game Rules
 
-		//curHealth = maxHealth; // Reset HP values
-		//curArmor = maxArmor;
 		maxShield = gameRules.ABLYshieldProjectMaxPool;
 
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
-		hpBar = Instantiate(uiManager.UnitHPBar);
+		hpBar = Instantiate(hpBarPrefab);
 		hpBar.transform.SetParent(uiManager.Canvas.transform, false);
-		HPBarOffset = uiManager.UIRules.HPBoffset;
-		UpdateUI(); // Make sure healthbar is hidden until the unit is first selected
+		hpBarOffset = uiManager.UIRules.HPBoffset;
+		UpdateHPBarPosAndVis(); // Make sure healthbar is hidden until the unit is first selected
+		UpdateHPBarVal();
 
 		foreach (Ability ab in abilities) // Init abilities
 			ab.Init(this, gameRules);
@@ -130,13 +139,19 @@ public class Unit : Entity
 	protected new void Update ()
 	{
 		base.Update(); // Entity base class
-		UpdateUI();
 		UpdateMovement();
 		UpdateAbilities();
 		UpdateStatuses();
 
-		// Health
+		if (isSelected)
+			UpdateHPBarPosAndVis();
+
+		// Burning
 		bool isBurning = curHealth / maxHealth <= gameRules.HLTHthreshBurn;
+
+		foreach (Status s in statuses)
+			if (s.statusType == StatusType.CriticalBurnImmune)
+				isBurning = false;
 		
 		if (isBurning)
 		{
@@ -149,7 +164,20 @@ public class Unit : Entity
 		}
 	}
 
-	void UpdateUI()
+	public override void OnSelect(Commander selector, bool selectOrDeselect)
+	{
+		base.OnSelect(selector, selectOrDeselect);
+		UpdateHPBarPosAndVis();
+		//Debug.Log(DisplayName + " btw");
+	}
+
+	void UpdateHealth()
+	{
+		UpdateHPBarVal();
+		UpdateEffects();
+	}
+
+	void UpdateHPBarPosAndVis()
 	{
 		if (!isSelected)
 		{
@@ -158,7 +186,7 @@ public class Unit : Entity
 			return;
 		}
 
-		Vector3 barPosition = new Vector3(model.position.x + HPBarOffset.x, swarmTarget.position.y + HPBarOffset.y, model.position.z + HPBarOffset.x);
+		Vector3 barPosition = new Vector3(model.position.x + hpBarOffset.x, swarmTarget.position.y + hpBarOffset.y, model.position.z + hpBarOffset.x);
 		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
 
 		float dot = Vector3.Dot((barPosition - Camera.main.transform.position).normalized, Camera.main.transform.forward);
@@ -175,13 +203,21 @@ public class Unit : Entity
 			RectTransform rect = hpBar.GetComponent<RectTransform>();
 			rect.position = new Vector2(screenPoint.x, screenPoint.y);
 			//rect.localScale = ;
-			UpdateHPBar();
 		}
 	}
 
-	void UpdateHPBar()
+	protected void UpdateHPBarVal()
 	{
 		hpBar.UpdateHPBar(curHealth / maxHealth, curArmor / maxArmor, curShield / maxShield);
+	}
+
+	void UpdateEffects()
+	{
+		// TODO: Optimize frequency of health updates
+		if (hpEffects)
+		{
+			hpEffects.UpdateHealthEffects(curHealth / maxHealth);
+		}
 	}
 
 	void UpdateMovement()
@@ -338,21 +374,26 @@ public class Unit : Entity
 
 		shieldTeam = projectorTeam;
 		curShield = amount;
+		UpdateHPBarVal();
 		return true;
 	}
 
-	public void UpdateShield(float amount)
+	public void SetShield(float amount)
 	{
 		curShield = amount;
+		UpdateHPBarVal();
 	}
 
 	public void RemoveShield()
 	{
 		curShield = 0;
+		UpdateHPBarVal();
 	}
 
 	public bool Damage(float damageBase, float range) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
 	{
+		OnDamage();
+
 		float dmg = damageBase;
 
 		dmg = StatusDamageMod(dmg); // Apply status modifiers to damage first
@@ -392,8 +433,8 @@ public class Unit : Entity
 		curHealth += Mathf.Min(curArmor /*ie armor is negative*/, 0) - overflowDmg - critflowDmg;
 		curArmor += -critflowDmg; // Don't want critflow damage to wrap around and damage health twice, so we put this step after health step
 		curArmor = Mathf.Max(curArmor, 0);
-
-		OnDamage();
+		UpdateHealth();
+		
 
 		if (curHealth <= 0)
 		{
@@ -403,10 +444,8 @@ public class Unit : Entity
 		return true;
 	}
 
-	protected void OnDamage()
-	{
-
-	}
+	protected virtual void OnDamage()
+	{ }
 
 	public float DamageShield(float dmg)
 	{
@@ -420,7 +459,10 @@ public class Unit : Entity
 				return -newShield;
 			}
 			else
+			{
+				UpdateHPBarVal();
 				return -newShield;
+			}
 		}
 		else
 		{
@@ -447,8 +489,9 @@ public class Unit : Entity
 	public void DamageSimple(float healthDmg, float armorDmg) // Simple subtraction to armor and health
 	{
 		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
-
 		curHealth = Mathf.Min(curHealth - healthDmg, maxHealth);
+		UpdateHealth();
+
 		if (curHealth <= 0)
 		{
 			Die();
@@ -467,19 +510,31 @@ public class Unit : Entity
 			ab.End();
 		}
 
+		if (hpEffects)
+			hpEffects.End();
+
 		foreach (Unit un in notifyOnDeath)
 		{
 			un.DeathMessage(this);
 		}
 
 		if (deathClone)
-			Instantiate(deathClone, model.transform.position, model.rotation);
+		{
+			GameObject go = Instantiate(deathClone, model.transform.position, model.rotation);
+			Clone_Wreck wreck = go.GetComponent<Clone_Wreck>();
+			if (wreck)
+				wreck.SetHP(maxHealth, maxArmor);
+		}
 		Destroy(hpBar.gameObject);
 		Destroy(selCircle);
 		Destroy(gameObject);
 
-		//gameManager.Commanders[team].RefundUnit(this);
-		gameManager.Commanders[0].RefundUnit(this); // TODO: While we have 1 commander
+		gameManager.Commanders[team].RefundUnitCounter(buildIndex);
+
+		// Refund resources
+		GameObject go2 = Instantiate(new GameObject());
+		Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
+		resDelay.GiveRecAfterDelay(gameManager.Commanders[team].GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
 	}
 
 	public void SubscribeToDeath(Unit u)
@@ -504,6 +559,9 @@ public class Unit : Entity
 		return velocity;
 	}
 
+	/// <summary>
+	/// Current health, maximum health, current armor, maximum armor
+	/// </summary>
 	public Vector4 GetHP()
 	{
 		return new Vector4(curHealth, maxHealth, curArmor, maxArmor);

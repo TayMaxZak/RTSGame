@@ -8,7 +8,8 @@ public enum BuildUnitType
 	Corvette,
 	Bomber,
 	Frigate,
-	Apollo
+	Apollo,
+	Bulkhead
 }
 
 public class BuildUnit : MonoBehaviour
@@ -17,8 +18,8 @@ public class BuildUnit : MonoBehaviour
 	public BuildUnitType type;
 	public GameObject previewObject;
 	public GameObject spawnObject;
-	public float cost;
-	public float unitCap = 1;
+	public int cost;
+	public int unitCap = 1;
 	public float buildTime;
 
 	//public BuildUnitType GetBuildUnitType()

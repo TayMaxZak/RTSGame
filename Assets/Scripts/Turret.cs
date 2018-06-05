@@ -76,7 +76,7 @@ public class Turret : MonoBehaviour
 
 	private int resetRotFrame;
 
-	private GameRules gameRules;
+	//private GameRules gameRules;
 	private Manager_Projectiles projs;
 	private AudioSource audioSource;
 
@@ -85,7 +85,7 @@ public class Turret : MonoBehaviour
 	{
 		curAmmo = maxAmmo;
 
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
+		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 		projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab copy of Projectiles Manager
 		audioSource = GetComponent<AudioSource>();
 

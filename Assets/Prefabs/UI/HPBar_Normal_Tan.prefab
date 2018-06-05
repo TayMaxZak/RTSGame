@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 114990446281247718}
   - component: {fileID: 114328092779895440}
   m_Layer: 5
-  m_Name: HPBar_NormalTan
+  m_Name: HPBar_Normal_Tan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.44852942, g: 0.3499985, b: 0.2605428, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -171,7 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.25735295, g: 0.25735295, b: 0.25735295, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -197,14 +197,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthFill: {fileID: 114425095458771546}
-  healthBkg: {fileID: 0}
   healthWidth: 98
   healthBurnColor1: {r: 1, g: 0.8864097, b: 0.74264705, a: 1}
   healthBurnColor2: {r: 0.44852942, g: 0.3499985, b: 0.2605428, a: 1}
   armorFill: {fileID: 114408024421690934}
-  armorBkg: {fileID: 0}
   armorWidth: 98
-  armorScorchColor: {r: 0, g: 0, b: 0, a: 1}
   shieldFill: {fileID: 114382050952071276}
   shieldWidth: 106
   borderFill: {fileID: 114990446281247718}
@@ -221,7 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.15973634, b: 0.9264706, a: 0.359}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -248,7 +245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.8161765, g: 0.8161765, b: 0.8161765, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -275,7 +272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.8864097, b: 0.74264705, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -302,7 +299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.8161765, g: 0.8161765, b: 0.8161765, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -329,7 +326,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.44117647, g: 0.72251534, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

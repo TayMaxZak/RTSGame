@@ -11,8 +11,8 @@ public class Manager_UI : MonoBehaviour
 	[SerializeField]
 	public Canvas Canvas;
 
-	[SerializeField]
-	public UI_HPBar UnitHPBar;
+	//[SerializeField]
+	//public UI_HPBar UnitHPBar;
 
 	[SerializeField]
 	public GameObject UnitSelCircle;

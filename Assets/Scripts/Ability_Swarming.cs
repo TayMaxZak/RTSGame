@@ -170,6 +170,12 @@ public class Ability_Swarming : MonoBehaviour {
 		pS.Play();
 	}
 
+	public void End()
+	{
+		// TODO: Write this
+		//Debug.LogError("Unfinished function");
+	}
+
 	float RandomValue()
 	{
 		return Random.value * 2 - 1;

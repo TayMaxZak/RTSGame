@@ -35,21 +35,10 @@ public class StrategyController : MonoBehaviour
 
 		cam.transform.position = camRoot.transform.position;
 
-		Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+		//Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
 		if (!EventSystem.current.IsPointerOverGameObject()/* && screenRect.Contains(Input.mousePosition)*/)
 		{
 			Vector3 velocityVector = Vector3.zero;
-
-			// TOREMOVE:
-			//if (Input.mousePosition.x < screenBorderSize)
-			//	velocityVector.x = -speed * Time.deltaTime;
-			//else if (Input.mousePosition.x > Screen.width - screenBorderSize)
-			//	velocityVector.x = speed * Time.deltaTime;
-
-			//if (Input.mousePosition.y < screenBorderSize)
-			//	velocityVector.z = -speed * Time.deltaTime;
-			//else if (Input.mousePosition.y > Screen.height - screenBorderSize)
-			//	velocityVector.z = speed * Time.deltaTime;
 
 			if (Input.mousePosition.x < screenBorderSize)
 			{

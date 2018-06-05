@@ -10,11 +10,13 @@ public class Commander : MonoBehaviour
 
 	[Header("GUI")]
 	[SerializeField]
-	private Text resPointsCounter;
+	private UI_ResCounter resPointsCounter;
 	[SerializeField]
-	private GameObject buildButtons;
+	private GameObject buildButtonRoot;
+	[SerializeField]
+	private UI_BuildButton[] buildButtons;
 
-	// Building //
+	[Header("Building")]
 	[SerializeField]
 	private BuildUnit[] buildUnits;
 	private int[] buildUnitCounters; // Tracks number of times corresponding build unit was built
@@ -26,9 +28,12 @@ public class Commander : MonoBehaviour
 	private int buildState; // 0 = standby, 1 = moving preview, 2 = rotating preview
 	private Coroutine buildHappening;
 
-	[Header("Objectives")]
+	[Header("Resources")]
 	[SerializeField]
-	private float resPoints = 20;
+	private int resPoints;
+	[SerializeField]
+	private int resPointsToReclaim; // Transferred over time into resPoints
+	private float resReclaimTimer;
 
 	[Header("Sound")]
 	[SerializeField]
@@ -55,6 +60,8 @@ public class Commander : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		//resPoints = resPointsMax;
+
 		//Time.timeScale = 1;
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 		audioSource = GetComponent<AudioSource>();
@@ -68,7 +75,17 @@ public class Commander : MonoBehaviour
 		UpdateGrid(curGrid);
 
 		buildUnitCounters = new int[buildUnits.Length];
-	}
+		for (int i = 0; i < buildButtons.Length; i++)
+		{
+			buildButtons[i].SetTeam(team);
+			buildButtons[i].SetIndex(i);
+			buildButtons[i].SetCost();
+			buildButtons[i].SetCounter(buildUnitCounters[i]);
+		}
+
+		resReclaimTimer = gameRules.RESreclaimTime;
+		UpdateResourceUIAmounts();
+}
 
 	RaycastHit RaycastFromCursor(int targetLayer) // 0 = entity, 1 = grid, 2 = anything else
 	{
@@ -100,7 +117,7 @@ public class Commander : MonoBehaviour
 	void Update ()
 	{
 		//UpdateUI(false);
-
+		UpdateReclaim();
 
 		// Cursor position code
 		// Should be done before clicking code
@@ -298,8 +315,6 @@ public class Commander : MonoBehaviour
 
 	void UpdateUI(bool selectingNewUnit)
 	{
-		resPointsCounter.text = resPoints.ToString();
-
 		if (selectingNewUnit && selected && IsUnit(selected))
 		{
 			Unit unit = (Unit)selected;
@@ -309,14 +324,14 @@ public class Commander : MonoBehaviour
 
 			if (flag)
 			{
-				buildButtons.SetActive(true);
+				buildButtonRoot.SetActive(true);
 				//selectedText.text = "|| FLAGSHIP ||";
 			}
 			else
-				buildButtons.SetActive(false);
+				buildButtonRoot.SetActive(false);
 		}
 		else
-			buildButtons.SetActive(false);
+			buildButtonRoot.SetActive(false);
 	}
 
 	public void BuildButton(int id)
@@ -326,15 +341,20 @@ public class Commander : MonoBehaviour
 
 		buildUnitIndex = id;
 
-		if (buildUnitCounters[buildUnitIndex] >= buildUnits[buildUnitIndex].unitCap)
+		if (buildUnitCounters[buildUnitIndex] >= buildUnits[buildUnitIndex].unitCap) // Already reached the unit number cap
 			return;
 
-		if (!SubtractResources(buildUnits[buildUnitIndex].cost))
+		if (!SubtractResources(buildUnits[buildUnitIndex].cost)) // Don't have enough resources to build
 			return;
 
 		buildState = 1;
 		buildPreview = Instantiate(buildUnits[buildUnitIndex].previewObject, Vector3.zero, Quaternion.identity);
 		buildPreview.SetActive(false);
+	}
+
+	public BuildUnit GetBuildUnit(int id)
+	{
+		return buildUnits[id];
 	}
 
 	void PlacePreview()
@@ -344,7 +364,7 @@ public class Commander : MonoBehaviour
 
 	void BuildCancel()
 	{
-		RefundResources(buildUnits[buildUnitIndex].cost);
+		AddResources(buildUnits[buildUnitIndex].cost);
 		buildState = 0;
 		Destroy(buildPreview);
 	}
@@ -355,24 +375,51 @@ public class Commander : MonoBehaviour
 
 		Clone_Build pendingBuild = buildPreview.GetComponent<Clone_Build>();
 		pendingBuild.buildUnit = buildUnits[buildUnitIndex];
-
 		pendingBuild.Build(buildUnitIndex);
+
 		buildUnitCounters[buildUnitIndex]++;
+
+		buildButtons[buildUnitIndex].SetCounter(buildUnitCounters[buildUnitIndex]);
 	}
 
-	void UpdateResources()
+	void UpdateReclaim()
 	{
-		resPointsCounter.text = "" + (int)resPoints;
+		if (resPointsToReclaim > 0)
+		{
+			resReclaimTimer -= Time.deltaTime;
+			UpdateResourceUITime();
+
+			if (resReclaimTimer <= 0)
+			{
+				resReclaimTimer = gameRules.RESreclaimTime;
+				resPointsToReclaim--;
+				resPoints++;
+				UpdateResourceUIAmounts();
+			}
+		}
 	}
 
-	bool SubtractResources(float cost)
+	void UpdateResourceUIAmounts()
 	{
-		float newResPoints = resPoints - cost;
+		resPointsCounter.UpdateResCounter(resPoints, resPointsToReclaim);
 
-		if (CheckResources(cost))
+		foreach (UI_BuildButton bb in buildButtons)
+			bb.CheckInteractable();
+	}
+
+	void UpdateResourceUITime()
+	{
+		resPointsCounter.UpdateTime(1.0f - (resReclaimTimer / gameRules.RESreclaimTime));
+	}
+
+	bool SubtractResources(int amount)
+	{
+		int newResPoints = resPoints - amount;
+
+		if (CheckResources(amount))
 		{
 			resPoints = newResPoints;
-			UpdateResources();
+			UpdateResourceUIAmounts();
 			return true;
 		}
 		else
@@ -381,9 +428,9 @@ public class Commander : MonoBehaviour
 		}
 	}
 
-	bool CheckResources(float cost)
+	bool CheckResources(int cost)
 	{
-		float newResPoints = resPoints - cost;
+		int newResPoints = resPoints - cost;
 
 		if (newResPoints >= 0)
 		{
@@ -395,24 +442,51 @@ public class Commander : MonoBehaviour
 		}
 	}
 
-	void RefundResources(float resources)
-	{
-		resPoints += resources;
-		UpdateResources();
-	}
-
 	void RefundBuildCap(int index)
 	{
 		buildUnitCounters[index]--;
-		Debug.Log(buildUnitCounters[index]);
 	}
 
-	public void RefundUnit(Unit unit)
+	public void RefundUnitCounter(int index)
 	{
-		if (unit.buildUnitIndex < 0)
+		if (index < 0) // Not initialized with a build index
 			return;
-		RefundResources(buildUnits[unit.buildUnitIndex].cost);
-		RefundBuildCap(unit.buildUnitIndex);
+
+		RefundBuildCap(index);
+
+		buildButtons[index].SetCounter(buildUnitCounters[index]);
+	}
+
+	public float GetResources()
+	{
+		return resPoints;
+	}
+
+	public bool TakeResources(int amount)
+	{
+		return SubtractResources(amount);
+	}
+
+	public void GiveRes(int amount)
+	{
+		AddResources(amount);
+	}
+
+	void AddResources(int amount)
+	{
+		resPoints = resPoints + amount;
+		UpdateResourceUIAmounts();
+	}
+
+	public void GiveRec(int amount)
+	{
+		AddResourcesToReclaim(amount);
+	}
+
+	void AddResourcesToReclaim(int amount)
+	{
+		resPointsToReclaim = resPointsToReclaim + amount;
+		UpdateResourceUIAmounts();
 	}
 
 	bool IsUnit(Entity ent)
