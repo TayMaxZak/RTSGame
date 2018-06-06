@@ -55,7 +55,7 @@ public class UI_BuildButton : MonoBehaviour
 
 	public void Build()
 	{
-		commander.BuildButton(index);
+		commander.UseBuildButton(index);
 	}
 
 	public void CheckInteractable()

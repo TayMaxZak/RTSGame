@@ -53,7 +53,7 @@ public class Commander : MonoBehaviour
 	private int defaultGrid = 1;
 	private int curGrid;
 
-	private Entity selected;
+	private Entity selection;
 	private AudioSource audioSource;
 	private GameRules gameRules;
 
@@ -126,8 +126,9 @@ public class Commander : MonoBehaviour
 			RaycastHit hit = RaycastFromCursor(1);
 			if (hit.collider)
 			{
-				Vector3 dif = Vector3.ClampMagnitude(hit.point - selected.transform.position, gameRules.SPWNflagshipRadius);
-				Vector3 pos = selected.transform.position + dif;
+				// From the flagship (selected), find a position within the spawning radius which is closest to our preview position
+				Vector3 dif = Vector3.ClampMagnitude(hit.point - selection.transform.position, gameRules.SPWNflagshipRadius);
+				Vector3 pos = selection.transform.position + dif;
 
 				buildPreview.transform.position = pos;
 				if (!buildPreview.activeSelf)
@@ -137,6 +138,7 @@ public class Commander : MonoBehaviour
 			}
 			else
 			{
+				// Deactivate preview if not on a valid position
 				if (buildPreview.activeSelf)
 				{
 					//buildPreview.SetActive(false);
@@ -195,16 +197,16 @@ public class Commander : MonoBehaviour
 			{
 				if (buildState > 0)
 					BuildCancel();
-				else if (selected)
+				else if (selection)
 				{
 					RaycastHit hit = RaycastFromCursor(2);
 					Entity ent = GetEntityFromHit(hit);
 					if (ent)
 					{
-						if (ent != selected && IsUnit(ent))
+						if (ent != selection && IsUnit(ent))
 							Target(ent);
 					}
-					else if (hit.collider && IsUnit(selected))
+					else if (hit.collider && IsUnit(selection))
 						Move(hit.point);
 				} //selected
 			}
@@ -254,10 +256,10 @@ public class Commander : MonoBehaviour
 
 	void UseAbility(int index)
 	{
-		if (!selected || !IsUnit(selected))
+		if (!selection || !IsUnit(selection))
 			return;
 
-		Unit unit = (Unit)selected;
+		Unit unit = (Unit)selection;
 
 		if (unit.abilities.Count < index + 1)
 			return;
@@ -291,10 +293,10 @@ public class Commander : MonoBehaviour
 
 	void UseCommandWheel()
 	{
-		if (!selected || !IsUnit(selected))
+		if (!selection || !IsUnit(selection))
 			return;
 
-		Unit unit = (Unit)selected;
+		Unit unit = (Unit)selection;
 
 		RaycastHit hit = RaycastFromCursor(1);
 		if (hit.collider)
@@ -315,9 +317,9 @@ public class Commander : MonoBehaviour
 
 	void UpdateUI(bool selectingNewUnit)
 	{
-		if (selectingNewUnit && selected && IsUnit(selected))
+		if (selectingNewUnit && selection && IsUnit(selection))
 		{
-			Unit unit = (Unit)selected;
+			Unit unit = (Unit)selection;
 			//selectedText.text = "Selected: " + selected.DisplayName;
 
 			Flagship flag = unit.gameObject.GetComponent<Flagship>();
@@ -334,7 +336,7 @@ public class Commander : MonoBehaviour
 			buildButtonRoot.SetActive(false);
 	}
 
-	public void BuildButton(int id)
+	public void UseBuildButton(int id)
 	{
 		if (buildState != 0)
 			return;
@@ -496,11 +498,11 @@ public class Commander : MonoBehaviour
 
 	public void Select(Entity newSel)
 	{
-		if (selected)
-			selected.OnSelect(this, false);
-		selected = newSel;
-		if(selected)
-			selected.OnSelect(this, true);
+		if (selection)
+			selection.OnSelect(this, false);
+		selection = newSel;
+		if(selection)
+			selection.OnSelect(this, true);
 
 		//if (newSel)
 		UpdateUI(true);
@@ -510,14 +512,25 @@ public class Commander : MonoBehaviour
 
 	public void Move(Vector3 newPos)
 	{
-		((Unit)selected).OrderMove(newPos);
-		AudioUtils.PlayClipAt(soundMove, transform.position, audioSource);
-		Instantiate(clickEffect, newPos, Quaternion.identity);
+		if (selection)
+		{
+			((Unit)selection).OrderMove(newPos);
+			AudioUtils.PlayClipAt(soundMove, transform.position, audioSource);
+			Instantiate(clickEffect, newPos, Quaternion.identity);
+		}
 	}
 
 	public void Target(Entity newTarg)
 	{
-		if (newTarg && IsUnit(newTarg))
-			((Unit)selected).OrderAttack((Unit)newTarg);
+		if (selection)
+		{
+			if (newTarg && IsUnit(newTarg))
+				((Unit)selection).OrderAttack((Unit)newTarg);
+		}
+	}
+
+	bool HasSelection()
+	{
+		return selection;
 	}
 }

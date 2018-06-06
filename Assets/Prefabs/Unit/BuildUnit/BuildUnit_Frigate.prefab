@@ -58,4 +58,4 @@ MonoBehaviour:
     type: 2}
   cost: 6
   unitCap: 5
-  buildTime: 15
+  buildTime: 8
