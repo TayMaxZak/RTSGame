@@ -51,11 +51,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aed46aa5a5abf5d4b962903bf4a2f6c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 1
   previewObject: {fileID: 1030691592888378, guid: ed920f27b0ecd1a49b74c45bff86ff90,
     type: 2}
   spawnObject: {fileID: 1327430980122510, guid: 4701c8cf188206642afc9eae95e16e8e,
     type: 2}
   cost: 12
   unitCap: 5
-  buildTime: 10
+  buildTime: 15

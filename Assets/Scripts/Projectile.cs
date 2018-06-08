@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ProjectileType
+public enum DamageType
 {
-	Bullet
+	Normal,
+	Wreck
 }
 
 [System.Serializable]
 public class Projectile
 {
 	[SerializeField]
-	private ProjectileType type = ProjectileType.Bullet;
+	private DamageType type = DamageType.Normal;
 	[SerializeField]
 	private float speed = 0;
 	[SerializeField]

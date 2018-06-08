@@ -5,6 +5,7 @@ using UnityEngine;
 public class Unit : Entity
 {
 	public bool printStatus = false;
+	public UnitType type;
 
 	[Header("Feedback")]
 	[SerializeField]
@@ -43,8 +44,6 @@ public class Unit : Entity
 	[Header("Abilities")]
 	[SerializeField]
 	public List<Ability> abilities;
-	[SerializeField]
-	private Vector3 velocityMod;
 
 	[Header("Moving")]
 	[SerializeField]
@@ -93,10 +92,16 @@ public class Unit : Entity
 	private UI_HPBar hpBar;
 	private Vector2 hpBarOffset;
 
+	// State //
 	private List<Status> statuses;
+	[SerializeField]
+	private List<VelocityMod> velocityMods;
+	private List<Unit> damageTaken;
+
+
 	private List<Unit> notifyOnDeath; // These units will be messaged when we die
 
-	private List<Unit> damageTaken;
+	
 
 	//private List<Unit> killers; // Units that assisted in this unit's death TODO: IMPLEMENT
 
@@ -143,7 +148,7 @@ public class Unit : Entity
 		UpdateAbilities();
 		UpdateStatuses();
 
-		if (isSelected)
+		if (isSelected || isHovered)
 			UpdateHPBarPosAndVis();
 
 		// Burning
@@ -164,6 +169,12 @@ public class Unit : Entity
 		}
 	}
 
+	public override void OnHover(Commander selector, bool selectOrDeselect)
+	{
+		base.OnHover(selector, selectOrDeselect);
+		UpdateHPBarPosAndVis();
+	}
+
 	public override void OnSelect(Commander selector, bool selectOrDeselect)
 	{
 		base.OnSelect(selector, selectOrDeselect);
@@ -179,7 +190,8 @@ public class Unit : Entity
 
 	void UpdateHPBarPosAndVis()
 	{
-		if (!isSelected)
+		
+		if (!isSelected && !isHovered)
 		{
 			if (hpBar.gameObject.activeSelf)
 				hpBar.gameObject.SetActive(false);
@@ -268,7 +280,7 @@ public class Unit : Entity
 		float MSdelta = Mathf.Clamp((targetMSRatio - curMSRatio) * deltaBias, -1, 1) * (1f / MSccel) * Time.deltaTime;
 		curMSRatio = Mathf.Clamp01(curMSRatio + MSdelta);
 
-		Vector3 Hvel = MS * curMSRatio * new Vector3(transform.forward.x, 0, transform.forward.z);
+		Vector3 Hvel = MS * curMSRatio * new Vector3(transform.forward.x, 0, transform.forward.z).normalized;
 		//transform.position += Hvel * Time.deltaTime;
 
 		// Vertical Movement
@@ -279,8 +291,77 @@ public class Unit : Entity
 		curYMSRatio = Mathf.Clamp01(curYMSRatio + YMSdelta);
 
 		Vector3 Yvel = MS * curYMSRatio * Vector3.up * Mathf.Clamp(direction.y * 2, -1, 1) * MSVerticalMod;
-		velocity = Yvel + Hvel;
+		Vector4 chainVel = CalcChainVel((Hvel + Yvel).magnitude);
+		// Final velocity is combination of independent movement and velocity mods
+
+		velocity = Vector3.ClampMagnitude(Yvel + Hvel + new Vector3(chainVel.x, chainVel.y, chainVel.z), chainVel.w);
 		transform.position += velocity * Time.deltaTime;
+	}
+
+	Vector4 CalcChainVel(float currentSpeed)
+	{
+		Vector3 total = Vector3.zero;
+		float maxMagnitude = currentSpeed;
+
+		for (int i = 0; i < velocityMods.Count; i++)
+		{
+			if (velocityMods[i].from == null)
+			{
+				velocityMods.RemoveAt(i);
+				i--;
+				continue;
+			}
+
+			if (velocityMods[i].vel.magnitude > maxMagnitude)
+				maxMagnitude = velocityMods[i].vel.magnitude;
+
+			float dot = Vector3.Dot((velocityMods[i].from.transform.position - transform.position).normalized, velocityMods[i].vel.normalized);
+			dot = Mathf.Clamp(dot, 0, Mathf.Infinity);
+			if (velocityMods[i].from.team == team)
+			{
+				total += velocityMods[i].vel * gameRules.ABLYchainAllyMult * dot;
+			}
+			else
+			{
+				total += velocityMods[i].vel * gameRules.ABLYchainEnemyMult * dot;
+			}
+		}
+
+		//if (printStatus)
+			//Debug.Log(DisplayName + "velMod is " + total.magnitude);
+		return new Vector4(total.x, total.y, total.z, maxMagnitude);
+	}
+
+	public void AddVelocityMod(VelocityMod velMod)
+	{
+		foreach (VelocityMod v in velocityMods) // Check all current velocity mods
+		{
+			if (v.from != velMod.from)
+				continue;
+			if (v.velModType != velMod.velModType)
+				continue;
+			v.vel = velMod.vel; // Overwrite current velocity
+			return;
+		}
+
+		// Otherwise add it
+		velocityMods.Add(velMod);
+	}
+
+	public void RemoveVelocityMod(VelocityMod velMod)
+	{
+		VelocityMod toRemove = null;
+		foreach (VelocityMod v in velocityMods) // Search all current velocity mods
+		{
+			if (v.from != velMod.from)
+				continue;
+			if (v.velModType != velMod.velModType)
+				continue;
+			toRemove = v;
+		}
+
+		if (toRemove != null)
+			velocityMods.Remove(toRemove);
 	}
 
 	void UpdateAbilities()
@@ -312,6 +393,23 @@ public class Unit : Entity
 
 		if (printStatus && statuses.Count > 0)
 			Debug.Log(output);
+	}
+
+
+	public void AddStatus(Status status)
+	{
+		foreach (Status s in statuses) // Check all current statuses
+		{
+			if (s.from != status.from)
+				continue;
+			if (s.statusType != status.statusType)
+				continue;
+			s.RefreshTimeLeft(); // If we already have this instance of a status effect, refresh its timer
+			return;
+		}
+
+		// Otherwise add it
+		statuses.Add(status);
 	}
 
 	public void OrderMove(Vector3 newGoal)
@@ -348,23 +446,6 @@ public class Unit : Entity
 	public float GetShieldPool()
 	{
 		return curShield;
-	}
-
-	public void AddStatus(Status status)
-	{
-		bool alreadyHave = false;
-		foreach (Status s in statuses) // Check all current statuses
-		{
-			if (s.from != status.from)
-				continue;
-			if (s.statusType != status.statusType)
-				continue;
-			alreadyHave = true;
-			s.RefreshTimeLeft(); // If we already have this instance of a status effect, refresh its timer
-		}
-
-		if (!alreadyHave) // Otherwise add it
-			statuses.Add(status);
 	}
 
 	public bool RecieveShield(float amount, int projectorTeam)
@@ -529,12 +610,17 @@ public class Unit : Entity
 		Destroy(selCircle);
 		Destroy(gameObject);
 
-		gameManager.Commanders[team].RefundUnitCounter(buildIndex);
+		if (gameManager.Commanders.Length >= team + 1)
+			gameManager.Commanders[team].RefundUnitCounter(buildIndex);
 
 		// Refund resources
-		GameObject go2 = Instantiate(new GameObject());
-		Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
-		resDelay.GiveRecAfterDelay(gameManager.Commanders[team].GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
+		if (buildIndex >= 0)
+		{
+			GameObject go2 = Instantiate(new GameObject());
+			Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
+
+			resDelay.GiveRecAfterDelay(gameManager.Commanders[team].GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
+		}
 	}
 
 	public void SubscribeToDeath(Unit u)
@@ -565,6 +651,11 @@ public class Unit : Entity
 	public Vector4 GetHP()
 	{
 		return new Vector4(curHealth, maxHealth, curArmor, maxArmor);
+	}
+
+	public bool IsDead()
+	{
+		return dead;
 	}
 
 	public Transform GetSwarmTarget()

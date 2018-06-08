@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum BuildUnitType
+public enum UnitType
 {
+	Default,
 	Destroyer,
 	Corvette,
 	Bomber,
@@ -15,7 +16,7 @@ public enum BuildUnitType
 public class BuildUnit : MonoBehaviour
 {
 	//[SerializeField]
-	public BuildUnitType type;
+	public UnitType type;
 	public GameObject previewObject;
 	public GameObject spawnObject;
 	public int cost;

@@ -15,6 +15,7 @@ public class Entity : MonoBehaviour
 	protected GameObject selCircle;
 	private float selCircleSpeed;
 	protected bool isSelected;
+	protected bool isHovered;
 
 	public string DisplayName
 	{
@@ -48,6 +49,11 @@ public class Entity : MonoBehaviour
 		//	tran.eulerAngles = new Vector3(0, tran.eulerAngles.y + selCircleSpeed * Time.deltaTime * posOrNeg, 0);
 		//	tran.position = transform.position;
 		//}
+	}
+
+	public virtual void OnHover(Commander selector, bool selectOrDeselect)
+	{
+		isHovered = selectOrDeselect;
 	}
 
 	public virtual void OnSelect(Commander selector, bool selectOrDeselect)

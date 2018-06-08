@@ -10,7 +10,8 @@ public enum AbilityType
 	MoveSwarm,
 	SelfDamage,
 	ShieldProject,
-	HealField
+	HealField,
+	Chain
 }
 
 [System.Serializable]
@@ -214,6 +215,12 @@ public static class AbilityUtils
 						ability.curCooldown = 0; // Refund cooldown if we fail to activate
 				}
 				break;
+			case AbilityType.Chain:
+				{
+					Ability_Chain chainManager = ability.user.GetComponent<Ability_Chain>();
+					chainManager.SetTarget(ability.target);
+				}
+				break;
 			default:
 				break;
 		}
@@ -297,7 +304,16 @@ public static class AbilityUtils
 					for (int i = 0; i < units.Count && i < ability.gameRules.ABLYarmorDrainMaxVictims; i++) // For each unit, subtract apropriate armor and add armor to us
 					{
 						if (units[i].team == ability.user.team)
-							units[i].DamageSimple(0, ability.gameRules.ABLYarmorDrainDPSAlly * Time.deltaTime);
+						{
+							if (ability.user.GetHP().z < ability.user.GetHP().w) // Only damage allies if we have to
+								units[i].DamageSimple(0, ability.gameRules.ABLYarmorDrainDPSAlly * Time.deltaTime);
+							else
+							{
+								units.RemoveAt(i);
+								i--;
+								continue;
+							}
+						}
 						else
 							units[i].DamageSimple(0, ability.gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
 						if (units[i].GetHP().z > 0)
@@ -384,6 +400,12 @@ public static class AbilityUtils
 					swarmManager.End();
 				}
 				break;
+			case AbilityType.Chain:
+				{
+					Ability_Chain chainManager = ability.user.GetComponent<Ability_Chain>();
+					chainManager.End();
+				}
+				break;
 			default:
 				break;
 		}
@@ -446,6 +468,8 @@ public static class AbilityUtils
 			case AbilityType.MoveSwarm:
 				return 1;
 			case AbilityType.ShieldProject:
+				return 1;
+			case AbilityType.Chain:
 				return 1;
 			default:
 				return 0;

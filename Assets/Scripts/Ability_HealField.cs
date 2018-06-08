@@ -73,7 +73,8 @@ public class Ability_HealField : MonoBehaviour {
 				if (units.Count > 0) // If at least one other unit is being healed, heal ourselves by a flat amount regardless of ally count
 				{
 					parentUnit.DamageSimple(-(gameRules.ABLYhealFieldUserGPS * Time.deltaTime) / units.Count, 0);
-					units[i].AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
+					parentUnit.AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
+					
 				}
 			}
 
@@ -86,8 +87,6 @@ public class Ability_HealField : MonoBehaviour {
 
 	public bool ToggleActive()
 	{
-
-
 		if (!isActive) // About to become active
 		{
 			// If we are not already borrowing and there are no resources to borrow, don't activate this ability
@@ -120,7 +119,6 @@ public class Ability_HealField : MonoBehaviour {
 
 	public void End()
 	{
-		// TODO: This should happen with a delay as well
 		if (isBorrowing)
 		{
 			GameObject go = Instantiate(new GameObject());
@@ -128,12 +126,6 @@ public class Ability_HealField : MonoBehaviour {
 			resDelay.GiveResAfterDelay(gameRules.ABLYhealFieldResCost, gameRules.ABLYhealFieldResTime, team);
 		}
 		pointEffect.End();
-	}
-
-	float RandomValue()
-	{
-		return Random.value * 2 - 1;
-		//return 1;
 	}
 
 	Unit GetUnitFromCol(Collider col)

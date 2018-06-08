@@ -26,6 +26,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1041279822171760
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4904582119831090}
+  m_Layer: 0
+  m_Name: ChainStart
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1112833545553458
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4753442089221148}
+  m_Layer: 0
+  m_Name: FirePos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1117661424771232
 GameObject:
   m_ObjectHideFlags: 1
@@ -50,8 +80,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4974165406158294}
   - component: {fileID: 114088720234087204}
+  - component: {fileID: 114431768053762592}
   - component: {fileID: 82921897760923188}
   - component: {fileID: 165487031371920440}
+  - component: {fileID: 114165545472820334}
   m_Layer: 0
   m_Name: Corvette
   m_TagString: Untagged
@@ -94,6 +126,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!1 &1304204049348630
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4392171242227662}
+  m_Layer: 0
+  m_Name: Pos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1407255803876940
 GameObject:
   m_ObjectHideFlags: 1
@@ -322,6 +369,19 @@ Transform:
   m_Father: {fileID: 4723779402802132}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4392171242227662
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1304204049348630}
+  m_LocalRotation: {x: -0.21260148, y: -0, z: -0, w: 0.977139}
+  m_LocalPosition: {x: 0, y: 0.71, z: -0.28}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4753442089221148}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -24.550001, y: 0, z: 0}
 --- !u!4 &4463270750573606
 Transform:
   m_ObjectHideFlags: 1
@@ -462,9 +522,25 @@ Transform:
   - {fileID: 4680998655394926}
   - {fileID: 4913992077185826}
   - {fileID: 4692057287397700}
+  - {fileID: 4753442089221148}
+  - {fileID: 4904582119831090}
   m_Father: {fileID: 4974165406158294}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
+--- !u!4 &4753442089221148
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1112833545553458}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4392171242227662}
+  m_Father: {fileID: 4723779402802132}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4878240945070210
 Transform:
   m_ObjectHideFlags: 1
@@ -477,6 +553,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4715606521439078}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4904582119831090
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1041279822171760}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.409, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4723779402802132}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4913992077185826
 Transform:
@@ -499,7 +588,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1245470892901488}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -7.4, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4723779402802132}
@@ -944,9 +1033,10 @@ MonoBehaviour:
   swarmTarget: {fileID: 4283069539521836}
   selCircleSize: 0.6
   printStatus: 0
+  type: 2
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
-  hpEffects: {fileID: 0}
+  hpEffects: {fileID: 114165545472820334}
   team: 0
   buildIndex: -1
   curArmor: 100
@@ -959,8 +1049,66 @@ MonoBehaviour:
   turrets:
   - {fileID: 114533801953351042}
   - {fileID: 114332884733111768}
-  abilities: []
-  velocityMod: {x: 0, y: 0, z: 0}
+  abilities:
+  - type: 7
+    gameRules:
+      ARMabsorbFlat: 0
+      ARMabsorbMax: 0
+      ARMrangeMin: 0
+      ARMrangeMax: 0
+      ARMrangeMult: 0
+      HLTHthreshBurn: 0
+      HLTHburnMin: 0
+      HLTHburnMax: 0
+      WRCKfallSpeedMax: 0
+      WRCKfallSpeedAccel: 0
+      WRCKlifetime: 0
+      WRCKmassHealthMult: 0
+      WRCKmassArmorMult: 0
+      WRCKcollisionSpeedPenalty: 0
+      FLAGshieldMax: 0
+      FLAGshieldRegenGPS: 0
+      FLAGshieldRegenDelay: 0
+      RESreclaimTime: 0
+      SPWNflagshipRadius: 0
+      AUDpitchVariance: 0
+      PRJmaxTimeAlive: 0
+      PRJhitOffset: 0
+      entityLayerMask:
+        serializedVersion: 2
+        m_Bits: 0
+      gridLayerMask:
+        serializedVersion: 2
+        m_Bits: 0
+      ABLYarmorDrainRange: 0
+      ABLYarmorDrainDPSEnemy: 0
+      ABLYarmorDrainDPSAlly: 0
+      ABLYarmorDrainGPS: 0
+      ABLYarmorDrainGPSBonusMult: 0
+      ABLYarmorDrainMaxVictims: 0
+      ABLYarmorRegenHPS: []
+      ABLYshieldProjectMaxPool: 0
+      ABLYshieldProjectInactiveGPS: 0
+      ABLYswarmMaxUses: 0
+      ABLYswarmDPS: 0
+      ABLYswarmDamageRadius: 0
+      ABLYhealFieldRange: 0
+      ABLYhealFieldAllyGPS: 0
+      ABLYhealFieldAllyGPSBonusMult: 0
+      ABLYhealFieldUserGPS: 0
+      ABLYhealFieldResCost: 0
+      ABLYhealFieldResTime: 0
+      ABLYchainAllyMult: 0
+      ABLYchainEnemyMult: 0
+      ABLYchainRange: 25
+      STATswarmShieldDmgReduce: 0
+      STATswarmShieldMaxStacks: 0
+    pointEffect: {fileID: 0}
+    user: {fileID: 0}
+    target:
+      unit: {fileID: 0}
+      position: {x: 0, y: 0, z: 0}
+    unitList: []
   MS: 5
   MSVerticalMod: 0.4
   MSAccel: 0.5
@@ -971,6 +1119,25 @@ MonoBehaviour:
   reachGoalThresh: 2
   YMSResetThresh: 1
   allowMoveThresh: 0.6
+  velocityMods: []
+--- !u!114 &114165545472820334
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1245470892901488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5736f2b58d641b745b5c40491d9867be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  smokeThresh: 0.667
+  smokePrefab: {fileID: 0}
+  smokePos: {fileID: 0}
+  smokePositions: []
+  firePrefab: {fileID: 198361047052177094, guid: d9049ca704dd910479f15c98901d50d6,
+    type: 2}
+  firePos: {fileID: 4753442089221148}
 --- !u!114 &114319464697193732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1004,7 +1171,7 @@ MonoBehaviour:
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 38
+  range: 25
   soundShoot: {fileID: 8300000, guid: eda9325462e16d44b9a0353b74109972, type: 3}
   firePos: {fileID: 4568417639343078}
   maxAmmo: 50
@@ -1019,6 +1186,24 @@ MonoBehaviour:
   pivotX: {fileID: 4568417639343078}
   minX: 0
   maxX: 0
+--- !u!114 &114431768053762592
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1245470892901488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1fc3effaaf20b74e8b0d9b2abaecdf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chainStart: {fileID: 4904582119831090}
+  lineEffectPrefab: {fileID: 114738217270647106, guid: 8042d02bc66811047978b412e56607b0,
+    type: 2}
+  pointEffectPrefab: {fileID: 114387442305719452, guid: b2e9d3bf6cf25a84e8fde7a6761975b4,
+    type: 2}
+  pointEffectBreakPrefab: {fileID: 1020491657332010, guid: b5976377b2a39b8459da76dcbd234c97,
+    type: 2}
 --- !u!114 &114452803610118814
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1052,7 +1237,7 @@ MonoBehaviour:
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 38
+  range: 25
   soundShoot: {fileID: 8300000, guid: eda9325462e16d44b9a0353b74109972, type: 3}
   firePos: {fileID: 4270747910565110}
   maxAmmo: 50

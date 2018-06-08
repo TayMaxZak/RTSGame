@@ -1348,6 +1348,7 @@ MonoBehaviour:
   swarmTarget: {fileID: 4751010177498942}
   selCircleSize: 2.8
   printStatus: 0
+  type: 6
   hpBarPrefab: {fileID: 114328092779895440, guid: df3b2f9d043548149bbea5ce4cc27206,
     type: 2}
   hpEffects: {fileID: 114908002695254704}
@@ -1412,6 +1413,9 @@ MonoBehaviour:
       ABLYhealFieldUserGPS: 4
       ABLYhealFieldResCost: 3
       ABLYhealFieldResTime: 5
+      ABLYchainAllyMult: 0.7
+      ABLYchainEnemyMult: 0.35
+      ABLYchainRange: 25
       STATswarmShieldDmgReduce: 0
       STATswarmShieldMaxStacks: 0
     pointEffect: {fileID: 0}
@@ -1420,7 +1424,6 @@ MonoBehaviour:
       unit: {fileID: 0}
       position: {x: 0, y: 0, z: 0}
     unitList: []
-  velocityMod: {x: 0, y: 0, z: 0}
   MS: 2
   MSVerticalMod: 0.4
   MSAccel: 1.5
@@ -1431,6 +1434,7 @@ MonoBehaviour:
   reachGoalThresh: 2.5
   YMSResetThresh: 1
   allowMoveThresh: 0.3
+  velocityMods: []
 --- !u!114 &114177749130366244
 MonoBehaviour:
   m_ObjectHideFlags: 1

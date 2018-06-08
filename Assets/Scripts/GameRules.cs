@@ -34,7 +34,7 @@ public class GameRules
 	public float AUDpitchVariance = 0.05f; // Audio pitch variation for each clip instance
 	[Header("Projectiles")]
 	public float PRJmaxTimeAlive = 9f; // How long each projectile lives
-	public float PRJhitOffset = 0.05f; // When hitting an object, a projectile always detonates this far from the hit point
+	public float PRJhitOffset = 0.05f; // When hitting an object, a projectile always detonates this back far from the hit point
 	[Header("Layer Masks")]
 	public LayerMask entityLayerMask;
 	public LayerMask gridLayerMask;
@@ -59,9 +59,13 @@ public class GameRules
 	public float ABLYhealFieldRange = 25;
 	public float ABLYhealFieldAllyGPS = 2; // Health gained per second by each ally
 	public float ABLYhealFieldAllyGPSBonusMult = 0.005f; // What percentage of missing health should contribute to health gained per second
-	public float ABLYhealFieldUserGPS = 4; // Health gained per second by user as long as one ally is being healed
+	public float ABLYhealFieldUserGPS = 5; // Health gained per second by user as long as one ally is being healed
 	public int ABLYhealFieldResCost = 4; // Amount of resource points held by this ability while active
 	public float ABLYhealFieldResTime = 10; // Delay to return resource points when the ability ends
+
+	public float ABLYchainAllyMult = 0.7f;
+	public float ABLYchainEnemyMult = 0.35f;
+	public float ABLYchainRange = 25;
 
 	[Header("Statuses")]
 	public float STATswarmShieldDmgReduce = 0.1f; // How much of all incoming damage does each swarm protecting an ally reduce

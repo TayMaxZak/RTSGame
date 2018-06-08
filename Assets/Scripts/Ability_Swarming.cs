@@ -172,8 +172,9 @@ public class Ability_Swarming : MonoBehaviour {
 
 	public void End()
 	{
-		// TODO: Write this
-		//Debug.LogError("Unfinished function");
+		foreach (GameObject go in swarmCenters)
+			Destroy(go);
+		Destroy(swarmsCenter);
 	}
 
 	float RandomValue()
