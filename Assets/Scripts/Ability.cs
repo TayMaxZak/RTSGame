@@ -4,11 +4,11 @@ using UnityEngine;
 
 public enum AbilityType
 {
+	Default,
 	ArmorDrain,
 	ArmorRegen,
 	SpawnSwarm,
 	MoveSwarm,
-	SelfDamage,
 	ShieldProject,
 	HealField,
 	Chain
@@ -17,8 +17,9 @@ public enum AbilityType
 [System.Serializable]
 public class Ability
 {
-	//[SerializeField]
-	public AbilityType type;
+	[SerializeField]
+	private AbilityType type;
+	[System.NonSerialized]
 	[HideInInspector]
 	public GameRules gameRules;
 
@@ -34,8 +35,9 @@ public class Ability
 	public AbilityTarget target;
 	[HideInInspector]
 	public List<Unit> unitList; // If ability involves finding multiple units, they are stored in this field
-	//[HideInInspector]
-	//public 
+	[System.NonSerialized]
+	[HideInInspector]
+	public bool displayAsUnusable = false;
 
 	[System.NonSerialized]
 	[HideInInspector]
@@ -78,7 +80,6 @@ public class Ability
 		AbilityUtils.TickAbility(this);
 	}
 
-
 	public AbilityType GetAbilityType()
 	{
 		return type;
@@ -89,11 +90,11 @@ public static class AbilityUtils
 {
 	public static void InitAbility(Ability ability)
 	{
-		switch (ability.type)
+		switch (ability.GetAbilityType())
 		{
 			case AbilityType.ArmorDrain:
 				{
-					GameObject go = Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
+					GameObject go = Object.Instantiate(Resources.Load(ability.GetAbilityType().ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
 					ability.pointEffect = go.GetComponent<Effect_Point>();
 				}
 				break;
@@ -103,9 +104,21 @@ public static class AbilityUtils
 					//ability.unitList.Add(ability.user);
 				}
 				break;
+			case AbilityType.MoveSwarm:
+				{
+					ability.stacks = -1;
+					ability.displayAsUnusable = true;
+				}
+				break;
 			case AbilityType.ShieldProject:
 				{
 					ability.pool = ability.gameRules.ABLYshieldProjectMaxPool;
+				}
+				break;
+			case AbilityType.HealField:
+				{
+					Ability_HealField healManager = ability.user.GetComponent<Ability_HealField>();
+					healManager.SetAbility(ability);
 				}
 				break;
 			default:
@@ -118,22 +131,29 @@ public static class AbilityUtils
 
 	public static void StartAbility(Ability ability)
 	{
+		// Can't be used yet
 		if (ability.curCooldown > 0)
-		{
 			return;
-		}
 			
 		ability.curCooldown = 1;
 
-		if (ActivationStyle(ability.type) == 1)
-			ability.isActive = true;
-		else if (ActivationStyle(ability.type) == 2)
+		if (GetActivationStyle(ability.GetAbilityType()) == 1)
+		{
 			ability.isActive = !ability.isActive;
+			if (ability.pointEffect)
+				ability.pointEffect.SetEffectActive(true);
+		}
+		else if (GetActivationStyle(ability.GetAbilityType()) == 2)
+		{
+			ability.isActive = !ability.isActive;
+			if (ability.pointEffect)
+				ability.pointEffect.SetEffectActive(ability.isActive);
+		}
+			
 
-		if (ability.pointEffect)
-			ability.pointEffect.SetEffectActive(ability.isActive);
+		
 
-		switch (ability.type) // Ability is off cooldown
+		switch (ability.GetAbilityType()) // Ability is off cooldown
 		{
 			case AbilityType.ArmorDrain:
 				break;
@@ -141,23 +161,41 @@ public static class AbilityUtils
 				{
 					if (ability.stacks > 0) // If we have swarms in reserve, spawn one and tell all swarms to move
 					{
+						if (ability.stacks == ability.gameRules.ABLYswarmMaxUses)
+						{
+							foreach (Ability a in ability.user.abilities)
+							{
+								if (a.GetAbilityType() == AbilityType.MoveSwarm)
+								{
+									a.stacks = 0;
+									a.displayAsUnusable = false;
+								}
+							}
+						}
+
 						Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>();
 
 						swarmManager.SetTarget(ability.target);
-					
+
 						ability.stacks--;
 						swarmManager.SpawnSwarm();
 					}
+
+					if (ability.stacks == 0)
+						ability.displayAsUnusable = true;
 				}
 				break;
 			case AbilityType.MoveSwarm:
 				{
-					Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>();
-					swarmManager.SetTarget(ability.target);
+					if (ability.stacks == 0) // Marked as being good to go
+					{
+						Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>();
+						swarmManager.SetTarget(ability.target);
+					}
 				}
 				break;
-			case AbilityType.SelfDamage:
-				Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
+			case AbilityType.Default:
+				Object.Instantiate(Resources.Load(ability.GetAbilityType().ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
 				ability.user.DamageSimple(ability.user.GetHP().y * 0.8f, 0);
 				break;
 			case AbilityType.ShieldProject:
@@ -170,11 +208,11 @@ public static class AbilityUtils
 						if (!flag)
 						{
 							if (ability.target.unit != ability.user)
-								Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.target.unit.transform.position, Quaternion.identity);
+								Object.Instantiate(Resources.Load(ability.GetAbilityType().ToString() + "Effect") as GameObject, ability.target.unit.transform.position, Quaternion.identity);
 							else
 							{
 								if (ability.unitList.Count > 0 && ability.unitList[0] != ability.user)
-									Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.target.unit.transform.position, Quaternion.identity);
+									Object.Instantiate(Resources.Load(ability.GetAbilityType().ToString() + "Effect") as GameObject, ability.target.unit.transform.position, Quaternion.identity);
 							}
 
 							if (ability.unitList.Count > 0)
@@ -228,7 +266,7 @@ public static class AbilityUtils
 
 	public static void TickAbility(Ability ability)
 	{
-		ability.curCooldown = ability.curCooldown - Time.deltaTime * DeltaDurations(ability.type).x; // Restore cooldown
+		ability.curCooldown = ability.curCooldown - Time.deltaTime * GetDeltaDurations(ability.GetAbilityType()).x; // Restore cooldown
 
 		if (ability.isActive && ability.curEnergy < 0) // Out of energy
 		{
@@ -242,11 +280,11 @@ public static class AbilityUtils
 		if (!ability.isActive) // If ability is not being used. Passives are always off
 		{
 			
-			if (ActivationStyle(ability.type) == 2) // If it's a toggle ability
-				ability.curEnergy = Mathf.Min(ability.curEnergy + Time.deltaTime * DeltaDurations(ability.type).z, 1); // Restore energy according to its reset duration
+			if (GetActivationStyle(ability.GetAbilityType()) == 2) // If it's a toggle ability
+				ability.curEnergy = Mathf.Min(ability.curEnergy + Time.deltaTime * GetDeltaDurations(ability.GetAbilityType()).z, 1); // Restore energy according to its reset duration
 
 
-			switch (ability.type)
+			switch (ability.GetAbilityType())
 			{
 				case AbilityType.ArmorDrain:
 					{
@@ -266,13 +304,13 @@ public static class AbilityUtils
 			return; // Leave, ability isn't being used
 		}
 
-		if (ActivationStyle(ability.type) == 2) // If it's a toggle ability
+		if (GetActivationStyle(ability.GetAbilityType()) == 2) // If it's a toggle ability
 		{
-			ability.curEnergy -= Time.deltaTime * DeltaDurations(ability.type).y; // Consume energy
+			ability.curEnergy -= Time.deltaTime * GetDeltaDurations(ability.GetAbilityType()).y; // Consume energy
 		}
 
 		// Active ability tick
-		switch (ability.type)
+		switch (ability.GetAbilityType())
 		{
 			case AbilityType.ArmorDrain: // Find all enemies in a radius and damage them over time
 				{
@@ -292,7 +330,7 @@ public static class AbilityUtils
 							continue;
 
 						foreach (Ability a in unit.abilities)
-							if (a.type == AbilityType.ArmorDrain) // Can't drain another drain-capable unit
+							if (a.GetAbilityType() == AbilityType.ArmorDrain) // Can't drain another drain-capable unit
 								hasDrainAbility = true;
 
 						if (unit != ability.user && !hasDrainAbility && unit.GetHP().z > 0) // Don't add ourselves
@@ -360,10 +398,9 @@ public static class AbilityUtils
 		}
 	}
 
-
 	public static void EndAbility(Ability ability)
 	{
-		switch (ability.type)
+		switch (ability.GetAbilityType())
 		{
 			case AbilityType.ArmorDrain:
 				{
@@ -374,7 +411,7 @@ public static class AbilityUtils
 				{
 					if (ability.unitList.Count > 0)
 					{
-						Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.target.unit.transform.position, Quaternion.identity);
+						Object.Instantiate(Resources.Load(ability.GetAbilityType().ToString() + "Effect") as GameObject, ability.target.unit.transform.position, Quaternion.identity);
 
 						if (ability.unitList[0] != ability.user)
 						{
@@ -384,7 +421,7 @@ public static class AbilityUtils
 					}
 					else
 					{
-						Object.Instantiate(Resources.Load(ability.type.ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
+						Object.Instantiate(Resources.Load(ability.GetAbilityType().ToString() + "Effect") as GameObject, ability.user.transform.position, Quaternion.identity);
 					}
 				}
 				break;
@@ -411,8 +448,10 @@ public static class AbilityUtils
 		}
 	}
 
-
-	public static int ActivationStyle(AbilityType type) // 0 = passive, 1 = instant, 2 = toggle
+	/// <summary>
+	/// 0 for passive, 1 for active instant, 2 for active toggle
+	/// </summary>
+	public static int GetActivationStyle(AbilityType type) // 0 = passive, 1 = instant, 2 = toggle
 	{
 		switch (type)
 		{
@@ -427,23 +466,23 @@ public static class AbilityUtils
 
 	// X = Cooldown, Y = Active Duration, Z = Reset Duration
 	// All default to 1 second
-	public static Vector3 DeltaDurations(AbilityType type)
+	public static Vector3 GetDeltaDurations(AbilityType type)
 	{
 		switch (type)
 		{
 			case AbilityType.ArmorDrain:
-				return DeltaOf(new Vector3(2.0f, 15.0f, 30.0f));
+				return GetDeltaOf(new Vector3(2.0f, 15.0f, 30.0f));
 			case AbilityType.SpawnSwarm:
-				return DeltaOf(new Vector3(5.0f, 0, 0));
+				return GetDeltaOf(new Vector3(5.0f, 0, 0));
 			case AbilityType.MoveSwarm:
-				return DeltaOf(new Vector3(0.5f, 0, 0));
+				return GetDeltaOf(new Vector3(0.5f, 0, 0));
 			default:
-				return DeltaOf(new Vector3());
+				return GetDeltaOf(new Vector3());
 		}
 	}
 
 	// Converts durations to multipliers per second
-	static Vector3 DeltaOf(Vector3 vector)
+	static Vector3 GetDeltaOf(Vector3 vector)
 	{
 		// Avoid division by zero
 		if (vector.x == 0)
@@ -457,7 +496,7 @@ public static class AbilityUtils
 	}
 
 	// 0 = no, 1 = unit, 2 = position
-	public static int RequiresTarget(AbilityType type)
+	public static int GetTargetRequirement(AbilityType type)
 	{
 		switch (type)
 		{
@@ -477,7 +516,7 @@ public static class AbilityUtils
 	}
 
 	// Display name of ability
-	public static string AbilityName(AbilityType type)
+	public static string GetAbilityName(AbilityType type)
 	{
 		switch (type)
 		{
@@ -488,6 +527,41 @@ public static class AbilityUtils
 			default:
 				return "default";
 		}
+	}
+
+	// Display icon of ability
+	public static Sprite GetAbilityIcon(AbilityType type)
+	{
+		Sprite sprite = Resources.Load<Sprite>("IconAbility_" + type);
+		if (sprite)
+			return sprite;
+		else
+			return Resources.Load<Sprite>("IconEmpty");
+	}
+
+	// Secondary display icon of ability
+	public static Sprite GetSecondaryAbilityIcon(AbilityType type, int stacks)
+	{
+		bool loadSprite = true;
+
+		switch (type)
+		{
+			case AbilityType.HealField:
+				{
+					if (stacks == 0) // Not borrowing, don't show secondary icon
+						loadSprite = false;
+				}
+				break;
+		}
+
+		Sprite sprite = null;
+		if (loadSprite)
+			 sprite = Resources.Load<Sprite>("IconAbility_" + type + "_B");
+
+		if (sprite)
+			return sprite;
+		else
+			return Resources.Load<Sprite>("IconEmpty");
 	}
 
 	static Unit GetUnitFromCol(Collider col)

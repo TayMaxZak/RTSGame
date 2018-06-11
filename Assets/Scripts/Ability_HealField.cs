@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Ability_HealField : MonoBehaviour {
+	private Ability ability;
 	[SerializeField]
 	private Effect_Point pointEffectPrefab;
 	private Effect_Point pointEffect;
@@ -33,6 +34,11 @@ public class Ability_HealField : MonoBehaviour {
 
 		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
 		pointEffect.SetEffectActive(isActive);
+	}
+
+	public void SetAbility(Ability a)
+	{
+		ability = a;
 	}
 
 	void Update()
@@ -94,6 +100,7 @@ public class Ability_HealField : MonoBehaviour {
 				return false;
 
 			isBorrowing = true;
+			ability.stacks = -1;
 
 			if (giveResourcesCoroutine != null)
 				StopCoroutine(giveResourcesCoroutine);
@@ -113,8 +120,10 @@ public class Ability_HealField : MonoBehaviour {
 	IEnumerator GiveResourcesCoroutine(float time)
 	{
 		yield return new WaitForSeconds(time);
-		command.GiveRes(gameRules.ABLYhealFieldResCost);
+		command.GiveResources(gameRules.ABLYhealFieldResCost);
+
 		isBorrowing = false;
+		ability.stacks = 0;
 	}
 
 	public void End()

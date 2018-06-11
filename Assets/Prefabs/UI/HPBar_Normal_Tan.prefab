@@ -198,8 +198,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthFill: {fileID: 114425095458771546}
   healthWidth: 98
-  healthBurnColor1: {r: 1, g: 0.8864097, b: 0.74264705, a: 1}
-  healthBurnColor2: {r: 0.44852942, g: 0.3499985, b: 0.2605428, a: 1}
+  healthBurnColor1: {r: 0.9294118, g: 0.1254902, b: 0.14117648, a: 1}
+  healthBurnColor2: {r: 1, g: 1, b: 1, a: 1}
   armorFill: {fileID: 114408024421690934}
   armorWidth: 98
   shieldFill: {fileID: 114382050952071276}

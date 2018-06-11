@@ -12,6 +12,11 @@ public class UI_HPBar : MonoBehaviour
 	private float healthT = 0;
 	[SerializeField]
 	private float healthWidth = 98;
+
+	private bool burning = false;
+	private Color burnCur = Color.red;
+	private float burnT = 0;
+	private bool burnUp = true;
 	[SerializeField]
 	private Color healthBurnColor1 = Color.red;
 	[SerializeField]
@@ -40,12 +45,12 @@ public class UI_HPBar : MonoBehaviour
 	private Image borderFill;
 
 	private UIRules uiRules;
-	private GameRules gameRules;
+	//private GameRules gameRules;
 
-	void Start()
+	void Awake()
 	{
 		uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 
 		healthOrigColor = healthFill.color;
 		armorOrigColor = armorFill.color;
@@ -56,44 +61,71 @@ public class UI_HPBar : MonoBehaviour
 
 	void Update()
 	{
+		// Update times
 		healthT += Time.deltaTime / uiRules.HPBupdateTime;
-		healthCur = Mathf.Lerp(healthCur, healthTarg, healthT);
-
 		armorT += Time.deltaTime / uiRules.HPBupdateTime;
-		armorCur = Mathf.Lerp(armorCur, armorTarg, armorT);
-
 		shieldT += Time.deltaTime / uiRules.HPBupdateTime;
+
+		UpdateDisplay();
+	}
+
+	void UpdateDisplay()
+	{
+		// Update current values
+		healthCur = Mathf.Lerp(healthCur, healthTarg, healthT);
+		armorCur = Mathf.Lerp(armorCur, armorTarg, armorT);
 		shieldCur = Mathf.Lerp(shieldCur, shieldTarg, shieldT);
 
-
+		// Update sizes of bars
 		healthFill.rectTransform.sizeDelta = new Vector2(healthWidth * healthCur, healthFill.rectTransform.sizeDelta.y);
 		armorFill.rectTransform.sizeDelta = new Vector2(armorWidth * armorCur, armorFill.rectTransform.sizeDelta.y);
 		shieldFill.rectTransform.sizeDelta = new Vector2(shieldWidth * shieldCur, shieldFill.rectTransform.sizeDelta.y);
 
-		//borderFill.color = armorCur > uiRules.HPBbordColorThresh ? armorOrigColor : healthOrigColor;
+		// What color should the border be?
 		borderFill.color = armorTarg > uiRules.HPBbordColorThresh ? armorOrigColor : healthOrigColor;
 
-		if (healthCur < gameRules.HLTHthreshBurn)
+		// If we are burning,
+		if (burning)
 		{
-			// Animate between 2 burn colors
-			if (Time.frameCount % 2 == 0)
-				healthFill.color = healthBurnColor1;
+			// animate healthbar color between 2 burn colors
+			if (burnUp)
+			{
+				burnT += Random.value * Time.deltaTime / uiRules.HPBblinkTime;
+				burnCur = Color.Lerp(burnCur, healthBurnColor1, burnT);
+				if (burnT > 1)
+					burnUp = false;
+			}
 			else
-				healthFill.color = healthBurnColor2;
+			{
+				burnT -= Random.value * Time.deltaTime / uiRules.HPBblinkTime;
+				burnCur = Color.Lerp(burnCur, healthBurnColor2, burnT);
+				if (burnT < 0)
+					burnUp = true;
+			}
+			healthFill.color = burnCur;
 		}
 		else
 			healthFill.color = healthOrigColor;
 	}
 
-	public void UpdateHPBar(float health, float armor, float shield)
+	public void SetHealthArmorShield(Vector3 values, bool isBurning, bool fastUpdate)
 	{
-		healthTarg = health;
-		healthT = 0;
+		burning = isBurning;
 
-		armorTarg = armor;
-		armorT = 0;
+		float Tinitial = 0;
+		if (fastUpdate)
+			Tinitial = 1;
 
-		shieldTarg = shield;
-		shieldT = 0;
+		healthTarg = values.x;
+		armorTarg = values.y;
+		shieldTarg = values.z;
+
+		healthT = Tinitial;
+		armorT = Tinitial;
+		shieldT = Tinitial;
+
+		// If we fast update, immediately update graphics without waiting for next Update()
+		if (fastUpdate)
+			UpdateDisplay();
 	}
 }

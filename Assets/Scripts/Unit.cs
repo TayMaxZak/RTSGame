@@ -28,6 +28,9 @@ public class Unit : Entity
 	[SerializeField]
 	private float maxHealth = 100;
 	[SerializeField]
+	public bool alwaysBurnImmune = false;
+	private bool isBurning = false;
+	[SerializeField]
 	protected float curShield = 0;
 	protected float maxShield = 0;
 	[SerializeField]
@@ -93,17 +96,12 @@ public class Unit : Entity
 	private Vector2 hpBarOffset;
 
 	// State //
-	private List<Status> statuses;
+	protected List<Status> statuses;
 	[SerializeField]
 	private List<VelocityMod> velocityMods;
-	private List<Unit> damageTaken;
-
+	private List<Unit> damageTaken; // Units that assisted in this unit's death
 
 	private List<Unit> notifyOnDeath; // These units will be messaged when we die
-
-	
-
-	//private List<Unit> killers; // Units that assisted in this unit's death TODO: IMPLEMENT
 
 	// Use this for initialization
 	protected new void Start()
@@ -117,6 +115,10 @@ public class Unit : Entity
 		if (gameRules == null) // Subclass may have already set this field
 			gameRules = gameManager.GameRules; // Grab copy of Game Rules
 
+		if (gameRules.useTestValues)
+		{
+			curHealth = curHealth  * gameRules.TESTinitHealthMult + gameRules.TESTinitHealthAdd;
+		}
 		maxShield = gameRules.ABLYshieldProjectMaxPool;
 
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
@@ -124,7 +126,7 @@ public class Unit : Entity
 		hpBar.transform.SetParent(uiManager.Canvas.transform, false);
 		hpBarOffset = uiManager.UIRules.HPBoffset;
 		UpdateHPBarPosAndVis(); // Make sure healthbar is hidden until the unit is first selected
-		UpdateHPBarVal();
+		UpdateHPBarVal(true);
 
 		foreach (Ability ab in abilities) // Init abilities
 			ab.Init(this, gameRules);
@@ -152,45 +154,34 @@ public class Unit : Entity
 			UpdateHPBarPosAndVis();
 
 		// Burning
-		bool isBurning = curHealth / maxHealth <= gameRules.HLTHthreshBurn;
-
-		foreach (Status s in statuses)
-			if (s.statusType == StatusType.CriticalBurnImmune)
-				isBurning = false;
-		
-		if (isBurning)
+		if (!alwaysBurnImmune)
 		{
-			curBurnCounter += Time.deltaTime;
-			if (curBurnCounter >= 1)
+			isBurning = curHealth / maxHealth <= gameRules.HLTHthreshBurn;
+
+			foreach (Status s in statuses)
+				if (s.statusType == StatusType.CriticalBurnImmune)
+					isBurning = false;
+
+			if (isBurning)
 			{
-				curBurnCounter = 0;
-				DamageSimple(Mathf.RoundToInt(Random.Range(gameRules.HLTHburnMin, gameRules.HLTHburnMax)), 0);
+				curBurnCounter += Time.deltaTime;
+				if (curBurnCounter >= 1)
+				{
+					curBurnCounter = 0;
+					DamageSimple(Mathf.RoundToInt(Random.Range(gameRules.HLTHburnMin, gameRules.HLTHburnMax)), 0);
+				}
 			}
 		}
 	}
 
-	public override void OnHover(Commander selector, bool selectOrDeselect)
-	{
-		base.OnHover(selector, selectOrDeselect);
-		UpdateHPBarPosAndVis();
-	}
-
-	public override void OnSelect(Commander selector, bool selectOrDeselect)
-	{
-		base.OnSelect(selector, selectOrDeselect);
-		UpdateHPBarPosAndVis();
-		//Debug.Log(DisplayName + " btw");
-	}
-
 	void UpdateHealth()
 	{
-		UpdateHPBarVal();
+		UpdateHPBarVal(false);
 		UpdateEffects();
 	}
 
 	void UpdateHPBarPosAndVis()
 	{
-		
 		if (!isSelected && !isHovered)
 		{
 			if (hpBar.gameObject.activeSelf)
@@ -218,9 +209,12 @@ public class Unit : Entity
 		}
 	}
 
-	protected void UpdateHPBarVal()
+	protected void UpdateHPBarVal(bool fastUpdate)
 	{
-		hpBar.UpdateHPBar(curHealth / maxHealth, curArmor / maxArmor, curShield / maxShield);
+		hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / maxArmor, curShield / maxShield), isBurning, fastUpdate);
+
+		if (controller)
+			controller.UpdateStatsHealth(this);
 	}
 
 	void UpdateEffects()
@@ -371,6 +365,9 @@ public class Unit : Entity
 			//if (abilities[i].isActive)
 			abilities[i].AbilityTick();
 		}
+
+		if (controller)
+			controller.UpdateStatsAbilities(this);
 	}
 
 	void UpdateStatuses()
@@ -455,20 +452,25 @@ public class Unit : Entity
 
 		shieldTeam = projectorTeam;
 		curShield = amount;
-		UpdateHPBarVal();
+		UpdateShield();
 		return true;
-	}
-
-	public void SetShield(float amount)
-	{
-		curShield = amount;
-		UpdateHPBarVal();
 	}
 
 	public void RemoveShield()
 	{
 		curShield = 0;
-		UpdateHPBarVal();
+		UpdateShield();
+	}
+
+	public void SetShield(float amount)
+	{
+		curShield = amount;
+		UpdateShield();
+	}
+
+	protected void UpdateShield()
+	{
+		UpdateHPBarVal(false);
 	}
 
 	public bool Damage(float damageBase, float range) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
@@ -541,7 +543,7 @@ public class Unit : Entity
 			}
 			else
 			{
-				UpdateHPBarVal();
+				UpdateHPBarVal(false);
 				return -newShield;
 			}
 		}
@@ -666,5 +668,23 @@ public class Unit : Entity
 	private void HPLog()
 	{
 		Debug.Log((int)(curHealth * 10) + " " + (int)(maxHealth * 10) + " :: " + (int)(curArmor * 10) + " " + (int)(maxArmor * 10));
+	}
+
+	public override void OnHover(bool hovered)
+	{
+		base.OnHover(hovered);
+		UpdateHPBarVal(true); // Instantly update HPBar the moment this object is hovered
+		UpdateHPBarPosAndVis();
+	}
+
+	public override void OnSelect(bool selected)
+	{
+		base.OnSelect(selected);
+		UpdateHPBarPosAndVis();
+	}
+
+	public override void LinkStats(bool detailed, Controller_Commander controller)
+	{
+		base.LinkStats(detailed, controller);
 	}
 }

@@ -5,6 +5,11 @@ using UnityEngine;
 [System.Serializable]
 public class GameRules
 {
+	[Header("Testing")]
+	public bool useTestValues = false;
+	public float TESTtimeMult = 0.25f;
+	public float TESTinitHealthAdd = 20;
+	public float TESTinitHealthMult = 0;
 	[Header("Armor")]
 	public float ARMabsorbFlat = 20; // How much armor absorb is guarenteed
 	public float ARMabsorbMax = 15; // How much armor absorb is added based on current percentage of armor

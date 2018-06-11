@@ -1174,6 +1174,9 @@ MonoBehaviour:
   abilities:
   - type: 0
     gameRules:
+      useTestValues: 0
+      TESTtimeMultiplier: 0.25
+      TESTinitHealth: 20
       ARMabsorbFlat: 0
       ARMabsorbMax: 0
       ARMrangeMin: 0

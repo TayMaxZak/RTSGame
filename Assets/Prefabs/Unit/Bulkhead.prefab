@@ -1344,7 +1344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881f111063680d7498afcd5cd846dd8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayName: Bulkhead
+  displayName: Bulkhead Cruiser
   swarmTarget: {fileID: 4751010177498942}
   selCircleSize: 2.8
   printStatus: 0
@@ -1367,6 +1367,9 @@ MonoBehaviour:
   abilities:
   - type: 6
     gameRules:
+      useTestValues: 0
+      TESTtimeMultiplier: 0.25
+      TESTinitHealth: 20
       ARMabsorbFlat: 0
       ARMabsorbMax: 0
       ARMrangeMin: 0
@@ -1446,7 +1449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e2ba5c4929752f4e91878fa2a09703c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointEffectPrefab: {fileID: 114194687130139358, guid: b5b5f49bddb0ab94790d7ae812674282,
+  pointEffectPrefab: {fileID: 114194687130139358, guid: 4753d448a666a184ba79c89141c84f9a,
     type: 2}
 --- !u!114 &114332744142565584
 MonoBehaviour:

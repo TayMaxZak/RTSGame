@@ -588,7 +588,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1245470892901488}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.4, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4723779402802132}
@@ -1052,6 +1052,9 @@ MonoBehaviour:
   abilities:
   - type: 7
     gameRules:
+      useTestValues: 0
+      TESTtimeMultiplier: 0.25
+      TESTinitHealth: 20
       ARMabsorbFlat: 0
       ARMabsorbMax: 0
       ARMrangeMin: 0

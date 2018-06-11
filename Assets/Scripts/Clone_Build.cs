@@ -25,7 +25,7 @@ public class Clone_Build : MonoBehaviour
 
 	private float warpingTime;
 	private float warpingAmount;
-	//private GameRules gameRules;
+	private GameRules gameRules;
 
 	private int buildUnitIndex;
 
@@ -34,7 +34,7 @@ public class Clone_Build : MonoBehaviour
 
 	void Start()
 	{
-		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 		warpingAmount = warpModel.transform.localScale.z;
 		warpModel.SetActive(false);
 	}
@@ -50,6 +50,9 @@ public class Clone_Build : MonoBehaviour
 		startTime = Time.time;
 		finishTime = buildUnit.buildTime;
 
+		if (gameRules.useTestValues)
+			finishTime = finishTime * gameRules.TESTtimeMult;
+
 		UpdateUI();
 
 		StartCoroutine(Building());
@@ -57,7 +60,7 @@ public class Clone_Build : MonoBehaviour
 
 	IEnumerator Building()
 	{
-		yield return new WaitForSeconds(buildUnit.buildTime - spawnEffectTime);
+		yield return new WaitForSeconds(finishTime - spawnEffectTime);
 		Effect();
 		yield return new WaitForSeconds(spawnEffectTime - warpTime);
 		StartCoroutine(Warp());

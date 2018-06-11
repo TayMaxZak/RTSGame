@@ -1397,7 +1397,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881f111063680d7498afcd5cd846dd8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayName: Apollo
+  displayName: Apollo-class
   swarmTarget: {fileID: 4671991824821066}
   selCircleSize: 1.2
   printStatus: 0
@@ -1421,6 +1421,9 @@ MonoBehaviour:
   abilities:
   - type: 5
     gameRules:
+      useTestValues: 0
+      TESTtimeMultiplier: 0.25
+      TESTinitHealth: 20
       ARMabsorbFlat: 0
       ARMabsorbMax: 0
       ARMrangeMin: 0

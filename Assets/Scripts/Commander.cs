@@ -10,483 +10,165 @@ public class Commander : MonoBehaviour
 
 	[Header("GUI")]
 	[SerializeField]
-	private UI_ResCounter resPointsCounter;
-	[SerializeField]
-	private GameObject buildButtonRoot;
-	[SerializeField]
-	private UI_BuildButton[] buildButtons;
+	private Controller_Commander controller; // Handles input and UI
 
 	[Header("Building")]
 	[SerializeField]
-	private BuildUnit[] buildUnits;
+	private BuildUnit[] buildUnits; // What units we can build
 	private int[] buildUnitCounters; // Tracks number of times corresponding build unit was built
-	private int buildUnitIndex;
-
-	private GameObject buildPreview;
-	private List<GameObject> pendingBuilds;
-
-	private int buildState; // 0 = standby, 1 = moving preview, 2 = rotating preview
-	private Coroutine buildHappening;
 
 	[Header("Resources")]
 	[SerializeField]
-	private int resPoints;
+	private int resPoints; // Resource points
 	[SerializeField]
-	private int resPointsToReclaim; // Transferred over time into resPoints
-	private float resReclaimTimer;
+	private int reclaimPoints; // Transferred over time into resPoints
+	private float reclaimTimer; // Progress turning a reclaimPoint into a resPoint
 
-	[Header("Sound")]
-	[SerializeField]
-	private AudioClip soundMove;
-
-	[Header("Clicking")]
-	[SerializeField]
-	private Camera cam;
-	[SerializeField]
-	private GameObject clickEffect;
-	private float clickRayLength = 1000;
-
-	[Header("Grids")]
-	[SerializeField]
-	private GameObject[] grids;
-	[SerializeField]
-	private int defaultGrid = 1;
-	private int curGrid;
-
-	private List<Entity> selection;
-	private Entity hoverion;
-	private AudioSource audioSource;
 	private GameRules gameRules;
 
 	// Use this for initialization
-	void Start ()
+	void Start()
 	{
-		//resPoints = resPointsMax;
-
-		//Time.timeScale = 1;
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
-		audioSource = GetComponent<AudioSource>();
 
-		selection = new List<Entity>();
-		Select(null, false);
-		UpdateUI(false);
+		buildUnitCounters = new int[buildUnits.Length]; // All BuildUnit counters start at 0
+		Controller_InitBuildButtons(); // Initialize UI through our controller
 
-		curGrid = defaultGrid;
-		foreach (GameObject go in grids)
-			go.SetActive(false);
-		UpdateGrid(curGrid);
-
-		buildUnitCounters = new int[buildUnits.Length];
-		for (int i = 0; i < buildButtons.Length; i++)
-		{
-			buildButtons[i].SetTeam(team);
-			buildButtons[i].SetIndex(i);
-			buildButtons[i].SetCost();
-			buildButtons[i].SetCounter(buildUnitCounters[i]);
-		}
-
-		resReclaimTimer = gameRules.RESreclaimTime;
-		UpdateResourceUIAmounts();
-}
-
-	/// <summary>
-	/// 0 for entity checking, 1 for grid checking, 2 for either
-	/// </summary>
-	/// <param name="targetLayer"></param>
-	/// <returns></returns>
-	RaycastHit RaycastFromCursor(int targetLayer) // 0 = entity, 1 = grid, 2 = anything
-	{
-		Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-		if (!EventSystem.current.IsPointerOverGameObject())
-		{
-			RaycastHit hit;
-			if ((targetLayer == 2 || targetLayer == 0) && Physics.Raycast(ray, out hit, clickRayLength, gameRules.entityLayerMask) && GetEntityFromHit(hit)) {}
-			else if ((targetLayer == 2 || targetLayer == 1) && Physics.Raycast(ray, out hit, clickRayLength, gameRules.gridLayerMask)) {}
-			else hit = new RaycastHit();
-			return hit;
-		}
-		return new RaycastHit();
+		reclaimTimer = gameRules.RESreclaimTime; // Don't start at 0. This way the first reclaimPoint will take time to reclaim
+		Controller_UpdateResourceAmounts(); // Initualize UI through our controller
 	}
 
-	Entity GetEntityFromHit(RaycastHit hit)
+	public void SetController(Controller_Commander newController)
 	{
-		if (hit.collider)
-		{
-			return hit.collider.GetComponentInParent<Entity>();
-		}
-		else
-		{
-			return null;
-		}
+		controller = newController;
 	}
 
 	// Update is called once per frame
-	void Update ()
+	void Update()
 	{
-		//UpdateUI(false);
-		UpdateReclaim();
-		UpdateInput();
+		UpdateReclaiming();
 	}
 
-	void UpdateInput()
+	// For each reclaimPoint, check every frame if we are ready to convert it into a resPoint
+	void UpdateReclaiming()
 	{
-		bool control = false;
-		if (Input.GetButton("Control"))
+		if (reclaimPoints > 0)
 		{
-			control = true;
-		}
+			reclaimTimer -= Time.deltaTime;
+			Controller_UpdateResourceTime();
 
-		// Cursor position code
-		// Should be done before clicking code
-		if (buildState == 0)
-		{
-			RaycastHit hit = RaycastFromCursor(0);
-			Entity ent = GetEntityFromHit(hit);
-			if (ent)
+			if (reclaimTimer <= 0)
 			{
-				if (hoverion)
-					hoverion.OnHover(this, false);
-				ent.OnHover(this, true);
-				hoverion = ent;
+				reclaimTimer = gameRules.RESreclaimTime;
+				reclaimPoints--;
+				resPoints++;
+				Controller_UpdateResourceAmounts();
 			}
-			else if (hoverion)
-				hoverion.OnHover(this, false);
-		}
-		else if (buildState == 1)
-		{
-			RaycastHit hit = RaycastFromCursor(1);
-			if (hit.collider)
-			{
-				// From the flagship (selected), find a position within the spawning radius which is closest to our preview position
-				Vector3 dif = Vector3.ClampMagnitude(hit.point - selection[0].transform.position, gameRules.SPWNflagshipRadius);
-				Vector3 pos = selection[0].transform.position + dif;
-
-				buildPreview.transform.position = pos;
-				if (!buildPreview.activeSelf)
-				{
-					buildPreview.SetActive(true);
-				}
-			}
-			else
-			{
-				// Deactivate preview if not on a valid position
-				if (buildPreview.activeSelf)
-				{
-					//buildPreview.SetActive(false);
-				}
-			}
-		}
-		else if (buildState == 2)
-		{
-			buildPreview.SetActive(true);
-			RaycastHit hit = RaycastFromCursor(1);
-			if (hit.collider && !GetEntityFromHit(hit))
-			{
-				buildPreview.transform.LookAt(hit.point);
-			}
-		}
-
-		// Clicking
-		if (Input.GetMouseButtonDown(0))
-		{
-			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
-			{
-				RaycastHit hit = RaycastFromCursor(0);
-				Entity ent = GetEntityFromHit(hit);
-				if (buildState == 0) // Normal select mode
-				{
-					if (control)
-					{
-						if (ent)
-								Select(ent, true);
-						else
-							Select(null, true);
-					}
-					else
-					{
-						if (ent)
-							Select(ent, false);
-						else
-							Select(null, false);
-					}
-				}
-			}
-		} //lmb
-
-		bool previewingBuild = buildState == 1 || buildState == 2;
-		if (previewingBuild && Input.GetMouseButtonUp(0))
-		{
-			RaycastHit hit = RaycastFromCursor(1);
-			//Entity ent = GetEntityFromHit(hit);
-
-			if (hit.collider)
-			{
-				if (buildState == 1) // Currently moving around preview, left clicking now will place the preview and let us start rotating it
-				{
-					PlacePreview();
-				}
-				else if (buildState == 2) // Currently rotating preview, left clicking now will finalize preview
-				{
-					BuildStart();
-				}
-			}
-		} //lmb up
-
-		if (Input.GetMouseButtonDown(1))
-		{
-			if (!EventSystem.current.IsPointerOverGameObject()) // Right clicks should not do anything if we are over UI, regardless of clicking on grid or not
-			{
-				if (buildState > 0)
-					BuildCancel();
-				else if (HasSelection())
-				{
-					RaycastHit hit = RaycastFromCursor(2);
-					Entity ent = GetEntityFromHit(hit);
-					if (ent)
-					{
-						if (IsUnit(ent))
-							Target(ent);
-					}
-					else if (hit.collider)
-						Move(hit.point);
-				} //selected
-			}
-		} //rmb
-
-		// Raise/Lower Grid
-		if (Input.GetButtonDown("RaiseGrid"))
-		{
-			UpdateGrid(Mathf.Clamp(curGrid + 1, 0, grids.Length - 1));
-		}
-		else if (Input.GetButtonDown("LowerGrid"))
-		{
-			UpdateGrid(Mathf.Clamp(curGrid - 1, 0, grids.Length - 1));
-		}
-		else if (Input.GetButtonDown("DefaultGrid"))
-		{
-			UpdateGrid(defaultGrid);
-		}
-
-		// Abilities
-		if (Input.GetButtonDown("Ability1"))
-		{
-			UseAbility(0);
-		}
-		if (Input.GetButtonDown("Ability2"))
-		{
-			UseAbility(1);
-		}
-		if (Input.GetButtonDown("Ability3"))
-		{
-			UseAbility(2);
-		}
-
-		if (Input.GetButtonDown("CommandWheel"))
-		{
-			UseCommandWheel();
 		}
 	}
 
-	void UseAbility(int index)
+	// Pass updated information to our controller
+	void Controller_UpdateResourceAmounts()
 	{
-		if (!HasSelection())
+		if (!controller)
 			return;
 
-		UnitType type = UnitType.Default;
-		foreach (Entity e in selection)
-		{
-			if (IsUnit(e))
-			{
-				Unit unit = (Unit)e;
-				if (type == UnitType.Default)
-					type = unit.type;
-				else if (unit.type != type)
-					return;
-			}
-		}
-
-		foreach (Entity e in selection)
-		{
-			if (IsUnit(e))
-			{
-				Unit unit = (Unit)e;
-
-				if (unit.abilities.Count < index + 1)
-					return;
-
-				Ability current = unit.abilities[index];
-
-				if (AbilityUtils.RequiresTarget(current.GetAbilityType()) == 0) // Targets nothing
-				{
-					unit.OrderAbility(index, null);
-				}
-				else if (AbilityUtils.RequiresTarget(current.GetAbilityType()) == 1) // Targets a unit
-				{
-					Entity ent = GetEntityFromHit(RaycastFromCursor(0));
-					if (ent && IsUnit(ent))
-					{
-						AbilityTarget targ = new AbilityTarget((Unit)ent);
-						unit.OrderAbility(index, targ);
-					}
-				}
-				else if (AbilityUtils.RequiresTarget(current.GetAbilityType()) == 2) // Targets a position
-				{
-					RaycastHit hit = RaycastFromCursor(1);
-					if (hit.collider)
-					{
-						AbilityTarget targ = new AbilityTarget(hit.point);
-						unit.OrderAbility(index, targ);
-					}
-				}
-			} //if IsUnit
-		} //foreach
-	} //UseAbility()
-
-	void UseCommandWheel()
-	{
-		if (!HasSelection())
-			return;
-
-		foreach (Entity e in selection)
-		{
-			if (IsUnit(e))
-			{
-				Unit unit = (Unit)e;
-
-				RaycastHit hit = RaycastFromCursor(1);
-				if (hit.collider)
-				{
-					AbilityTarget targ = new AbilityTarget(hit.point);
-					unit.OrderCommandWheel(2, targ);
-				}
-				else
-					unit.OrderCommandWheel(2, null);
-			}
-		}
+		controller.UpdateResourceAmounts(resPoints, reclaimPoints);
+		controller.UpdateBuildButtonInteract();
 	}
 
-	void UpdateGrid(int newGrid)
+	// Pass updated information to our controller
+	void Controller_UpdateResourceTime()
 	{
-		grids[curGrid].SetActive(false);
-		curGrid = newGrid;
-		grids[curGrid].SetActive(true);
+		if (controller)
+			controller.UpdateResourceTime(reclaimTimer);
 	}
 
-	void UpdateUI(bool selectingNewUnit)
+	// Initialize building UI according to this Commander
+	void Controller_InitBuildButtons()
 	{
-		if (selectingNewUnit && HasSelection())
-		{
-			bool isFlagship = false;
+		if (!controller)
+			return;
 
-			foreach (Entity e in selection)
-			{
-				Unit unit = (Unit)e;
-				//selectedText.text = "Selected: " + selected.DisplayName;
-
-				Flagship flag = unit.gameObject.GetComponent<Flagship>();
-
-				if (flag)
-					isFlagship = true;
-			}
-
-			if (isFlagship)
-			{
-				buildButtonRoot.SetActive(true);
-				//selectedText.text = "|| FLAGSHIP ||";
-			}
-			else
-				buildButtonRoot.SetActive(false);
-		}
-		else
-			buildButtonRoot.SetActive(false);
+		controller.InitBuildButtons(buildUnitCounters);
 	}
 
-	public void UseBuildButton(int id)
-	{
-		if (buildState != 0)
-			return;
-
-		buildUnitIndex = id;
-
-		if (buildUnitCounters[buildUnitIndex] >= buildUnits[buildUnitIndex].unitCap) // Already reached the unit number cap
-			return;
-
-		if (!SubtractResources(buildUnits[buildUnitIndex].cost)) // Don't have enough resources to build
-			return;
-
-		buildState = 1;
-		buildPreview = Instantiate(buildUnits[buildUnitIndex].previewObject, Vector3.zero, Quaternion.identity);
-		buildPreview.SetActive(false);
-	}
 
 	public BuildUnit GetBuildUnit(int id)
 	{
 		return buildUnits[id];
 	}
 
-	void PlacePreview()
+	public float GetResources()
 	{
-		buildState = 2;
+		return resPoints;
 	}
 
-	void BuildCancel()
+	public float GetReclaim()
 	{
-		AddResources(buildUnits[buildUnitIndex].cost);
-		buildState = 0;
-		Destroy(buildPreview);
+		return reclaimPoints;
 	}
 
-	void BuildStart()
+	public void GiveResources(int amount)
 	{
-		buildState = 0;
-
-		Clone_Build pendingBuild = buildPreview.GetComponent<Clone_Build>();
-		pendingBuild.buildUnit = buildUnits[buildUnitIndex];
-		pendingBuild.Build(buildUnitIndex);
-
-		buildUnitCounters[buildUnitIndex]++;
-
-		buildButtons[buildUnitIndex].SetCounter(buildUnitCounters[buildUnitIndex]);
+		AddResPoints(amount);
 	}
 
-	void UpdateReclaim()
+	public void GiveReclaims(int amount)
 	{
-		if (resPointsToReclaim > 0)
-		{
-			resReclaimTimer -= Time.deltaTime;
-			UpdateResourceUITime();
-
-			if (resReclaimTimer <= 0)
-			{
-				resReclaimTimer = gameRules.RESreclaimTime;
-				resPointsToReclaim--;
-				resPoints++;
-				UpdateResourceUIAmounts();
-			}
-		}
+		AddReclaimPoints(amount);
 	}
 
-	void UpdateResourceUIAmounts()
+	public bool TakeResources(int amount)
 	{
-		resPointsCounter.UpdateResCounter(resPoints, resPointsToReclaim);
-
-		foreach (UI_BuildButton bb in buildButtons)
-			bb.CheckInteractable();
+		// Return whether or not the subtraction was successful
+		return SubtractResPoints(amount);
 	}
 
-	void UpdateResourceUITime()
+	// This code will always run on unit death
+	public void RefundUnitCounter(int index)
 	{
-		resPointsCounter.UpdateTime(1.0f - (resReclaimTimer / gameRules.RESreclaimTime));
+		if (controller)
+			controller.CleanSelection();
+
+		if (index < 0) // Not initialized with a build index
+			return;
+
+		SubtractBuildUnitCounter(index);
+
+		if (controller)
+			controller.SetBuildButtonCounter(index, buildUnitCounters);
 	}
 
-	bool SubtractResources(int amount)
+	public void IncrementUnitCounter(int index)
+	{
+		AddBuildUnitCounter(index);
+
+		if (controller) // This code will always run on unit construction
+			controller.SetBuildButtonCounter(index, buildUnitCounters);
+	}
+
+
+	private void AddResPoints(int amount)
+	{
+		resPoints = resPoints + amount;
+		Controller_UpdateResourceAmounts();
+	}
+
+	private void AddReclaimPoints(int amount)
+	{
+		reclaimPoints = reclaimPoints + amount;
+		Controller_UpdateResourceAmounts();
+	}
+
+	private bool SubtractResPoints(int amount)
 	{
 		int newResPoints = resPoints - amount;
 
-		if (CheckResources(amount))
+		if (CheckResPointSubtraction(amount)) // If we wont go negative subtracting this amount,
 		{
-			resPoints = newResPoints;
-			UpdateResourceUIAmounts();
+			resPoints = newResPoints; // change resPoints
+			Controller_UpdateResourceAmounts(); // and update our controller UI
 			return true;
 		}
 		else
@@ -495,7 +177,18 @@ public class Commander : MonoBehaviour
 		}
 	}
 
-	bool CheckResources(int cost)
+	private void SubtractBuildUnitCounter(int index)
+	{
+		buildUnitCounters[index]--;
+	}
+
+	private void AddBuildUnitCounter(int index)
+	{
+		buildUnitCounters[index]++;
+	}
+
+	// Used to determine if a subtraction is possible
+	private bool CheckResPointSubtraction(int cost)
 	{
 		int newResPoints = resPoints - cost;
 
@@ -507,186 +200,5 @@ public class Commander : MonoBehaviour
 		{
 			return false;
 		}
-	}
-
-	void RefundBuildCap(int index)
-	{
-		buildUnitCounters[index]--;
-	}
-
-	public void RefundUnitCounter(int index)
-	{
-		if (index < 0) // Not initialized with a build index
-			return;
-
-		RefundBuildCap(index);
-
-		buildButtons[index].SetCounter(buildUnitCounters[index]);
-
-		CheckSelection();
-	}
-
-	public float GetResources()
-	{
-		return resPoints;
-	}
-
-	public bool TakeResources(int amount)
-	{
-		return SubtractResources(amount);
-	}
-
-	public void GiveRes(int amount)
-	{
-		AddResources(amount);
-	}
-
-	void AddResources(int amount)
-	{
-		resPoints = resPoints + amount;
-		UpdateResourceUIAmounts();
-	}
-
-	public void GiveRec(int amount)
-	{
-		AddResourcesToReclaim(amount);
-	}
-
-	void AddResourcesToReclaim(int amount)
-	{
-		resPointsToReclaim = resPointsToReclaim + amount;
-		UpdateResourceUIAmounts();
-	}
-
-	bool IsUnit(Entity ent)
-	{
-		if (!ent)
-			return false;
-
-		return ent.GetType() == typeof(Unit) || ent.GetType().IsSubclassOf(typeof(Unit));
-	}
-
-	public void Select(Entity newSel, bool add)
-	{
-		bool newSelIsUnit = IsUnit(newSel);
-
-		if (newSelIsUnit)
-			if (((Unit)newSel).team != team)
-				return;
-
-
-		
-		if (add)
-		{
-			if (!newSel)
-			{
-				return;
-			}
-
-			// If we have a list of only Units, and we attempt to add a non-Unit, return
-			// If we already have this Entity, return
-			bool allUnits = true;
-
-			for (int i = 0; i < selection.Count; i++)
-			{
-				Entity e = selection[i];
-
-				if (!IsUnit(e))
-					allUnits = false;
-
-				if (e == newSel)
-				{
-					e.OnSelect(this, false);
-					selection.RemoveAt(i);
-					UpdateUI(true);
-					return;
-				}
-			}
-
-			if (allUnits && !newSelIsUnit)
-			{
-				return;
-			}
-
-			newSel.OnSelect(this, true);
-			selection.Add(newSel);
-		}
-		else
-		{
-			if (HasSelection())
-			{
-				foreach (Entity e in selection)
-				{
-					if (e != newSel)
-					{
-						e.OnSelect(this, false);
-					}
-				}
-			}
-
-			selection = new List<Entity>();
-			if (newSel)
-			{
-				newSel.OnSelect(this, true);
-				selection.Add(newSel);
-			}
-		}
-
-		UpdateUI(true);
-
-		//if (newSel)
-		//else
-		//selectedText.text = "";
-	}
-
-	void CheckSelection()
-	{
-		List<Entity> toRemove = new List<Entity>();
-		foreach (Entity e in selection)
-		{
-			if (IsUnit(e))
-			{
-				if (((Unit)e).IsDead())
-					toRemove.Add(e);
-			}
-		}
-
-		foreach (Entity e in toRemove)
-		{
-			selection.Remove(e);
-		}
-	}
-
-	public void Move(Vector3 newPos)
-	{
-		if (HasSelection())
-		{
-			foreach (Entity e in selection)
-			{
-				if (IsUnit(e))
-					((Unit)e).OrderMove(newPos);
-			}
-
-			AudioUtils.PlayClipAt(soundMove, transform.position, audioSource);
-			Instantiate(clickEffect, newPos, Quaternion.identity);
-		}
-	}
-
-	public void Target(Entity newTarg)
-	{
-		if (HasSelection())
-		{
-			foreach (Entity e in selection)
-			{
-				//if (newTarg && IsUnit(newTarg) && IsUnit(e) && ((Unit)newTarg).team != team)
-				if (newTarg && IsUnit(newTarg) && newTarg != e && IsUnit(e))
-					((Unit)e).OrderAttack((Unit)newTarg);
-			}
-		}
-	}
-
-	bool HasSelection()
-	{
-		return selection.Count > 0;
 	}
 }

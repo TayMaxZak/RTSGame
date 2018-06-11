@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class UI_BuildButton : MonoBehaviour
 {
-	[SerializeField]
-	private int team;
+	//[SerializeField]
+	//private int team;
 	private int index;
 
 	[SerializeField]
@@ -24,17 +24,23 @@ public class UI_BuildButton : MonoBehaviour
 	//private Image borderFill;
 
 	//private UIRules uiRules;
-	private Manager_Game gameManager;
+	//private Manager_Game gameManager;
 
+	private Controller_Commander controller;
 	private Commander commander;
 
 	void Start()
 	{
 		//uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
-		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
-		UpdateCommander();
+		//gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
 
 		interactable = new bool[2];
+	}
+
+	public void SetController(Controller_Commander newController)
+	{
+		controller = newController;
+		commander = controller.GetCommander();
 	}
 
 	public void SetIndex(int i)
@@ -42,20 +48,9 @@ public class UI_BuildButton : MonoBehaviour
 		index = i;
 	}
 
-	public void SetTeam(int t)
-	{
-		team = t;
-		UpdateCommander();
-	}
-
-	void UpdateCommander()
-	{
-		commander = gameManager.Commanders[team];
-	}
-
 	public void Build()
 	{
-		commander.UseBuildButton(index);
+		controller.UseBuildButton(index);
 	}
 
 	public void CheckInteractable()

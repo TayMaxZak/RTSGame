@@ -17,6 +17,8 @@ public class Entity : MonoBehaviour
 	protected bool isSelected;
 	protected bool isHovered;
 
+	protected Controller_Commander controller;
+
 	public string DisplayName
 	{
 		get
@@ -51,14 +53,22 @@ public class Entity : MonoBehaviour
 		//}
 	}
 
-	public virtual void OnHover(Commander selector, bool selectOrDeselect)
+	public virtual void OnHover(bool hovered)
 	{
-		isHovered = selectOrDeselect;
+		isHovered = hovered;
 	}
 
-	public virtual void OnSelect(Commander selector, bool selectOrDeselect)
+	public virtual void OnSelect(bool selected)
 	{
-		selCircle.SetActive(selectOrDeselect);
-		isSelected = selectOrDeselect;
+		selCircle.SetActive(selected);
+		isSelected = selected;
+	}
+
+	public virtual void LinkStats(bool detailed, Controller_Commander newController)
+	{
+		if (detailed)
+			controller = newController;
+		else
+			controller = null;
 	}
 }

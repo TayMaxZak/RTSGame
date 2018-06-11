@@ -13,7 +13,7 @@ public class Flagship : Unit
 		gameRules = gameManager.GameRules; // Grab copy of Game Rules
 		base.Start(); // Init Unit base class
 		maxShield = gameRules.FLAGshieldMax;
-		UpdateHPBarVal();
+		UpdateHPBarVal(true);
 	}
 
 	// Update is called once per frame
@@ -21,7 +21,10 @@ public class Flagship : Unit
 	{
 		shieldRegenTimer -= Time.deltaTime;
 		if (shieldRegenTimer <= 0)
+		{
 			curShield = Mathf.Clamp(curShield + gameRules.FLAGshieldRegenGPS * Time.deltaTime, 0, gameRules.FLAGshieldMax);
+			UpdateShield();
+		}
 		base.Update(); // Unit base class
 	}
 
