@@ -5,7 +5,6 @@ using UnityEngine;
 public class Unit : Entity
 {
 	public bool printStatus = false;
-	public UnitType type;
 
 	[Header("Feedback")]
 	[SerializeField]

@@ -39,7 +39,7 @@ Material:
     - _NoiseSteps: 1000
     - _NoiseStretch: 1
     - _NoiseSubSteps: 50
-    - _SSSStrength: 0.5
+    - _SSSStrength: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _SSSColor: {r: 1, g: 0.9696755, b: 0.9044118, a: 1}

@@ -8,8 +8,8 @@ public class GameRules
 	[Header("Testing")]
 	public bool useTestValues = false;
 	public float TESTtimeMult = 0.25f;
-	public float TESTinitHealthAdd = 20;
-	public float TESTinitHealthMult = 0;
+	public float TESTinitHealthAdd = 0;
+	public float TESTinitHealthMult = 0.2f;
 	[Header("Armor")]
 	public float ARMabsorbFlat = 20; // How much armor absorb is guarenteed
 	public float ARMabsorbMax = 15; // How much armor absorb is added based on current percentage of armor
@@ -32,7 +32,7 @@ public class GameRules
 	public float FLAGshieldRegenGPS = 5;
 	public float FLAGshieldRegenDelay = 10;
 	[Header("Resources")]
-	public float RESreclaimTime = 10;
+	public float RESreclaimTime = 5;
 	[Header("Spawning")]
 	public float SPWNflagshipRadius = 50; // Radius around flagship where units can be spawned
 	[Header("Audio")]
@@ -69,7 +69,7 @@ public class GameRules
 	public float ABLYhealFieldResTime = 10; // Delay to return resource points when the ability ends
 
 	public float ABLYchainAllyMult = 0.7f;
-	public float ABLYchainEnemyMult = 0.35f;
+	public float ABLYchainEnemyMult = 0.7f;
 	public float ABLYchainRange = 25;
 
 	[Header("Statuses")]

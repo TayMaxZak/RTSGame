@@ -125,18 +125,19 @@ public class UI_EntityStats : MonoBehaviour
 		{
 			//ability1Text.text = IntToNumerals(amount);
 			foreach (Text text in ability1Text)
-				text.text = IntToNumerals(stacks);
+				text.text = stacks > 0 ? stacks.ToString() : "";
 			ability1IconB.sprite = AbilityUtils.GetSecondaryAbilityIcon(type, stacks);
 		}
 		else
 		{
 			//ability2Text.text = IntToNumerals(amount);
 			foreach (Text text in ability2Text)
-				text.text = IntToNumerals(stacks);
+				text.text = stacks > 0 ? stacks.ToString() : "";
 			ability2IconB.sprite = AbilityUtils.GetSecondaryAbilityIcon(type, stacks);
 		}
 	}
 
+	/*
 	string IntToNumerals(int number)
 	{
 		switch (number)
@@ -155,4 +156,5 @@ public class UI_EntityStats : MonoBehaviour
 				return "V";
 		}
 	}
+	*/
 }

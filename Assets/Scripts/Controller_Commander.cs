@@ -399,17 +399,25 @@ public class Controller_Commander : MonoBehaviour
 		if (!HasSelection())
 			return;
 
-		UnitType type = UnitType.Default;
+		// If we are dealing with a mixed group of units, don't use abilities
+		EntityType type = EntityType.Default;
 		foreach (Entity e in selection)
 		{
+			// TODO: Check by abilities rather than types
+			if (type == EntityType.Default)
+				type = e.Type;
+			else if (e.Type != type)
+				return;
+			/*
 			if (IsUnit(e))
 			{
 				Unit unit = (Unit)e;
-				if (type == UnitType.Default)
+				if (type == EntityType.Default)
 					type = unit.type;
 				else if (unit.type != type)
 					return;
 			}
+			*/
 		}
 
 		foreach (Entity e in selection)
@@ -516,7 +524,7 @@ public class Controller_Commander : MonoBehaviour
 				InitStats(unit);
 
 				// and that entity is a flagship, show build buttons
-				Flagship flag = selection[0].gameObject.GetComponent<Flagship>();
+				Unit_Flagship flag = selection[0].gameObject.GetComponent<Unit_Flagship>();
 				if (flag)
 					buildButtonsRoot.SetActive(true);
 				else
@@ -602,7 +610,7 @@ public class Controller_Commander : MonoBehaviour
 		}
 		entityStats.SetAbilities(abilityCounter.ToArray());
 
-		entityStats.SetDisplayName(who.DisplayName);
+		entityStats.SetDisplayName(EntityUtils.GetDisplayName(who.Type));
 
 		UpdateStatsHealth(who);
 		UpdateStatsAbilities(who);

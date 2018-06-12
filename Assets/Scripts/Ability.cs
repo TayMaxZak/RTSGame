@@ -203,7 +203,7 @@ public static class AbilityUtils
 					// TODO: Clean code up
 					if (ability.target.unit.GetShieldPool() <= Mathf.Epsilon || ability.target.unit == ability.user)
 					{
-						Flagship flag = ability.target.unit.gameObject.GetComponent<Flagship>();
+						Unit_Flagship flag = ability.target.unit.gameObject.GetComponent<Unit_Flagship>();
 
 						if (!flag)
 						{

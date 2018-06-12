@@ -1968,11 +1968,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881f111063680d7498afcd5cd846dd8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayName: Frigate
+  type: 4
   swarmTarget: {fileID: 4907543980749030}
   selCircleSize: 2.5
   printStatus: 0
-  type: 4
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
   hpEffects: {fileID: 114299271673986788}
@@ -1982,6 +1981,7 @@ MonoBehaviour:
   maxArmor: 300
   curHealth: 250
   maxHealth: 250
+  alwaysBurnImmune: 0
   curShield: 0
   shieldTeam: 0
   deathClone: {fileID: 1796662562453436, guid: bcfe7a37703b99244ad36433f72888c7, type: 2}
@@ -1991,118 +1991,14 @@ MonoBehaviour:
   - {fileID: 114698448303424642}
   - {fileID: 114474939179645132}
   abilities:
-  - type: 2
-    gameRules:
-      ARMabsorbFlat: 0
-      ARMabsorbMax: 0
-      ARMrangeMin: 0
-      ARMrangeMax: 0
-      ARMrangeMult: 0
-      HLTHthreshBurn: 0
-      HLTHburnMin: 0
-      HLTHburnMax: 0
-      WRCKfallSpeedMax: 10
-      WRCKfallSpeedAccel: 3
-      WRCKlifetime: 8
-      WRCKmassHealthMult: 1
-      WRCKmassArmorMult: 0.5
-      WRCKcollisionSpeedPenalty: 0.6
-      FLAGshieldMax: 500
-      FLAGshieldRegenGPS: 5
-      FLAGshieldRegenDelay: 10
-      RESreclaimTime: 10
-      SPWNflagshipRadius: 20
-      AUDpitchVariance: 0
-      PRJmaxTimeAlive: 0
-      PRJhitOffset: 0
-      entityLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      gridLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      ABLYarmorDrainRange: 0
-      ABLYarmorDrainDPSEnemy: 0
-      ABLYarmorDrainDPSAlly: 0
-      ABLYarmorDrainGPS: 1
-      ABLYarmorDrainGPSBonusMult: 1
-      ABLYarmorDrainMaxVictims: 0
-      ABLYarmorRegenHPS: []
-      ABLYshieldProjectMaxPool: 0
-      ABLYshieldProjectInactiveGPS: 8
-      ABLYswarmMaxUses: 3
-      ABLYswarmDPS: 3
-      ABLYswarmDamageRadius: 8
-      ABLYhealFieldRange: 25
-      ABLYhealFieldAllyGPS: 2
-      ABLYhealFieldAllyGPSBonusMult: 0.005
-      ABLYhealFieldUserGPS: 4
-      ABLYhealFieldResCost: 3
-      ABLYhealFieldResTime: 5
-      ABLYchainAllyMult: 0.7
-      ABLYchainEnemyMult: 0.35
-      ABLYchainRange: 25
-      STATswarmShieldDmgReduce: 0.1
-      STATswarmShieldMaxStacks: 4
+  - type: 3
     pointEffect: {fileID: 0}
     user: {fileID: 0}
     target:
       unit: {fileID: 0}
       position: {x: 0, y: 0, z: 0}
     unitList: []
-  - type: 3
-    gameRules:
-      ARMabsorbFlat: 0
-      ARMabsorbMax: 0
-      ARMrangeMin: 0
-      ARMrangeMax: 0
-      ARMrangeMult: 0
-      HLTHthreshBurn: 0
-      HLTHburnMin: 0
-      HLTHburnMax: 0
-      WRCKfallSpeedMax: 10
-      WRCKfallSpeedAccel: 3
-      WRCKlifetime: 8
-      WRCKmassHealthMult: 1
-      WRCKmassArmorMult: 0.5
-      WRCKcollisionSpeedPenalty: 0.6
-      FLAGshieldMax: 500
-      FLAGshieldRegenGPS: 5
-      FLAGshieldRegenDelay: 10
-      RESreclaimTime: 10
-      SPWNflagshipRadius: 20
-      AUDpitchVariance: 0
-      PRJmaxTimeAlive: 0
-      PRJhitOffset: 0
-      entityLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      gridLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      ABLYarmorDrainRange: 0
-      ABLYarmorDrainDPSEnemy: 0
-      ABLYarmorDrainDPSAlly: 0
-      ABLYarmorDrainGPS: 1
-      ABLYarmorDrainGPSBonusMult: 1
-      ABLYarmorDrainMaxVictims: 0
-      ABLYarmorRegenHPS: []
-      ABLYshieldProjectMaxPool: 0
-      ABLYshieldProjectInactiveGPS: 8
-      ABLYswarmMaxUses: 3
-      ABLYswarmDPS: 3
-      ABLYswarmDamageRadius: 8
-      ABLYhealFieldRange: 25
-      ABLYhealFieldAllyGPS: 2
-      ABLYhealFieldAllyGPSBonusMult: 0.005
-      ABLYhealFieldUserGPS: 4
-      ABLYhealFieldResCost: 3
-      ABLYhealFieldResTime: 5
-      ABLYchainAllyMult: 0.7
-      ABLYchainEnemyMult: 0.35
-      ABLYchainRange: 25
-      STATswarmShieldDmgReduce: 0.1
-      STATswarmShieldMaxStacks: 4
+  - type: 4
     pointEffect: {fileID: 0}
     user: {fileID: 0}
     target:

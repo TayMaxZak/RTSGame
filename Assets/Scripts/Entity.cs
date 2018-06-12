@@ -2,11 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum EntityType
+{
+	Default,
+	Destroyer,
+	Corvette,
+	Flagship,
+	Frigate,
+	Apollo,
+	Bulkhead
+}
+
 public class Entity : MonoBehaviour
 {
 	[Header("Entity Properties")]
 	[SerializeField]
-	private string displayName = "Default Name";
+	private EntityType type;
 	[SerializeField]
 	protected Transform swarmTarget;
 	[SerializeField]
@@ -19,11 +30,11 @@ public class Entity : MonoBehaviour
 
 	protected Controller_Commander controller;
 
-	public string DisplayName
+	public EntityType Type
 	{
 		get
 		{
-			return displayName;
+			return type;
 		}
 	}
 
@@ -70,5 +81,43 @@ public class Entity : MonoBehaviour
 			controller = newController;
 		else
 			controller = null;
+	}
+}
+
+public static class EntityUtils
+{
+	public static string GetDisplayName(EntityType type)
+	{
+		switch (type)
+		{
+			default:
+				{
+					return "no name";
+				}
+			case EntityType.Destroyer:
+				{
+					return "Destroyer";
+				}
+			case EntityType.Corvette:
+				{
+					return "Corvette";
+				}
+			case EntityType.Flagship:
+				{
+					return "Flagship";
+				}
+			case EntityType.Frigate:
+				{
+					return "Frigate";
+				}
+			case EntityType.Apollo:
+				{
+					return "Apollo-class";
+				}
+			case EntityType.Bulkhead:
+				{
+					return "Bulkhead Cruiser";
+				}
+		}
 	}
 }
