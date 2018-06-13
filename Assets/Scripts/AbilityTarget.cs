@@ -18,6 +18,11 @@ public class AbilityTarget
 		position = pos;
 	}
 
+	public override string ToString()
+	{
+		return EntityUtils.GetDisplayName(unit.Type) + " " + position;
+	}
+
 	//public bool UnitOrPos()
 	//{
 	//	if (unit)

@@ -429,7 +429,7 @@ public class Controller_Commander : MonoBehaviour
 				if (unit.abilities.Count < index + 1)
 					return;
 
-				Ability current = unit.abilities[index];
+				AbilityOld current = unit.abilities[index];
 
 				if (AbilityUtils.GetTargetRequirement(current.GetAbilityType()) == 0) // Targets nothing
 				{
@@ -601,7 +601,7 @@ public class Controller_Commander : MonoBehaviour
 
 		// Determine number of active abilities
 		List<AbilityType> abilityCounter = new List<AbilityType>();
-		foreach (Ability a in who.abilities)
+		foreach (AbilityOld a in who.abilities)
 		{
 			if (AbilityUtils.GetActivationStyle(a.GetAbilityType()) > 0) // Not a passive
 			{
@@ -632,7 +632,7 @@ public class Controller_Commander : MonoBehaviour
 	{
 		if (who.abilities.Count > 0)
 		{
-			Ability a1 = who.abilities[0];
+			AbilityOld a1 = who.abilities[0];
 			if (a1.displayAsUnusable)
 				entityStats.SetAbilityProgress(0, 1, a1.isActive);
 			else if (AbilityUtils.GetActivationStyle(a1.GetAbilityType()) == 1) // Instant
@@ -643,7 +643,7 @@ public class Controller_Commander : MonoBehaviour
 		}
 		if (who.abilities.Count > 1)
 		{
-			Ability a2 = who.abilities[1];
+			AbilityOld a2 = who.abilities[1];
 			if (a2.displayAsUnusable)
 			{
 				entityStats.SetAbilityProgress(1, 1, a2.isActive);

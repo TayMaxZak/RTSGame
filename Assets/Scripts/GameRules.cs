@@ -8,8 +8,8 @@ public class GameRules
 	[Header("Testing")]
 	public bool useTestValues = false;
 	public float TESTtimeMult = 0.25f;
-	public float TESTinitHealthAdd = 0;
-	public float TESTinitHealthMult = 0.2f;
+	public float TESTinitHPAdd = 0;
+	public float TESTinitHPMult = 0.2f;
 	[Header("Armor")]
 	public float ARMabsorbFlat = 20; // How much armor absorb is guarenteed
 	public float ARMabsorbMax = 15; // How much armor absorb is added based on current percentage of armor

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Ability_HealField : MonoBehaviour {
-	private Ability ability;
+	private AbilityOld ability;
 	[SerializeField]
 	private Effect_Point pointEffectPrefab;
 	private Effect_Point pointEffect;
@@ -36,7 +36,7 @@ public class Ability_HealField : MonoBehaviour {
 		pointEffect.SetEffectActive(isActive);
 	}
 
-	public void SetAbility(Ability a)
+	public void SetAbility(AbilityOld a)
 	{
 		ability = a;
 	}

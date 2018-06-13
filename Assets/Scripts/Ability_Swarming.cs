@@ -33,9 +33,9 @@ public class Ability_Swarming : MonoBehaviour {
 
 
 	[SerializeField]
-	private float distanceSpeed = 0.03f;
+	private float distanceAccel = 0.8f;
 	[SerializeField]
-	private float distanceSpeedMaxMult = 4;
+	private float distanceAccelMaxMult = 4;
 
 	[SerializeField]
 	private float maxSpeed = 5f;
@@ -105,16 +105,17 @@ public class Ability_Swarming : MonoBehaviour {
 				//randomVectors[i].w = 0;
 			}
 
-			Vector3 distanceVel = (particles[i].position - targPos) * -distanceSpeed;
-			particles[i].velocity += Vector3.ClampMagnitude(distanceVel, distanceSpeed * distanceSpeedMaxMult);
+			float correctedSpeed = -distanceAccel * Time.deltaTime;
+			Vector3 distanceVel = (particles[i].position - targPos) * correctedSpeed;
+			particles[i].velocity += Vector3.ClampMagnitude(distanceVel, distanceAccel * distanceAccelMaxMult);
 
 			Vector3 randomVel = randomVectors[i] * randomSpeed;
 			particles[i].velocity += randomVel;
 			particles[i].velocity = Vector3.ClampMagnitude(particles[i].velocity, maxSpeed);
 
 			int avgPosIndex = Mathf.FloorToInt(i / swarmSize);
-			avgPositions[avgPosIndex] += distanceVel / -distanceSpeed;
-			overallAvgPos += distanceVel / -distanceSpeed;
+			avgPositions[avgPosIndex] += distanceVel / correctedSpeed;
+			overallAvgPos += distanceVel / correctedSpeed;
 		}
 
 		for (int i = 0; i < swarmCenters.Count; i++)

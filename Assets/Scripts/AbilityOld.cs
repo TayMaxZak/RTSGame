@@ -15,7 +15,7 @@ public enum AbilityType
 }
 
 [System.Serializable]
-public class Ability
+public class AbilityOld
 {
 	[SerializeField]
 	private AbilityType type;
@@ -88,7 +88,7 @@ public class Ability
 
 public static class AbilityUtils
 {
-	public static void InitAbility(Ability ability)
+	public static void InitAbility(AbilityOld ability)
 	{
 		switch (ability.GetAbilityType())
 		{
@@ -129,7 +129,7 @@ public static class AbilityUtils
 			ability.pointEffect.SetEffectActive(ability.isActive);
 	}
 
-	public static void StartAbility(Ability ability)
+	public static void StartAbility(AbilityOld ability)
 	{
 		// Can't be used yet
 		if (ability.curCooldown > 0)
@@ -139,7 +139,7 @@ public static class AbilityUtils
 
 		if (GetActivationStyle(ability.GetAbilityType()) == 1)
 		{
-			ability.isActive = !ability.isActive;
+			ability.isActive = true;
 			if (ability.pointEffect)
 				ability.pointEffect.SetEffectActive(true);
 		}
@@ -163,7 +163,7 @@ public static class AbilityUtils
 					{
 						if (ability.stacks == ability.gameRules.ABLYswarmMaxUses)
 						{
-							foreach (Ability a in ability.user.abilities)
+							foreach (AbilityOld a in ability.user.abilities)
 							{
 								if (a.GetAbilityType() == AbilityType.MoveSwarm)
 								{
@@ -264,7 +264,7 @@ public static class AbilityUtils
 		}
 	}
 
-	public static void TickAbility(Ability ability)
+	public static void TickAbility(AbilityOld ability)
 	{
 		ability.curCooldown = ability.curCooldown - Time.deltaTime * GetDeltaDurations(ability.GetAbilityType()).x; // Restore cooldown
 
@@ -329,7 +329,7 @@ public static class AbilityUtils
 						if (units.Contains(unit)) // Multiple colliders for one unit
 							continue;
 
-						foreach (Ability a in unit.abilities)
+						foreach (AbilityOld a in unit.abilities)
 							if (a.GetAbilityType() == AbilityType.ArmorDrain) // Can't drain another drain-capable unit
 								hasDrainAbility = true;
 
@@ -383,11 +383,15 @@ public static class AbilityUtils
 				break;
 			case AbilityType.SpawnSwarm:
 				{
+					Debug.Log("AHH 1");
 					if (ability.stacks < ability.gameRules.ABLYswarmMaxUses) // If we've already used the ability (so we should have a target already set)
 					{
-						Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>(); // TODO: Optimize
+						Debug.Log("AHH 2");
+						Ability_Swarming swarmManager = ability.user.GetComponent<Ability_Swarming>();
+						Debug.Log(swarmManager.GetTarget());
 						if (!swarmManager.GetTarget().unit) // Self-cast if the target dies
 						{
+							Debug.Log("AHH 3");
 							swarmManager.SetTarget(new AbilityTarget(ability.user));
 						}
 					}
@@ -398,7 +402,7 @@ public static class AbilityUtils
 		}
 	}
 
-	public static void EndAbility(Ability ability)
+	public static void EndAbility(AbilityOld ability)
 	{
 		switch (ability.GetAbilityType())
 		{

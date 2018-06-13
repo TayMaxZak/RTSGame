@@ -45,7 +45,7 @@ public class Unit : Entity
 
 	[Header("Abilities")]
 	[SerializeField]
-	public List<Ability> abilities;
+	public List<AbilityOld> abilities;
 
 	[Header("Moving")]
 	[SerializeField]
@@ -116,7 +116,8 @@ public class Unit : Entity
 
 		if (gameRules.useTestValues)
 		{
-			curHealth = curHealth  * gameRules.TESTinitHealthMult + gameRules.TESTinitHealthAdd;
+			curHealth = curHealth * gameRules.TESTinitHPMult + gameRules.TESTinitHPAdd;
+			curArmor = curArmor * gameRules.TESTinitHPMult + gameRules.TESTinitHPAdd;
 		}
 		maxShield = gameRules.ABLYshieldProjectMaxPool;
 
@@ -127,7 +128,7 @@ public class Unit : Entity
 		UpdateHPBarPosAndVis(); // Make sure healthbar is hidden until the unit is first selected
 		UpdateHPBarVal(true);
 
-		foreach (Ability ab in abilities) // Init abilities
+		foreach (AbilityOld ab in abilities) // Init abilities
 			ab.Init(this, gameRules);
 
 		foreach (Turret tur in turrets) // Init turrets
@@ -587,7 +588,7 @@ public class Unit : Entity
 			return;
 		dead = true; // Prevents multiple deaths
 
-		foreach (Ability ab in abilities)
+		foreach (AbilityOld ab in abilities)
 		{
 			ab.End();
 		}

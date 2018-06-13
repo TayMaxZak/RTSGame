@@ -1776,7 +1776,7 @@ MonoBehaviour:
   randomSpeed: 0.05
   randomDistribution: {x: 1, y: 0, z: 1}
   randomFreq: 1
-  distanceSpeed: 0.04
+  distanceSpeed: 0.8
   distanceSpeedMaxMult: 4
   maxSpeed: 5
 --- !u!114 &114451669362268560
