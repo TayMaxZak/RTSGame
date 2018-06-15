@@ -43,7 +43,6 @@ public class Manager_Projectiles : MonoBehaviour
 			return;
 
 		numAlive = pS.GetParticles(particles);
-		//Debug.Log("numAlive = " + numAlive);
 
 		for (int i = 0; i < projectiles.Count; i++)
 		{
@@ -57,7 +56,6 @@ public class Manager_Projectiles : MonoBehaviour
 					Unit unit = hit.collider.transform.parent.GetComponent<Unit>();
 					if (unit) // If we hit a unit and its not on our team, damage it
 					{
-						//Debug.Log("I AM TEAM " + proj.GetTeam());
 						unit.Damage(proj.GetDamage(), proj.CalcRange());
 					}
 				}
@@ -70,7 +68,6 @@ public class Manager_Projectiles : MonoBehaviour
 				continue;
 			}//if Raycast
 			
-			//Debug.Log("life " + i + " is " + proj.GetTimeAlive());
 			proj.UpdateTimeAlive(Time.deltaTime);
 			if (proj.GetTimeAlive() > gameRules.PRJmaxTimeAlive)
 			{
@@ -94,7 +91,6 @@ public class Manager_Projectiles : MonoBehaviour
 		}
 		toDelete.Clear();
 
-		//Debug.Log("new projectiles this frame " + newProjectilesThisFrame);
 		//newProjectilesThisFrame = 0;
 		pS.SetParticles(particles, numAlive);
 	} //Update()
@@ -113,7 +109,6 @@ public class Manager_Projectiles : MonoBehaviour
 
 			for (int i = 1; i < count; i++)
 			{
-				//Debug.Log("count = " + count);
 				subTotal += pS.subEmitters.GetSubEmitterSystem(i).particleCount;
 			}
 			Debug.Log("NUM ALIVE: " + (pS.particleCount) + " -> " + (pS.particleCount + subTotal));

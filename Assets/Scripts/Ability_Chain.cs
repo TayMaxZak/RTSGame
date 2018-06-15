@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ability_Chain : MonoBehaviour {
+public class Ability_Chain : Ability
+{
 	[SerializeField]
 	private Transform chainStart;
 	[SerializeField]
@@ -15,24 +16,17 @@ public class Ability_Chain : MonoBehaviour {
 	private GameObject pointEffectBreakPrefab;
 	private GameObject pointEffectBreak;
 
-	//private Vector3 velocity; // Doesn't need to be public
-
-	//private bool isActive = false;
-
-	//private Manager_Game gameManager;
-	private GameRules gameRules;
-
-	private Unit parentUnit;
 	private Unit targetUnit;
 
-	// Use this for initialization
-	void Start()
+	void Awake()
 	{
-		parentUnit = GetComponent<Unit>();
-		//velocity = parentUnit.GetVelocity();
+		abilityType = AbilityType.Chain;
+	}
 
-		//gameManager = ;
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+	// Use this for initialization
+	new void Start()
+	{
+		base.Start();
 
 		lineEffect = Instantiate(lineEffectPrefab, transform.position, Quaternion.identity);
 		lineEffect.SetEffectActive(0);
@@ -41,12 +35,18 @@ public class Ability_Chain : MonoBehaviour {
 		pointEffect.SetEffectActive(false);
 	}
 
-	public void SetTarget(AbilityTarget target)
+	public override void UseAbility(AbilityTarget target)
 	{
 		if (targetUnit)
 			ClearTarget();
 		if (target.unit != parentUnit && InRange(target.unit.transform))
 			targetUnit = target.unit;
+	}
+
+	public override void End()
+	{
+		lineEffect.End();
+		pointEffect.End();
 	}
 
 	void Update()
@@ -67,11 +67,6 @@ public class Ability_Chain : MonoBehaviour {
 				ClearTarget();
 			}
 		}
-		else
-		{
-			lineEffect.SetEffectActive(0);
-			pointEffect.SetEffectActive(false);
-		}
 	}
 
 	void ClearTarget()
@@ -79,20 +74,16 @@ public class Ability_Chain : MonoBehaviour {
 		targetUnit.RemoveVelocityMod(new VelocityMod(parentUnit, parentUnit.GetVelocity(), VelocityModType.Chain));
 		targetUnit = null;
 		lineEffect.SetEffectActive(0);
-		
+		pointEffect.SetEffectActive(false);
 	}
 
 	bool InRange(Transform tran)
 	{
-		if (Vector3.SqrMagnitude(tran.position - chainStart.position) < gameRules.ABLYchainRange * gameRules.ABLYchainRange)
+		if (Vector3.SqrMagnitude(tran.position - transform.position) < gameRules.ABLYchainRange * gameRules.ABLYchainRange)
 			return true;
 		else
 			return false;
 	}
 
-	public void End()
-	{
-		lineEffect.End();
-		pointEffect.End();
-	}
+
 }

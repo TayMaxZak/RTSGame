@@ -6,7 +6,9 @@ public class Effect_Point : MonoBehaviour
 {
 	private AudioSource audioSource;
 	[SerializeField]
-	private ParticleSystem pS;
+	private ParticleSystem mainPS;
+	[SerializeField]
+	private bool mainPSInstant;
 	[SerializeField]
 	private ParticleSystem secondaryPS;
 
@@ -24,17 +26,39 @@ public class Effect_Point : MonoBehaviour
 	{
 		if (state)
 		{
-			if (!audioSource.isPlaying)
-				audioSource.Play();
-			if (!pS.isPlaying)
-				pS.Play();
+			if (audioSource)
+			{
+				if (!audioSource.isPlaying)
+					audioSource.Play();
+			}
+
+			if (!mainPSInstant)
+			{
+				if (!mainPS.isPlaying)
+					mainPS.Play();
+			}
+			else
+			{
+				mainPS.gameObject.SetActive(true);
+			}
 		}
 		else
 		{
-			if (audioSource.isPlaying)
-				audioSource.Stop();
-			if (pS.isPlaying)
-				pS.Stop();
+			if (audioSource)
+			{;
+				if (audioSource.isPlaying)
+					audioSource.Stop();
+			}
+
+			if (!mainPSInstant)
+			{
+				if (mainPS.isPlaying)
+					mainPS.Stop();
+			}
+			else
+			{
+				mainPS.gameObject.SetActive(false);
+			}
 		}
 
 		if (secondaryPS)
@@ -58,7 +82,7 @@ public class Effect_Point : MonoBehaviour
 
 	public void End()
 	{
-		float duration = Mathf.Max(pS.main.duration, secondaryPS ? secondaryPS.main.duration : 0);;
+		float duration = Mathf.Max(mainPS.main.duration, secondaryPS ? secondaryPS.main.duration : 0);;
 		SetEffectActive(false);
 		Destroy(gameObject, duration);
 	}

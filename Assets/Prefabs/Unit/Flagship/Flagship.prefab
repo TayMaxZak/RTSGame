@@ -71,7 +71,6 @@ GameObject:
   - component: {fileID: 4501992173204926}
   - component: {fileID: 114768339707892834}
   - component: {fileID: 82400357582218234}
-  - component: {fileID: 165220144546132188}
   m_Layer: 0
   m_Name: Flagship
   m_TagString: Untagged
@@ -101,7 +100,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1266253429163222}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.62, z: 0}
+  m_LocalPosition: {x: 0, y: 5.62, z: -4.92}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4218804481066840}
@@ -114,7 +113,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1997734968041638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -34.5, y: 0, z: 0}
+  m_LocalPosition: {x: -30, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4218804481066840}
@@ -233,7 +232,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 440c65bcf86cfb647b19d4780cd5c41b, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.4
   m_Pitch: 1.1
@@ -347,8 +346,6 @@ MonoBehaviour:
   curHealth: 2000
   maxHealth: 2000
   alwaysBurnImmune: 1
-  curShield: 500
-  shieldTeam: 0
   deathClone: {fileID: 0}
   turrets: []
   abilities: []
@@ -362,13 +359,3 @@ MonoBehaviour:
   reachGoalThresh: 8
   YMSResetThresh: 1
   allowMoveThresh: 0.1
-  velocityMods: []
---- !u!165 &165220144546132188
-AudioHighPassFilter:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1997734968041638}
-  m_Enabled: 1
-  m_CutoffFrequency: 600
-  m_HighpassResonanceQ: 1

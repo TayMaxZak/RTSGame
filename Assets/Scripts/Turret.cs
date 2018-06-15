@@ -99,8 +99,6 @@ public class Turret : MonoBehaviour
 		if (state == 1 && !target)
 			UpdateTarget();
 
-		//Debug.Log("STATE = " + state);
-
 		// 0 = standby, 1 = shooting
 		if (state == 0)
 		{
@@ -193,7 +191,6 @@ public class Turret : MonoBehaviour
 		{
 			if (audioSource.isPlaying)
 			{
-				//Debug.Log(audioSource.time);
 				audioSource.Stop();
 				
 				AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource);

@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Particle = UnityEngine.ParticleSystem.Particle;
 
-public class Ability_Swarming : MonoBehaviour {
-	private int team; // Doesn't need to be public
-
-	[SerializeField]
-	private AbilityTarget target;
+public class Ability_Swarming : Ability
+{
 	[SerializeField]
 	private ParticleSystem pS;
 	[SerializeField]
@@ -42,17 +39,17 @@ public class Ability_Swarming : MonoBehaviour {
 
 	private int livingParticles;
 
-	private GameRules gameRules;
-
-	private Unit parentUnit;
+	void Awake()
+	{
+		// TODO: Multi-ability
+		abilityType = AbilityType.SpawnSwarm;
+	}
 
 	// Use this for initialization
-	void Start ()
+	new void Start ()
 	{
-		parentUnit = GetComponent<Unit>();
-		team = parentUnit.team;
-
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+		base.Start();
+		stacks = gameRules.ABLYswarmMaxUses;
 
 		particles = new Particle[pS.main.maxParticles];
 
@@ -60,10 +57,13 @@ public class Ability_Swarming : MonoBehaviour {
 		randomDistribution.Normalize();
 
 		swarmCenters = new List<GameObject>();
-		/*
-		if (doFollowTransform)
-			main.customSimulationSpace = targetTransform;
-		*/
+	}
+
+	public override void End()
+	{
+		foreach (GameObject go in swarmCenters)
+			Destroy(go);
+		Destroy(swarmsCenter);
 	}
 
 	void Update()
@@ -78,7 +78,7 @@ public class Ability_Swarming : MonoBehaviour {
 			return;
 		}
 
-		if (!target.unit)
+		if (target == null || !target.unit)
 			return;
 
 		Vector3 targPos = target.unit.GetSwarmTarget().position;
@@ -105,17 +105,19 @@ public class Ability_Swarming : MonoBehaviour {
 				//randomVectors[i].w = 0;
 			}
 
-			float correctedSpeed = -distanceAccel * Time.deltaTime;
-			Vector3 distanceVel = (particles[i].position - targPos) * correctedSpeed;
-			particles[i].velocity += Vector3.ClampMagnitude(distanceVel, distanceAccel * distanceAccelMaxMult);
+			float correctedAccel = -distanceAccel * Time.deltaTime;
+			Vector3 distanceVel = (particles[i].position - targPos) * correctedAccel;
+			Vector3 clampedVel = (particles[i].position - targPos).normalized * Mathf.Min(distanceAccelMaxMult, (particles[i].position - targPos).magnitude) * correctedAccel;
+			particles[i].velocity += clampedVel;
 
-			Vector3 randomVel = randomVectors[i] * randomSpeed;
+			float correctedRandom = randomSpeed * Time.deltaTime;
+			Vector3 randomVel = randomVectors[i] * correctedRandom;
 			particles[i].velocity += randomVel;
 			particles[i].velocity = Vector3.ClampMagnitude(particles[i].velocity, maxSpeed);
 
 			int avgPosIndex = Mathf.FloorToInt(i / swarmSize);
-			avgPositions[avgPosIndex] += distanceVel / correctedSpeed;
-			overallAvgPos += distanceVel / correctedSpeed;
+			avgPositions[avgPosIndex] += distanceVel / correctedAccel;
+			overallAvgPos += distanceVel / correctedAccel;
 		}
 
 		for (int i = 0; i < swarmCenters.Count; i++)
@@ -146,36 +148,33 @@ public class Ability_Swarming : MonoBehaviour {
 		pS.SetParticles(particles, numAlive);
 	}
 
-	public void SetTarget(AbilityTarget targ)
+	bool SpawnSwarm()
 	{
-		target = targ;
+		if (stacks > 0)
+		{
+			// Worst case scenario: we used ability once already but particle system did not have enough time to spawn sufficient number of particles
+			// This condition avoids messy situations like this
+			if (livingParticles < swarmCenters.Count * swarmSize)
+				return false;
+
+			// Successful ability cast
+			stacks--;
+
+			if (livingParticles == 0)
+				swarmsCenter = Instantiate(swarmsCenterPrefab, transform.position, Quaternion.identity);
+
+			swarmCenters.Add(Instantiate(swarmCenterPrefab, transform.position, Quaternion.identity));
+			pS.Play();
+			return true;
+		}
+		else
+			return false;
 	}
 
-	public AbilityTarget GetTarget()
+	public override void UseAbility(AbilityTarget targ)
 	{
-		return target;
-	}
-
-
-	public void SpawnSwarm()
-	{
-		// Worst case scenario: we used ability once already but particle system did not have enough time to spawn sufficient number of particles
-		// This condition avoids messy situations like this
-		if (livingParticles < swarmCenters.Count * swarmSize)
-			return;
-
-		if (livingParticles == 0)
-			swarmsCenter = Instantiate(swarmsCenterPrefab, transform.position, Quaternion.identity);
-
-		swarmCenters.Add(Instantiate(swarmCenterPrefab, transform.position, Quaternion.identity));
-		pS.Play();
-	}
-
-	public void End()
-	{
-		foreach (GameObject go in swarmCenters)
-			Destroy(go);
-		Destroy(swarmsCenter);
+		base.UseAbility(targ);
+		SpawnSwarm(); // If this fails, swarm will just move
 	}
 
 	float RandomValue()

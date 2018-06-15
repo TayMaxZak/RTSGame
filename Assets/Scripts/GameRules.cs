@@ -28,7 +28,7 @@ public class GameRules
 	public float WRCKmassArmorMult = 0.5f; // When calculating mass, how much should max armor count for
 	public float WRCKcollisionSpeedPenalty = 0.6f; // If it hits something, how much speed should it lose
 	[Header("Flagship")]
-	public float FLAGshieldMax = 500;
+	public float FLAGshieldMaxPool = 500;
 	public float FLAGshieldRegenGPS = 5;
 	public float FLAGshieldRegenDelay = 10;
 	[Header("Resources")]
@@ -54,8 +54,13 @@ public class GameRules
 
 	public float[] ABLYarmorRegenHPS = new float[] { 4, 8, 16, 16, 2 }; // Based on armor missing: 20% -> 4ps / 40% -> 8ps / 60% -> 16ps / 80% -> 16ps / 100% -> 2ps
 
-	public float ABLYshieldProjectMaxPool = 200;
-	public float ABLYshieldProjectInactiveGPS = 8; // How much shield pool is gained per second the shield is inactive
+	public float ABLYshieldProjectRangeUse = 20; // Can be cast at this distance
+	public float ABLYshieldProjectRange = 30; // If distance exceeds this post-cast, shield is returned
+	public float ABLYshieldProjectMaxPool = 200; // Size of shield
+	public float ABLYshieldProjectOnGPS = 4; // How much shield pool is gained per second the shield is active
+	public float ABLYshieldProjectOnGPSDelay = 5; // Delay after taking damage before shield pool gain begins while the shield is active
+	public float ABLYshieldProjectOffGPS = 8; // How much shield pool is gained per second the shield is inactive
+	public float ABLYshieldProjectOffGPSNegMult = 2; // GPS multiplier if shield is negative
 
 	public int ABLYswarmMaxUses = 3;
 	public int ABLYswarmDPS = 4;

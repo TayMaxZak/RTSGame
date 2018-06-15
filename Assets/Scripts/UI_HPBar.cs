@@ -3,7 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_HPBar : MonoBehaviour
+public class UI_Bar : MonoBehaviour
+{
+	public virtual void FastUpdate()
+	{ }
+}
+
+public class UI_HPBar : UI_Bar
 {
 	[SerializeField]
 	private Image healthFill;
@@ -43,6 +49,9 @@ public class UI_HPBar : MonoBehaviour
 
 	[SerializeField]
 	private Image borderFill;
+
+	[SerializeField]
+	private List<UI_Bar> addons;
 
 	private UIRules uiRules;
 	//private GameRules gameRules;
@@ -108,24 +117,37 @@ public class UI_HPBar : MonoBehaviour
 			healthFill.color = healthOrigColor;
 	}
 
-	public void SetHealthArmorShield(Vector3 values, bool isBurning, bool fastUpdate)
+	public override void FastUpdate()
+	{
+		healthT = 1;
+		armorT = 1;
+		shieldT = 1;
+		UpdateDisplay();
+
+		foreach (UI_Bar bar in addons)
+			bar.FastUpdate();
+	}
+
+	public void SetHealthArmorShield(Vector3 values, bool isBurning)
 	{
 		burning = isBurning;
 
 		float Tinitial = 0;
-		if (fastUpdate)
-			Tinitial = 1;
 
-		healthTarg = values.x;
-		armorTarg = values.y;
-		shieldTarg = values.z;
-
-		healthT = Tinitial;
-		armorT = Tinitial;
-		shieldT = Tinitial;
-
-		// If we fast update, immediately update graphics without waiting for next Update()
-		if (fastUpdate)
-			UpdateDisplay();
+		if (healthTarg != values.x)
+		{
+			healthTarg = values.x;
+			healthT = Tinitial;
+		}
+		if (armorTarg != values.y)
+		{
+			armorTarg = values.y;
+			armorT = Tinitial;
+		}
+		if (shieldTarg != values.z)
+		{
+			shieldTarg = values.z;
+			shieldT = Tinitial;
+		}
 	}
 }

@@ -58,7 +58,6 @@ public class Entity : MonoBehaviour
 		//{
 		//	Transform tran = selCircle.GetComponentsInChildren<Transform>()[i];
 		//	float posOrNeg = (i % selCircle.transform.childCount + 1);
-		//	Debug.Log(selCircle.transform.childCount);
 		//	tran.eulerAngles = new Vector3(0, tran.eulerAngles.y + selCircleSpeed * Time.deltaTime * posOrNeg, 0);
 		//	tran.position = transform.position;
 		//}

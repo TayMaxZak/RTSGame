@@ -50,7 +50,6 @@ public class FPSCounter : MonoBehaviour
 
 		if (fps < lowestFPS)
 		{
-			//Debug.Log("new low (cur) " + lowestFPS + " (new) " + fps);
 			lowestFPS = fps;
 		}
 

@@ -429,7 +429,8 @@ public class Controller_Commander : MonoBehaviour
 				if (unit.abilities.Count < index + 1)
 					return;
 
-				AbilityOld current = unit.abilities[index];
+				//AbilityOld current = unit.abilities[index];
+				Ability current = unit.abilities[index];
 
 				if (AbilityUtils.GetTargetRequirement(current.GetAbilityType()) == 0) // Targets nothing
 				{
@@ -598,7 +599,7 @@ public class Controller_Commander : MonoBehaviour
 	{
 		if (!entityStats.gameObject.activeSelf)
 			entityStats.gameObject.SetActive(true);
-
+		/*
 		// Determine number of active abilities
 		List<AbilityType> abilityCounter = new List<AbilityType>();
 		foreach (AbilityOld a in who.abilities)
@@ -609,7 +610,7 @@ public class Controller_Commander : MonoBehaviour
 			}
 		}
 		entityStats.SetAbilities(abilityCounter.ToArray());
-
+		*/
 		entityStats.SetDisplayName(EntityUtils.GetDisplayName(who.Type));
 
 		UpdateStatsHealth(who);
@@ -630,6 +631,7 @@ public class Controller_Commander : MonoBehaviour
 
 	public void UpdateStatsAbilities(Unit who)
 	{
+		/*
 		if (who.abilities.Count > 0)
 		{
 			AbilityOld a1 = who.abilities[0];
@@ -654,6 +656,7 @@ public class Controller_Commander : MonoBehaviour
 				entityStats.SetAbilityProgress(1, 1 - a2.curEnergy, a2.isActive);
 			entityStats.SetAbilityStacks(1, a2.stacks, a2.GetAbilityType());
 		}
+		*/
 	}
 
 	public void UpdateResourceAmounts(int resPoints, int reclaimPoints)

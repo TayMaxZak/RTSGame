@@ -139,9 +139,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4254661421833070}
   - component: {fileID: 114133806779069504}
-  - component: {fileID: 82436381900669564}
   - component: {fileID: 114177749130366244}
   - component: {fileID: 114908002695254704}
+  - component: {fileID: 82436381900669564}
   m_Layer: 0
   m_Name: Bulkhead
   m_TagString: Untagged
@@ -1036,7 +1036,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 86f9b1c2afaeb3343b3d0f183a0d7fbe, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.33
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1044,7 +1044,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 256
   DopplerLevel: 0
-  MinDistance: 1
+  MinDistance: 3
   MaxDistance: 75
   Pan2D: 0
   rolloffMode: 0
@@ -1344,11 +1344,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881f111063680d7498afcd5cd846dd8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayName: Bulkhead Cruiser
+  type: 6
   swarmTarget: {fileID: 4751010177498942}
   selCircleSize: 2.8
-  printStatus: 0
-  type: 6
+  printInfo: 0
   hpBarPrefab: {fileID: 114328092779895440, guid: df3b2f9d043548149bbea5ce4cc27206,
     type: 2}
   hpEffects: {fileID: 114908002695254704}
@@ -1358,75 +1357,13 @@ MonoBehaviour:
   maxArmor: 0
   curHealth: 900
   maxHealth: 900
-  curShield: 0
-  shieldTeam: 0
+  alwaysBurnImmune: 0
   deathClone: {fileID: 1796662562453436, guid: 0ab5eb26f10e3a34fa89f2371c77dcd4, type: 2}
   turrets:
   - {fileID: 114332744142565584}
   - {fileID: 114972989576666406}
   abilities:
-  - type: 6
-    gameRules:
-      useTestValues: 0
-      TESTtimeMultiplier: 0.25
-      TESTinitHealth: 20
-      ARMabsorbFlat: 0
-      ARMabsorbMax: 0
-      ARMrangeMin: 0
-      ARMrangeMax: 0
-      ARMrangeMult: 0
-      HLTHthreshBurn: 0
-      HLTHburnMin: 0
-      HLTHburnMax: 0
-      WRCKfallSpeedMax: 5
-      WRCKfallSpeedAccel: 2
-      WRCKlifetime: 8
-      WRCKmassHealthMult: 1
-      WRCKmassArmorMult: 0.5
-      WRCKcollisionSpeedPenalty: 0.5
-      FLAGshieldMax: 0
-      FLAGshieldRegenGPS: 0
-      FLAGshieldRegenDelay: 0
-      RESreclaimTime: 10
-      SPWNflagshipRadius: 0
-      AUDpitchVariance: 0
-      PRJmaxTimeAlive: 0
-      PRJhitOffset: 0
-      entityLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      gridLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      ABLYarmorDrainRange: 0
-      ABLYarmorDrainDPSEnemy: 0
-      ABLYarmorDrainDPSAlly: 0
-      ABLYarmorDrainGPS: 0
-      ABLYarmorDrainGPSBonusMult: 0
-      ABLYarmorDrainMaxVictims: 0
-      ABLYarmorRegenHPS: []
-      ABLYshieldProjectMaxPool: 0
-      ABLYshieldProjectInactiveGPS: 0
-      ABLYswarmMaxUses: 0
-      ABLYswarmDPS: 0
-      ABLYswarmDamageRadius: 0
-      ABLYhealFieldRange: 25
-      ABLYhealFieldAllyGPS: 2
-      ABLYhealFieldAllyGPSBonusMult: 0.005
-      ABLYhealFieldUserGPS: 4
-      ABLYhealFieldResCost: 3
-      ABLYhealFieldResTime: 5
-      ABLYchainAllyMult: 0.7
-      ABLYchainEnemyMult: 0.35
-      ABLYchainRange: 25
-      STATswarmShieldDmgReduce: 0
-      STATswarmShieldMaxStacks: 0
-    pointEffect: {fileID: 0}
-    user: {fileID: 0}
-    target:
-      unit: {fileID: 0}
-      position: {x: 0, y: 0, z: 0}
-    unitList: []
+  - {fileID: 114177749130366244}
   MS: 2
   MSVerticalMod: 0.4
   MSAccel: 1.5
@@ -1437,7 +1374,6 @@ MonoBehaviour:
   reachGoalThresh: 2.5
   YMSResetThresh: 1
   allowMoveThresh: 0.3
-  velocityMods: []
 --- !u!114 &114177749130366244
 MonoBehaviour:
   m_ObjectHideFlags: 1

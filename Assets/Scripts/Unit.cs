@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Unit : Entity
 {
-	public bool printStatus = false;
+	public bool printInfo = false;
 
 	[Header("Feedback")]
 	[SerializeField]
@@ -30,11 +30,6 @@ public class Unit : Entity
 	public bool alwaysBurnImmune = false;
 	private bool isBurning = false;
 	[SerializeField]
-	protected float curShield = 0;
-	protected float maxShield = 0;
-	[SerializeField]
-	private int shieldTeam = 0;
-	[SerializeField]
 	private GameObject deathClone; // Object to spawn on death
 	private float curBurnCounter;
 	private bool dead;
@@ -45,7 +40,7 @@ public class Unit : Entity
 
 	[Header("Abilities")]
 	[SerializeField]
-	public List<AbilityOld> abilities;
+	public List<Ability> abilities;
 
 	[Header("Moving")]
 	[SerializeField]
@@ -91,21 +86,31 @@ public class Unit : Entity
 
 	protected Manager_Game gameManager;
 	protected GameRules gameRules;
-	private UI_HPBar hpBar;
+	[System.NonSerialized]
+	public UI_HPBar hpBar; // Should be accessible by ability scripts
 	private Vector2 hpBarOffset;
 
 	// State //
-	protected List<Status> statuses;
-	[SerializeField]
+	private List<Status> statuses;
 	private List<VelocityMod> velocityMods;
+	private List<ShieldMod> shieldMods;
 	private List<Unit> damageTaken; // Units that assisted in this unit's death
 
 	private List<Unit> notifyOnDeath; // These units will be messaged when we die
+
+	void Awake()
+	{
+		hpBar = Instantiate(hpBarPrefab);
+	}
 
 	// Use this for initialization
 	protected new void Start()
 	{
 		base.Start(); // Init Entity base class
+		statuses = new List<Status>();
+		velocityMods = new List<VelocityMod>();
+		shieldMods = new List<ShieldMod>();
+		notifyOnDeath = new List<Unit>();
 
 		goal = transform.position; // Path towards current location (i.e. nowhere)
 
@@ -119,23 +124,19 @@ public class Unit : Entity
 			curHealth = curHealth * gameRules.TESTinitHPMult + gameRules.TESTinitHPAdd;
 			curArmor = curArmor * gameRules.TESTinitHPMult + gameRules.TESTinitHPAdd;
 		}
-		maxShield = gameRules.ABLYshieldProjectMaxPool;
 
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
-		hpBar = Instantiate(hpBarPrefab);
+		 //hpBar = Instantiate(hpBarPrefab);
 		hpBar.transform.SetParent(uiManager.Canvas.transform, false);
 		hpBarOffset = uiManager.UIRules.HPBoffset;
 		UpdateHPBarPosAndVis(); // Make sure healthbar is hidden until the unit is first selected
 		UpdateHPBarVal(true);
 
-		foreach (AbilityOld ab in abilities) // Init abilities
-			ab.Init(this, gameRules);
+		//foreach (AbilityOld ab in abilities) // Init abilities
+		//	ab.Init(this, gameRules);
 
 		foreach (Turret tur in turrets) // Init turrets
 			tur.team = team;
-
-		statuses = new List<Status>();
-		notifyOnDeath = new List<Unit>();
 	}
 
 	// Banking
@@ -147,7 +148,7 @@ public class Unit : Entity
 	{
 		base.Update(); // Entity base class
 		UpdateMovement();
-		UpdateAbilities();
+		//UpdateAbilities(); // TODO: REMOVE
 		UpdateStatuses();
 
 		if (isSelected || isHovered)
@@ -211,7 +212,9 @@ public class Unit : Entity
 
 	protected void UpdateHPBarVal(bool fastUpdate)
 	{
-		hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / maxArmor, curShield / maxShield), isBurning, fastUpdate);
+		hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / maxArmor, CalcShieldPoolCur() / CalcShieldPoolMax()), isBurning);
+		if (fastUpdate)
+			hpBar.FastUpdate();
 
 		if (controller)
 			controller.UpdateStatsHealth(this);
@@ -219,7 +222,6 @@ public class Unit : Entity
 
 	void UpdateEffects()
 	{
-		// TODO: Optimize frequency of health updates
 		if (hpEffects)
 		{
 			hpEffects.UpdateHealthEffects(curHealth / maxHealth);
@@ -321,8 +323,6 @@ public class Unit : Entity
 			}
 		}
 
-		//if (printStatus)
-			//Debug.Log(DisplayName + "velMod is " + total.magnitude);
 		return new Vector4(total.x, total.y, total.z, maxMagnitude);
 	}
 
@@ -358,18 +358,6 @@ public class Unit : Entity
 			velocityMods.Remove(toRemove);
 	}
 
-	void UpdateAbilities()
-	{
-		for (int i = 0; i < abilities.Count; i++)
-		{
-			//if (abilities[i].isActive)
-			abilities[i].AbilityTick();
-		}
-
-		if (controller)
-			controller.UpdateStatsAbilities(this);
-	}
-
 	void UpdateStatuses()
 	{
 		string output = "Current statuses are: ";
@@ -387,11 +375,7 @@ public class Unit : Entity
 		{
 			statuses.Remove(s);
 		}
-
-		if (printStatus && statuses.Count > 0)
-			Debug.Log(output);
 	}
-
 
 	public void AddStatus(Status status)
 	{
@@ -409,6 +393,110 @@ public class Unit : Entity
 		statuses.Add(status);
 	}
 
+	float CalcShieldPoolCur()
+	{
+		if (shieldMods.Count == 0)
+			return 0;
+
+		float total = 0;
+		foreach (ShieldMod s in shieldMods) // Check all current shield mods
+		{
+			// Projected Shield
+			if (s.shieldModType == ShieldModType.ShieldProject)
+				total += s.shieldPercent * gameRules.ABLYshieldProjectMaxPool;
+			else if (s.shieldModType == ShieldModType.Flagship)
+				total += s.shieldPercent * gameRules.FLAGshieldMaxPool;
+		}
+
+		return total;
+	}
+
+	float CalcShieldPoolMax()
+	{
+		if (shieldMods.Count == 0)
+			return 1;
+
+		float total = 0;
+		foreach (ShieldMod s in shieldMods) // Check all current shield mods
+		{
+			// Projected Shield
+			if (s.shieldModType == ShieldModType.ShieldProject)
+				total += gameRules.ABLYshieldProjectMaxPool;
+			else if (s.shieldModType == ShieldModType.Flagship)
+				total += gameRules.FLAGshieldMaxPool;
+		}
+
+		return total;
+	}
+
+	public bool AddShieldMod(ShieldMod shieldMod)
+	{
+		bool isProjectedShield = shieldMod.shieldModType == ShieldModType.ShieldProject;
+
+		// A destroyed Projected Shield can't be applied to anything until it regenerates past 0
+		if (isProjectedShield && shieldMod.shieldPercent <= 0)
+			return false;
+
+		foreach (ShieldMod s in shieldMods) // Check all current Shield mods
+		{
+			// Only one Projected Shield or Flagship Shield on a unit at a time
+			// If it belongs to the same unit,
+			if (s.shieldModType == shieldMod.shieldModType)
+			{
+				if (s.from = shieldMod.from)
+				{
+					s.shieldPercent = shieldMod.shieldPercent;
+					return false;
+				}
+				else // Otherwise return
+				{
+					return false;
+				}
+			}
+		}
+
+		// Otherwise add the new shield mod
+		shieldMods.Add(shieldMod);
+		UpdateShield();
+		return true;
+	}
+
+	public void RemoveShieldMod(ShieldMod shieldMod)
+	{
+		ShieldMod toRemove = null;
+		foreach (ShieldMod s in shieldMods) // Search all current velocity mods
+		{
+			if (s.from != shieldMod.from)
+				continue;
+			if (s.shieldModType != shieldMod.shieldModType)
+				continue;
+			toRemove = s;
+		}
+
+		if (toRemove != null)
+		{
+			shieldMods.Remove(toRemove);
+			UpdateShield();
+		}
+	}
+
+	protected void UpdateShield()
+	{
+		UpdateHPBarVal(false);
+	}
+	/*
+	void UpdateAbilities() // TODO: REMOVE
+	{
+		for (int i = 0; i < abilities.Count; i++)
+		{
+			//if (abilities[i].isActive)
+			abilities[i].AbilityTick();
+		}
+
+		if (controller)
+			controller.UpdateStatsAbilities(this);
+	}
+	*/
 	public void OrderMove(Vector3 newGoal)
 	{
 		Vector3 prevGoal = goal;
@@ -430,7 +518,7 @@ public class Unit : Entity
 
 	public void OrderAbility(int i, AbilityTarget targ)
 	{
-		abilities[i].Activate(targ);
+		abilities[i].UseAbility(targ);
 	}
 
 	public void OrderCommandWheel(int i, AbilityTarget targ)
@@ -438,39 +526,6 @@ public class Unit : Entity
 		if (i == 2)
 			foreach (Turret tur in turrets)
 				tur.SetTarget(null);
-	}
-
-	public float GetShieldPool()
-	{
-		return curShield;
-	}
-
-	public bool RecieveShield(float amount, int projectorTeam)
-	{
-		if (curShield > 0)
-			return false;
-
-		shieldTeam = projectorTeam;
-		curShield = amount;
-		UpdateShield();
-		return true;
-	}
-
-	public void RemoveShield()
-	{
-		curShield = 0;
-		UpdateShield();
-	}
-
-	public void SetShield(float amount)
-	{
-		curShield = amount;
-		UpdateShield();
-	}
-
-	protected void UpdateShield()
-	{
-		UpdateHPBarVal(false);
 	}
 
 	public bool Damage(float damageBase, float range) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
@@ -530,27 +585,84 @@ public class Unit : Entity
 	protected virtual void OnDamage()
 	{ }
 
+	// Apply damage to the highest priority shield types first
+	// If a shield's percent is brought below zero, remove it (depending on the shield type)
+	// Any excess after a breaking a shield is applied to the next shield in line
+	// At the end, return how much damage was left after filtering through all shields
 	public float DamageShield(float dmg)
 	{
-		if (shieldTeam == team)
+		if (dmg <= 0)
+			return -1;
+
+		// Each unit has at most one Projected Shield and at most one Flagship Shield
+		ShieldMod projShield = null;
+		ShieldMod flagShield = null;
+		foreach (ShieldMod s in shieldMods)
 		{
-			float newShield = curShield - dmg;
-			curShield = newShield;
-			if (newShield < 0)
+			if (s.shieldModType == ShieldModType.ShieldProject)
+				projShield = s;
+			else if (s.shieldModType == ShieldModType.Flagship)
+				flagShield = s;
+		}
+
+		if (projShield != null)
+		{
+			float curShieldPool = projShield.shieldPercent * gameRules.ABLYshieldProjectMaxPool;
+
+			// If projShieldPool is positive, the shield held, and it now represents the remaining pool
+			// otherwise, the shield was broken, and it now represents the leftover damage
+			curShieldPool -= dmg;
+			// dmg should also be updated for next shield types to take damage
+			dmg = Mathf.Max(dmg - projShield.shieldPercent * gameRules.ABLYshieldProjectMaxPool, 0);
+
+			if (curShieldPool >= 0)
 			{
-				curShield = 0;
-				return -newShield;
+				projShield.shieldPercent = curShieldPool / gameRules.ABLYshieldProjectMaxPool;
+
+				UpdateShield();
+				projShield.from.GetComponent<Ability_ShieldProject>().UpdateVisuals();
+				return -1; // Return a negative number so Damage() knows the shield was not broken
 			}
-			else
+			else // Negative value
 			{
-				UpdateHPBarVal(false);
-				return -newShield;
+				// Apply damage to shield pool, which can go negative
+				projShield.shieldPercent = curShieldPool / gameRules.ABLYshieldProjectMaxPool;
+				// or reset shield to a baseline pool value
+				//projShield.shieldPercent = 0;
+
+				// Notify source that the shield was destroyed, no further action on our side needed
+				projShield.from.GetComponent<Ability_ShieldProject>().BreakShield();
 			}
 		}
-		else
+
+		if (flagShield != null)
 		{
-			return dmg;
+			float curShieldPool = flagShield.shieldPercent * gameRules.FLAGshieldMaxPool;
+
+			// If projShieldPool is positive, the shield held, and it now represents the remaining pool
+			// otherwise, the shield was broken, and it now represents the leftover damage
+			curShieldPool -= dmg;
+			// dmg should also be updated for next shield types to take damage
+			dmg = Mathf.Max(dmg - flagShield.shieldPercent * gameRules.FLAGshieldMaxPool, 0);
+
+			if (curShieldPool >= 0)
+			{
+				float percent = curShieldPool / gameRules.FLAGshieldMaxPool;
+				flagShield.shieldPercent = percent;
+
+				UpdateShield();
+				return -1; // Return a negative number so Damage() knows the shield was not broken
+			}
+			else // Negative value
+			{
+				// Do not remove flagship shield, it is permanent
+				// Reset shield pool to a baseline value
+				flagShield.shieldPercent = 0;
+			}
 		}
+
+		UpdateShield();
+		return dmg; // Leftover damage, should be positive
 	}
 
 	private float StatusDamageMod(float dmgOrg)
@@ -564,7 +676,7 @@ public class Unit : Entity
 				swarmShieldCounter++;
 		}
 
-		// Apply swarm shield damage reduction, which can stack a limited number of times
+		// Apply swarm Shield damage reduction, which can stack a limited number of times
 		dmg -= dmg * gameRules.STATswarmShieldDmgReduce * Mathf.Clamp(swarmShieldCounter, 0, gameRules.STATswarmShieldMaxStacks);
 		return dmg;
 	}
@@ -588,7 +700,7 @@ public class Unit : Entity
 			return;
 		dead = true; // Prevents multiple deaths
 
-		foreach (AbilityOld ab in abilities)
+		foreach (Ability ab in abilities)
 		{
 			ab.End();
 		}
@@ -608,9 +720,6 @@ public class Unit : Entity
 			if (wreck)
 				wreck.SetHP(maxHealth, maxArmor);
 		}
-		Destroy(hpBar.gameObject);
-		Destroy(selCircle);
-		Destroy(gameObject);
 
 		if (gameManager.Commanders.Length >= team + 1)
 			gameManager.Commanders[team].RefundUnitCounter(buildIndex);
@@ -623,6 +732,10 @@ public class Unit : Entity
 
 			resDelay.GiveRecAfterDelay(gameManager.Commanders[team].GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
 		}
+
+		Destroy(hpBar.gameObject);
+		Destroy(selCircle);
+		Destroy(gameObject);
 	}
 
 	public void SubscribeToDeath(Unit u)
@@ -665,15 +778,11 @@ public class Unit : Entity
 		return swarmTarget;
 	}
 
-	private void HPLog()
-	{
-		Debug.Log((int)(curHealth * 10) + " " + (int)(maxHealth * 10) + " :: " + (int)(curArmor * 10) + " " + (int)(maxArmor * 10));
-	}
-
 	public override void OnHover(bool hovered)
 	{
 		base.OnHover(hovered);
-		UpdateHPBarVal(true); // Instantly update HPBar the moment this object is hovered
+		if (hovered)
+			UpdateHPBarVal(true); // Instantly update HPBar the moment this object is hovered
 		UpdateHPBarPosAndVis();
 	}
 

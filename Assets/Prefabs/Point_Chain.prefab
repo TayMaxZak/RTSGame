@@ -243,7 +243,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f10683b02e860d246b4e3ecf50d7c942, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pS: {fileID: 198507900960380400}
+  mainPS: {fileID: 198507900960380400}
+  mainPSInstant: 0
   secondaryPS: {fileID: 0}
 --- !u!198 &198220144684573656
 ParticleSystem:

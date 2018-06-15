@@ -2,33 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ability_HealField : MonoBehaviour {
-	private AbilityOld ability;
+public class Ability_HealField : Ability
+{
+	//private AbilityOld ability;
 	[SerializeField]
 	private Effect_Point pointEffectPrefab;
 	private Effect_Point pointEffect;
-
-	private int team; // Doesn't need to be public
 
 	private bool isActive = false;
 	private bool isBorrowing = false; // Are we holding resources from our team's commander
 
 	private Manager_Game gameManager;
-	private GameRules gameRules;
 
-	private Unit parentUnit;
 	private Commander command;
 
 	private Coroutine giveResourcesCoroutine;
 
-	// Use this for initialization
-	void Start()
+	void Awake()
 	{
-		parentUnit = GetComponent<Unit>();
-		team = parentUnit.team;
+		abilityType = AbilityType.HealField;
+	}
+
+	// Use this for initialization
+	new void Start()
+	{
+		base.Start();
 
 		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
-		gameRules = gameManager.GameRules;
 
 		command = gameManager.Commanders[team];
 
@@ -36,9 +36,20 @@ public class Ability_HealField : MonoBehaviour {
 		pointEffect.SetEffectActive(isActive);
 	}
 
+	public override void End()
+	{
+		if (isBorrowing)
+		{
+			GameObject go = Instantiate(new GameObject());
+			Util_ResDelay resDelay = go.AddComponent<Util_ResDelay>();
+			resDelay.GiveResAfterDelay(gameRules.ABLYhealFieldResCost, gameRules.ABLYhealFieldResTime, team);
+		}
+		pointEffect.End();
+	}
+
 	public void SetAbility(AbilityOld a)
 	{
-		ability = a;
+		//ability = a;
 	}
 
 	void Update()
@@ -53,13 +64,19 @@ public class Ability_HealField : MonoBehaviour {
 			{
 				Unit unit = GetUnitFromCol(cols[i]);
 
-				if (!unit)
+				if (!unit) // Only works on units
 					continue;
 
-				if (units.Contains(unit)) // Multiple colliders for one unit
+				if (units.Contains(unit)) // Ignore multiple colliders for one unit
 					continue;
 
 				if (unit.GetHP().x >= unit.GetHP().y) // If at full HP, don't attempt to heal
+					continue;
+
+				if (unit.GetType() == typeof(Unit_Flagship)) // Can't heal Flagships
+					continue;
+
+				if (unit.team != team) // Must be on our team
 					continue;
 
 				if (unit != parentUnit) // Don't add ourselves
@@ -68,13 +85,11 @@ public class Ability_HealField : MonoBehaviour {
 
 			for (int i = 0; i < units.Count; i++) // For each ally unit, add health
 			{
-				if (units[i].team == team)
-				{
-					float missingHealth = units[i].GetHP().x / units[i].GetHP().y;
-					units[i].DamageSimple(-(gameRules.ABLYhealFieldAllyGPS + gameRules.ABLYhealFieldAllyGPSBonusMult * missingHealth) * Time.deltaTime, 0); // Add health based on missing health
+				Vector4 getHP = units[i].GetHP();
+				float missingHealth = getHP.y - getHP.x; // Bonus based on missing health
+				units[i].DamageSimple(-(gameRules.ABLYhealFieldAllyGPS + gameRules.ABLYhealFieldAllyGPSBonusMult * missingHealth) * Time.deltaTime, 0); // Add health
 
-					units[i].AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
-				}
+				units[i].AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
 
 				if (units.Count > 0) // If at least one other unit is being healed, heal ourselves by a flat amount regardless of ally count
 				{
@@ -91,16 +106,18 @@ public class Ability_HealField : MonoBehaviour {
 		}
 	}
 
-	public bool ToggleActive()
+	public override void UseAbility(AbilityTarget targ)
 	{
+		base.UseAbility(targ);
+
 		if (!isActive) // About to become active
 		{
 			// If we are not already borrowing and there are no resources to borrow, don't activate this ability
 			if (!isBorrowing && !command.TakeResources(gameRules.ABLYhealFieldResCost))
-				return false;
+				return;
 
 			isBorrowing = true;
-			ability.stacks = -1;
+			//ability.stacks = -1;
 
 			if (giveResourcesCoroutine != null)
 				StopCoroutine(giveResourcesCoroutine);
@@ -113,8 +130,6 @@ public class Ability_HealField : MonoBehaviour {
 		isActive = !isActive;
 
 		pointEffect.SetEffectActive(isActive);
-
-		return true;
 	}
 
 	IEnumerator GiveResourcesCoroutine(float time)
@@ -123,18 +138,7 @@ public class Ability_HealField : MonoBehaviour {
 		command.GiveResources(gameRules.ABLYhealFieldResCost);
 
 		isBorrowing = false;
-		ability.stacks = 0;
-	}
-
-	public void End()
-	{
-		if (isBorrowing)
-		{
-			GameObject go = Instantiate(new GameObject());
-			Util_ResDelay resDelay = go.AddComponent<Util_ResDelay>();
-			resDelay.GiveResAfterDelay(gameRules.ABLYhealFieldResCost, gameRules.ABLYhealFieldResTime, team);
-		}
-		pointEffect.End();
+		//ability.stacks = 0;
 	}
 
 	Unit GetUnitFromCol(Collider col)

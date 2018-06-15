@@ -81,9 +81,8 @@ GameObject:
   - component: {fileID: 4974165406158294}
   - component: {fileID: 114088720234087204}
   - component: {fileID: 114431768053762592}
-  - component: {fileID: 82921897760923188}
-  - component: {fileID: 165487031371920440}
   - component: {fileID: 114165545472820334}
+  - component: {fileID: 82921897760923188}
   m_Layer: 0
   m_Name: Corvette
   m_TagString: Untagged
@@ -929,10 +928,10 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: bbb1bd218e7514a4a8ae467d50910cff, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 8ff602d961e72294ebf93e9564473a0f, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.33
-  m_Pitch: 1.1
+  m_Volume: 0.1
+  m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
@@ -1032,7 +1031,7 @@ MonoBehaviour:
   type: 2
   swarmTarget: {fileID: 4283069539521836}
   selCircleSize: 0.6
-  printStatus: 0
+  printInfo: 0
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
   hpEffects: {fileID: 114165545472820334}
@@ -1043,19 +1042,11 @@ MonoBehaviour:
   curHealth: 100
   maxHealth: 100
   alwaysBurnImmune: 0
-  curShield: 0
-  shieldTeam: 0
   deathClone: {fileID: 1796662562453436, guid: 92a8ad440104d3b4fa9c1b30e2acd5da, type: 2}
   turrets:
   - {fileID: 114533801953351042}
   abilities:
-  - type: 7
-    pointEffect: {fileID: 0}
-    user: {fileID: 0}
-    target:
-      unit: {fileID: 0}
-      position: {x: 0, y: 0, z: 0}
-    unitList: []
+  - {fileID: 114431768053762592}
   MS: 5
   MSVerticalMod: 0.4
   MSAccel: 0.5
@@ -1066,7 +1057,6 @@ MonoBehaviour:
   reachGoalThresh: 2
   YMSResetThresh: 1
   allowMoveThresh: 0.6
-  velocityMods: []
 --- !u!114 &114165545472820334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1227,15 +1217,6 @@ MonoBehaviour:
   bias: 0.2
   parent: {fileID: 0}
   cam: {fileID: 0}
---- !u!165 &165487031371920440
-AudioHighPassFilter:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1245470892901488}
-  m_Enabled: 0
-  m_CutoffFrequency: 200
-  m_HighpassResonanceQ: 1
 --- !u!198 &198111168324779508
 ParticleSystem:
   m_ObjectHideFlags: 1

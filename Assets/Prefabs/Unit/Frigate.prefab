@@ -108,9 +108,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4073420170976810}
   - component: {fileID: 114793434201877688}
-  - component: {fileID: 82447127744892596}
   - component: {fileID: 114414820332703200}
   - component: {fileID: 114299271673986788}
+  - component: {fileID: 82447127744892596}
   m_Layer: 0
   m_Name: Frigate
   m_TagString: Untagged
@@ -1536,7 +1536,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 86f9b1c2afaeb3343b3d0f183a0d7fbe, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.33
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1544,7 +1544,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 256
   DopplerLevel: 0
-  MinDistance: 1
+  MinDistance: 3
   MaxDistance: 75
   Pan2D: 0
   rolloffMode: 0
@@ -1764,20 +1764,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75acb01efa1b86d4e9377d5c6e7fd35f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target:
-    unit: {fileID: 114793434201877688}
-    position: {x: 0, y: 0, z: 0}
   pS: {fileID: 198678227653488430}
   swarmSize: 6
   swarmCenterPrefab: {fileID: 1641218715249782, guid: 3922b0e4bd6c7c543a09734bba5ffcce,
     type: 2}
   swarmsCenterPrefab: {fileID: 1641218715249782, guid: d5948f036b40dee419d01974f6e67462,
     type: 2}
-  randomSpeed: 0.05
+  randomSpeed: 6
   randomDistribution: {x: 1, y: 0, z: 1}
   randomFreq: 1
-  distanceSpeed: 0.8
-  distanceSpeedMaxMult: 4
+  distanceAccel: 5
+  distanceAccelMaxMult: 4
   maxSpeed: 5
 --- !u!114 &114451669362268560
 MonoBehaviour:
@@ -1971,7 +1968,7 @@ MonoBehaviour:
   type: 4
   swarmTarget: {fileID: 4907543980749030}
   selCircleSize: 2.5
-  printStatus: 0
+  printInfo: 0
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
   hpEffects: {fileID: 114299271673986788}
@@ -1982,8 +1979,6 @@ MonoBehaviour:
   curHealth: 250
   maxHealth: 250
   alwaysBurnImmune: 0
-  curShield: 0
-  shieldTeam: 0
   deathClone: {fileID: 1796662562453436, guid: bcfe7a37703b99244ad36433f72888c7, type: 2}
   turrets:
   - {fileID: 114618528909356700}
@@ -1991,21 +1986,9 @@ MonoBehaviour:
   - {fileID: 114698448303424642}
   - {fileID: 114474939179645132}
   abilities:
-  - type: 3
-    pointEffect: {fileID: 0}
-    user: {fileID: 0}
-    target:
-      unit: {fileID: 0}
-      position: {x: 0, y: 0, z: 0}
-    unitList: []
-  - type: 4
-    pointEffect: {fileID: 0}
-    user: {fileID: 0}
-    target:
-      unit: {fileID: 0}
-      position: {x: 0, y: 0, z: 0}
-    unitList: []
-  MS: 3.5
+  - {fileID: 114414820332703200}
+  - {fileID: 0}
+  MS: 4
   MSVerticalMod: 0.4
   MSAccel: 1
   MSDeccel: 1
@@ -2015,7 +1998,6 @@ MonoBehaviour:
   reachGoalThresh: 1.6
   YMSResetThresh: 1
   allowMoveThresh: 0.6
-  velocityMods: []
 --- !u!114 &114868401536279404
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -20,8 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4888680709255202}
   - component: {fileID: 114305229649543536}
-  - component: {fileID: 82663178150848212}
+  - component: {fileID: 114511447420377598}
   - component: {fileID: 114613675032481870}
+  - component: {fileID: 82663178150848212}
   m_Layer: 0
   m_Name: Apollo
   m_TagString: Untagged
@@ -255,6 +256,21 @@ GameObject:
   - component: {fileID: 199215615045828264}
   m_Layer: 0
   m_Name: EngineGold (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1575936916648306
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4573455083156152}
+  m_Layer: 0
+  m_Name: ShieldStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -573,6 +589,19 @@ Transform:
   m_Father: {fileID: 4270087688197372}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 39.515003}
+--- !u!4 &4573455083156152
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1575936916648306}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.399, z: 0.42}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4917791186809190}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4574170545557616
 Transform:
   m_ObjectHideFlags: 1
@@ -741,6 +770,7 @@ Transform:
   - {fileID: 4626422676163004}
   - {fileID: 4671991824821066}
   - {fileID: 4270087688197372}
+  - {fileID: 4573455083156152}
   m_Father: {fileID: 4888680709255202}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
@@ -1119,7 +1149,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: b631e9fdb9d5a3c45b33d9778cf3bf3c, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.33
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1127,7 +1157,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 256
   DopplerLevel: 0
-  MinDistance: 1
+  MinDistance: 1.5
   MaxDistance: 75
   Pan2D: 0
   rolloffMode: 0
@@ -1397,12 +1427,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881f111063680d7498afcd5cd846dd8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayName: Apollo-class
+  type: 5
   swarmTarget: {fileID: 4671991824821066}
   selCircleSize: 1.2
-  printStatus: 0
-  type: 5
-  hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
+  printInfo: 0
+  hpBarPrefab: {fileID: 114477666003345976, guid: c3b28b4f6a7a9fb4db418ee97ac67eb0,
     type: 2}
   hpEffects: {fileID: 114613675032481870}
   team: 0
@@ -1411,76 +1440,14 @@ MonoBehaviour:
   maxArmor: 150
   curHealth: 250
   maxHealth: 250
-  curShield: 0
-  shieldTeam: 0
+  alwaysBurnImmune: 0
   deathClone: {fileID: 1796662562453436, guid: eb08eaf7d437cd649bb520668db77d96, type: 2}
   turrets:
   - {fileID: 114857530670386064}
   - {fileID: 114248577163731552}
   - {fileID: 114194242468430414}
   abilities:
-  - type: 5
-    gameRules:
-      useTestValues: 0
-      TESTtimeMultiplier: 0.25
-      TESTinitHealth: 20
-      ARMabsorbFlat: 0
-      ARMabsorbMax: 0
-      ARMrangeMin: 0
-      ARMrangeMax: 100
-      ARMrangeMult: 0
-      HLTHthreshBurn: 0
-      HLTHburnMin: 0
-      HLTHburnMax: 0
-      WRCKfallSpeedMax: 5
-      WRCKfallSpeedAccel: 2
-      WRCKlifetime: 8
-      WRCKmassHealthMult: 1
-      WRCKmassArmorMult: 0.5
-      WRCKcollisionSpeedPenalty: 0.5
-      FLAGshieldMax: 500
-      FLAGshieldRegenGPS: 5
-      FLAGshieldRegenDelay: 10
-      RESreclaimTime: 1
-      SPWNflagshipRadius: 20
-      AUDpitchVariance: 0
-      PRJmaxTimeAlive: 0
-      PRJhitOffset: 0
-      entityLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      gridLayerMask:
-        serializedVersion: 2
-        m_Bits: 0
-      ABLYarmorDrainRange: 0
-      ABLYarmorDrainDPSEnemy: 0
-      ABLYarmorDrainDPSAlly: 0
-      ABLYarmorDrainGPS: 1
-      ABLYarmorDrainGPSBonusMult: 1
-      ABLYarmorDrainMaxVictims: 0
-      ABLYarmorRegenHPS: []
-      ABLYshieldProjectMaxPool: 500
-      ABLYshieldProjectInactiveGPS: 8
-      ABLYswarmMaxUses: 3
-      ABLYswarmDPS: 3
-      ABLYswarmDamageRadius: 8
-      ABLYhealFieldRange: 25
-      ABLYhealFieldAllyGPS: 2
-      ABLYhealFieldAllyGPSBonusMult: 0.005
-      ABLYhealFieldUserGPS: 4
-      ABLYhealFieldResCost: 3
-      ABLYhealFieldResTime: 5
-      ABLYchainAllyMult: 0.7
-      ABLYchainEnemyMult: 0.35
-      ABLYchainRange: 25
-      STATswarmShieldDmgReduce: 0.1
-      STATswarmShieldMaxStacks: 4
-    pointEffect: {fileID: 0}
-    user: {fileID: 0}
-    target:
-      unit: {fileID: 0}
-      position: {x: 0, y: 0, z: 0}
-    unitList: []
+  - {fileID: 114511447420377598}
   MS: 3
   MSVerticalMod: 0.4
   MSAccel: 0.5
@@ -1491,7 +1458,28 @@ MonoBehaviour:
   reachGoalThresh: 1.6
   YMSResetThresh: 1
   allowMoveThresh: 0.6
-  velocityMods: []
+--- !u!114 &114511447420377598
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1025386178585290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cdce44699abfef46895cdbcd328dc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shieldStart: {fileID: 4573455083156152}
+  lineEffectPrefab: {fileID: 114738217270647106, guid: a0c1f6e38ad765f4298e151f21fd6673,
+    type: 2}
+  targetLoopEffectPrefab: {fileID: 114576451638010940, guid: c70c1f37dcfb35d4a917cbcfbe253f6a,
+    type: 2}
+  targetProjectEffectPrefab: {fileID: 1928473051249270, guid: 1d37fa4a7ed68474a90d414eb625008e,
+    type: 2}
+  returnEffectPrefab: {fileID: 1928473051249270, guid: 3929c49360c79aa44a4b9e1a884563fc,
+    type: 2}
+  breakEffectPrefab: {fileID: 1928473051249270, guid: de1b900b96fbe354da76b7834f94a44c,
+    type: 2}
 --- !u!114 &114574471153303864
 MonoBehaviour:
   m_ObjectHideFlags: 1
