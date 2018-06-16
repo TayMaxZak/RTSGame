@@ -77,7 +77,7 @@ public class UI_EntityStats : MonoBehaviour
 		nameText.text = name.ToUpper();
 	}
 
-	public void SetAbilities(AbilityType[] abilities)
+	public void SetAbilityIcons(AbilityType[] abilities)
 	{
 		
 		if (abilities.Length == 0)
@@ -103,15 +103,11 @@ public class UI_EntityStats : MonoBehaviour
 		}
 	}
 
-	public void SetAbilityProgress(int index, float amount, bool isActive)
+	public void SetAbilityProgress(int index, float amount)
 	{
 		if (index == 0)
 		{
 			ability1Fill.fillAmount = amount;
-			if (isActive)
-				ability1IconB.rectTransform.Rotate(new Vector3(0, 0, 30 * Time.deltaTime));
-			else
-				ability1IconB.rectTransform.Rotate(new Vector3(0, 0, -10 * Time.deltaTime));
 		}
 		else
 		{
@@ -119,21 +115,19 @@ public class UI_EntityStats : MonoBehaviour
 		}
 	}
 
-	public void SetAbilityStacks(int index, int stacks, AbilityType type)
+	public void SetAbilityStacks(int index, int stacks)
 	{
 		if (index == 0)
 		{
 			//ability1Text.text = IntToNumerals(amount);
 			foreach (Text text in ability1Text)
 				text.text = stacks > 0 ? stacks.ToString() : "";
-			ability1IconB.sprite = AbilityUtils.GetSecondaryAbilityIcon(type, stacks);
 		}
 		else
 		{
 			//ability2Text.text = IntToNumerals(amount);
 			foreach (Text text in ability2Text)
 				text.text = stacks > 0 ? stacks.ToString() : "";
-			ability2IconB.sprite = AbilityUtils.GetSecondaryAbilityIcon(type, stacks);
 		}
 	}
 

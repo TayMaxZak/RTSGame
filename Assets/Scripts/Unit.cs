@@ -148,7 +148,6 @@ public class Unit : Entity
 	{
 		base.Update(); // Entity base class
 		UpdateMovement();
-		//UpdateAbilities(); // TODO: REMOVE
 		UpdateStatuses();
 
 		if (isSelected || isHovered)
@@ -484,19 +483,13 @@ public class Unit : Entity
 	{
 		UpdateHPBarVal(false);
 	}
-	/*
-	void UpdateAbilities() // TODO: REMOVE
+	
+	public void UpdateAbilityDisplay(int index, bool updateStacks)
 	{
-		for (int i = 0; i < abilities.Count; i++)
-		{
-			//if (abilities[i].isActive)
-			abilities[i].AbilityTick();
-		}
-
 		if (controller)
-			controller.UpdateStatsAbilities(this);
+			controller.UpdateStatsAbilities(this, index, updateStacks);
 	}
-	*/
+	
 	public void OrderMove(Vector3 newGoal)
 	{
 		Vector3 prevGoal = goal;
@@ -620,7 +613,7 @@ public class Unit : Entity
 				projShield.shieldPercent = curShieldPool / gameRules.ABLYshieldProjectMaxPool;
 
 				UpdateShield();
-				projShield.from.GetComponent<Ability_ShieldProject>().UpdateVisuals();
+				projShield.from.GetComponent<Ability_ShieldProject>().UpdateAbilityBar();
 				return -1; // Return a negative number so Damage() knows the shield was not broken
 			}
 			else // Negative value
@@ -721,8 +714,8 @@ public class Unit : Entity
 				wreck.SetHP(maxHealth, maxArmor);
 		}
 
-		if (gameManager.Commanders.Length >= team + 1)
-			gameManager.Commanders[team].RefundUnitCounter(buildIndex);
+		//if (gameManager.Commanders.Length >= team + 1)
+		gameManager.GetCommander(team).RefundUnitCounter(buildIndex);
 
 		// Refund resources
 		if (buildIndex >= 0)
@@ -730,7 +723,7 @@ public class Unit : Entity
 			GameObject go2 = Instantiate(new GameObject());
 			Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
 
-			resDelay.GiveRecAfterDelay(gameManager.Commanders[team].GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
+			resDelay.GiveRecAfterDelay(gameManager.GetCommander(team).GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
 		}
 
 		Destroy(hpBar.gameObject);
@@ -750,7 +743,7 @@ public class Unit : Entity
 	{
 		if (u.team != team)
 		{
-			// TODO: Hellrazor stack increase
+			// TODO: Hellrazor stack increase?
 
 		}
 	}

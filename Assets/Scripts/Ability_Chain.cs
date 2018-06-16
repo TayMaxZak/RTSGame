@@ -10,8 +10,8 @@ public class Ability_Chain : Ability
 	private Effect_Line lineEffectPrefab;
 	private Effect_Line lineEffect;
 	[SerializeField]
-	private Effect_Point pointEffectPrefab;
-	private Effect_Point pointEffect;
+	private Effect_Point chainEndsEffectPrefab;
+	private Effect_Point[] chainEndsEffect;
 	[SerializeField]
 	private GameObject pointEffectBreakPrefab;
 	private GameObject pointEffectBreak;
@@ -31,8 +31,11 @@ public class Ability_Chain : Ability
 		lineEffect = Instantiate(lineEffectPrefab, transform.position, Quaternion.identity);
 		lineEffect.SetEffectActive(0);
 
-		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
-		pointEffect.SetEffectActive(false);
+		chainEndsEffect = new Effect_Point[2];
+		chainEndsEffect[0] = Instantiate(chainEndsEffectPrefab, transform.position, Quaternion.identity);
+		chainEndsEffect[1] = Instantiate(chainEndsEffectPrefab, transform.position, Quaternion.identity);
+		chainEndsEffect[0].SetEffectActive(false);
+		chainEndsEffect[1].SetEffectActive(false);
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -40,13 +43,19 @@ public class Ability_Chain : Ability
 		if (targetUnit)
 			ClearTarget();
 		if (target.unit != parentUnit && InRange(target.unit.transform))
+		{
 			targetUnit = target.unit;
+
+			chainEndsEffect[0].SetEffectActive(true);
+			chainEndsEffect[1].SetEffectActive(true);
+		}
 	}
 
 	public override void End()
 	{
 		lineEffect.End();
-		pointEffect.End();
+		chainEndsEffect[0].End();
+		chainEndsEffect[1].End();
 	}
 
 	void Update()
@@ -58,8 +67,11 @@ public class Ability_Chain : Ability
 				targetUnit.AddVelocityMod(new VelocityMod(parentUnit, parentUnit.GetVelocity(), VelocityModType.Chain));
 
 				lineEffect.SetEffectActive(1, chainStart.position, targetUnit.transform.position);
-				pointEffect.SetEffectActive(true);
-				pointEffect.transform.position = (chainStart.position + targetUnit.transform.position) * 0.5f;
+
+				chainEndsEffect[0].transform.position = chainStart.position;
+				chainEndsEffect[0].transform.rotation = Quaternion.LookRotation(targetUnit.transform.position - chainStart.position);
+				chainEndsEffect[1].transform.position = targetUnit.transform.position;
+				chainEndsEffect[1].transform.rotation = Quaternion.LookRotation(chainStart.position - targetUnit.transform.position);
 			}
 			else
 			{
@@ -74,7 +86,8 @@ public class Ability_Chain : Ability
 		targetUnit.RemoveVelocityMod(new VelocityMod(parentUnit, parentUnit.GetVelocity(), VelocityModType.Chain));
 		targetUnit = null;
 		lineEffect.SetEffectActive(0);
-		pointEffect.SetEffectActive(false);
+		chainEndsEffect[0].SetEffectActive(false);
+		chainEndsEffect[1].SetEffectActive(false);
 	}
 
 	bool InRange(Transform tran)

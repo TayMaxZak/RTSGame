@@ -30,7 +30,7 @@ public class Ability_HealField : Ability
 
 		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
 
-		command = gameManager.Commanders[team];
+		command = gameManager.GetCommander(team);
 
 		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
 		pointEffect.SetEffectActive(isActive);

@@ -47,6 +47,7 @@ public class Ability_ArmorDrain : Ability
 			}
 
 			energy -= deltaDurations.y * Time.deltaTime;
+			Display(1 - energy);
 
 			Collider[] cols = Physics.OverlapSphere(transform.position, gameRules.ABLYarmorDrainRange, gameRules.entityLayerMask);
 			List<Unit> units = new List<Unit>();
@@ -106,17 +107,25 @@ public class Ability_ArmorDrain : Ability
 		}
 		else // Inactive
 		{
-			energy += deltaDurations.z * Time.deltaTime;
+			if (energy < 1)
+			{
+				energy += deltaDurations.z * Time.deltaTime;
+				Display(1 - energy);
+			}
 		}
 	}
 
 	public override void UseAbility(AbilityTarget targ)
 	{
-		base.UseAbility(null);
-
 		isActive = !isActive;
 
 		pointEffect.SetEffectActive(isActive);
+	}
+
+	void Display(float fill)
+	{
+		displayInfo.fill = fill;
+		UpdateDisplay(abilityIndex, false);
 	}
 
 	Unit GetUnitFromCol(Collider col)

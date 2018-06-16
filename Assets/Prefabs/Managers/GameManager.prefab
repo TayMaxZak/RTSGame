@@ -1,0 +1,253 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1644349898724332}
+  m_IsPrefabParent: 1
+--- !u!1 &1644349898724332
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4042889356359010}
+  - component: {fileID: 114359600981258838}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: GameManager
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1780462053699938
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4654786481856324}
+  - component: {fileID: 114476393172418668}
+  - component: {fileID: 82694785113659464}
+  m_Layer: 0
+  m_Name: Commander1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4042889356359010
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1644349898724332}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4654786481856324}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4654786481856324
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1780462053699938}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4042889356359010}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &82694785113659464
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1780462053699938}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 0.05
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+--- !u!114 &114359600981258838
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1644349898724332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b005ef7048fca7d418b812ae71fd4dad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameRules:
+    useTestValues: 1
+    TESTtimeMult: 0.1
+    TESTinitHPAdd: 0
+    TESTinitHPMult: 1
+    ARMabsorbFlat: 20
+    ARMabsorbMax: 15
+    ARMrangeMin: 25
+    ARMrangeMax: 100
+    ARMrangeMult: 0.8
+    HLTHthreshBurn: 0.201
+    HLTHburnMin: 2
+    HLTHburnMax: 3
+    WRCKfallSpeedMax: 10
+    WRCKfallSpeedAccel: 3
+    WRCKlifetime: 10
+    WRCKmassHealthMult: 1
+    WRCKmassArmorMult: 0.5
+    WRCKcollisionSpeedPenalty: 0.6
+    FLAGshieldMaxPool: 500
+    FLAGshieldRegenGPS: 5
+    FLAGshieldRegenDelay: 10
+    RESreclaimTime: 5
+    SPWNflagshipRadius: 50
+    AUDpitchVariance: 0.05
+    PRJmaxTimeAlive: 9
+    PRJhitOffset: 0.05
+    entityLayerMask:
+      serializedVersion: 2
+      m_Bits: 1
+    gridLayerMask:
+      serializedVersion: 2
+      m_Bits: 512
+    ABLYarmorDrainRange: 20
+    ABLYarmorDrainDPSEnemy: 9
+    ABLYarmorDrainDPSAlly: 4
+    ABLYarmorDrainGPS: 1
+    ABLYarmorDrainGPSBonusMult: 1
+    ABLYarmorDrainMaxVictims: 5
+    ABLYarmorRegenHPS:
+    - 4
+    - 8
+    - 16
+    - 16
+    - 2
+    ABLYshieldProjectRangeUse: 20
+    ABLYshieldProjectRange: 30
+    ABLYshieldProjectMaxPool: 200
+    ABLYshieldProjectOnGPS: 4
+    ABLYshieldProjectOnGPSDelay: 5
+    ABLYshieldProjectOffGPS: 8
+    ABLYshieldProjectOffGPSNegMult: 2
+    ABLYswarmMaxUses: 3
+    ABLYswarmDPS: 4
+    ABLYswarmDamageRadius: 7
+    ABLYhealFieldRange: 25
+    ABLYhealFieldAllyGPS: 2
+    ABLYhealFieldAllyGPSBonusMult: 0.005
+    ABLYhealFieldUserGPS: 5
+    ABLYhealFieldResCost: 4
+    ABLYhealFieldResTime: 10
+    ABLYchainAllyMult: 0.7
+    ABLYchainEnemyMult: 0.7
+    ABLYchainRange: 25
+    STATswarmShieldDmgReduce: 0.1
+    STATswarmShieldMaxStacks: 2
+  commanders:
+  - {fileID: 114476393172418668}
+--- !u!114 &114476393172418668
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1780462053699938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38f0d512cda1c774e86520a49c66bb05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 1
+  controller: {fileID: 0}
+  buildUnits:
+  - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
+  - {fileID: 114214795380621988, guid: 8cc9506457f748847a9d34bd6755cddf, type: 2}
+  - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
+  - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
+  - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
+  resPoints: 30
+  reclaimPoints: 0

@@ -8,11 +8,12 @@ public class Ability : MonoBehaviour {
 	protected int team; // Doesn't need to be public
 
 	// Common primtive data
+	protected int abilityIndex = -1;
 	protected float cooldownTimer = 0; // Tracks when ability can be used again next
 	protected int stacks = 0; // Counter used for tracking ability level, uses left, etc.
 
 	// Common display data
-	protected AbilityDisplay display;
+	protected AbilityDisplayInfo displayInfo;
 
 	// Common object data
 	protected AbilityTarget target;
@@ -24,8 +25,11 @@ public class Ability : MonoBehaviour {
 	{
 		parentUnit = GetComponent<Unit>();
 		team = parentUnit.team;
+		abilityIndex = parentUnit.abilities.IndexOf(this);
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+
+		displayInfo = new AbilityDisplayInfo();
 	}
 	
 	public virtual void UseAbility(AbilityTarget targ)
@@ -37,9 +41,15 @@ public class Ability : MonoBehaviour {
 	{
 	}
 
-	public virtual void UpdateVisuals()
+	public virtual void UpdateAbilityBar()
 	{
 
+	}
+
+	protected virtual void UpdateDisplay(int index, bool updateStacks)
+	{
+		Debug.Log(updateStacks);
+		parentUnit.UpdateAbilityDisplay(index, updateStacks);
 	}
 
 	public AbilityTarget GetTarget()
@@ -52,12 +62,16 @@ public class Ability : MonoBehaviour {
 		return abilityType;
 	}
 
-
+	public AbilityDisplayInfo GetDisplayInfo()
+	{
+		return displayInfo;
+	}
 }
 
-public class AbilityDisplay
+public class AbilityDisplayInfo
 {
 	public bool displayInactive = false;
 	public bool displayStacks = false;
-	public float displayFill = 0;
+	public int stacks = 0;
+	public float fill = 0;
 }

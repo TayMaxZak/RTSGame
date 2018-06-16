@@ -12,7 +12,7 @@ public class Util_ResDelay : MonoBehaviour
 	IEnumerator ResDelayCoroutine(int a, float d, int t)
 	{
 		yield return new WaitForSeconds(d);
-		GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().Commanders[t].GiveResources(a);
+		GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GetCommander(t).GiveResources(a);
 	}
 
 	public void GiveRecAfterDelay(int amount, float delay, int team)
@@ -23,6 +23,6 @@ public class Util_ResDelay : MonoBehaviour
 	IEnumerator RecDelayCoroutine(int a, float d, int t)
 	{
 		yield return new WaitForSeconds(d);
-		GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().Commanders[t].GiveReclaims(a);
+		GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GetCommander(t).GiveReclaims(a);
 	}
 }

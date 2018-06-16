@@ -60,7 +60,7 @@ public class Controller_Commander : MonoBehaviour
 
 		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
 		gameRules = gameManager.GameRules; // Grab copy of Game Rules
-		ChangeCommander(gameManager.Commanders[team]);
+		ChangeCommander(gameManager.GetCommander(team));
 
 		selection = new List<Entity>();
 		Select(null, false);
@@ -493,31 +493,6 @@ public class Controller_Commander : MonoBehaviour
 		// If we updated our selection and only one Entity is left selected,
 		if (selection.Count == 1)
 		{
-			/*
-			bool isFlagship = true;
-			
-			foreach (Entity e in selection)
-			{
-				Unit unit = (Unit)e;
-				//selectedText.text = "Selected: " + selected.DisplayName;
-
-				Flagship flag = unit.gameObject.GetComponent<Flagship>();
-
-				// If any of the selected entities are not Flagships, don't display Flagship UI
-				if (!flag)
-					isFlagship = false;
-			}
-
-			// if the only thing selected is a flagship, display build buttons
-			if (isFlagship)
-			{
-				buildButtonsRoot.SetActive(true);
-				//selectedText.text = "|| FLAGSHIP ||";
-			}
-			else
-				buildButtonsRoot.SetActive(false);
-			*/
-
 			Unit unit = (Unit)selection[0];
 
 			if (unit)
@@ -549,15 +524,6 @@ public class Controller_Commander : MonoBehaviour
 			return;
 
 		buildUnitIndex = id;
-
-		// This code is obsolete. Buttons are automatically made uninteractable if these conditions are not met. There is no need to check them here again
-		/*
-		if (buildUnitCounters[buildUnitIndex] >= buildUnits[buildUnitIndex].unitCap) // Already reached the unit number cap
-			return;
-
-		if (!SubtractResources(buildUnits[buildUnitIndex].cost)) // Don't have enough resources to build
-			return;
-		*/
 
 		commander.TakeResources(commander.GetBuildUnit(buildUnitIndex).cost);
 
@@ -599,22 +565,23 @@ public class Controller_Commander : MonoBehaviour
 	{
 		if (!entityStats.gameObject.activeSelf)
 			entityStats.gameObject.SetActive(true);
-		/*
+
 		// Determine number of active abilities
 		List<AbilityType> abilityCounter = new List<AbilityType>();
-		foreach (AbilityOld a in who.abilities)
+		foreach (Ability a in who.abilities)
 		{
-			if (AbilityUtils.GetActivationStyle(a.GetAbilityType()) > 0) // Not a passive
-			{
-				abilityCounter.Add(a.GetAbilityType());
-			}
+			abilityCounter.Add(a.GetAbilityType());
 		}
-		entityStats.SetAbilities(abilityCounter.ToArray());
-		*/
+		entityStats.SetAbilityIcons(abilityCounter.ToArray());
+		for (int i = 0; i < who.abilities.Count; i++)
+		{
+			UpdateStatsAbilities(who, i, true);
+		}
+
 		entityStats.SetDisplayName(EntityUtils.GetDisplayName(who.Type));
 
 		UpdateStatsHealth(who);
-		UpdateStatsAbilities(who);
+		
 
 		// Establish connection for realtime health and ability state updates
 		if (currentStatEntity)
@@ -629,34 +596,24 @@ public class Controller_Commander : MonoBehaviour
 		entityStats.SetHealthArmor(healthArmor.x, healthArmor.y, healthArmor.z, healthArmor.w);
 	}
 
-	public void UpdateStatsAbilities(Unit who)
+	public void UpdateStatsAbilities(Unit who, int index, bool updateStacks)
 	{
-		/*
-		if (who.abilities.Count > 0)
+		AbilityDisplayInfo display = who.abilities[index].GetDisplayInfo();
+		if (!display.displayInactive)
 		{
-			AbilityOld a1 = who.abilities[0];
-			if (a1.displayAsUnusable)
-				entityStats.SetAbilityProgress(0, 1, a1.isActive);
-			else if (AbilityUtils.GetActivationStyle(a1.GetAbilityType()) == 1) // Instant
-				entityStats.SetAbilityProgress(0, a1.curCooldown, a1.isActive);
-			else // Toggle
-				entityStats.SetAbilityProgress(0, 1 - a1.curEnergy, a1.isActive);
-			entityStats.SetAbilityStacks(0, a1.stacks, a1.GetAbilityType());
+			entityStats.SetAbilityProgress(index, display.fill);
 		}
-		if (who.abilities.Count > 1)
+		else
+			entityStats.SetAbilityProgress(index, 1);
+
+		if (updateStacks)
 		{
-			AbilityOld a2 = who.abilities[1];
-			if (a2.displayAsUnusable)
-			{
-				entityStats.SetAbilityProgress(1, 1, a2.isActive);
-			}
-			else if (AbilityUtils.GetActivationStyle(a2.GetAbilityType()) == 1) // Instant
-				entityStats.SetAbilityProgress(1, a2.curCooldown, a2.isActive);
-			else // Toggle
-				entityStats.SetAbilityProgress(1, 1 - a2.curEnergy, a2.isActive);
-			entityStats.SetAbilityStacks(1, a2.stacks, a2.GetAbilityType());
+			Debug.Log(display.displayStacks + " " + display.stacks);
+			if (display.displayStacks)
+				entityStats.SetAbilityStacks(index, display.stacks);
+			else
+				entityStats.SetAbilityStacks(index, 0);
 		}
-		*/
 	}
 
 	public void UpdateResourceAmounts(int resPoints, int reclaimPoints)

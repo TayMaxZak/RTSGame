@@ -140,7 +140,7 @@ public class Ability_ShieldProject : Ability
 					shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + increment, 1);
 				else // Accelerated regeneration if in negative pool
 					shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + increment * gameRules.ABLYshieldProjectOffGPSNegMult, 1);
-				UpdateVisuals();
+				UpdateAbilityBar();
 			}
 		}
 	}
@@ -153,7 +153,7 @@ public class Ability_ShieldProject : Ability
 		targetLoopEffect.transform.position = targetUnit.transform.position;
 	}
 
-	public override void UpdateVisuals()
+	public override void UpdateAbilityBar()
 	{
 		abilityBar.SetShield(Mathf.Clamp(shieldMod.shieldPercent, -1, 1), shieldMod.shieldPercent < 0);
 	}

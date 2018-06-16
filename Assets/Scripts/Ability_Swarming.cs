@@ -50,6 +50,8 @@ public class Ability_Swarming : Ability
 	{
 		base.Start();
 		stacks = gameRules.ABLYswarmMaxUses;
+		displayInfo.stacks = stacks;
+		displayInfo.displayStacks = true;
 
 		particles = new Particle[pS.main.maxParticles];
 
@@ -59,15 +61,17 @@ public class Ability_Swarming : Ability
 		swarmCenters = new List<GameObject>();
 	}
 
+	public override void UseAbility(AbilityTarget targ)
+	{
+		base.UseAbility(targ);
+		SpawnSwarm(); // If this fails, swarm will just move
+	}
+
 	public override void End()
 	{
 		foreach (GameObject go in swarmCenters)
 			Destroy(go);
 		Destroy(swarmsCenter);
-	}
-
-	void Update()
-	{
 	}
 	
 	// Update is called once per frame
@@ -159,6 +163,17 @@ public class Ability_Swarming : Ability
 
 			// Successful ability cast
 			stacks--;
+			if (stacks > 0)
+			{
+				displayInfo.stacks = stacks;
+				UpdateDisplay(abilityIndex, true);
+			}
+			else
+			{
+				displayInfo.stacks = stacks;
+				displayInfo.displayInactive = true;
+				UpdateDisplay(abilityIndex, true);
+			}
 
 			if (livingParticles == 0)
 				swarmsCenter = Instantiate(swarmsCenterPrefab, transform.position, Quaternion.identity);
@@ -169,12 +184,6 @@ public class Ability_Swarming : Ability
 		}
 		else
 			return false;
-	}
-
-	public override void UseAbility(AbilityTarget targ)
-	{
-		base.UseAbility(targ);
-		SpawnSwarm(); // If this fails, swarm will just move
 	}
 
 	float RandomValue()

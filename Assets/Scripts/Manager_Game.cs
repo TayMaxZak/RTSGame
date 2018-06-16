@@ -8,5 +8,10 @@ public class Manager_Game : MonoBehaviour
 	public GameRules GameRules;
 
 	[SerializeField]
-	public Commander[] Commanders;
+	private Commander[] commanders;
+
+	public Commander GetCommander(int index)
+	{
+		return commanders[index];
+	}
 }
