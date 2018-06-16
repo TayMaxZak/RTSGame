@@ -608,7 +608,6 @@ public class Controller_Commander : MonoBehaviour
 
 		if (updateStacks)
 		{
-			Debug.Log(display.displayStacks + " " + display.stacks);
 			if (display.displayStacks)
 				entityStats.SetAbilityStacks(index, display.stacks);
 			else

@@ -41,12 +41,12 @@ Material:
     - _Cutoff1: 0
     - _Cutoff2: 0
     - _LightSteps: 8
-    - _Mult: 1.6
+    - _Mult: 1.4
     - _NoiseAmount: 1
     - _NoiseSteps: 16
     - _NoiseStretch: 1
     - _NoiseSubSteps: 50
     - _SSSStrength: 1
     m_Colors:
-    - _Color: {r: 0.47450984, g: 0.6901961, b: 0.9843138, a: 1}
+    - _Color: {r: 0.4745098, g: 0.62691, b: 0.9843138, a: 1}
     - _SSSColor: {r: 1, g: 1, b: 1, a: 1}

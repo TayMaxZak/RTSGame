@@ -1987,7 +1987,6 @@ MonoBehaviour:
   - {fileID: 114474939179645132}
   abilities:
   - {fileID: 114414820332703200}
-  - {fileID: 0}
   MS: 4
   MSVerticalMod: 0.4
   MSAccel: 1

@@ -48,7 +48,6 @@ public class Ability : MonoBehaviour {
 
 	protected virtual void UpdateDisplay(int index, bool updateStacks)
 	{
-		Debug.Log(updateStacks);
 		parentUnit.UpdateAbilityDisplay(index, updateStacks);
 	}
 
