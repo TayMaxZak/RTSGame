@@ -89,17 +89,17 @@ public class UI_EntityStats : MonoBehaviour
 		{
 			
 			ability1Bkg.gameObject.SetActive(true);
-			ability1Icon.sprite = AbilityUtils.GetAbilityIcon(abilities[0]);
+			ability1Icon.sprite = AbilityUtils.GetDisplayIcon(abilities[0]);
 
 			ability2Bkg.gameObject.SetActive(false);
 		}
 		else if (abilities.Length == 2)
 		{
 			ability1Bkg.gameObject.SetActive(true);
-			ability1Icon.sprite = AbilityUtils.GetAbilityIcon(abilities[0]);
+			ability1Icon.sprite = AbilityUtils.GetDisplayIcon(abilities[0]);
 
 			ability2Bkg.gameObject.SetActive(true);
-			ability2Icon.sprite = AbilityUtils.GetAbilityIcon(abilities[1]);
+			ability2Icon.sprite = AbilityUtils.GetDisplayIcon(abilities[1]);
 		}
 	}
 

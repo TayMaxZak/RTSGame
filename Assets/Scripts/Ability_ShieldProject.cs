@@ -5,6 +5,7 @@ using UnityEngine;
 public class Ability_ShieldProject : Ability
 {
 	private ShieldMod shieldMod;
+	private float activeRegenTimer = 0;
 
 	[SerializeField]
 	private Transform shieldStart;
@@ -29,6 +30,7 @@ public class Ability_ShieldProject : Ability
 	void Awake()
 	{
 		abilityType = AbilityType.ShieldProject;
+		InitCooldown();
 	}
 
 	// Use this for initialization
@@ -50,10 +52,20 @@ public class Ability_ShieldProject : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
+		if (!offCooldown)
+			return;
+
+		base.UseAbility(target);
+
+		ProjectShield(target.unit);
+	}
+
+	void ProjectShield(Unit target)
+	{
 		if (target != null) // Normal use case
 		{
 			// If we are targeting ourselves, clear everything
-			if (target.unit == parentUnit)
+			if (target == parentUnit)
 			{
 				if (targetUnit)
 				{
@@ -62,17 +74,17 @@ public class Ability_ShieldProject : Ability
 					ClearTarget();
 				}
 			}
-			else if (InRange(target.unit.transform, gameRules.ABLYshieldProjectRangeUse)) // Make sure target is in casting range
+			else if (InRange(target.transform, gameRules.ABLYshieldProjectRangeUse)) // Make sure target is in casting range
 			{
 				// If we successfully added a shield,
-				if (target.unit.AddShieldMod(shieldMod))
+				if (target.AddShieldMod(shieldMod))
 				{
 					// forget about previous targetUnit
 					if (targetUnit)
 						ClearTarget();
 
 					// and set new targetUnit and update effects accordingly
-					targetUnit = target.unit;
+					targetUnit = target;
 					checkIfDead = true;
 
 					Instantiate(targetProjectEffectPrefab, targetUnit.transform.position, targetUnit.transform.rotation);
@@ -81,6 +93,14 @@ public class Ability_ShieldProject : Ability
 
 					UpdateActiveEffects();
 				}
+				else // Failed to cast, don't punish player with a cooldown
+				{
+					ResetCooldown();
+				}
+			}
+			else // Failed to cast, don't punish player with a cooldown
+			{
+				ResetCooldown();
 			}
 		}
 		else // Shield broken
@@ -97,7 +117,8 @@ public class Ability_ShieldProject : Ability
 	public void BreakShield()
 	{
 		// Indicate shield broke, return shield, and put on cooldown
-		UseAbility(null);
+		StartCooldown();
+		ProjectShield(null);
 	}
 
 	public override void End()
@@ -108,19 +129,34 @@ public class Ability_ShieldProject : Ability
 		targetLoopEffect.End();
 	}
 
-	void Update()
+	new void Update()
 	{
+		base.Update();
+
 		if (targetUnit)
 		{
 			if (!targetUnit.IsDead() && InRange(targetUnit.transform, gameRules.ABLYshieldProjectRange))
 			{
-				//targetUnit.AddShieldMod(shieldMod);
+				activeRegenTimer -= Time.deltaTime;
+				if (activeRegenTimer <= 0)
+				{
+					if (shieldMod.shieldPercent < 1)
+					{
+						float increment = (gameRules.ABLYshieldProjectOnGPS / gameRules.ABLYshieldProjectMaxPool) * Time.deltaTime;
+						if (shieldMod.shieldPercent >= 0)
+							shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + increment, 1);
+						UpdateAbilityBar();
+						targetUnit.OnShield(); // Update target unit's HP bar
+					}
+				}
+
 				UpdateActiveEffects();
 			}
 			else // Left range
 			{
 				// Return shield and put on cooldown
-				UseAbility(new AbilityTarget(parentUnit));
+				StartCooldown();
+				ProjectShield(parentUnit);
 			}
 		}
 		else
@@ -148,12 +184,18 @@ public class Ability_ShieldProject : Ability
 	void UpdateActiveEffects()
 	{
 		//lineEffect.SetEffectActive(1, shieldStart.position, targetUnit.transform.position);
-		lineEffect.SetEffectActive(1, shieldStart.position, shieldStart.position + (targetUnit.transform.position - shieldStart.position).normalized * 3);
+		lineEffect.SetEffectActive(1, transform.position, transform.position + (targetUnit.transform.position - shieldStart.position).normalized * 3);
 		targetLoopEffect.transform.rotation = targetUnit.transform.rotation;
 		targetLoopEffect.transform.position = targetUnit.transform.position;
 	}
 
-	public override void UpdateAbilityBar()
+	public void OnDamage()
+	{
+		activeRegenTimer = gameRules.ABLYshieldProjectOnGPSDelay;
+		UpdateAbilityBar();
+	}
+
+	protected override void UpdateAbilityBar()
 	{
 		abilityBar.SetShield(Mathf.Clamp(shieldMod.shieldPercent, -1, 1), shieldMod.shieldPercent < 0);
 	}

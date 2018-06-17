@@ -266,7 +266,12 @@ public class Unit : Entity
 		if (dot >= 0.9999f)
 			dot = 1;
 
-		float targetMSRatio = dot * (isPathing ? 1 : 0);
+		float statusSpeedMult = 1;
+		foreach (Status s in statuses)
+			if (s.statusType == StatusType.SpawnSwarmSpeedNerf)
+				statusSpeedMult = gameRules.ABLYswarmFirstUseSpeedMult;
+
+		float targetMSRatio = dot * (isPathing ? statusSpeedMult : 0);
 
 		//float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel;
 		//float MSdelta = Mathf.Sign(targetMSRatio - curMSRatio) * (1f / MSccel) * Time.deltaTime;
@@ -287,9 +292,9 @@ public class Unit : Entity
 
 		Vector3 Yvel = MS * curYMSRatio * Vector3.up * Mathf.Clamp(direction.y * 2, -1, 1) * MSVerticalMod;
 		Vector4 chainVel = CalcChainVel((Hvel + Yvel).magnitude);
-		// Final velocity is combination of independent movement and velocity mods
 
-		velocity = Vector3.ClampMagnitude(Yvel + Hvel + new Vector3(chainVel.x, chainVel.y, chainVel.z), chainVel.w);
+		// Final velocity is combination of independent movement and velocity mods
+		velocity = Vector3.ClampMagnitude((Yvel + Hvel) + new Vector3(chainVel.x, chainVel.y, chainVel.z), chainVel.w);
 		transform.position += velocity * Time.deltaTime;
 	}
 
@@ -367,8 +372,12 @@ public class Unit : Entity
 			if (!s.UpdateTimeLeft(Time.deltaTime))
 				toRemove.Add(s);
 
-			output += s.statusType + " ";
+			output += s.statusType + " " + s.GetTimeLeft() + " ";
+			
 		}
+
+		if (printInfo && statuses.Count > 0)
+			Debug.Log(output);
 
 		foreach (Status s in toRemove)
 		{
@@ -477,6 +486,11 @@ public class Unit : Entity
 			shieldMods.Remove(toRemove);
 			UpdateShield();
 		}
+	}
+
+	public void OnShield()
+	{
+		UpdateShield();
 	}
 
 	protected void UpdateShield()
@@ -613,7 +627,7 @@ public class Unit : Entity
 				projShield.shieldPercent = curShieldPool / gameRules.ABLYshieldProjectMaxPool;
 
 				UpdateShield();
-				projShield.from.GetComponent<Ability_ShieldProject>().UpdateAbilityBar();
+				projShield.from.GetComponent<Ability_ShieldProject>().OnDamage(); // TODO: Optimize
 				return -1; // Return a negative number so Damage() knows the shield was not broken
 			}
 			else // Negative value
@@ -624,7 +638,7 @@ public class Unit : Entity
 				//projShield.shieldPercent = 0;
 
 				// Notify source that the shield was destroyed, no further action on our side needed
-				projShield.from.GetComponent<Ability_ShieldProject>().BreakShield();
+				projShield.from.GetComponent<Ability_ShieldProject>().BreakShield(); // TODO: Optimize
 			}
 		}
 

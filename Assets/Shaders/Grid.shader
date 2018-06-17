@@ -48,7 +48,7 @@ Shader "Custom/Grid" {
 						half2 texcoord : TEXCOORD0;
 						float3 normal : TEXCOORD2; //you don't need these semantics except for XBox360
 						float3 viewT : TEXCOORD3; //you don't need these semantics except for XBox360
-						half dist : DISTANCE1;
+						half dist : TEXCOORD4;
 						UNITY_FOG_COORDS(1)
 					};
 

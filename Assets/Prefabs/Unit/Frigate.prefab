@@ -109,6 +109,7 @@ GameObject:
   - component: {fileID: 4073420170976810}
   - component: {fileID: 114793434201877688}
   - component: {fileID: 114414820332703200}
+  - component: {fileID: 114437644942323818}
   - component: {fileID: 114299271673986788}
   - component: {fileID: 82447127744892596}
   m_Layer: 0
@@ -599,14 +600,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1216876717439498}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4268561022817726}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -134.932, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4104760975395180
 Transform:
   m_ObjectHideFlags: 1
@@ -1764,18 +1765,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75acb01efa1b86d4e9377d5c6e7fd35f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  swarmMover: {fileID: 114437644942323818}
   pS: {fileID: 198678227653488430}
-  swarmSize: 6
   swarmCenterPrefab: {fileID: 1641218715249782, guid: 3922b0e4bd6c7c543a09734bba5ffcce,
     type: 2}
   swarmsCenterPrefab: {fileID: 1641218715249782, guid: d5948f036b40dee419d01974f6e67462,
     type: 2}
+  swarmSize: 6
   randomSpeed: 6
   randomDistribution: {x: 1, y: 0, z: 1}
   randomFreq: 1
   distanceAccel: 5
   distanceAccelMaxMult: 4
   maxSpeed: 5
+--- !u!114 &114437644942323818
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1216876717439498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01bdad0518a3cce46ab2624c108c1507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  swarmController: {fileID: 114414820332703200}
 --- !u!114 &114451669362268560
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1987,6 +2001,7 @@ MonoBehaviour:
   - {fileID: 114474939179645132}
   abilities:
   - {fileID: 114414820332703200}
+  - {fileID: 114437644942323818}
   MS: 4
   MSVerticalMod: 0.4
   MSAccel: 1

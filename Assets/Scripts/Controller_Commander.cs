@@ -601,7 +601,10 @@ public class Controller_Commander : MonoBehaviour
 		AbilityDisplayInfo display = who.abilities[index].GetDisplayInfo();
 		if (!display.displayInactive)
 		{
-			entityStats.SetAbilityProgress(index, display.fill);
+			if (!display.displayFill)
+				entityStats.SetAbilityProgress(index, display.cooldown);
+			else
+				entityStats.SetAbilityProgress(index, display.fill);
 		}
 		else
 			entityStats.SetAbilityProgress(index, 1);

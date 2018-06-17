@@ -21,6 +21,7 @@ public class Ability_HealField : Ability
 	void Awake()
 	{
 		abilityType = AbilityType.HealField;
+		InitCooldown();
 	}
 
 	// Use this for initialization
@@ -47,13 +48,10 @@ public class Ability_HealField : Ability
 		pointEffect.End();
 	}
 
-	public void SetAbility(AbilityOld a)
+	new void Update()
 	{
-		//ability = a;
-	}
+		base.Update();
 
-	void Update()
-	{
 		pointEffect.transform.position = transform.position; // Move effect to center of user
 
 		if (isActive)
@@ -106,9 +104,12 @@ public class Ability_HealField : Ability
 		}
 	}
 
-	public override void UseAbility(AbilityTarget targ)
+	public override void UseAbility(AbilityTarget target)
 	{
-		base.UseAbility(targ);
+		if (!offCooldown)
+			return;
+
+		base.UseAbility(target);
 
 		if (!isActive) // About to become active
 		{

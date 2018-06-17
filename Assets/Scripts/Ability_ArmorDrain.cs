@@ -16,12 +16,14 @@ public class Ability_ArmorDrain : Ability
 	void Awake()
 	{
 		abilityType = AbilityType.ArmorDrain;
+		InitCooldown();
 	}
 
 	// Use this for initialization
 	new void Start()
 	{
 		base.Start();
+		displayInfo.displayFill = true;
 
 		energy = 1;
 		deltaDurations = AbilityUtils.GetDeltaDurations(AbilityType.ArmorDrain);
@@ -35,8 +37,10 @@ public class Ability_ArmorDrain : Ability
 		pointEffect.End();
 	}
 
-	void Update()
+	new void Update()
 	{
+		base.Update();
+
 		pointEffect.transform.position = transform.position; // Move effect to center of user
 
 		if (isActive)
@@ -46,6 +50,7 @@ public class Ability_ArmorDrain : Ability
 				UseAbility(null); // Toggle to inactive and put on cooldown
 			}
 
+			// Consume energy according to active duration
 			energy -= deltaDurations.y * Time.deltaTime;
 			Display(1 - energy);
 
@@ -109,14 +114,20 @@ public class Ability_ArmorDrain : Ability
 		{
 			if (energy < 1)
 			{
+				// Restore energy according to reset duration
 				energy += deltaDurations.z * Time.deltaTime;
 				Display(1 - energy);
 			}
 		}
 	}
 
-	public override void UseAbility(AbilityTarget targ)
+	public override void UseAbility(AbilityTarget target)
 	{
+		if (!offCooldown)
+			return;
+
+		base.UseAbility(target);
+
 		isActive = !isActive;
 
 		pointEffect.SetEffectActive(isActive);

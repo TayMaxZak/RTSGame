@@ -63,6 +63,7 @@ public class GameRules
 	public float ABLYshieldProjectOffGPSNegMult = 2; // GPS multiplier if shield is negative
 
 	public int ABLYswarmMaxUses = 3;
+	public float ABLYswarmFirstUseSpeedMult = 0.75f;
 	public int ABLYswarmDPS = 4;
 	public int ABLYswarmDamageRadius = 7; // How close a swarm has to be to proc its damage reduction status / damage over time
 

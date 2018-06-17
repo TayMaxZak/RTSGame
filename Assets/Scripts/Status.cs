@@ -5,7 +5,8 @@ using UnityEngine;
 public enum StatusType
 {
 	SwarmShield,
-	CriticalBurnImmune
+	CriticalBurnImmune,
+	SpawnSwarmSpeedNerf
 }
 
 [System.Serializable]
@@ -53,6 +54,8 @@ public static class StatusUtils
 				return 2;
 			case StatusType.CriticalBurnImmune:
 				return 1;
+			case StatusType.SpawnSwarmSpeedNerf:
+				return Mathf.Infinity;
 			default:
 				return 1;
 		}

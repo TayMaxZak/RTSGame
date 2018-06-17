@@ -21,6 +21,7 @@ public class Ability_Chain : Ability
 	void Awake()
 	{
 		abilityType = AbilityType.Chain;
+		InitCooldown();
 	}
 
 	// Use this for initialization
@@ -40,15 +41,43 @@ public class Ability_Chain : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
-		if (targetUnit)
-			ClearTarget();
-		if (target.unit != parentUnit && InRange(target.unit.transform))
-		{
-			targetUnit = target.unit;
+		if (!offCooldown)
+			return;
 
-			chainEndsEffect[0].SetEffectActive(true);
-			chainEndsEffect[1].SetEffectActive(true);
+		base.UseAbility(target);
+
+		ApplyChain(target.unit);
+	}
+
+	void ApplyChain(Unit unit)
+	{
+		if (unit != parentUnit)
+		{
+			if (InRange(unit.transform))
+			{
+				if (!targetUnit || unit != targetUnit)
+				{
+					if (targetUnit)
+						ClearTarget(false);
+					targetUnit = unit;
+
+					chainEndsEffect[0].SetEffectActive(true);
+					chainEndsEffect[1].SetEffectActive(true);
+				}
+				else
+					ResetCooldown();
+			} // InRange
+			else
+				ResetCooldown();
+		} // not parentUnit
+		else
+		{
+			if (targetUnit)
+				ClearTarget(true);
+
+			// If target is parentUnit, put ability on cooldown
 		}
+
 	}
 
 	public override void End()
@@ -58,8 +87,10 @@ public class Ability_Chain : Ability
 		chainEndsEffect[1].End();
 	}
 
-	void Update()
+	new void Update()
 	{
+		base.Update();
+
 		if (targetUnit)
 		{
 			if (InRange(targetUnit.transform))
@@ -76,15 +107,22 @@ public class Ability_Chain : Ability
 			else
 			{
 				Instantiate(pointEffectBreakPrefab, (chainStart.position + targetUnit.transform.position) * 0.5f, Quaternion.LookRotation(chainStart.position - targetUnit.transform.position));
-				ClearTarget();
+				ClearTarget(true);
+				StartCooldown();
 			}
 		}
 	}
 
-	void ClearTarget()
+	void ClearTarget(bool clearEffects)
 	{
 		targetUnit.RemoveVelocityMod(new VelocityMod(parentUnit, parentUnit.GetVelocity(), VelocityModType.Chain));
 		targetUnit = null;
+		if (clearEffects)
+			ClearEffects();
+	}
+
+	void ClearEffects()
+	{
 		lineEffect.SetEffectActive(0);
 		chainEndsEffect[0].SetEffectActive(false);
 		chainEndsEffect[1].SetEffectActive(false);
