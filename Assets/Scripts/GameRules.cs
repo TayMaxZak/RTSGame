@@ -54,7 +54,7 @@ public class GameRules
 
 	public float[] ABLYarmorRegenHPS = new float[] { 4, 8, 16, 16, 2 }; // Based on armor missing: 20% -> 4ps / 40% -> 8ps / 60% -> 16ps / 80% -> 16ps / 100% -> 2ps
 
-	public float ABLYshieldProjectRangeUse = 20; // Can be cast at this distance
+	public float ABLYshieldProjectRangeUse = 20; // Max distance for cast
 	public float ABLYshieldProjectRange = 30; // If distance exceeds this post-cast, shield is returned
 	public float ABLYshieldProjectMaxPool = 200; // Size of shield
 	public float ABLYshieldProjectOnGPS = 4; // How much shield pool is gained per second the shield is active
@@ -74,9 +74,16 @@ public class GameRules
 	public int ABLYhealFieldResCost = 4; // Amount of resource points held by this ability while active
 	public float ABLYhealFieldResTime = 10; // Delay to return resource points when the ability ends
 
-	public float ABLYchainAllyMult = 0.7f;
+	public float ABLYchainRange = 25; // Max distance for cast
+	public float ABLYchainAllyMult = 0.7f; // Multiplier applied to velocity when adding to it the target
 	public float ABLYchainEnemyMult = 0.7f;
-	public float ABLYchainRange = 25;
+
+	public float ABLYsuperlaserRangeUse = 25; // Max distance for cast
+	public float ABLYsuperlaserRangeTolerance = 10; // If distance changes by this much or more post-cast, superlaser is put on a shorter cooldown without firing
+	public float ABLYsuperlaserDelay = 3.5f; // Delay before damage is dealt during ability can be interupted or range-cancelled
+	public int ABLYsuperlaserInitStacks = 0; // Stacks the ability starts with
+	public float ABLYsuperlaserDmgAmount = 0.6f; // How much damage (by percentage of max health + max armor) has to be done to a unit to earn a stack from its death
+	public float[] ABLYsuperlaserDmgByStacks = new float[] { -1, 100, 200, 300, 400}; // Based on stacks: 0 -> cannot be activated / 1 -> 100 / 2 -> 200 / 3 -> 300 / 4 -> 400
 
 	[Header("Statuses")]
 	public float STATswarmShieldDmgReduce = 0.1f; // How much of all incoming damage does each swarm protecting an ally reduce

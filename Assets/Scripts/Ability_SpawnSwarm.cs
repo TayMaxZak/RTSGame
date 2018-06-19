@@ -201,7 +201,7 @@ public class Ability_SpawnSwarm : Ability
 			if (Vector3.SqrMagnitude(swarmCenters[i].transform.position - targPos) < gameRules.ABLYswarmDamageRadius * gameRules.ABLYswarmDamageRadius)
 			{
 				if (targetUnit.team != team) // If target is an enemy unit, damage it
-					targetUnit.Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0); // 0 range = point blank, armor has no effect
+					targetUnit.Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
 				else
 				{
 					targetUnit.AddStatus(new Status(swarmCenters[i], StatusType.SwarmShield));

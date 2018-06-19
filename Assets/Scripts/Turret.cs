@@ -5,10 +5,12 @@ using UnityEngine;
 public class Turret : MonoBehaviour
 {
 	public int team = 0;
+	private Unit parentUnit;
 	private int state = 0; // 0 = standby, 1 = shooting
 
 	[SerializeField]
 	private Projectile projTemplate;
+	private Status onHitStatus;
 
 	[Header("Targeting")]
 	[SerializeField]
@@ -91,6 +93,17 @@ public class Turret : MonoBehaviour
 
 		shootCooldown = 1f / (rateOfFire / 60f);
 		shootOffset = shootCooldown * shootOffsetRatio;
+	}
+
+	public void SetParentUnit(Unit unit)
+	{
+		parentUnit = unit;
+		team = parentUnit.team;
+	}
+
+	public void SetOnHitStatus(Status status)
+	{
+		onHitStatus = status;
 	}
 
 	// Update is called once per frame
@@ -289,7 +302,10 @@ public class Turret : MonoBehaviour
 			Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
 			Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y)).normalized;
 
-			projs.SpawnProjectile(projTemplate, team, firePos.position, errForward);
+			if (onHitStatus == null)
+				projs.SpawnProjectile(projTemplate, firePos.position, errForward, parentUnit, null); // TODO: Do we need to make a new status each time?
+			else
+				projs.SpawnProjectile(projTemplate, firePos.position, errForward, parentUnit, new Status(onHitStatus.from, onHitStatus.statusType)); // TODO: Do we need to make a new status each time?
 		}
 
 		// Sound

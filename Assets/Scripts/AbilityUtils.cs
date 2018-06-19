@@ -11,7 +11,8 @@ public enum AbilityType
 	MoveSwarm,
 	ShieldProject,
 	HealField,
-	Chain
+	Chain,
+	Superlaser
 }
 
 public static class AbilityUtils
@@ -36,6 +37,8 @@ public static class AbilityUtils
 				return GetDeltaOf(new Vector3(2, 0, 0));
 			case AbilityType.Chain:
 				return GetDeltaOf(new Vector3(20, 0, 0));
+			case AbilityType.Superlaser:
+				return GetDeltaOf(new Vector3(40, 0, 0));
 			default:
 				return GetDeltaOf(new Vector3());
 		}
@@ -67,6 +70,8 @@ public static class AbilityUtils
 			case AbilityType.ShieldProject:
 				return 1;
 			case AbilityType.Chain:
+				return 1;
+			case AbilityType.Superlaser:
 				return 1;
 			default:
 				return 0;

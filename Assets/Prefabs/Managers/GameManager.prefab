@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRules:
-    useTestValues: 1
+    useTestValues: 0
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -335,9 +335,20 @@ MonoBehaviour:
     ABLYhealFieldUserGPS: 5
     ABLYhealFieldResCost: 4
     ABLYhealFieldResTime: 10
+    ABLYchainRange: 25
     ABLYchainAllyMult: 0.7
     ABLYchainEnemyMult: 0.7
-    ABLYchainRange: 25
+    ABLYsuperlaserRangeUse: 25
+    ABLYsuperlaserRangeTolerance: 10
+    ABLYsuperlaserDelay: 3.5
+    ABLYsuperlaserInitStacks: 0
+    ABLYsuperlaserDmgAmount: 0.6
+    ABLYsuperlaserDmgByStacks:
+    - -1
+    - 100
+    - 200
+    - 300
+    - 400
     STATswarmShieldDmgReduce: 0.1
     STATswarmShieldMaxStacks: 2
   commanders:

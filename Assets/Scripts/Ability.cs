@@ -38,7 +38,11 @@ public class Ability : MonoBehaviour {
 	{
 		if (!offCooldown)
 		{
-			cooldownTimer -= cooldownDelta * Time.deltaTime;
+			if (!gameRules.useTestValues)
+				cooldownTimer -= cooldownDelta * Time.deltaTime;
+			else
+				cooldownTimer -= cooldownDelta * (1f / gameRules.TESTtimeMult) * Time.deltaTime;
+
 			if (cooldownTimer <= 0)
 				offCooldown = true;
 			Display();

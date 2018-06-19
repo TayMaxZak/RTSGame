@@ -51,21 +51,39 @@ public class Manager_Projectiles : MonoBehaviour
 			RaycastHit hit;
 			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.GetSpeed() * Time.deltaTime, layerMask))
 			{
+				bool hitSelf = false;
 				if (hit.collider.transform.parent) // Is this a unit?
 				{
 					Unit unit = hit.collider.transform.parent.GetComponent<Unit>();
-					if (unit) // If we hit a unit and its not on our team, damage it
+					if (unit != proj.GetFrom()) // If we hit a unit and its not us, damage it
 					{
-						unit.Damage(proj.GetDamage(), proj.CalcRange());
+						Status status = proj.GetStatus();
+						if (status != null)
+						{
+							if (status.statusType == StatusType.SuperlaserMark)
+								status.SetTimeLeft(proj.GetDamage()); // Store damage in timeLeft field of projectile
+
+							unit.AddStatus(status);
+						}
+						unit.Damage(proj.GetDamage(), proj.CalcRange(), DamageType.Normal);
+					}
+					else
+					{
+						// Ignore this collision
+						hitSelf = true;
 					}
 				}
 
-				proj.position = hit.point - proj.direction * gameRules.PRJhitOffset; // Move to contact point
-				particles[i].position = proj.position;
+				// Don't do anything if we are passing through the unit that fired us
+				if (!hitSelf)
+				{
+					proj.position = hit.point - proj.direction * gameRules.PRJhitOffset; // Move to contact point
+					particles[i].position = proj.position;
 
-				particles[i].remainingLifetime = 0; // Destroy projectile
-				toDelete.Add(proj);
-				continue;
+					particles[i].remainingLifetime = 0; // Destroy projectile
+					toDelete.Add(proj);
+					continue;
+				}
 			}//if Raycast
 			
 			proj.UpdateTimeAlive(Time.deltaTime);
@@ -115,21 +133,24 @@ public class Manager_Projectiles : MonoBehaviour
 		}
 	}
 
-	public void SpawnProjectile(Projectile temp, int team, Vector3 position, Vector3 direction)
+	public void SpawnProjectile(Projectile temp, Vector3 position, Vector3 direction, Unit from, Status onHit)
 	{
 		if (numAlive >= particles.Length)
 			throw new System.Exception("Too many projectiles.");
 
 		Projectile proj = new Projectile(temp);
-		proj.SetTeam(team);
 		proj.SetStartPosition(position);
 		proj.position = position;
 		proj.direction = direction;
+		proj.SetFrom(from);
+		proj.SetStatus(onHit);
 		projectiles.Add(proj);
 
-		EmitParams param = new EmitParams();
-		param.position = position;
-		param.velocity = direction;
+		EmitParams param = new EmitParams()
+		{
+			position = position,
+			velocity = direction
+		};
 		pS.Emit(param, 1);
 	}
 

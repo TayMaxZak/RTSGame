@@ -66,7 +66,7 @@ public class Clone_Wreck : MonoBehaviour
 		Unit unit = other.GetComponentInParent<Unit>();
 		if (unit)
 		{
-			unit.Damage(mass, 0);
+			unit.Damage(mass, 0, DamageType.Wreck);
 			if (unit.GetHP().x > 0) // If we don't kill the unit on impact, shatter against it
 				Die(true);
 			else // If we do kill the unit, briefly slow down and reset lifetime

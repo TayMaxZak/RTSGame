@@ -12,6 +12,7 @@ public class Ability_ArmorDrain : Ability
 	private Effect_Point pointEffect;
 
 	private bool isActive = false;
+	private bool hasSuperlaser = false;
 
 	void Awake()
 	{
@@ -27,6 +28,10 @@ public class Ability_ArmorDrain : Ability
 
 		energy = 1;
 		deltaDurations = AbilityUtils.GetDeltaDurations(AbilityType.ArmorDrain);
+
+		foreach (Ability a in parentUnit.abilities)
+			if (a.GetAbilityType() == AbilityType.Superlaser)
+				hasSuperlaser = true;
 
 		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
 		pointEffect.SetEffectActive(isActive);
@@ -45,70 +50,78 @@ public class Ability_ArmorDrain : Ability
 
 		if (isActive)
 		{
-			if (energy <= 0)
+			if (energy > 0) // Needs energy to run
+			{
+				// Consume energy according to active duration
+				energy -= deltaDurations.y * Time.deltaTime;
+				Display(1 - energy);
+
+				Collider[] cols = Physics.OverlapSphere(transform.position, gameRules.ABLYarmorDrainRange, gameRules.entityLayerMask);
+				List<Unit> units = new List<Unit>();
+				for (int i = 0; i < cols.Length; i++)
+				{
+					Unit unit = GetUnitFromCol(cols[i]);
+
+					if (!unit) // Only works on units
+						continue;
+
+					if (units.Contains(unit)) // Ignore multiple colliders for one unit
+						continue;
+
+					if (unit.GetType() == typeof(Unit_Flagship)) // Can't drain Flagships
+						continue;
+
+					if (unit.GetHP().z <= 0) // They must have some armor
+						continue;
+
+					foreach (Ability a in unit.abilities)
+						if (a.GetAbilityType() == AbilityType.ArmorDrain) // Can't drain another drain-capable unit
+							continue;
+
+					if (unit != parentUnit) // Don't add ourselves
+						units.Add(unit);
+				}
+
+				// TODO: Sort unit list to have allies first
+
+				int allyCount = 0;
+				int enemyCount = 0;
+
+				for (int i = 0; i < units.Count && i < gameRules.ABLYarmorDrainMaxVictims; i++) // For each unit, subtract armor
+				{
+					if (units[i].team == parentUnit.team) // Ally
+					{
+						if (parentUnit.GetHP().z < parentUnit.GetHP().w) // Only damage allies if we have missing armor
+						{
+							units[i].DamageSimple(0, gameRules.ABLYarmorDrainDPSAlly * Time.deltaTime);
+							allyCount++;
+						}
+					}
+					else // Enemy
+					{
+						units[i].DamageSimple(0, gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
+						if (hasSuperlaser)
+						{
+							Status markStatus = new Status(gameObject, StatusType.SuperlaserMark); // TODO: Optimize?
+							markStatus.SetTimeLeft(gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
+							units[i].AddStatus(markStatus);
+						}
+						enemyCount++;
+					}
+				}
+
+				// Add armor to us based on number of units
+				parentUnit.DamageSimple(0, -(gameRules.ABLYarmorDrainGPS + gameRules.ABLYarmorDrainGPSBonusMult * enemyCount) * (allyCount + enemyCount) * Time.deltaTime);
+
+				if ((allyCount + enemyCount) == 0)
+					pointEffect.SetEffectActive(true, false);
+				else
+					pointEffect.SetEffectActive(true, true);
+			}
+			else
 			{
 				UseAbility(null); // Toggle to inactive and put on cooldown
 			}
-
-			// Consume energy according to active duration
-			energy -= deltaDurations.y * Time.deltaTime;
-			Display(1 - energy);
-
-			Collider[] cols = Physics.OverlapSphere(transform.position, gameRules.ABLYarmorDrainRange, gameRules.entityLayerMask);
-			List<Unit> units = new List<Unit>();
-			for (int i = 0; i < cols.Length; i++)
-			{
-				Unit unit = GetUnitFromCol(cols[i]);
-
-				if (!unit) // Only works on units
-					continue;
-
-				if (units.Contains(unit)) // Ignore multiple colliders for one unit
-					continue;
-
-				if (unit.GetType() == typeof(Unit_Flagship)) // Can't drain Flagships
-					continue;
-
-				if (unit.GetHP().z <= 0) // They must have some armor
-					continue;
-
-				foreach (Ability a in unit.abilities)
-					if (a.GetAbilityType() == AbilityType.ArmorDrain) // Can't drain another drain-capable unit
-						continue;
-
-				if (unit != parentUnit) // Don't add ourselves
-					units.Add(unit);
-			}
-
-			// TODO: Sort unit list to have allies first
-
-			int allyCount = 0;
-			int enemyCount = 0;
-
-			for (int i = 0; i < units.Count && i < gameRules.ABLYarmorDrainMaxVictims; i++) // For each unit, subtract armor
-			{
-				if (units[i].team == parentUnit.team)
-				{
-					if (parentUnit.GetHP().z < parentUnit.GetHP().w) // Only damage allies if we have missing armor
-					{
-						units[i].DamageSimple(0, gameRules.ABLYarmorDrainDPSAlly * Time.deltaTime);
-						allyCount++;
-					}
-				}
-				else
-				{
-					units[i].DamageSimple(0, gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
-					enemyCount++;
-				}
-			}
-
-			// Add armor to us based on number of units
-			parentUnit.DamageSimple(0, -(gameRules.ABLYarmorDrainGPS + gameRules.ABLYarmorDrainGPSBonusMult * enemyCount) * (allyCount + enemyCount) * Time.deltaTime);
-
-			if ((allyCount + enemyCount) == 0)
-				pointEffect.SetEffectActive(true, false);
-			else
-				pointEffect.SetEffectActive(true, true);
 		}
 		else // Inactive
 		{

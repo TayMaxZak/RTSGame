@@ -6,7 +6,8 @@ public enum StatusType
 {
 	SwarmShield,
 	CriticalBurnImmune,
-	SpawnSwarmSpeedNerf
+	SpawnSwarmSpeedNerf,
+	SuperlaserMark
 }
 
 [System.Serializable]
@@ -42,6 +43,16 @@ public class Status
 	{
 		return timeLeft;
 	}
+
+	public void SetTimeLeft(float time)
+	{
+		timeLeft = time;
+	}
+
+	public void AddTimeLeft(float time)
+	{
+		timeLeft += time;
+	}
 }
 
 public static class StatusUtils
@@ -52,12 +63,32 @@ public static class StatusUtils
 		{
 			case StatusType.SwarmShield:
 				return 2;
-			case StatusType.CriticalBurnImmune:
-				return 1;
-			case StatusType.SpawnSwarmSpeedNerf:
-				return Mathf.Infinity;
 			default:
 				return 1;
+		}
+	}
+
+	public static bool ShouldCountDownDuration(StatusType statType)
+	{
+		switch (statType)
+		{
+			case StatusType.SpawnSwarmSpeedNerf:
+				return false;
+			case StatusType.SuperlaserMark:
+				return false;
+			default:
+				return true;
+		}
+	}
+
+	public static bool ShouldStackDuration(StatusType statType)
+	{
+		switch (statType)
+		{
+			case StatusType.SuperlaserMark:
+				return true;
+			default:
+				return false;
 		}
 	}
 }

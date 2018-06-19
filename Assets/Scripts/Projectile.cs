@@ -5,7 +5,9 @@ using UnityEngine;
 public enum DamageType
 {
 	Normal,
-	Wreck
+	Wreck,
+	Swarm,
+	Superlaser
 }
 
 [System.Serializable]
@@ -26,7 +28,8 @@ public class Projectile
 	[HideInInspector]
 	public Vector3 direction = Vector3.forward;
 
-	private int team = 0;
+	private Unit from;
+	private Status status;
 
 	public Projectile(Projectile copy)
 	{
@@ -40,16 +43,6 @@ public class Projectile
 	public void SetStartPosition(Vector3 startPos)
 	{
 		startPosition = startPos;
-	}
-
-	public float GetTeam()
-	{
-		return team;
-	}
-
-	public void SetTeam(int newTeam)
-	{
-		team = newTeam;
 	}
 
 	public float GetSpeed()
@@ -80,5 +73,25 @@ public class Projectile
 	public float CalcRange()
 	{
 		return (startPosition - position).magnitude;
+	}
+
+
+	public Unit GetFrom()
+	{
+		return from;
+	}
+
+	public void SetFrom(Unit newFrom)
+	{
+		from = newFrom;
+	}
+	public Status GetStatus()
+	{
+		return status;
+	}
+
+	public void SetStatus(Status newStatus)
+	{
+		status = newStatus;
 	}
 }

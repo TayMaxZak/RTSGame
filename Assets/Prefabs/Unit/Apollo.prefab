@@ -352,6 +352,7 @@ GameObject:
   - component: {fileID: 33934732127134688}
   - component: {fileID: 23257035969092386}
   - component: {fileID: 65606189105715982}
+  - component: {fileID: 65631683571774088}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -940,8 +941,20 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.61, y: 2.92, z: 2.71}
-  m_Center: {x: 0, y: -0.12, z: -0.1}
+  m_Size: {x: 1.61, y: 1.24, z: 2.71}
+  m_Center: {x: 0, y: 0.36, z: -0.1}
+--- !u!65 &65631683571774088
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1853842422680514}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.65, y: 1.24, z: 1.64}
+  m_Center: {x: 0, y: -0.83, z: -0.1}
 --- !u!82 &82244398850110840
 AudioSource:
   m_ObjectHideFlags: 1
@@ -1051,7 +1064,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.36
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1247,7 +1260,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.36
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 1
   Mute: 0

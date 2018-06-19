@@ -115,7 +115,10 @@ public class Ability_HealField : Ability
 		{
 			// If we are not already borrowing and there are no resources to borrow, don't activate this ability
 			if (!isBorrowing && !command.TakeResources(gameRules.ABLYhealFieldResCost))
+			{
+				ResetCooldown();
 				return;
+			}
 
 			isBorrowing = true;
 			//ability.stacks = -1;

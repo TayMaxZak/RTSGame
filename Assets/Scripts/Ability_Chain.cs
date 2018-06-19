@@ -17,6 +17,7 @@ public class Ability_Chain : Ability
 	private GameObject pointEffectBreak;
 
 	private Unit targetUnit;
+	private bool checkingForDead = false;
 
 	void Awake()
 	{
@@ -60,6 +61,7 @@ public class Ability_Chain : Ability
 					if (targetUnit)
 						ClearTarget(false);
 					targetUnit = unit;
+					checkingForDead = true;
 
 					chainEndsEffect[0].SetEffectActive(true);
 					chainEndsEffect[1].SetEffectActive(true);
@@ -75,7 +77,8 @@ public class Ability_Chain : Ability
 			if (targetUnit)
 				ClearTarget(true);
 
-			// If target is parentUnit, put ability on cooldown
+			// If target is parentUnit, don't put ability on cooldown
+			ResetCooldown();
 		}
 
 	}
@@ -108,7 +111,15 @@ public class Ability_Chain : Ability
 			{
 				Instantiate(pointEffectBreakPrefab, (chainStart.position + targetUnit.transform.position) * 0.5f, Quaternion.LookRotation(chainStart.position - targetUnit.transform.position));
 				ClearTarget(true);
-				StartCooldown();
+				//StartCooldown(); // TODO: Maybe not
+			}
+		}
+		else
+		{
+			if (checkingForDead)
+			{
+				ClearTarget(true);
+				//StartCooldown(); // TODO: Maybe not
 			}
 		}
 	}
@@ -117,6 +128,7 @@ public class Ability_Chain : Ability
 	{
 		targetUnit.RemoveVelocityMod(new VelocityMod(parentUnit, parentUnit.GetVelocity(), VelocityModType.Chain));
 		targetUnit = null;
+		checkingForDead = false;
 		if (clearEffects)
 			ClearEffects();
 	}

@@ -63,13 +63,13 @@ public class UI_EntityStats : MonoBehaviour
 		healthFill.rectTransform.sizeDelta = new Vector2((1 - healthRatio) * -rootWidth, healthFill.rectTransform.sizeDelta.y);
 		//healthText.text = (int)healthCur + "/" + (int)healthMax;
 		foreach (Text text in healthText)
-			text.text = (int)healthCur + "/" + (int)healthMax;
+			text.text = StringFromFloat(healthCur) + "/" + StringFromFloat(healthMax);
 
 		float armorRatio = armorCur / (armorMax != 0 ? armorMax : 1);
 		armorFill.rectTransform.sizeDelta = new Vector2((1 - armorRatio) * -rootWidth, armorFill.rectTransform.sizeDelta.y);
 		//armorText.text = (int)armorCur + "/" + (int)armorMax;
 		foreach (Text text in armorText)
-			text.text = (int)armorCur + "/" + (int)armorMax;
+			text.text = StringFromFloat(armorCur) + "/" + StringFromFloat(armorMax);
 	}
 
 	public void SetDisplayName(string name)
@@ -121,14 +121,28 @@ public class UI_EntityStats : MonoBehaviour
 		{
 			//ability1Text.text = IntToNumerals(amount);
 			foreach (Text text in ability1Text)
-				text.text = stacks > 0 ? stacks.ToString() : "";
+				text.text = stacks > 0 ? StringFromInt(stacks) : "";
 		}
 		else
 		{
 			//ability2Text.text = IntToNumerals(amount);
 			foreach (Text text in ability2Text)
-				text.text = stacks > 0 ? stacks.ToString() : "";
+				text.text = stacks > 0 ? StringFromInt(stacks) : "";
 		}
+	}
+
+	string StringFromFloat(float number)
+	{
+		int val = Mathf.CeilToInt(number);
+		return val.ToString();
+	}
+
+	string StringFromInt(int number)
+	{
+		if (number <= 9)
+			return number.ToString();
+		else
+			return "9+";
 	}
 
 	/*

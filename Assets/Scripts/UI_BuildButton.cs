@@ -17,6 +17,15 @@ public class UI_BuildButton : MonoBehaviour
 	private int countCur;
 	[SerializeField]
 	private Button button;
+	[SerializeField]
+	private Image buttonIcon;
+
+	private Color textInitColor;
+	[SerializeField]
+	private Color textInactiveColor = Color.black;
+	private Color buttonIconInitColor;
+	[SerializeField]
+	private Color buttonIconInactiveColor = Color.black;
 
 	private bool[] interactable; // [0] false = not enough resources, [1] false = not enough counter
 
@@ -35,6 +44,9 @@ public class UI_BuildButton : MonoBehaviour
 		//gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
 
 		interactable = new bool[2];
+
+		textInitColor = costText.color;
+		buttonIconInitColor = buttonIcon.color;
 	}
 
 	public void SetController(Controller_Commander newController)
@@ -65,7 +77,12 @@ public class UI_BuildButton : MonoBehaviour
 		else
 			interactable[1] = true;
 
-		button.interactable = ButtonInteractable();
+		bool canInteract = ButtonInteractable();
+		button.interactable = canInteract;
+
+		costText.color = canInteract ? textInitColor: textInactiveColor;
+		countText.color = canInteract ? textInitColor : textInactiveColor;
+		buttonIcon.color = canInteract ? buttonIconInitColor : buttonIconInactiveColor;
 	}
 
 	public void SetCost()

@@ -136,7 +136,17 @@ public class Unit : Entity
 		//	ab.Init(this, gameRules);
 
 		foreach (Turret tur in turrets) // Init turrets
-			tur.team = team;
+		{
+			tur.SetParentUnit(this);
+
+			// Make sure weapon damage counts for Superlaser marks
+			bool hasSuperlaser = false;
+			foreach (Ability a in abilities)
+				if (a.GetAbilityType() == AbilityType.Superlaser)
+					hasSuperlaser = true;
+			if (hasSuperlaser)
+				tur.SetOnHitStatus(new Status(gameObject, StatusType.SuperlaserMark));
+		}
 	}
 
 	// Banking
@@ -172,6 +182,52 @@ public class Unit : Entity
 				}
 			}
 		}
+
+		if (Time.frameCount == 2)
+		{
+			ProxyAI();
+		}
+	}
+
+	void ProxyAI()
+	{
+		// Attack a main enemy unit and use abilities
+		if (team != 0)
+		{
+			GameObject go = GameObject.FindGameObjectWithTag("Player");
+			if (go)
+			{
+				Unit mainUnit = go.GetComponent<Unit>();
+				OrderAttack(mainUnit);
+				foreach (Ability a in abilities)
+				{
+					switch (a.GetAbilityType())
+					{
+						case AbilityType.SpawnSwarm:
+							a.UseAbility(new AbilityTarget(mainUnit));
+							break;
+						case AbilityType.ShieldProject:
+							{
+								Collider[] cols = Physics.OverlapSphere(transform.position, 10);
+								Transform parent = cols[0].transform.parent;
+								if (parent)
+								{
+									Unit u = parent.GetComponent<Unit>();
+									if (u)
+									{
+										a.UseAbility(new AbilityTarget(u));
+									}
+								}
+
+							}
+							break;
+						case AbilityType.HealField:
+							a.UseAbility(new AbilityTarget(mainUnit));
+							break;
+					} // switch
+				} // foreach
+			} // mainunit
+		} // team
 	}
 
 	void UpdateHealth()
@@ -369,11 +425,11 @@ public class Unit : Entity
 
 		foreach (Status s in statuses)
 		{
-			if (!s.UpdateTimeLeft(Time.deltaTime))
-				toRemove.Add(s);
+			if (StatusUtils.ShouldCountDownDuration(s.statusType))
+				if (!s.UpdateTimeLeft(Time.deltaTime))
+					toRemove.Add(s);
 
 			output += s.statusType + " " + s.GetTimeLeft() + " ";
-			
 		}
 
 		if (printInfo && statuses.Count > 0)
@@ -385,6 +441,7 @@ public class Unit : Entity
 		}
 	}
 
+	// TODO: Do a better job accounting for armor overflow when adding up SuperlaserMark damage, sometimes projectiles will do way more effective damage than is counted here
 	public void AddStatus(Status status)
 	{
 		foreach (Status s in statuses) // Check all current statuses
@@ -393,11 +450,28 @@ public class Unit : Entity
 				continue;
 			if (s.statusType != status.statusType)
 				continue;
-			s.RefreshTimeLeft(); // If we already have this instance of a status effect, refresh its timer
+
+			// If we already have this instance of a status effect, refresh its timer
+			if (!StatusUtils.ShouldStackDuration(s.statusType))
+				s.RefreshTimeLeft();
+			else // or add the new timer to the current timer
+			{
+				// Superlaser mark damage
+				if (s.statusType == StatusType.SuperlaserMark && status.statusType == StatusType.SuperlaserMark) // Don't count damage which wasn't necessary for the kill
+				{
+					s.AddTimeLeft(Mathf.Min(status.GetTimeLeft(), (curHealth + curArmor)));
+				}
+				else
+					s.AddTimeLeft(status.GetTimeLeft());
+			}
 			return;
 		}
 
-		// Otherwise add it
+		// Superlaser mark damage
+		if (status.statusType == StatusType.SuperlaserMark) // Don't count damage which wasn't necessary for the kill
+		{
+			status.SetTimeLeft(Mathf.Min(status.GetTimeLeft(), (curHealth + curArmor)));
+		}
 		statuses.Add(status);
 	}
 
@@ -535,7 +609,7 @@ public class Unit : Entity
 				tur.SetTarget(null);
 	}
 
-	public bool Damage(float damageBase, float range) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
+	public bool Damage(float damageBase, float range, DamageType dmgType) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
 	{
 		OnDamage();
 
@@ -634,7 +708,8 @@ public class Unit : Entity
 			{
 				// Apply damage to shield pool, which can go negative
 				projShield.shieldPercent = curShieldPool / gameRules.ABLYshieldProjectMaxPool;
-				// or reset shield to a baseline pool value
+
+				// Reset shield to a baseline pool value
 				//projShield.shieldPercent = 0;
 
 				// Notify source that the shield was destroyed, no further action on our side needed
@@ -706,6 +781,19 @@ public class Unit : Entity
 		if (dead)
 			return;
 		dead = true; // Prevents multiple deaths
+
+		foreach (Status s in statuses)
+		{
+			// Check if sufficient damage was dealt to grant a Superlaser stack
+			if (s.statusType == StatusType.SuperlaserMark)
+			{
+				float ratio = s.GetTimeLeft() / (maxHealth + maxArmor);
+
+				if (ratio >= gameRules.ABLYsuperlaserDmgAmount)
+					if (s.from) // Potentially the recipient of the stack does not exist anymore
+						s.from.GetComponent<Ability_Superlaser>().GiveStack();
+			}
+		}
 
 		foreach (Ability ab in abilities)
 		{
