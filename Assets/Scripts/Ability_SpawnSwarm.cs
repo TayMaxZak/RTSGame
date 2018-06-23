@@ -98,7 +98,7 @@ public class Ability_SpawnSwarm : Ability
 				// If used for the first time,
 				if (stacks == gameRules.ABLYswarmMaxUses - 1)
 				{
-					// permanently nerf parent unit's movement speed from now on
+					// nerf parent unit's movement speed
 					parentUnit.AddStatus(new Status(gameObject, StatusType.SpawnSwarmSpeedNerf));
 					// and notify swarm mover to display as active
 					swarmMover.DisplayInactive(false);
@@ -109,6 +109,9 @@ public class Ability_SpawnSwarm : Ability
 			}
 			else // Otherwise, cannot be used in the future
 			{
+				// Restore parent unit's movement speed
+				parentUnit.RemoveStatus(new Status(gameObject, StatusType.SpawnSwarmSpeedNerf));
+
 				displayInfo.stacks = stacks;
 				displayInfo.displayInactive = true;
 				UpdateDisplay(abilityIndex, true);

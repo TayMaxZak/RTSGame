@@ -7,7 +7,6 @@ using EmitParams = UnityEngine.ParticleSystem.EmitParams;
 
 public class Manager_Projectiles : MonoBehaviour
 {
-	public GameObject test;
 	[SerializeField]
 	public List<Projectile> projectiles;
 	private List<Projectile> toDelete;

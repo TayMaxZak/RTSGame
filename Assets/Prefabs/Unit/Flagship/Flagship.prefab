@@ -113,7 +113,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1997734968041638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -30, y: 0, z: 0}
+  m_LocalPosition: {x: -20, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4218804481066840}
@@ -335,7 +335,7 @@ MonoBehaviour:
   type: 3
   swarmTarget: {fileID: 4472865978280284}
   selCircleSize: 12
-  printStatus: 0
+  printInfo: 0
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
   hpEffects: {fileID: 0}
@@ -349,13 +349,14 @@ MonoBehaviour:
   deathClone: {fileID: 0}
   turrets: []
   abilities: []
-  MS: 3
-  MSVerticalMod: 1.5
-  MSAccel: 3.5
-  MSDeccel: 5
-  RS: 5
-  RSAccel: 3
-  model: {fileID: 4218804481066840}
-  reachGoalThresh: 8
-  YMSResetThresh: 1
-  allowMoveThresh: 0.1
+  movement:
+    MS: 7
+    MSVMult: 0.4
+    MSAccel: 3
+    MSDeccel: 3
+    model: {fileID: 4218804481066840}
+    RS: 90
+    RSAccel: 1
+    allowMoveThresh: 0.1
+    stopRotateThresh: 0.3
+    reachGoalThresh: 11.75

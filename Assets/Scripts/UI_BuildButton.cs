@@ -28,6 +28,7 @@ public class UI_BuildButton : MonoBehaviour
 	private Color buttonIconInactiveColor = Color.black;
 
 	private bool[] interactable; // [0] false = not enough resources, [1] false = not enough counter
+	private bool usable = false; // Internally tracks whether or not the build action can be used
 
 	//[SerializeField]
 	//private Image borderFill;
@@ -62,10 +63,13 @@ public class UI_BuildButton : MonoBehaviour
 
 	public void Build()
 	{
+		if (!usable)
+			return;
+
 		controller.UseBuildButton(index);
 	}
 
-	public void CheckInteractable()
+	public void UpdateInteractable()
 	{
 		if (costCur > commander.GetResources())
 			interactable[0] = false;
@@ -79,6 +83,7 @@ public class UI_BuildButton : MonoBehaviour
 
 		bool canInteract = ButtonInteractable();
 		button.interactable = canInteract;
+		usable = canInteract;
 
 		costText.color = canInteract ? textInitColor: textInactiveColor;
 		countText.color = canInteract ? textInitColor : textInactiveColor;
@@ -89,14 +94,14 @@ public class UI_BuildButton : MonoBehaviour
 	{
 		costCur = commander.GetBuildUnit(index).cost;
 		costText.text = costCur.ToString();
-		CheckInteractable();
+		UpdateInteractable();
 	}
 
 	public void SetCounter(int cur)
 	{
 		countCur = cur;
 		countText.text = countCur + "/" + commander.GetBuildUnit(index).unitCap;
-		CheckInteractable();
+		UpdateInteractable();
 	}
 
 	bool ButtonInteractable()

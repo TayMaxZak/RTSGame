@@ -1344,16 +1344,17 @@ MonoBehaviour:
   abilities:
   - {fileID: 114971228717168258}
   - {fileID: 114553389254284404}
-  MS: 3
-  MSVerticalMod: 0.4
-  MSAccel: 1
-  MSDeccel: 1
-  RS: 25
-  RSAccel: 1
-  model: {fileID: 4964686013811900}
-  reachGoalThresh: 1.5
-  YMSResetThresh: 1
-  allowMoveThresh: 0.6
+  movement:
+    MS: 4
+    MSVMult: 0.4
+    MSAccel: 1
+    MSDeccel: 1
+    model: {fileID: 4964686013811900}
+    RS: 45
+    RSAccel: 1
+    allowMoveThresh: 0.1
+    stopRotateThresh: 0.3
+    reachGoalThresh: 2
 --- !u!114 &114820288780046676
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -99,7 +99,7 @@ public static class EntityUtils
 				}
 			case EntityType.Corvette:
 				{
-					return "Corvette";
+					return "StarLark";
 				}
 			case EntityType.Flagship:
 				{
@@ -116,6 +116,41 @@ public static class EntityUtils
 			case EntityType.Bulkhead:
 				{
 					return "Bulkhead Cruiser";
+				}
+		}
+	}
+
+	public static string GetInfoBlurb(EntityType type)
+	{
+		switch (type)
+		{
+			default:
+				{
+					return "";
+				}
+			case EntityType.Destroyer:
+				{
+					return "The [name] Fleet Destroyer is the pinnacle of modern warship design. It is equipped with Armor Well technology, which creates a specialized interference field which destabilizes and attracts particles of common armor polymers. These fragments are then flash-vaporized, conveyed around the spacecraft, cooled, and injected into damaged armor plating. The main weapon of the [name] is the Hellrazor-I Radiation Cannon, an experimental weapon system which is powered by the unstable but powerful ephemeral radiation emitted by reactors seconds before overloading. The [name] collects this energy from hostile starships it destroys.";
+				}
+			case EntityType.Corvette:
+				{
+					return "The StarLark is a miniature towing ship which can apply its surprisingly powerful engines to pull objects much more massive than itself. Typically, these spaceships find use in mining corporations moving asteroids and cargo containers, but their cheap production cost, easily installable weapons, and mobility make them a common sight in armed forces.";
+				}
+			case EntityType.Flagship:
+				{
+					return "Flagship";
+				}
+			case EntityType.Frigate:
+				{
+					return "The [name]-II Carrier is a fast response cruiser with a powerful engine block and an extremely compact design allowing it to carry 3 full fighter squadrons in a relatively small frame. Usually deployed in pairs, these cruisers threaten to unleash massive swarms of nimble starcraft which provide cover fire for larger allied warships.";
+				}
+			case EntityType.Apollo:
+				{
+					return "The Apollo-class Escort Ship is a specialty cruiser designed by Pantheon Corporation to protect valuable assets. Using patented Surguard technology, which employs arrays of projectors to shape an electromagnetic field around a designated recipient, the Apollo can effectively shield something from projectiles and most energy attacks. It is also armed with cheap but effective ion torpedoes which can temporarily neutralize a threat.";
+				}
+			case EntityType.Bulkhead:
+				{
+					return "The Bulkhead Heavy Foundry Cruiser is a material transport with an integrated refinery to process volatile resources during the delivery period. Additionally, it is equipped with dispersal mechanisms that can release material from either of its two storage compartments in a radius around the transport or towards a target location. These functions are designed for terraforming, but some creative fleet commanders have found use for them in combat situations as well, especially for delivering metasteel vapors to damaged ally spacecraft.";
 				}
 		}
 	}

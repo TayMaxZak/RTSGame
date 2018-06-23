@@ -42,45 +42,9 @@ public class Unit : Entity
 	[SerializeField]
 	public List<Ability> abilities;
 
-	[Header("Moving")]
+	[Header("Movement")]
 	[SerializeField]
-	private float MS = 7;
-	private float curMSRatio = 0;
-	[SerializeField]
-	private float MSVerticalMod = 0.4f;
-	private float curYMSRatio = 0;
-	//private float targetMSRatio = 0;
-	[SerializeField]
-	private float MSAccel = 1; // Time in seconds to reach full speed
-	[SerializeField]
-	private float MSDeccel = 2; // Time in seconds to reach full stop
-	private Vector3 velocity;
-
-	[Header("Turning")]
-	[SerializeField]
-	private float RS = 90;
-	[SerializeField]
-	private float RSAccel = 1;
-	private float curRSRatio = 0;
-	//private float targetRSRatio = 0;
-	//[SerializeField]
-	//private float bankAngle = 30;
-	[SerializeField]
-	private Transform model;
-
-	[Header("Pathing")]
-	[SerializeField]
-	private float reachGoalThresh = 1; // How close to the goal position is close enough?
-	[SerializeField]
-	private float YMSResetThresh = 1;
-	private float deltaBias = 99999;
-	private bool isPathing;
-	private Vector3 goal;
-
-	private Quaternion lookRotation;
-	private Vector3 direction;
-	[SerializeField]
-	private float allowMoveThresh = 0.1f; // How early during a turn can we start moving forward
+	private UnitMovement movement;
 
 	private bool selected;
 
@@ -96,8 +60,6 @@ public class Unit : Entity
 	private List<ShieldMod> shieldMods;
 	private List<Unit> damageTaken; // Units that assisted in this unit's death
 
-	private List<Unit> notifyOnDeath; // These units will be messaged when we die
-
 	void Awake()
 	{
 		hpBar = Instantiate(hpBarPrefab);
@@ -110,9 +72,8 @@ public class Unit : Entity
 		statuses = new List<Status>();
 		velocityMods = new List<VelocityMod>();
 		shieldMods = new List<ShieldMod>();
-		notifyOnDeath = new List<Unit>();
 
-		goal = transform.position; // Path towards current location (i.e. nowhere)
+		movement.Init(this);
 
 		if (gameManager == null)
 			gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
@@ -157,8 +118,8 @@ public class Unit : Entity
 	protected new void Update ()
 	{
 		base.Update(); // Entity base class
-		UpdateMovement();
 		UpdateStatuses();
+		movement.Tick();
 
 		if (isSelected || isHovered)
 			UpdateHPBarPosAndVis();
@@ -245,7 +206,7 @@ public class Unit : Entity
 			return;
 		}
 
-		Vector3 barPosition = new Vector3(model.position.x + hpBarOffset.x, swarmTarget.position.y + hpBarOffset.y, model.position.z + hpBarOffset.x);
+		Vector3 barPosition = new Vector3(transform.position.x + hpBarOffset.x, swarmTarget.position.y + hpBarOffset.y, transform.position.z + hpBarOffset.x);
 		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
 
 		float dot = Vector3.Dot((barPosition - Camera.main.transform.position).normalized, Camera.main.transform.forward);
@@ -283,107 +244,9 @@ public class Unit : Entity
 		}
 	}
 
-	void UpdateMovement()
+	public List<VelocityMod> GetVelocityMods()
 	{
-		Vector3 dif = goal - transform.position;
-
-		if (dif.magnitude <= reachGoalThresh)
-			isPathing = false;
-		else
-			isPathing = true;
-
-		// Rotation
-		float targetRSRatio = isPathing ? 1 : 0;
-
-		//float RSdelta = Mathf.Sign(targetRSRatio - curRSRatio) * (1f / RSAccel) * Time.deltaTime;
-
-		float RSdelta = Mathf.Clamp((targetRSRatio - curRSRatio) * deltaBias, -1, 1) * (1f / RSAccel) * Time.deltaTime;
-		curRSRatio = Mathf.Clamp01(curRSRatio + RSdelta);
-
-		direction = dif.normalized;
-		lookRotation = Quaternion.LookRotation(direction == Vector3.zero ? transform.forward : direction);
-		//float oldRotY = transform.eulerAngles.y;
-		//transform.Rotate(new Vector3(0, RS * Time.deltaTime, 0));
-		transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, Time.deltaTime * RS * curRSRatio);
-		//float difRot = transform.eulerAngles.y - oldRotY;
-
-		//float oldBank = model.localEulerAngles.z;
-		//float newBank = bankAngle * (difRot / (Time.deltaTime * RS)) * curRSRatio;
-		//float diffBank = ((oldBank - newBank + 180 + 360) % 360) - 180;
-		//float targetBank = (360 + newBank + (diffBank / 2)) % 360;
-
-		//model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, targetBank));
-		model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, 0));
-
-
-
-		// Horizontal Movement
-		float dot = Mathf.Max((Vector3.Dot(direction, transform.forward) - (1 - allowMoveThresh)) / (allowMoveThresh), 0);
-		if (dot >= 0.9999f)
-			dot = 1;
-
-		float statusSpeedMult = 1;
-		foreach (Status s in statuses)
-			if (s.statusType == StatusType.SpawnSwarmSpeedNerf)
-				statusSpeedMult = gameRules.ABLYswarmFirstUseSpeedMult;
-
-		float targetMSRatio = dot * (isPathing ? statusSpeedMult : 0);
-
-		//float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel;
-		//float MSdelta = Mathf.Sign(targetMSRatio - curMSRatio) * (1f / MSccel) * Time.deltaTime;
-
-		float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel; // MSccel is not a typo
-		float MSdelta = Mathf.Clamp((targetMSRatio - curMSRatio) * deltaBias, -1, 1) * (1f / MSccel) * Time.deltaTime;
-		curMSRatio = Mathf.Clamp01(curMSRatio + MSdelta);
-
-		Vector3 Hvel = MS * curMSRatio * new Vector3(transform.forward.x, 0, transform.forward.z).normalized;
-		//transform.position += Hvel * Time.deltaTime;
-
-		// Vertical Movement
-		float targetYMSRatio = (isPathing ? 1 : 0);
-
-		//float YMSdelta = Mathf.Sign(targetYMSRatio - curYMSRatio) * (1f / MSAccel) * Time.deltaTime;
-		float YMSdelta = Mathf.Clamp((targetYMSRatio - curYMSRatio) * deltaBias, -1, 1) * (1f / MSAccel) * Time.deltaTime;
-		curYMSRatio = Mathf.Clamp01(curYMSRatio + YMSdelta);
-
-		Vector3 Yvel = MS * curYMSRatio * Vector3.up * Mathf.Clamp(direction.y * 2, -1, 1) * MSVerticalMod;
-		Vector4 chainVel = CalcChainVel((Hvel + Yvel).magnitude);
-
-		// Final velocity is combination of independent movement and velocity mods
-		velocity = Vector3.ClampMagnitude((Yvel + Hvel) + new Vector3(chainVel.x, chainVel.y, chainVel.z), chainVel.w);
-		transform.position += velocity * Time.deltaTime;
-	}
-
-	Vector4 CalcChainVel(float currentSpeed)
-	{
-		Vector3 total = Vector3.zero;
-		float maxMagnitude = currentSpeed;
-
-		for (int i = 0; i < velocityMods.Count; i++)
-		{
-			if (velocityMods[i].from == null)
-			{
-				velocityMods.RemoveAt(i);
-				i--;
-				continue;
-			}
-
-			if (velocityMods[i].vel.magnitude > maxMagnitude)
-				maxMagnitude = velocityMods[i].vel.magnitude;
-
-			float dot = Vector3.Dot((velocityMods[i].from.transform.position - transform.position).normalized, velocityMods[i].vel.normalized);
-			dot = Mathf.Clamp(dot, 0, Mathf.Infinity);
-			if (velocityMods[i].from.team == team)
-			{
-				total += velocityMods[i].vel * gameRules.ABLYchainAllyMult * dot;
-			}
-			else
-			{
-				total += velocityMods[i].vel * gameRules.ABLYchainEnemyMult * dot;
-			}
-		}
-
-		return new Vector4(total.x, total.y, total.z, maxMagnitude);
+		return velocityMods;
 	}
 
 	public void AddVelocityMod(VelocityMod velMod)
@@ -416,6 +279,11 @@ public class Unit : Entity
 
 		if (toRemove != null)
 			velocityMods.Remove(toRemove);
+	}
+
+	public List<Status> GetStatuses()
+	{
+		return statuses;
 	}
 
 	void UpdateStatuses()
@@ -473,6 +341,22 @@ public class Unit : Entity
 			status.SetTimeLeft(Mathf.Min(status.GetTimeLeft(), (curHealth + curArmor)));
 		}
 		statuses.Add(status);
+	}
+
+	public void RemoveStatus(Status status)
+	{
+		Status toRemove = null;
+		foreach (Status s in statuses) // Search all current velocity mods
+		{
+			if (s.from != status.from)
+				continue;
+			if (s.statusType != status.statusType)
+				continue;
+			toRemove = s;
+		}
+
+		if (toRemove != null)
+			statuses.Remove(toRemove);
 	}
 
 	float CalcShieldPoolCur()
@@ -562,7 +446,7 @@ public class Unit : Entity
 		}
 	}
 
-	public void OnShield()
+	public void OnShieldChange()
 	{
 		UpdateShield();
 	}
@@ -580,14 +464,7 @@ public class Unit : Entity
 	
 	public void OrderMove(Vector3 newGoal)
 	{
-		Vector3 prevGoal = goal;
-		goal = newGoal;
-		float yDif = goal.y - prevGoal.y;
-
-		if (Mathf.Abs(yDif) >= YMSResetThresh)
-		{
-			curYMSRatio = 0;
-		}
+		movement.OrderMove(newGoal);
 	}
 
 	public void OrderAttack(Unit newTarg)
@@ -775,7 +652,6 @@ public class Unit : Entity
 		}
 	}
 
-
 	public void Die()
 	{
 		if (dead)
@@ -803,14 +679,9 @@ public class Unit : Entity
 		if (hpEffects)
 			hpEffects.End();
 
-		foreach (Unit un in notifyOnDeath)
-		{
-			un.DeathMessage(this);
-		}
-
 		if (deathClone)
 		{
-			GameObject go = Instantiate(deathClone, model.transform.position, model.rotation);
+			GameObject go = Instantiate(deathClone, transform.position, transform.rotation);
 			Clone_Wreck wreck = go.GetComponent<Clone_Wreck>();
 			if (wreck)
 				wreck.SetHP(maxHealth, maxArmor);
@@ -833,26 +704,9 @@ public class Unit : Entity
 		Destroy(gameObject);
 	}
 
-	public void SubscribeToDeath(Unit u)
-	{
-		if (notifyOnDeath.Contains(u))
-			return;
-		else
-			notifyOnDeath.Add(u);
-	}
-
-	public void DeathMessage(Unit u)
-	{
-		if (u.team != team)
-		{
-			// TODO: Hellrazor stack increase?
-
-		}
-	}
-
 	public Vector3 GetVelocity()
 	{
-		return velocity;
+		return movement.GetVelocity();
 	}
 
 	/// <summary>

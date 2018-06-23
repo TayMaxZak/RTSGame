@@ -1034,10 +1034,10 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 86f9b1c2afaeb3343b3d0f183a0d7fbe, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 924a95c391f479e42a9d7d7a4b3c089a, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.04
-  m_Pitch: 0.5
+  m_Volume: 0.1
+  m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
@@ -1364,16 +1364,17 @@ MonoBehaviour:
   - {fileID: 114972989576666406}
   abilities:
   - {fileID: 114177749130366244}
-  MS: 2
-  MSVerticalMod: 0.4
-  MSAccel: 1.5
-  MSDeccel: 1.5
-  RS: 30
-  RSAccel: 2
-  model: {fileID: 4935241332060562}
-  reachGoalThresh: 2.5
-  YMSResetThresh: 1
-  allowMoveThresh: 0.3
+  movement:
+    MS: 3
+    MSVMult: 0.4
+    MSAccel: 1
+    MSDeccel: 1
+    model: {fileID: 4935241332060562}
+    RS: 45
+    RSAccel: 1
+    allowMoveThresh: 0.1
+    stopRotateThresh: 0.3
+    reachGoalThresh: 1.5
 --- !u!114 &114177749130366244
 MonoBehaviour:
   m_ObjectHideFlags: 1

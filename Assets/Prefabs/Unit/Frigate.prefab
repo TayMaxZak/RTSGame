@@ -602,7 +602,7 @@ Transform:
   m_GameObject: {fileID: 1216876717439498}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_Children:
   - {fileID: 4268561022817726}
   m_Father: {fileID: 0}
@@ -2002,16 +2002,17 @@ MonoBehaviour:
   abilities:
   - {fileID: 114414820332703200}
   - {fileID: 114437644942323818}
-  MS: 4
-  MSVerticalMod: 0.4
-  MSAccel: 1
-  MSDeccel: 1
-  RS: 15
-  RSAccel: 1
-  model: {fileID: 4268561022817726}
-  reachGoalThresh: 1.6
-  YMSResetThresh: 1
-  allowMoveThresh: 0.6
+  movement:
+    MS: 4
+    MSVMult: 0.4
+    MSAccel: 1
+    MSDeccel: 1
+    model: {fileID: 4268561022817726}
+    RS: 45
+    RSAccel: 1
+    allowMoveThresh: 0.1
+    stopRotateThresh: 0.3
+    reachGoalThresh: 2
 --- !u!114 &114868401536279404
 MonoBehaviour:
   m_ObjectHideFlags: 1

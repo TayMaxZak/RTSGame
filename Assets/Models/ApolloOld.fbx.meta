@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: c77e3228cb1610d49a9aff5b290d0069
-timeCreated: 1529665378
+guid: fd2c08630c4fb2347b8f0c80d725a9db
+timeCreated: 1526777990
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
@@ -10,8 +10,6 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Mesh
-    7400000: Take 001
-    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -81,7 +79,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

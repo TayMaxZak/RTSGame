@@ -623,7 +623,7 @@ public class Controller_Commander : MonoBehaviour
 		resPointsCounter.UpdateResCounter(resPoints, reclaimPoints);
 
 		foreach (UI_BuildButton bb in buildButtons)
-			bb.CheckInteractable();
+			bb.UpdateInteractable();
 	}
 
 	public void UpdateResourceTime(float reclaimTimer)
@@ -634,7 +634,7 @@ public class Controller_Commander : MonoBehaviour
 	public void UpdateBuildButtonInteract()
 	{
 		foreach (UI_BuildButton bb in buildButtons)
-			bb.CheckInteractable();
+			bb.UpdateInteractable();
 	}
 
 	public void InitBuildButtons(int[] buildUnitCounters)

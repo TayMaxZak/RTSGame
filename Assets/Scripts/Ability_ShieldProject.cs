@@ -64,44 +64,47 @@ public class Ability_ShieldProject : Ability
 	{
 		if (target != null) // Normal use case
 		{
-			// If we are targeting ourselves, clear everything
-			if (target == parentUnit)
+			if (target.GetType() != typeof(Unit_Flagship)) // Can't drain Flagships
 			{
-				if (targetUnit)
+				// If we are targeting ourselves, clear everything
+				if (target == parentUnit)
 				{
-					Instantiate(returnEffectPrefab, shieldStart.position, shieldStart.rotation);
-
-					ClearTarget();
-				}
-			}
-			else if (InRange(target.transform, gameRules.ABLYshieldProjectRangeUse)) // Make sure target is in casting range
-			{
-				// If we successfully added a shield,
-				if (target.AddShieldMod(shieldMod))
-				{
-					// forget about previous targetUnit
 					if (targetUnit)
+					{
+						Instantiate(returnEffectPrefab, shieldStart.position, shieldStart.rotation);
+
 						ClearTarget();
+					}
+					else
+						ResetCooldown();
+				}
+				else if (InRange(target.transform, gameRules.ABLYshieldProjectRangeUse)) // Make sure target is in casting range
+				{
+					// If we successfully added a shield,
+					if (target.AddShieldMod(shieldMod))
+					{
+						// forget about previous targetUnit
+						if (targetUnit)
+							ClearTarget();
 
-					// and set new targetUnit and update effects accordingly
-					targetUnit = target;
-					checkIfDead = true;
+						// and set new targetUnit and update effects accordingly
+						targetUnit = target;
+						checkIfDead = true;
 
-					Instantiate(targetProjectEffectPrefab, targetUnit.transform.position, targetUnit.transform.rotation);
+						Instantiate(targetProjectEffectPrefab, targetUnit.transform.position, targetUnit.transform.rotation);
 
-					targetLoopEffect.SetEffectActive(true);
+						targetLoopEffect.SetEffectActive(true);
 
-					UpdateActiveEffects();
+						UpdateActiveEffects();
+					}
+					else // Failed to cast, don't punish player with a cooldown
+						ResetCooldown();
 				}
 				else // Failed to cast, don't punish player with a cooldown
-				{
 					ResetCooldown();
-				}
 			}
-			else // Failed to cast, don't punish player with a cooldown
-			{
+			else
 				ResetCooldown();
-			}
 		}
 		else // Shield broken
 		{
@@ -146,7 +149,7 @@ public class Ability_ShieldProject : Ability
 						if (shieldMod.shieldPercent >= 0)
 							shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + increment, 1);
 						UpdateAbilityBar();
-						targetUnit.OnShield(); // Update target unit's HP bar
+						targetUnit.OnShieldChange(); // Update target unit's HP bar
 					}
 				}
 
