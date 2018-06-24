@@ -35,7 +35,6 @@ public class UnitMovement
 	[SerializeField]
 	private float RSAccel = 1;
 	private float curRSRatio = 0;
-	private int RSlast = 0;
 	[SerializeField]
 	private float allowMoveThresh = 0.1f; // How early during a turn can we start moving forward
 	[SerializeField]
@@ -93,12 +92,17 @@ public class UnitMovement
 
 		// Rotate
 		float leftOrRight  = UpdateRotation(dif.normalized);
-		// If we are facing the goal after rotating, move towards it
-		UpdatePositionH(leftOrRight);
-		// Move vertically, independent from all the other movement so far
-		UpdatePositionV();
-
-		UpdatePositionVelMod();
+		// If we are facing the goal after rotating, "move" towards it, saving velocity for actual position change later
+		Vector3 hVel = UpdatePositionH(leftOrRight);
+		// "Move" vertically, independent from all the other movement so far, saving velocity for actual position change later
+		Vector3 vVel = UpdatePositionV();
+		// Pass in current speed so CalcChainVel knows if unit's movement speed is less than or greater than the speed from Chain
+		Vector3 ourVel = (hVel + vVel) * CalcStatusSpeedMult();
+		Vector4 chainVel = CalcChainVel(ourVel.magnitude);
+		// Apply the maximum speed, as determined in CalcChainVel, as an upper limit to velocity magnitude
+		velocity = Vector3.ClampMagnitude(ourVel + new Vector3(chainVel.x, chainVel.y, chainVel.z), chainVel.w);
+		// Finally apply velocity to unit's position
+		transform.position += velocity * Time.deltaTime;
 	}
 
 	// TODO: Use Quaternion.Angle to measure angle differences
@@ -107,20 +111,34 @@ public class UnitMovement
 		float RdirectionOrg = AngleDir(transform.forward, dir, Vector3.up);
 		float Rdirection = Mathf.Clamp(RdirectionOrg * deltaBias, -1, 1);
 
-		if (Rdirection > 0)
-			CurRS(1);
-		else if (Rdirection < 0)
-			CurRS(-1);
+		if (!reachedHGoal)
+		{
+			if (Rdirection > 0)
+				CurRS(1);
+			else if (Rdirection < 0)
+				CurRS(-1);
+			else
+				CurRS(0);
+		}
 		else
 			CurRS(0);
 
-		Quaternion origRotate = transform.rotation;
-		if (reachedHGoal)
-			CurRS(0);
+		//Quaternion origRotate = transform.rotation;
 
 		transform.Rotate(0, RS * curRSRatio * Time.deltaTime, 0);
 
 		return RdirectionOrg;
+	}
+
+	// Credit for JS code to HigherScriptingAuthority and cerebreate on Unity Forums
+	// Returns -1 when to the left, 1 to the right, and 0 for forward/backward
+	float AngleDir(Vector3 fwd, Vector3 targetDir, Vector3 up)
+	{
+		Vector3 perp = Vector3.Cross(fwd, targetDir);
+		float dir = Vector3.Dot(perp, up);
+
+		//dir = Mathf.Clamp(dir * deltaBias, -1, 1);
+		return dir;
 	}
 
 	void CurRS(int targetRatio)
@@ -131,9 +149,16 @@ public class UnitMovement
 			curRSRatio = Mathf.Clamp(curRSRatio - Time.deltaTime * deltaMult, -1, 0);
 		else if (targetRatio > 0)
 			curRSRatio = Mathf.Clamp(curRSRatio + Time.deltaTime * deltaMult, 0, 1);
+		else // Zero
+		{
+			if (curRSRatio < 0)
+				curRSRatio = Mathf.Clamp(curRSRatio + Time.deltaTime * deltaMult, -1, 0);
+			else if (curRSRatio > 0)
+				curRSRatio = Mathf.Clamp(curRSRatio - Time.deltaTime * deltaMult, 0, 1);
+		}
 	}
 
-	void UpdatePositionH(float leftOrRight)
+	Vector3 UpdatePositionH(float leftOrRight)
 	{
 		if (Vector3.SqrMagnitude(transform.position - new Vector3(goal.x, transform.position.y, goal.z)) < reachGoalThresh * reachGoalThresh)
 			reachedHGoal = true;
@@ -147,9 +172,7 @@ public class UnitMovement
 			CurHMS(0);
 		}
 
-		transform.Translate(MS * curHMSRatio * Vector3.forward * Time.deltaTime);
-
-		
+		return MS * curHMSRatio * transform.forward;
 	}
 
 	void CurHMS(int targetRatio)
@@ -162,7 +185,7 @@ public class UnitMovement
 			curHMSRatio = Mathf.Clamp(curHMSRatio - Time.deltaTime * deltaMult, 0, 1);
 	}
 
-	void UpdatePositionV()
+	Vector3 UpdatePositionV()
 	{
 		if (Mathf.Abs(goal.y - transform.position.y) < reachGoalThresh * MSVMult)
 			reachedVGoal = true;
@@ -181,7 +204,7 @@ public class UnitMovement
 			CurVMS(0);
 		}
 
-		transform.Translate(MS * MSVMult * curVMSRatio * Vector3.up * Time.deltaTime);
+		return MS * MSVMult * curVMSRatio * Vector3.up;
 	}
 
 	void CurVMS(int targetRatio)
@@ -201,25 +224,72 @@ public class UnitMovement
 		}
 	}
 
-	void UpdatePositionVelMod()
+	Vector4 CalcChainVel(float currentSpeed)
 	{
-		// TODO: Complete
+		List<VelocityMod> velocityMods = parentUnit.GetVelocityMods();
+		Vector3 total = Vector3.zero;
+		float maxMagnitude = currentSpeed;
+
+		for (int i = 0; i < velocityMods.Count; i++)
+		{
+			if (velocityMods[i].from == null)
+			{
+				velocityMods.RemoveAt(i);
+				i--;
+				continue;
+			}
+
+			if (velocityMods[i].vel.magnitude > maxMagnitude)
+				maxMagnitude = velocityMods[i].vel.magnitude;
+
+			float dot = Vector3.Dot((velocityMods[i].from.transform.position - transform.position).normalized, velocityMods[i].vel.normalized);
+			dot = Mathf.Clamp(dot, 0, Mathf.Infinity);
+			if (velocityMods[i].from.team == parentUnit.team)
+			{
+				total += velocityMods[i].vel * gameRules.ABLYchainAllyMult * dot;
+			}
+			else
+			{
+				total += velocityMods[i].vel * gameRules.ABLYchainEnemyMult * dot;
+			}
+		}
+
+		if (velocityMods.Count > 0)
+		{
+			Debug.Log("yoink");
+			reachedHGoal = false;
+			reachedVGoal = false;
+		}
+
+		return new Vector4(total.x, total.y, total.z, maxMagnitude);
 	}
 
-	// Credit for JS code to HigherScriptingAuthority and cerebreate on Unity Forums
-	// Returns -1 when to the left, 1 to the right, and 0 for forward/backward
-	float AngleDir(Vector3 fwd, Vector3 targetDir, Vector3 up)
+	float CalcStatusSpeedMult()
 	{
-		Vector3 perp = Vector3.Cross(fwd, targetDir);
-		float dir = Vector3.Dot(perp, up);
-
-		//dir = Mathf.Clamp(dir * deltaBias, -1, 1);
-		return dir;
+		float statusSpeedMult = 1;
+		foreach (Status s in parentUnit.GetStatuses()) // TODO: Optimize
+			if (s.statusType == StatusType.SpawnSwarmSpeedNerf)
+				statusSpeedMult = gameRules.ABLYswarmFirstUseSpeedMult;
+		return statusSpeedMult;
 	}
 
+
+	public void OrderMove(Vector3 newGoal)
+	{
+		goal = newGoal;
+		reachedHGoal = false;
+		reachedVGoal = false;
+	}
+	
+	public Vector3 GetVelocity()
+	{
+		return velocity;
+	}
+
+	/*
 	void UpdateMovementOld()
 	{
-		/*
+		
 		Vector3 dif = goal - transform.position;
 
 		if (dif.magnitude <= reachGoalThresh)
@@ -287,51 +357,7 @@ public class UnitMovement
 		// Final velocity is combination of independent movement and velocity mods
 		velocity = Vector3.ClampMagnitude((Yvel + Hvel) + new Vector3(chainVel.x, chainVel.y, chainVel.z), chainVel.w);
 		transform.position += velocity * Time.deltaTime;
-		*/
+		
 	}
-
-	Vector4 CalcChainVel(float currentSpeed)
-	{
-		List<VelocityMod> velocityMods = parentUnit.GetVelocityMods();
-		Vector3 total = Vector3.zero;
-		float maxMagnitude = currentSpeed;
-
-		for (int i = 0; i < velocityMods.Count; i++)
-		{
-			if (velocityMods[i].from == null)
-			{
-				velocityMods.RemoveAt(i);
-				i--;
-				continue;
-			}
-
-			if (velocityMods[i].vel.magnitude > maxMagnitude)
-				maxMagnitude = velocityMods[i].vel.magnitude;
-
-			float dot = Vector3.Dot((velocityMods[i].from.transform.position - transform.position).normalized, velocityMods[i].vel.normalized);
-			dot = Mathf.Clamp(dot, 0, Mathf.Infinity);
-			if (velocityMods[i].from.team == parentUnit.team)
-			{
-				total += velocityMods[i].vel * gameRules.ABLYchainAllyMult * dot;
-			}
-			else
-			{
-				total += velocityMods[i].vel * gameRules.ABLYchainEnemyMult * dot;
-			}
-		}
-
-		return new Vector4(total.x, total.y, total.z, maxMagnitude);
-	}
-
-	public void OrderMove(Vector3 newGoal)
-	{
-		goal = newGoal;
-		reachedHGoal = false;
-		reachedVGoal = false;
-	}
-	
-	public Vector3 GetVelocity()
-	{
-		return velocity;
-	}
+	*/
 }

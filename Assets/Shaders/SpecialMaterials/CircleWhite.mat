@@ -31,7 +31,7 @@ Material:
     - _Amplitude: 10
     - _Cutoff: 0.015
     - _Cutoff1: 0.85
-    - _Cutoff2: 0.1
+    - _Cutoff2: 0.125
     - _CutoutThresh: 0
     - _Distance: 10
     - _Hardness: 1
