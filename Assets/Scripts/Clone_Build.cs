@@ -28,6 +28,7 @@ public class Clone_Build : MonoBehaviour
 	private GameRules gameRules;
 
 	private int buildUnitIndex;
+	private int unitTeam;
 
 	private float startTime;
 	private float finishTime;
@@ -39,9 +40,11 @@ public class Clone_Build : MonoBehaviour
 		warpModel.SetActive(false);
 	}
 
-	public void Build(int index)
+	public void Build(int index, int team)
 	{
+		unitTeam = team;
 		buildUnitIndex = index;
+
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
 		progBar = Instantiate(progBarPrefab);
 		progBar.transform.SetParent(uiManager.Canvas.transform, false);
@@ -121,7 +124,10 @@ public class Clone_Build : MonoBehaviour
 	{
 		Unit unit = Instantiate(buildUnit.spawnObject, transform.position, transform.rotation).GetComponent<Unit>();
 		if (unit)
+		{
 			unit.buildIndex = buildUnitIndex;
+			unit.team = unitTeam;
+		}
 
 		Destroy(progBar.gameObject);
 		Destroy(gameObject);

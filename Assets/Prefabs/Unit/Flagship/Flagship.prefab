@@ -82,7 +82,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1266253429163222}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.62, z: -4.92}
+  m_LocalPosition: {x: 0, y: 4.96, z: -4.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4218804481066840}
@@ -95,7 +95,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1997734968041638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4218804481066840}
@@ -140,7 +140,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1700309868318742}
-  m_Mesh: {fileID: 4300000, guid: 5c9b93379e46a354cb13a94f142951ae, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 61be02dd0e5ee604a810347dc6b5e156, type: 3}
 --- !u!65 &65337962762888186
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -162,10 +162,10 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c81d6cd7840e33a4ebbef0480747b894, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.1
-  m_Pitch: 1.1
+  m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
@@ -264,7 +264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   swarmTarget: {fileID: 4472865978280284}
-  selCircleSize: 7
+  selCircleSize: 6
   printInfo: 0
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
@@ -280,13 +280,12 @@ MonoBehaviour:
   turrets: []
   abilities: []
   movement:
-    MS: 5
+    MS: 4
     MSVMult: 0.4
     MSAccel: 3
-    MSDeccel: 3
+    MSDeccel: 2
     model: {fileID: 4218804481066840}
-    RS: 30
+    RS: 5
     RSAccel: 3
-    allowMoveThresh: 0.1
-    stopRotateThresh: 0.3
+    allowMoveThresh: 0.3
     reachGoalThresh: 11.75

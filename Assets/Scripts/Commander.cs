@@ -27,14 +27,17 @@ public class Commander : MonoBehaviour
 	private GameRules gameRules;
 
 	// Use this for initialization
-	void Start()
+	void Awake()
 	{
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
 		buildUnitCounters = new int[buildUnits.Length]; // All BuildUnit counters start at 0
-		Controller_InitBuildButtons(); // Initialize UI through our controller
-
 		reclaimTimer = gameRules.RESreclaimTime; // Don't start at 0. This way the first reclaimPoint will take time to reclaim
+	}
+
+	public void InitUI()
+	{
+		Controller_InitBuildButtons(); // Initialize UI through our controller
 		Controller_UpdateResourceAmounts(); // Initualize UI through our controller
 	}
 

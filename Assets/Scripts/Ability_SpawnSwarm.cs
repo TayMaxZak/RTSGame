@@ -201,13 +201,13 @@ public class Ability_SpawnSwarm : Ability
 				avgPositions[i] = transform.position;
 			swarmCenters[i].transform.position = avgPositions[i];
 
-			if (Vector3.SqrMagnitude(swarmCenters[i].transform.position - targPos) < gameRules.ABLYswarmDamageRadius * gameRules.ABLYswarmDamageRadius)
+			if (Vector3.SqrMagnitude(swarmCenters[i].transform.position - targPos) < gameRules.ABLYswarmInteractRadius * gameRules.ABLYswarmInteractRadius)
 			{
 				if (targetUnit.team != team) // If target is an enemy unit, damage it
 					targetUnit.Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
 				else
 				{
-					targetUnit.AddStatus(new Status(swarmCenters[i], StatusType.SwarmShield));
+					targetUnit.AddStatus(new Status(swarmCenters[i], StatusType.SwarmResist));
 				}
 			}
 		}

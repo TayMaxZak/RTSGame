@@ -84,14 +84,20 @@ public class Ability : MonoBehaviour {
 	{
 	}
 
+	// Used by subclasses
 	protected virtual void UpdateAbilityBar()
 	{
 
 	}
 
+	protected virtual void UpdateDisplay(int index, bool updateStacks, bool updateIconB)
+	{
+		parentUnit.UpdateAbilityDisplay(index, updateStacks, updateIconB);
+	}
+
 	protected virtual void UpdateDisplay(int index, bool updateStacks)
 	{
-		parentUnit.UpdateAbilityDisplay(index, updateStacks);
+		UpdateDisplay(index, updateStacks, false);
 	}
 
 	protected virtual void InitCooldown()
@@ -118,11 +124,16 @@ public class Ability : MonoBehaviour {
 public class AbilityDisplayInfo
 {
 	public bool displayInactive = false;
+
 	public bool displayStacks = false;
-	public float cooldown = 0;
-	public bool displayFill = false;
 	public int stacks = 0;
+
+	public bool displayFill = false;
 	public float fill = 0;
+	public float cooldown = 0;
+	// TODO: Implement Icon B
+	public bool displayIconB = false;
+	public int iconBState = 0;
 }
 
 public enum AbilityType
@@ -236,16 +247,15 @@ public static class AbilityUtils
 	}
 
 	// Secondary display icon of ability
-	public static Sprite GetDisplayIconSecondary(AbilityType type, int stacks)
+	public static Sprite GetDisplayIconB(AbilityType type)
 	{
-		bool loadSprite = true;
+		bool loadSprite = false;
 
 		switch (type)
 		{
 			case AbilityType.HealField:
 				{
-					if (stacks == 0) // Not borrowing, don't show secondary icon
-						loadSprite = false;
+					loadSprite = true;
 				}
 				break;
 		}

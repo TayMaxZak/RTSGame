@@ -1370,9 +1370,9 @@ MonoBehaviour:
     MSAccel: 1
     MSDeccel: 1
     model: {fileID: 4935241332060562}
-    RS: 45
+    RS: 30
     RSAccel: 1
-    allowMoveThresh: 0.1
+    allowMoveThresh: 0.5
     stopRotateThresh: 0.3
     reachGoalThresh: 1.5
 --- !u!114 &114177749130366244

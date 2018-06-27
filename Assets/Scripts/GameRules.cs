@@ -65,7 +65,7 @@ public class GameRules
 	public int ABLYswarmMaxUses = 3;
 	public float ABLYswarmFirstUseSpeedMult = 0.75f;
 	public int ABLYswarmDPS = 4;
-	public int ABLYswarmDamageRadius = 7; // How close a swarm has to be to proc its damage reduction status / damage over time
+	public int ABLYswarmInteractRadius = 5; // How close a swarm has to be to proc its damage reduction status / damage over time
 
 	public float ABLYhealFieldRange = 25;
 	public float ABLYhealFieldAllyGPS = 2; // Health gained per second by each ally
@@ -75,8 +75,9 @@ public class GameRules
 	public float ABLYhealFieldResTime = 10; // Delay to return resource points when the ability ends
 
 	public float ABLYchainRange = 25; // Max distance for cast
-	public float ABLYchainAllyMult = 0.7f; // Multiplier applied to velocity when adding to it the target
-	public float ABLYchainEnemyMult = 0.7f;
+	public float ABLYchainAllyMult = 0.667f; // Multiplier applied to velocity when adding to it the target
+	public float ABLYchainEnemyMult = 0.667f;
+	public float ABLYchainFlagshipMult = 0.5f; // Stacks with prior 2 multipliers (0.667 * 0.5 = 0.333)
 
 	public float ABLYsuperlaserRangeUse = 25; // Max distance for cast
 	public float ABLYsuperlaserRangeTolerance = 10; // If distance changes by this much or more post-cast, superlaser is put on a shorter cooldown without firing
@@ -86,6 +87,6 @@ public class GameRules
 	public float[] ABLYsuperlaserDmgByStacks = new float[] { -1, 100, 200, 300, 400}; // Based on stacks: 0 -> cannot be activated / 1 -> 100 / 2 -> 200 / 3 -> 300 / 4 -> 400
 
 	[Header("Statuses")]
-	public float STATswarmShieldDmgReduce = 0.1f; // How much of all incoming damage does each swarm protecting an ally reduce
-	public float STATswarmShieldMaxStacks = 2; // How many times can this damage reduction stack
+	public float STATswarmResistDmgReduce = 0.1f; // How much of all incoming damage does each swarm protecting an ally reduce
+	public float STATswarmResistMaxStacks = 2; // How many times can this damage reduction stack
 }

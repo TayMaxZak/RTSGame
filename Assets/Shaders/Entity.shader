@@ -141,6 +141,7 @@
 		float2 uv = IN.uv_MainTex;
 		o.Albedo = tex2D(_MainTex, uv).rgb * _Color;
 		o.Alpha = _Color.a;
+		//uv = IN.uv_AOTex;
 		o.AmbientOcclusion = 1;
 		o.AmbientOcclusion = tex2D(_AOTex, uv).rgb;
 		o.SSS = tex2D(_SSSTex, uv).rgb;

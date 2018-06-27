@@ -12,16 +12,21 @@ public class UI_EntityStats : MonoBehaviour
 	private RectTransform root;
 	private float rootWidth;
 
-	[Header("Armor")]
-	[SerializeField]
-	private Text[] armorText;
-	[SerializeField]
-	private Image armorFill;
 	[Header("Health")]
 	[SerializeField]
 	private Text[] healthText;
 	[SerializeField]
 	private Image healthFill;
+	[Header("Armor")]
+	[SerializeField]
+	private Text[] armorText;
+	[SerializeField]
+	private Image armorFill;
+	[Header("Shields")]
+	[SerializeField]
+	private Text[] shieldsText;
+	[SerializeField]
+	private Image shieldBkg;
 
 	[Header("Ability 1")]
 	[SerializeField]
@@ -34,6 +39,7 @@ public class UI_EntityStats : MonoBehaviour
 	private Image ability1Icon;
 	[SerializeField]
 	private Image ability1IconB;
+	private int ability1IconBstate = 0;
 
 	[Header("Ability 2")]
 	[SerializeField]
@@ -46,17 +52,58 @@ public class UI_EntityStats : MonoBehaviour
 	private Image ability2Icon;
 	[SerializeField]
 	private Image ability2IconB;
+	private int ability2IconBstate = 0;
+
+	[Header("Statuses")]
+	[SerializeField]
+	private Image[] statusBkgs;
 
 	//[SerializeField]
 	//private Image borderFill;
 
-	//private UIRules uiRules;
+	private UIRules uiRules;
+	private GameRules gameRules;
+
+	void Awake()
+	{
+		uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
+		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+	}
 
 	void Start()
 	{
 		rootWidth = root.sizeDelta.x;
 	}
 
+	void Update()
+	{
+		// Animate secondary icons according to their state
+		if (ability1Bkg.gameObject.activeSelf)
+		{
+			if (ability1IconBstate == 1)
+				ability1IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ESiconBState1Speed);
+			else if (ability1IconBstate == 2)
+				ability1IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ESiconBState2Speed);
+		}
+		if (ability2Bkg.gameObject.activeSelf)
+		{
+			
+			if (ability2IconBstate == 1)
+				ability2IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ESiconBState1Speed);
+			else if (ability2IconBstate == 2)
+				ability2IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ESiconBState2Speed);
+		}
+	}
+
+	void ResetIconBTransform(int index)
+	{
+		if (index == 0)
+			ability1IconB.transform.rotation = Quaternion.identity;
+		else
+			ability2IconB.transform.rotation = Quaternion.identity;
+	}
+
+	// Set health and armor values, which are translated into fill amounts and text numbers
 	public void SetHealthArmor(float healthCur, float healthMax, float armorCur, float armorMax)
 	{
 		float healthRatio = healthCur / (healthMax != 0 ? healthMax : 1);
@@ -72,14 +119,27 @@ public class UI_EntityStats : MonoBehaviour
 			text.text = StringFromFloat(armorCur) + "/" + StringFromFloat(armorMax);
 	}
 
+	// Set visibility of the shield icon and set text number to be displayed next to the shield icon
+	public void SetShields(float shieldsCur, float shieldsMax)
+	{
+		if (Mathf.RoundToInt(shieldsMax) == 0)
+			shieldBkg.gameObject.SetActive(false);
+		else
+			shieldBkg.gameObject.SetActive(true);
+
+		foreach (Text text in shieldsText)
+			text.text = StringFromFloat(shieldsCur) + "/" + StringFromFloat(shieldsMax);
+	}
+
+	// Set name to be displayed as the title of the EntityStats panel
 	public void SetDisplayName(string name)
 	{
 		nameText.text = name.ToUpper();
 	}
 
+	// Set what image is displayed for each ability slot
 	public void SetAbilityIcons(AbilityType[] abilities)
-	{
-		
+	{	
 		if (abilities.Length == 0)
 		{
 			ability1Bkg.gameObject.SetActive(false);
@@ -87,7 +147,6 @@ public class UI_EntityStats : MonoBehaviour
 		}
 		else if (abilities.Length == 1)
 		{
-			
 			ability1Bkg.gameObject.SetActive(true);
 			ability1Icon.sprite = AbilityUtils.GetDisplayIcon(abilities[0]);
 
@@ -100,6 +159,48 @@ public class UI_EntityStats : MonoBehaviour
 
 			ability2Bkg.gameObject.SetActive(true);
 			ability2Icon.sprite = AbilityUtils.GetDisplayIcon(abilities[1]);
+		}
+	}
+
+	// Set secondary image which is overlayed over the specified ability slot and set how it should be animated
+	/// <summary>
+	/// 0 = no behaviour, 1 = rotate clockwise, 2 = rotate counterclockwise slowly
+	/// </summary>
+	/// <param name="index"></param>
+	/// <param name="ability"></param>
+	/// <param name="animState"></param>
+	public void SetAbilityIconB(int index, AbilityType ability, int animState)
+	{
+		// If it is any state which should not rotate, reset rotation
+		if (animState == 0)
+			ResetIconBTransform(index);
+
+		if (index == 0)
+		{
+			ability1IconB.sprite = AbilityUtils.GetDisplayIconB(ability);
+			ability1IconBstate = animState;
+		}
+		else
+		{
+			ability2IconB.sprite = AbilityUtils.GetDisplayIconB(ability);
+			ability2IconBstate = animState;
+		}
+	}
+
+	// Clear secondary image from the specified ability slot
+	public void ClearAbilityIconB(int index)
+	{
+		ResetIconBTransform(index);
+
+		if (index == 0)
+		{
+			ability1IconB.sprite = AbilityUtils.GetDisplayIcon(AbilityType.Default); // This ability type has an empty icon
+			ability1IconBstate = 0; // Reset anim state
+		}
+		else
+		{
+			ability2IconB.sprite = AbilityUtils.GetDisplayIcon(AbilityType.Default); // This ability type has an empty icon
+			ability2IconBstate = 0; // Reset anim state
 		}
 	}
 
@@ -165,4 +266,43 @@ public class UI_EntityStats : MonoBehaviour
 		}
 	}
 	*/
+
+	public void SetStatuses(List<Status> statuses)
+	{
+		// Loop through all statuses
+		List<StatusType> displayedStatuses = new List<StatusType>();
+
+		int swarmResistCount = 0;
+		foreach (Status s in statuses)
+		{
+			// Only display a relevant number of SwarmResist icons
+			if (s.statusType == StatusType.SwarmResist)
+			{
+				swarmResistCount++;
+				if (swarmResistCount > gameRules.STATswarmResistMaxStacks)
+					continue;
+			}
+
+			if (StatusUtils.ShouldDisplay(s.statusType))
+				displayedStatuses.Add(s.statusType);
+		}
+
+		// For each status icon, enable or disable, apply colors, and set inner icon
+		for (int i = 0; i < statusBkgs.Length; i++)
+		{
+			if (i < displayedStatuses.Count)
+			{
+				statusBkgs[i].gameObject.SetActive(true);
+
+				Color[] colors = StatusUtils.GetDisplayColors(displayedStatuses[i]);
+				statusBkgs[i].color = colors[0];
+
+				Image icon = statusBkgs[i].GetComponentsInChildren<Image>()[1];
+				icon.color = colors[1];
+				icon.sprite = StatusUtils.GetDisplayIcon(displayedStatuses[i]);
+			}
+			else
+				statusBkgs[i].gameObject.SetActive(false);
+		}
+	}
 }

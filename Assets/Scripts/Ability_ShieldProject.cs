@@ -25,6 +25,7 @@ public class Ability_ShieldProject : Ability
 
 	private Unit targetUnit;
 	private bool checkIfDead = false;
+
 	private UI_AbilBar_ShieldProject abilityBar;
 
 	void Awake()
@@ -39,7 +40,6 @@ public class Ability_ShieldProject : Ability
 		base.Start();
 
 		shieldMod = new ShieldMod(parentUnit, 1, ShieldModType.ShieldProject);
-
 		abilityBar = parentUnit.hpBar.GetComponent<UI_AbilBar_ShieldProject>();
 		abilityBar.SetShield(shieldMod.shieldPercent, shieldMod.shieldPercent < 0);
 
@@ -78,29 +78,34 @@ public class Ability_ShieldProject : Ability
 					else
 						ResetCooldown();
 				}
-				else if (InRange(target.transform, gameRules.ABLYshieldProjectRangeUse)) // Make sure target is in casting range
+				else if (target.team == team)
 				{
-					// If we successfully added a shield,
-					if (target.AddShieldMod(shieldMod))
+					if (InRange(target.transform, gameRules.ABLYshieldProjectRangeUse)) // Make sure target is in casting range
 					{
-						// forget about previous targetUnit
-						if (targetUnit)
-							ClearTarget();
+						// If we successfully added a shield,
+						if (target.AddShieldMod(shieldMod))
+						{
+							// forget about previous targetUnit
+							if (targetUnit)
+								ClearTarget();
 
-						// and set new targetUnit and update effects accordingly
-						targetUnit = target;
-						checkIfDead = true;
+							// and set new targetUnit and update effects accordingly
+							targetUnit = target;
+							checkIfDead = true;
 
-						Instantiate(targetProjectEffectPrefab, targetUnit.transform.position, targetUnit.transform.rotation);
+							Instantiate(targetProjectEffectPrefab, targetUnit.transform.position, targetUnit.transform.rotation);
 
-						targetLoopEffect.SetEffectActive(true);
+							targetLoopEffect.SetEffectActive(true);
 
-						UpdateActiveEffects();
+							UpdateActiveEffects();
+						}
+						else // Failed to cast, don't punish player with a cooldown
+							ResetCooldown();
 					}
 					else // Failed to cast, don't punish player with a cooldown
 						ResetCooldown();
 				}
-				else // Failed to cast, don't punish player with a cooldown
+				else
 					ResetCooldown();
 			}
 			else

@@ -11,8 +11,12 @@ public class UI_Bar : MonoBehaviour
 
 public class UI_HPBar : UI_Bar
 {
+	private bool enemy = false;
+
 	[SerializeField]
 	private Image healthFill;
+	[SerializeField]
+	private Image healthBkg;
 	private float healthCur = 0;
 	private float healthTarg = 1;
 	private float healthT = 0;
@@ -24,19 +28,36 @@ public class UI_HPBar : UI_Bar
 	private float burnT = 0;
 	private bool burnUp = true;
 	[SerializeField]
+	private Color healthAllyColor = Color.green;
+	[SerializeField]
+	private Color healthEnemyColor = Color.red;
+	[SerializeField]
 	private Color healthBurnColor1 = Color.red;
 	[SerializeField]
 	private Color healthBurnColor2 = Color.white;
-	private Color healthOrigColor = Color.green;
+	[SerializeField]
+	private Color healthBkgAllyColor = Color.black;
+	[SerializeField]
+	private Color healthBkgEnemyColor = Color.black;
+
 
 	[SerializeField]
 	private Image armorFill;
+	[SerializeField]
+	private Image armorBkg;
 	private float armorCur = 0;
 	private float armorTarg = 1;
 	private float armorT = 0;
 	[SerializeField]
 	private float armorWidth = 98;
-	private Color armorOrigColor = Color.blue;
+	[SerializeField]
+	private Color armorAllyColor = Color.blue;
+	[SerializeField]
+	private Color armorEnemyColor = Color.blue;
+	[SerializeField]
+	private Color armorBkgAllyColor = Color.black;
+	[SerializeField]
+	private Color armorBkgEnemyColor = Color.black;
 
 	[SerializeField]
 	private Image shieldFill;
@@ -61,10 +82,6 @@ public class UI_HPBar : UI_Bar
 		uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
 		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 
-		healthOrigColor = healthFill.color;
-		armorOrigColor = armorFill.color;
-		//shieldOrigColor = shieldFill.color;
-
 		transform.SetSiblingIndex(0); // Draw behind other UI elements
 	}
 
@@ -76,6 +93,9 @@ public class UI_HPBar : UI_Bar
 		shieldT += Time.deltaTime / uiRules.HPBupdateTime;
 
 		UpdateDisplay();
+
+		//if (Random.value > 0.99f)
+		//	SetIsAlly(enemy);
 	}
 
 	void UpdateDisplay()
@@ -91,7 +111,7 @@ public class UI_HPBar : UI_Bar
 		shieldFill.rectTransform.sizeDelta = new Vector2(shieldWidth * shieldCur, shieldFill.rectTransform.sizeDelta.y);
 
 		// What color should the border be?
-		borderFill.color = armorTarg > uiRules.HPBbordColorThresh ? armorOrigColor : healthOrigColor;
+		borderFill.color = armorTarg > uiRules.HPBbordColorThresh ? (enemy ? armorEnemyColor : armorAllyColor) : (enemy ? healthEnemyColor : healthAllyColor);
 
 		// If we are burning,
 		if (burning)
@@ -114,7 +134,7 @@ public class UI_HPBar : UI_Bar
 			healthFill.color = burnCur;
 		}
 		else
-			healthFill.color = healthOrigColor;
+			healthFill.color = (enemy ? healthEnemyColor : healthAllyColor);
 	}
 
 	public override void FastUpdate()
@@ -128,26 +148,44 @@ public class UI_HPBar : UI_Bar
 			bar.FastUpdate();
 	}
 
-	public void SetHealthArmorShield(Vector3 values, bool isBurning)
+	public bool SetHealthArmorShield(Vector3 values, bool isBurning)
 	{
 		burning = isBurning;
 
 		float Tinitial = 0;
 
+		bool newValues = false;
+
 		if (healthTarg != values.x)
 		{
+			newValues = true;
 			healthTarg = values.x;
 			healthT = Tinitial;
 		}
 		if (armorTarg != values.y)
 		{
+			newValues = true;
 			armorTarg = values.y;
 			armorT = Tinitial;
 		}
 		if (shieldTarg != values.z)
 		{
+			newValues = true;
 			shieldTarg = values.z;
 			shieldT = Tinitial;
 		}
+
+		return newValues;
+	}
+
+	public void SetIsAlly(bool isAlly)
+	{
+		enemy = !isAlly;
+
+		healthFill.color = (enemy ? healthEnemyColor : healthAllyColor);
+		healthBkg.color = (enemy ? healthBkgEnemyColor : healthBkgAllyColor);
+
+		armorFill.color = (enemy ? armorEnemyColor : armorAllyColor);
+		armorBkg.color = (enemy ? armorBkgEnemyColor : armorBkgAllyColor);
 	}
 }

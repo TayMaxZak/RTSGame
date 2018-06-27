@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum StatusType
 {
-	SwarmShield,
+	SwarmResist,
 	CriticalBurnImmune,
 	SpawnSwarmSpeedNerf,
 	SuperlaserMark
@@ -27,7 +27,7 @@ public class Status
 
 	public bool UpdateTimeLeft(float delta)
 	{
-		timeLeft -= delta * (1 / StatusUtils.Duration(statusType));
+		timeLeft -= delta * (1 / StatusUtils.GetDuration(statusType));
 		if (timeLeft < 0)
 			return false;
 		else
@@ -57,11 +57,11 @@ public class Status
 
 public static class StatusUtils
 {
-	public static float Duration(StatusType statType)
+	public static float GetDuration(StatusType statType)
 	{
 		switch (statType)
 		{
-			case StatusType.SwarmShield:
+			case StatusType.SwarmResist:
 				return 2;
 			default:
 				return 1;
@@ -90,5 +90,62 @@ public static class StatusUtils
 			default:
 				return false;
 		}
+	}
+
+	public static string GetDisplayName(StatusType statType)
+	{
+		switch (statType)
+		{
+			case StatusType.SwarmResist:
+				return "Fighter Support";
+			case StatusType.CriticalBurnImmune:
+				return "Burn Immune";
+			case StatusType.SpawnSwarmSpeedNerf:
+				return "Hangars open, engines on low power";
+			case StatusType.SuperlaserMark:
+				return "Hellrazor Mark";
+			default:
+				return "default";
+		}
+	}
+
+	public static bool ShouldDisplay(StatusType statType)
+	{
+		switch (statType)
+		{
+			case StatusType.SwarmResist:
+				return true;
+			case StatusType.SpawnSwarmSpeedNerf:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	/// <summary>
+	/// [0] is bkg color, [1] is icon color
+	/// </summary>
+	/// <param name="statType"></param>
+	/// <returns></returns>
+	public static Color[] GetDisplayColors(StatusType statType)
+	{
+		switch (statType)
+		{
+			case StatusType.SwarmResist:
+				return new Color[] { new Color32(0x90, 0x11, 0x11, 0xFF), new Color32(0xFF, 0x70, 0x88, 0xFF) };
+			case StatusType.SpawnSwarmSpeedNerf:
+				return new Color[] { new Color32(0x90, 0x11, 0x11, 0xFF), new Color32(0xFF, 0x70, 0x88, 0xFF) };
+			default:
+				return new Color[0];
+		}
+	}
+
+	public static Sprite GetDisplayIcon(StatusType type)
+	{
+		Sprite sprite = Resources.Load<Sprite>("IconStatus_" + type);
+		if (sprite)
+			return sprite;
+		else
+			return Resources.Load<Sprite>("IconEmpty");
 	}
 }

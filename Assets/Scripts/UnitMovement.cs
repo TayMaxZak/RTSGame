@@ -37,8 +37,6 @@ public class UnitMovement
 	private float curRSRatio = 0;
 	[SerializeField]
 	private float allowMoveThresh = 0.1f; // How early during a turn can we start moving forward
-	[SerializeField]
-	private float stopRotateThresh = 0.3f; // How early during a turn can we start moving forward
 
 	//private float targetRSRatio = 0;
 	//[SerializeField]
@@ -51,6 +49,7 @@ public class UnitMovement
 
 	private float deltaBias = 99999;
 	private Vector3 goal;
+	private AbilityTarget rotationGoal; // Set by abilities. If not null, forces the unit to face towards a different goal than the one it wants to path to
 	private bool reachedHGoal = false;
 	private bool reachedVGoal = false;
 
@@ -79,9 +78,7 @@ public class UnitMovement
 	// Update is called once per frame
 	public void Tick()
 	{
-		/*
-		transform.Rotate(0, 180 * Time.deltaTime, 0);
-		*/
+		//transform.Rotate(0, 180 * Time.deltaTime, 0);
 
 		UpdateMovement();
 	}
@@ -91,7 +88,7 @@ public class UnitMovement
 		Vector3 dif = goal - transform.position;
 
 		// Rotate
-		float leftOrRight  = UpdateRotation(dif.normalized);
+		float leftOrRight  = UpdateRotation(rotationGoal == null ? dif.normalized : (rotationGoal.position - transform.position).normalized);
 		// If we are facing the goal after rotating, "move" towards it, saving velocity for actual position change later
 		Vector3 hVel = UpdatePositionH(leftOrRight);
 		// "Move" vertically, independent from all the other movement so far, saving velocity for actual position change later
@@ -177,12 +174,10 @@ public class UnitMovement
 
 	void CurHMS(int targetRatio)
 	{
-		float deltaMult = 1 / MSAccel;
-
 		if (targetRatio > 0)
-			curHMSRatio = Mathf.Clamp(curHMSRatio + Time.deltaTime * deltaMult, 0, 1);
+			curHMSRatio = Mathf.Clamp(curHMSRatio + Time.deltaTime * (1 / MSAccel), 0, 1);
 		else
-			curHMSRatio = Mathf.Clamp(curHMSRatio - Time.deltaTime * deltaMult, 0, 1);
+			curHMSRatio = Mathf.Clamp(curHMSRatio - Time.deltaTime * (1 / MSDeccel), 0, 1);
 	}
 
 	Vector3 UpdatePositionV()
@@ -244,19 +239,27 @@ public class UnitMovement
 
 			float dot = Vector3.Dot((velocityMods[i].from.transform.position - transform.position).normalized, velocityMods[i].vel.normalized);
 			dot = Mathf.Clamp(dot, 0, Mathf.Infinity);
+
+			float curMult = dot;
+
 			if (velocityMods[i].from.team == parentUnit.team)
 			{
-				total += velocityMods[i].vel * gameRules.ABLYchainAllyMult * dot;
+				curMult *= gameRules.ABLYchainAllyMult;
 			}
 			else
 			{
-				total += velocityMods[i].vel * gameRules.ABLYchainEnemyMult * dot;
+				curMult *= gameRules.ABLYchainEnemyMult;
 			}
+
+			// TODO: Apply this type of logic to all instances checking if something is a flagship
+			if (parentUnit.Type == EntityType.Flagship)
+				curMult *= gameRules.ABLYchainFlagshipMult;
+
+			total += velocityMods[i].vel * curMult;
 		}
 
 		if (velocityMods.Count > 0)
 		{
-			Debug.Log("yoink");
 			reachedHGoal = false;
 			reachedVGoal = false;
 		}
@@ -286,78 +289,13 @@ public class UnitMovement
 		return velocity;
 	}
 
-	/*
-	void UpdateMovementOld()
+	public void SetRotationGoal(AbilityTarget newGoal)
 	{
-		
-		Vector3 dif = goal - transform.position;
-
-		if (dif.magnitude <= reachGoalThresh)
-			isPathing = false;
-		else
-			isPathing = true;
-
-		// Rotation
-		float targetRSRatio = isPathing ? 1 : 0;
-
-		//float RSdelta = Mathf.Sign(targetRSRatio - curRSRatio) * (1f / RSAccel) * Time.deltaTime;
-
-		float RSdelta = Mathf.Clamp((targetRSRatio - curRSRatio) * deltaBias, -1, 1) * (1f / RSAccel) * Time.deltaTime;
-		curRSRatio = Mathf.Clamp01(curRSRatio + RSdelta);
-
-		direction = dif.normalized;
-		lookRotation = Quaternion.LookRotation(direction == Vector3.zero ? transform.forward : direction);
-		//float oldRotY = transform.eulerAngles.y;
-		//transform.Rotate(new Vector3(0, RS * Time.deltaTime, 0));
-		transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, Time.deltaTime * RS * curRSRatio);
-		//float difRot = transform.eulerAngles.y - oldRotY;
-
-		//float oldBank = model.localEulerAngles.z;
-		//float newBank = bankAngle * (difRot / (Time.deltaTime * RS)) * curRSRatio;
-		//float diffBank = ((oldBank - newBank + 180 + 360) % 360) - 180;
-		//float targetBank = (360 + newBank + (diffBank / 2)) % 360;
-
-		//model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, targetBank));
-		model.rotation = Quaternion.Euler(new Vector3(0, transform.eulerAngles.y, 0));
-
-
-
-		// Horizontal Movement
-		float dot = Mathf.Max((Vector3.Dot(direction, transform.forward) - (1 - allowMoveThresh)) / (allowMoveThresh), 0);
-		if (dot >= 0.9999f)
-			dot = 1;
-
-		float statusSpeedMult = 1;
-		foreach (Status s in parentUnit.GetStatuses()) // TODO: Optimize
-			if (s.statusType == StatusType.SpawnSwarmSpeedNerf)
-				statusSpeedMult = gameRules.ABLYswarmFirstUseSpeedMult;
-
-		float targetMSRatio = dot * (isPathing ? statusSpeedMult : 0);
-
-		//float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel;
-		//float MSdelta = Mathf.Sign(targetMSRatio - curMSRatio) * (1f / MSccel) * Time.deltaTime;
-
-		float MSccel = (Mathf.Sign(targetMSRatio - curMSRatio) > 0) ? MSAccel : MSDeccel; // MSccel is not a typo
-		float MSdelta = Mathf.Clamp((targetMSRatio - curMSRatio) * deltaBias, -1, 1) * (1f / MSccel) * Time.deltaTime;
-		curMSRatio = Mathf.Clamp01(curMSRatio + MSdelta);
-
-		Vector3 Hvel = MS * curMSRatio * new Vector3(transform.forward.x, 0, transform.forward.z).normalized;
-		//transform.position += Hvel * Time.deltaTime;
-
-		// Vertical Movement
-		float targetYMSRatio = (isPathing ? 1 : 0);
-
-		//float YMSdelta = Mathf.Sign(targetYMSRatio - curYMSRatio) * (1f / MSAccel) * Time.deltaTime;
-		float YMSdelta = Mathf.Clamp((targetYMSRatio - curVMSRatio) * deltaBias, -1, 1) * (1f / MSAccel) * Time.deltaTime;
-		curVMSRatio = Mathf.Clamp01(curVMSRatio + YMSdelta);
-
-		Vector3 Yvel = MS * curVMSRatio * Vector3.up * Mathf.Clamp(direction.y * 2, -1, 1) * MSVMult;
-		Vector4 chainVel = CalcChainVel((Hvel + Yvel).magnitude);
-
-		// Final velocity is combination of independent movement and velocity mods
-		velocity = Vector3.ClampMagnitude((Yvel + Hvel) + new Vector3(chainVel.x, chainVel.y, chainVel.z), chainVel.w);
-		transform.position += velocity * Time.deltaTime;
-		
+		rotationGoal = newGoal;
 	}
-	*/
+
+	public void ClearRotationGoal()
+	{
+		rotationGoal = null;
+	}
 }

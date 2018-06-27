@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 
 public class Controller_Commander : MonoBehaviour
 {
+	public bool allowTeamSwaps = false;
 	public int team;
 	private Commander commander;
 
@@ -60,7 +61,7 @@ public class Controller_Commander : MonoBehaviour
 
 		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
 		gameRules = gameManager.GameRules; // Grab copy of Game Rules
-		ChangeCommander(gameManager.GetCommander(team));
+		SetCommander(gameManager.GetCommander(team));
 
 		selection = new List<Entity>();
 		Select(null, false);
@@ -73,10 +74,21 @@ public class Controller_Commander : MonoBehaviour
 		audioSource = GetComponent<AudioSource>();
 	}
 
-	void ChangeCommander(Commander newCommander)
+	void SetCommander(Commander newCommander)
 	{
+		if (commander)
+			commander.SetController(null);
 		commander = newCommander;
 		commander.SetController(this);
+		commander.InitUI();
+	}
+
+	void SetTeam(int newTeam)
+	{
+		team = newTeam; // Set team field
+		Select(null, false); // Clear selection
+
+		SetCommander(gameManager.GetCommander(team)); // Set commander
 	}
 
 	public void Select(Entity newSel, bool add)
@@ -107,7 +119,7 @@ public class Controller_Commander : MonoBehaviour
 				{
 					e.OnSelect(false);
 					selection.RemoveAt(i);
-					UpdateUI();
+					ShowHideStatsBuildButtons();
 					return;
 				}
 			}
@@ -118,10 +130,12 @@ public class Controller_Commander : MonoBehaviour
 
 			newSel.OnSelect(true);
 			selection.Add(newSel);
-			UpdateUI();
+			ShowHideStatsBuildButtons();
 		}
 		else
 		{
+			// TODO: Optimize update of EntityStats when we select the same single entity which was already selected before
+
 			// Deselect all currently selected Entities
 			foreach (Entity e in selection)
 			{
@@ -137,10 +151,10 @@ public class Controller_Commander : MonoBehaviour
 			{
 				newSel.OnSelect(true);
 				selection.Add(newSel);
-				UpdateUI();
+				ShowHideStatsBuildButtons();
 			}
 			else
-				UpdateUI();
+				ShowHideStatsBuildButtons();
 		}
 	}
 
@@ -163,7 +177,7 @@ public class Controller_Commander : MonoBehaviour
 
 		// Only update UI if selection actually changed
 		if (toRemove.Count > 0)
-			UpdateUI();
+			ShowHideStatsBuildButtons();
 	}
 
 	public void Move(Vector3 newPos)
@@ -360,7 +374,7 @@ public class Controller_Commander : MonoBehaviour
 			}
 		} //rmb
 
-		// Raise/Lower Grid
+		// Raise/lower grid
 		if (Input.GetButtonDown("RaiseGrid"))
 		{
 			UpdateGrid(Mathf.Clamp(curGrid + 1, 0, grids.Length - 1));
@@ -388,9 +402,22 @@ public class Controller_Commander : MonoBehaviour
 			UseAbility(2);
 		}
 
+		// Command wheel
 		if (Input.GetButtonDown("CommandWheel"))
 		{
 			UseCommandWheel();
+		}
+
+		// Switch teams when a key is pressed
+		if (allowTeamSwaps)
+		{
+			if (Input.GetKeyDown("1"))
+			{
+				if (team == 0)
+					SetTeam(1);
+				else
+					SetTeam(0);
+			}
 		}
 	}
 
@@ -488,7 +515,7 @@ public class Controller_Commander : MonoBehaviour
 		grids[curGrid].SetActive(true);
 	}
 
-	void UpdateUI()
+	void ShowHideStatsBuildButtons()
 	{
 		// If we updated our selection and only one Entity is left selected,
 		if (selection.Count == 1)
@@ -550,7 +577,7 @@ public class Controller_Commander : MonoBehaviour
 
 		Clone_Build pendingBuild = buildPreview.GetComponent<Clone_Build>();
 		pendingBuild.buildUnit = commander.GetBuildUnit(buildUnitIndex);
-		pendingBuild.Build(buildUnitIndex);
+		pendingBuild.Build(buildUnitIndex, team);
 
 		// Resources should already be subtracted at this point
 		commander.IncrementUnitCounter(buildUnitIndex);
@@ -561,8 +588,10 @@ public class Controller_Commander : MonoBehaviour
 		entityStats.gameObject.SetActive(false);
 	}
 
+	// Called whenever EntityStats is attached to a new unit
 	public void InitStats(Unit who)
 	{
+		// Set active if not already active
 		if (!entityStats.gameObject.activeSelf)
 			entityStats.gameObject.SetActive(true);
 
@@ -575,13 +604,15 @@ public class Controller_Commander : MonoBehaviour
 		entityStats.SetAbilityIcons(abilityCounter.ToArray());
 		for (int i = 0; i < who.abilities.Count; i++)
 		{
-			UpdateStatsAbilities(who, i, true);
+			UpdateStatsAbility(who, i, true);
+			UpdateStatsAbilityIconB(who, i);
 		}
 
 		entityStats.SetDisplayName(EntityUtils.GetDisplayName(who.Type));
 
-		UpdateStatsHealth(who);
-		
+		UpdateStatsHP(who);
+		UpdateStatsShields(who);
+		UpdateStatsStatuses(who.GetStatuses());
 
 		// Establish connection for realtime health and ability state updates
 		if (currentStatEntity)
@@ -590,13 +621,22 @@ public class Controller_Commander : MonoBehaviour
 		currentStatEntity = who;
 	}
 
-	public void UpdateStatsHealth(Unit who)
+	// Update health and armor counters and fills
+	public void UpdateStatsHP(Unit who)
 	{
 		Vector4 healthArmor = who.GetHP();
 		entityStats.SetHealthArmor(healthArmor.x, healthArmor.y, healthArmor.z, healthArmor.w);
 	}
 
-	public void UpdateStatsAbilities(Unit who, int index, bool updateStacks)
+	// Update visibility of shield status and number for shield counter
+	public void UpdateStatsShields(Unit who)
+	{
+		Vector2 shields = who.GetShields();
+		entityStats.SetShields(shields.x, shields.y);
+	}
+
+	// Update fill indicator and stack counter
+	public void UpdateStatsAbility(Unit who, int index, bool updateStacks)
 	{
 		AbilityDisplayInfo display = who.abilities[index].GetDisplayInfo();
 		if (!display.displayInactive)
@@ -617,6 +657,21 @@ public class Controller_Commander : MonoBehaviour
 				entityStats.SetAbilityStacks(index, 0);
 		}
 	}
+
+	public void UpdateStatsAbilityIconB(Unit who, int index)
+	{
+		AbilityDisplayInfo display = who.abilities[index].GetDisplayInfo();
+		if (display.displayIconB)
+			entityStats.SetAbilityIconB(index, who.abilities[index].GetAbilityType(), display.iconBState);
+		else
+			entityStats.ClearAbilityIconB(index);
+	}
+
+	public void UpdateStatsStatuses(List<Status> statuses)
+	{
+		entityStats.SetStatuses(statuses);
+	}
+
 
 	public void UpdateResourceAmounts(int resPoints, int reclaimPoints)
 	{

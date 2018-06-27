@@ -28,11 +28,13 @@ public class Ability_Superlaser : Ability
 	private GameObject countdownFinishExplosion;
 
 	private Unit targetUnit;
-	private bool checkingForDead = false;
+	private bool checkIfDead = false;
 	private float initDistance = 0;
 	private Vector3 initPosition;
 
 	private Coroutine countdownCoroutine;
+
+	private UI_AbilBar_Superlaser abilityBar;
 
 	void Awake()
 	{
@@ -44,8 +46,10 @@ public class Ability_Superlaser : Ability
 	new void Start()
 	{
 		base.Start();
+
 		stacks = gameRules.ABLYsuperlaserInitStacks;
 		displayInfo.displayStacks = true;
+		abilityBar = parentUnit.hpBar.GetComponent<UI_AbilBar_Superlaser>();
 		Display();
 
 		laserEffects = new Effect_Line[laserPositions.Length];
@@ -67,6 +71,7 @@ public class Ability_Superlaser : Ability
 		else
 			displayInfo.displayInactive = false;
 		UpdateDisplay(abilityIndex, true);
+		UpdateAbilityBar();
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -96,7 +101,7 @@ public class Ability_Superlaser : Ability
 							if (targetUnit)
 								ClearTarget(false);
 							targetUnit = unit;
-							checkingForDead = true;
+							checkIfDead = true;
 							initDistance = Vector3.Magnitude(targetUnit.transform.position - transform.position);
 							initPosition = transform.position;
 
@@ -123,7 +128,7 @@ public class Ability_Superlaser : Ability
 	{
 		// Make sure this shot counts for damage
 		Status markStatus = new Status(gameObject, StatusType.SuperlaserMark);
-		markStatus.SetTimeLeft(GetDamage());
+		markStatus.SetTimeLeft(GetDamage() * 2);
 		targetUnit.AddStatus(markStatus);
 
 		targetUnit.Damage(GetDamage(), 0, DamageType.Superlaser);
@@ -184,7 +189,7 @@ public class Ability_Superlaser : Ability
 		}
 		else
 		{
-			if (checkingForDead)
+			if (checkIfDead)
 			{
 				//countdownStart.SetEffectActive(false); TODO: BUGGED
 				ClearTarget(true);
@@ -198,11 +203,16 @@ public class Ability_Superlaser : Ability
 		Display();
 	}
 
+	protected override void UpdateAbilityBar()
+	{
+		abilityBar.SetStacks(stacks, false);
+	}
+
 	void ClearTarget(bool clearEffects)
 	{
 		targetUnit.RemoveVelocityMod(new VelocityMod(parentUnit, parentUnit.GetVelocity(), VelocityModType.Chain));
 		targetUnit = null;
-		checkingForDead = false;
+		checkIfDead = false;
 
 		StopCoroutine(countdownCoroutine);
 		countdownCoroutine = null;
@@ -210,7 +220,6 @@ public class Ability_Superlaser : Ability
 		if (clearEffects)
 		{
 			Destroy(countdownStart);
-			//Destroy(countdownStartRange);
 			ClearEffects();
 		}
 	}

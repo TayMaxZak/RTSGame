@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRules:
-    useTestValues: 0
+    useTestValues: 1
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -328,7 +328,7 @@ MonoBehaviour:
     ABLYswarmMaxUses: 3
     ABLYswarmFirstUseSpeedMult: 0.75
     ABLYswarmDPS: 4
-    ABLYswarmDamageRadius: 7
+    ABLYswarmInteractRadius: 5
     ABLYhealFieldRange: 25
     ABLYhealFieldAllyGPS: 2
     ABLYhealFieldAllyGPSBonusMult: 0.005
@@ -336,8 +336,9 @@ MonoBehaviour:
     ABLYhealFieldResCost: 4
     ABLYhealFieldResTime: 10
     ABLYchainRange: 25
-    ABLYchainAllyMult: 0.7
-    ABLYchainEnemyMult: 0.7
+    ABLYchainAllyMult: 0.667
+    ABLYchainEnemyMult: 0.667
+    ABLYchainFlagshipMult: 0.5
     ABLYsuperlaserRangeUse: 25
     ABLYsuperlaserRangeTolerance: 10
     ABLYsuperlaserDelay: 3.5
@@ -349,8 +350,8 @@ MonoBehaviour:
     - 200
     - 300
     - 400
-    STATswarmShieldDmgReduce: 0.1
-    STATswarmShieldMaxStacks: 2
+    STATswarmResistDmgReduce: 0.1
+    STATswarmResistMaxStacks: 2
   commanders:
   - {fileID: 114578553437470668}
   - {fileID: 114476393172418668}
@@ -373,7 +374,7 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
-  resPoints: 30
+  resPoints: 20
   reclaimPoints: 0
 --- !u!114 &114578553437470668
 MonoBehaviour:
@@ -394,5 +395,5 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
-  resPoints: 30
+  resPoints: 20
   reclaimPoints: 0

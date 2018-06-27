@@ -120,7 +120,8 @@ public class Ability_ArmorDrain : Ability
 			}
 			else
 			{
-				UseAbility(null); // Toggle to inactive and put on cooldown
+				Toggle(); // Toggle to inactive and put on cooldown
+				StartCooldown();
 			}
 		}
 		else // Inactive
@@ -141,6 +142,11 @@ public class Ability_ArmorDrain : Ability
 
 		base.UseAbility(target);
 
+		Toggle();
+	}
+
+	void Toggle()
+	{
 		isActive = !isActive;
 
 		pointEffect.SetEffectActive(isActive);

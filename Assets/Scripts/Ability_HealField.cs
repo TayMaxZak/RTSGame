@@ -93,7 +93,7 @@ public class Ability_HealField : Ability
 				{
 					parentUnit.DamageSimple(-(gameRules.ABLYhealFieldUserGPS * Time.deltaTime) / units.Count, 0);
 					parentUnit.AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
-					
+
 				}
 			}
 
@@ -102,6 +102,37 @@ public class Ability_HealField : Ability
 			else
 				pointEffect.SetEffectActive(true, true);
 		}
+		else
+			CheckDisplayConditions();
+	}
+
+	void CheckDisplayConditions()
+	{
+		if (!isBorrowing && command.GetResources() < gameRules.ABLYhealFieldResCost)
+			DisplayUsable(true);
+		else
+			DisplayUsable(false);
+	}
+
+	void DisplayUsable(bool newVal)
+	{
+		if (newVal == displayInfo.displayInactive)
+			return;
+
+		displayInfo.displayInactive = newVal;
+		UpdateDisplay(abilityIndex, false);
+	}
+
+	void DisplayBorrowing(bool isBorrowing)
+	{
+		displayInfo.displayIconB = isBorrowing;
+		if (isBorrowing)
+		{
+			// Active has to be inverted here because where this function is called, isActive is only flipped afterwards
+			displayInfo.iconBState = !isActive ? 1 : 2;
+		}
+
+		UpdateDisplay(abilityIndex, false, true);
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -121,7 +152,7 @@ public class Ability_HealField : Ability
 			}
 
 			isBorrowing = true;
-			//ability.stacks = -1;
+			DisplayBorrowing(isBorrowing);
 
 			if (giveResourcesCoroutine != null)
 				StopCoroutine(giveResourcesCoroutine);
@@ -138,11 +169,12 @@ public class Ability_HealField : Ability
 
 	IEnumerator GiveResourcesCoroutine(float time)
 	{
+		DisplayBorrowing(isBorrowing);
 		yield return new WaitForSeconds(time);
 		command.GiveResources(gameRules.ABLYhealFieldResCost);
 
 		isBorrowing = false;
-		//ability.stacks = 0;
+		DisplayBorrowing(isBorrowing);
 	}
 
 	Unit GetUnitFromCol(Collider col)

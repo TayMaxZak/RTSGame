@@ -12,6 +12,9 @@ public class Manager_Game : MonoBehaviour
 
 	public Commander GetCommander(int index)
 	{
-		return commanders[index];
+		if (index < commanders.Length)
+			return commanders[index];
+		else
+			return null;
 	}
 }

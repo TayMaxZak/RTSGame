@@ -1327,7 +1327,7 @@ MonoBehaviour:
   swarmTarget: {fileID: 4415277090469646}
   selCircleSize: 2.5
   printInfo: 0
-  hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
+  hpBarPrefab: {fileID: 114201364516099128, guid: f9ab5ed9c28f1bb43ac9ea3f17080b5b,
     type: 2}
   hpEffects: {fileID: 114248553201379134}
   team: 0
@@ -1350,10 +1350,9 @@ MonoBehaviour:
     MSAccel: 1
     MSDeccel: 1
     model: {fileID: 4964686013811900}
-    RS: 45
+    RS: 15
     RSAccel: 1
-    allowMoveThresh: 0.1
-    stopRotateThresh: 0.3
+    allowMoveThresh: 0.3
     reachGoalThresh: 2
 --- !u!114 &114820288780046676
 MonoBehaviour:

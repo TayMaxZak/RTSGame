@@ -228,12 +228,17 @@ public class Unit : Entity
 
 	protected void UpdateHPBarVal(bool fastUpdate)
 	{
-		hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / maxArmor, CalcShieldPoolCur() / CalcShieldPoolMax()), isBurning);
+		float max = CalcShieldPoolMax();
+		bool newValues = hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / maxArmor, CalcShieldPoolCur() / (max == 0 ? 1 : max)), isBurning);
 		if (fastUpdate)
 			hpBar.FastUpdate();
 
-		if (controller)
-			controller.UpdateStatsHealth(this);
+		// Update EntityStats only if there the new values differ from the current ones
+		if (newValues && controller)
+		{
+			controller.UpdateStatsHP(this);
+			controller.UpdateStatsShields(this);
+		}
 	}
 
 	void UpdateEffects()
@@ -307,13 +312,21 @@ public class Unit : Entity
 		{
 			statuses.Remove(s);
 		}
+
+		// Number of statuses changed, update UI
+		if (toRemove.Count > 0)
+			UpdateStatusUI();
 	}
 
 	// TODO: Do a better job accounting for armor overflow when adding up SuperlaserMark damage, sometimes projectiles will do way more effective damage than is counted here
+	// TODO: Ensure a last hit counts for a Superlaser stack always
 	public void AddStatus(Status status)
 	{
+		int origCount = statuses.Count;
+
 		foreach (Status s in statuses) // Check all current statuses
 		{
+			
 			if (s.from != status.from)
 				continue;
 			if (s.statusType != status.statusType)
@@ -324,6 +337,8 @@ public class Unit : Entity
 				s.RefreshTimeLeft();
 			else // or add the new timer to the current timer
 			{
+				s.AddTimeLeft(status.GetTimeLeft());
+				/*
 				// Superlaser mark damage
 				if (s.statusType == StatusType.SuperlaserMark && status.statusType == StatusType.SuperlaserMark) // Don't count damage which wasn't necessary for the kill
 				{
@@ -331,16 +346,23 @@ public class Unit : Entity
 				}
 				else
 					s.AddTimeLeft(status.GetTimeLeft());
+				*/
 			}
 			return;
 		}
 
+		/*
 		// Superlaser mark damage
 		if (status.statusType == StatusType.SuperlaserMark) // Don't count damage which wasn't necessary for the kill
 		{
 			status.SetTimeLeft(Mathf.Min(status.GetTimeLeft(), (curHealth + curArmor)));
 		}
+		*/
 		statuses.Add(status);
+
+		// Number of statuses changed, update UI
+		if (statuses.Count != origCount)
+			UpdateStatusUI();
 	}
 
 	public void RemoveStatus(Status status)
@@ -356,7 +378,20 @@ public class Unit : Entity
 		}
 
 		if (toRemove != null)
+		{
 			statuses.Remove(toRemove);
+			// Number of statuses changed, update UI
+			UpdateStatusUI();
+		}
+	}
+
+	// Notify EntityStats that statuses have changed
+	void UpdateStatusUI()
+	{
+		if (!controller)
+			return;
+
+		controller.UpdateStatsStatuses(statuses);
 	}
 
 	float CalcShieldPoolCur()
@@ -380,7 +415,7 @@ public class Unit : Entity
 	float CalcShieldPoolMax()
 	{
 		if (shieldMods.Count == 0)
-			return 1;
+			return 0;
 
 		float total = 0;
 		foreach (ShieldMod s in shieldMods) // Check all current shield mods
@@ -409,7 +444,7 @@ public class Unit : Entity
 			// If it belongs to the same unit,
 			if (s.shieldModType == shieldMod.shieldModType)
 			{
-				if (s.from = shieldMod.from)
+				if (s.from == shieldMod.from)
 				{
 					s.shieldPercent = shieldMod.shieldPercent;
 					return false;
@@ -456,10 +491,15 @@ public class Unit : Entity
 		UpdateHPBarVal(false);
 	}
 	
-	public void UpdateAbilityDisplay(int index, bool updateStacks)
+	public void UpdateAbilityDisplay(int index, bool updateStacks, bool updateIconB)
 	{
-		if (controller)
-			controller.UpdateStatsAbilities(this, index, updateStacks);
+		if (!controller)
+			return;
+
+		controller.UpdateStatsAbility(this, index, updateStacks);
+
+		if (updateIconB)
+			controller.UpdateStatsAbilityIconB(this, index);
 	}
 	
 	public void OrderMove(Vector3 newGoal)
@@ -481,7 +521,7 @@ public class Unit : Entity
 
 	public void OrderCommandWheel(int i, AbilityTarget targ)
 	{
-		if (i == 2)
+		if (i == 2) // 
 			foreach (Turret tur in turrets)
 				tur.SetTarget(null);
 	}
@@ -631,12 +671,12 @@ public class Unit : Entity
 
 		foreach (Status s in statuses)
 		{
-			if (s.statusType == StatusType.SwarmShield)
+			if (s.statusType == StatusType.SwarmResist)
 				swarmShieldCounter++;
 		}
 
 		// Apply swarm Shield damage reduction, which can stack a limited number of times
-		dmg -= dmg * gameRules.STATswarmShieldDmgReduce * Mathf.Clamp(swarmShieldCounter, 0, gameRules.STATswarmShieldMaxStacks);
+		dmg -= dmg * gameRules.STATswarmResistDmgReduce * Mathf.Clamp(swarmShieldCounter, 0, gameRules.STATswarmResistMaxStacks);
 		return dmg;
 	}
 
@@ -664,7 +704,6 @@ public class Unit : Entity
 			if (s.statusType == StatusType.SuperlaserMark)
 			{
 				float ratio = s.GetTimeLeft() / (maxHealth + maxArmor);
-
 				if (ratio >= gameRules.ABLYsuperlaserDmgAmount)
 					if (s.from) // Potentially the recipient of the stack does not exist anymore
 						s.from.GetComponent<Ability_Superlaser>().GiveStack();
@@ -687,10 +726,10 @@ public class Unit : Entity
 				wreck.SetHP(maxHealth, maxArmor);
 		}
 
-		//if (gameManager.Commanders.Length >= team + 1)
-		gameManager.GetCommander(team).RefundUnitCounter(buildIndex);
+		if (gameManager.GetCommander(team))
+			gameManager.GetCommander(team).RefundUnitCounter(buildIndex);
 
-		// Refund resources
+		// Refund resources if build index is initialized
 		if (buildIndex >= 0)
 		{
 			GameObject go2 = Instantiate(new GameObject());
@@ -715,6 +754,14 @@ public class Unit : Entity
 	public Vector4 GetHP()
 	{
 		return new Vector4(curHealth, maxHealth, curArmor, maxArmor);
+	}
+
+	/// <summary>
+	/// Current total shields, maximum total shields
+	/// </summary>
+	public Vector2 GetShields()
+	{
+		return new Vector2(CalcShieldPoolCur(), CalcShieldPoolMax());
 	}
 
 	public bool IsDead()

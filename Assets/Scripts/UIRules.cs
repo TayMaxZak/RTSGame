@@ -19,4 +19,8 @@ public class UIRules
 	// ShieldProject //
 	public float AB_SPupdateTime = 0.2f;
 	public float AB_SPblinkTime = 0.2f;
+
+	[Header("Entity Stats")]
+	public float ESiconBState1Speed = 45f;
+	public float ESiconBState2Speed = -15f;
 }

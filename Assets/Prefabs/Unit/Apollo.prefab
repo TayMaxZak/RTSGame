@@ -1206,7 +1206,7 @@ MonoBehaviour:
     model: {fileID: 4917791186809190}
     RS: 45
     RSAccel: 1
-    allowMoveThresh: 0.2
+    allowMoveThresh: 0.3
     stopRotateThresh: 0.3
     reachGoalThresh: 2
 --- !u!114 &114345409677500330
