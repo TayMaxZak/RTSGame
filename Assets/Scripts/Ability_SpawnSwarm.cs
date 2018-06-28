@@ -17,8 +17,9 @@ public class Ability_SpawnSwarm : Ability
 	private GameObject swarmsCenterPrefab; // Middle of all swarms, handles effects that don't need to be done for every single swarm i.e. sound
 	private GameObject swarmsCenter;
 
+	private int swarmSize;
 	[SerializeField]
-	private int swarmSize = 6;
+	private float deployTime = 2;
 	[SerializeField]
 	private float randomSpeed = 0.2f;
 	[SerializeField]
@@ -54,7 +55,12 @@ public class Ability_SpawnSwarm : Ability
 		displayInfo.stacks = stacks;
 		displayInfo.displayStacks = true;
 
+		swarmSize = pS.main.maxParticles / gameRules.ABLYswarmMaxUses; // Calculate swarm size
 		particles = new Particle[pS.main.maxParticles];
+		ParticleSystem.EmissionModule emission = pS.emission;
+		emission.rateOverTime = new ParticleSystem.MinMaxCurve(swarmSize / deployTime);
+		ParticleSystem.MainModule main = pS.main;
+		main.duration = deployTime + 0.05f;
 
 		randomVectors = new Vector4[pS.main.maxParticles];
 		randomDistribution.Normalize();

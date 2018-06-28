@@ -1265,17 +1265,17 @@ MonoBehaviour:
   projTemplate:
     type: 0
     speed: 20
-    damage: 19
+    damage: 20
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 150
+  range: 40
   soundShoot: {fileID: 8300000, guid: 1607e54d88add954ab7c5f4a593ef8b8, type: 3}
   firePos: {fileID: 4672358430916740}
-  maxAmmo: 5
+  maxAmmo: 4
   pelletCount: 1
-  accuracy: 0
-  reloadCooldown: 5
+  accuracy: 0.2
+  reloadCooldown: 4
   rateOfFire: 150
   shootOffsetRatio: 0.5
   RS: 80
@@ -1369,17 +1369,17 @@ MonoBehaviour:
   projTemplate:
     type: 0
     speed: 20
-    damage: 19
+    damage: 20
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 150
+  range: 40
   soundShoot: {fileID: 8300000, guid: 1607e54d88add954ab7c5f4a593ef8b8, type: 3}
   firePos: {fileID: 4901817886275136}
-  maxAmmo: 5
+  maxAmmo: 4
   pelletCount: 1
-  accuracy: 0
-  reloadCooldown: 5
+  accuracy: 0.2
+  reloadCooldown: 4
   rateOfFire: 150
   shootOffsetRatio: 0
   RS: 80

@@ -543,7 +543,7 @@ public class Unit : Entity
 			return false;
 
 		//Damage lost to range resist / damage falloff, incentivising shooting armor from up close
-		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / gameRules.ARMrangeMax);
+		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / (gameRules.ARMrangeMax - gameRules.ARMrangeMin));
 
 		float rangeDamage = Mathf.Min(dmg * rangeRatio, dmg) * gameRules.ARMrangeMult;
 		if (curArmor > Mathf.Max(0, dmg - rangeDamage)) // Range resist condition: if this shot wont break the armor, it will be range resisted
@@ -560,9 +560,10 @@ public class Unit : Entity
 
 		float overflowDmg = Mathf.Max(0, dmg - absorbLim); // How much damage health takes (aka by how much damage exceeds absorbtion limit)
 
-		//float critflowDmg = 0;
-		float critflowDmg = Mathf.Max(0, overflowDmg - absorbLim); // By how much *overflow damage* exceeds absorbtion limit. 
-		overflowDmg -= critflowDmg;
+
+		//float critflowDmg = Mathf.Max(0, overflowDmg - absorbLim); // By how much *overflow damage* exceeds absorbtion limit. 
+		float critflowDmg = 0; // Remove critflow to avoid confusing player
+		overflowDmg -= critflowDmg; // Don't count critflow twice
 
 		// Setting cur values
 		curArmor += -dmgToArmor;

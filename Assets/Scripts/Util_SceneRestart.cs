@@ -11,9 +11,14 @@ public class Util_SceneRestart: MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if (Input.GetKeyDown("escape"))
+		if (Input.GetKeyDown("backspace"))
 		{
 			SceneManager.LoadScene(sceneID);
+		}
+
+		if (Input.GetKeyDown("escape"))
+		{
+			Application.Quit();
 		}
 	}
 }

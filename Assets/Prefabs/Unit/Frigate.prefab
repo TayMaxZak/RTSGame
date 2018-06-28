@@ -48,7 +48,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &1024176818260824
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
@@ -338,7 +338,7 @@ GameObject:
   - component: {fileID: 33387419127913208}
   - component: {fileID: 23510888756607302}
   m_Layer: 0
-  m_Name: Turret (3)
+  m_Name: TurretF
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -502,7 +502,7 @@ GameObject:
   - component: {fileID: 33665902763342056}
   - component: {fileID: 23041774031224022}
   m_Layer: 0
-  m_Name: Turret
+  m_Name: TurretF
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -521,7 +521,7 @@ GameObject:
   - component: {fileID: 33608366359691806}
   - component: {fileID: 23357600536693586}
   m_Layer: 0
-  m_Name: Turret (2)
+  m_Name: TurretB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -540,7 +540,7 @@ GameObject:
   - component: {fileID: 33469696736066676}
   - component: {fileID: 23701630411161442}
   m_Layer: 0
-  m_Name: Turret (1)
+  m_Name: TurretB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -571,13 +571,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1952995823771098}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.646, y: 0, z: 0.542}
+  m_LocalPosition: {x: 0.8, y: 0, z: 0.542}
   m_LocalScale: {x: 0.14999999, y: 0.14999999, z: 0.14999999}
   m_Children:
   - {fileID: 4355977369754986}
   - {fileID: 4804128221137416}
   m_Father: {fileID: 4268561022817726}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4027148199508018
 Transform:
@@ -586,13 +586,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1805613568755980}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.646, y: 0, z: 0.542}
+  m_LocalPosition: {x: -0.8, y: 0, z: 0.542}
   m_LocalScale: {x: 0.14999999, y: 0.14999999, z: 0.14999999}
   m_Children:
   - {fileID: 4670288346556724}
   - {fileID: 4393959809981440}
   m_Father: {fileID: 4268561022817726}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4073420170976810
 Transform:
@@ -601,10 +601,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1216876717439498}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4268561022817726}
+  - {fileID: 4606344318940384}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -693,10 +694,9 @@ Transform:
   - {fileID: 4914857474325566}
   - {fileID: 4247239358604642}
   - {fileID: 4328102997576898}
+  - {fileID: 4792401148454346}
   - {fileID: 4005962465823896}
   - {fileID: 4027148199508018}
-  - {fileID: 4792401148454346}
-  - {fileID: 4606344318940384}
   - {fileID: 4907543980749030}
   - {fileID: 4393960141924304}
   m_Father: {fileID: 4073420170976810}
@@ -796,7 +796,7 @@ Transform:
   - {fileID: 4624220311445620}
   - {fileID: 4405984713753698}
   m_Father: {fileID: 4268561022817726}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4396133892356198
 Transform:
@@ -888,8 +888,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4432959356896396}
-  m_Father: {fileID: 4268561022817726}
-  m_RootOrder: 10
+  m_Father: {fileID: 4073420170976810}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4624220311445620
 Transform:
@@ -943,7 +943,7 @@ Transform:
   - {fileID: 4439424789102846}
   - {fileID: 4104760975395180}
   m_Father: {fileID: 4268561022817726}
-  m_RootOrder: 9
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4797715764532950
 Transform:
@@ -996,7 +996,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4268561022817726}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4914857474325566
 Transform:
@@ -1437,9 +1437,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 3d057d4e6f7b751499d8ac6a2ac81e2f, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1633,9 +1633,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 3d057d4e6f7b751499d8ac6a2ac81e2f, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1771,7 +1771,7 @@ MonoBehaviour:
     type: 2}
   swarmsCenterPrefab: {fileID: 1641218715249782, guid: d5948f036b40dee419d01974f6e67462,
     type: 2}
-  swarmSize: 6
+  deployTime: 2
   randomSpeed: 6
   randomDistribution: {x: 1, y: 0, z: 1}
   randomFreq: 1
@@ -1819,19 +1819,19 @@ MonoBehaviour:
   projTemplate:
     type: 0
     speed: 30
-    damage: 5
+    damage: 1
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 150
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  range: 25
+  soundShoot: {fileID: 8300000, guid: 40bfb129bf4d8f44d9c2328dda50fafd, type: 3}
   firePos: {fileID: 4439424789102846}
-  maxAmmo: 3
+  maxAmmo: 10
   pelletCount: 1
-  accuracy: 0.01
+  accuracy: 0.3
   reloadCooldown: 4
-  rateOfFire: 120
-  shootOffsetRatio: 0.75
+  rateOfFire: 308
+  shootOffsetRatio: 0.5
   RS: 180
   baseRotatesOnY: 1
   pivotY: {fileID: 4104760975395180}
@@ -1867,18 +1867,18 @@ MonoBehaviour:
   projTemplate:
     type: 0
     speed: 30
-    damage: 5
+    damage: 1
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 150
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  range: 25
+  soundShoot: {fileID: 8300000, guid: 40bfb129bf4d8f44d9c2328dda50fafd, type: 3}
   firePos: {fileID: 4761075872646922}
-  maxAmmo: 3
+  maxAmmo: 10
   pelletCount: 1
-  accuracy: 0.01
+  accuracy: 0.3
   reloadCooldown: 4
-  rateOfFire: 120
+  rateOfFire: 308
   shootOffsetRatio: 0
   RS: 180
   baseRotatesOnY: 1
@@ -1915,19 +1915,19 @@ MonoBehaviour:
   projTemplate:
     type: 0
     speed: 30
-    damage: 5
+    damage: 15
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 150
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  range: 60
+  soundShoot: {fileID: 8300000, guid: 1607e54d88add954ab7c5f4a593ef8b8, type: 3}
   firePos: {fileID: 4670288346556724}
-  maxAmmo: 3
+  maxAmmo: 1
   pelletCount: 1
-  accuracy: 0.01
-  reloadCooldown: 4
-  rateOfFire: 120
-  shootOffsetRatio: 0.5
+  accuracy: 0.05
+  reloadCooldown: 5
+  rateOfFire: 60
+  shootOffsetRatio: 1
   RS: 180
   baseRotatesOnY: 1
   pivotY: {fileID: 4393959809981440}
@@ -1949,19 +1949,19 @@ MonoBehaviour:
   projTemplate:
     type: 0
     speed: 30
-    damage: 5
+    damage: 15
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 150
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  range: 60
+  soundShoot: {fileID: 8300000, guid: 1607e54d88add954ab7c5f4a593ef8b8, type: 3}
   firePos: {fileID: 4355977369754986}
-  maxAmmo: 3
+  maxAmmo: 1
   pelletCount: 1
-  accuracy: 0.01
-  reloadCooldown: 4
-  rateOfFire: 120
-  shootOffsetRatio: 0.25
+  accuracy: 0.05
+  reloadCooldown: 5
+  rateOfFire: 60
+  shootOffsetRatio: 0
   RS: 180
   baseRotatesOnY: 1
   pivotY: {fileID: 4804128221137416}
@@ -21583,7 +21583,7 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1024176818260824}
   serializedVersion: 5
-  lengthInSec: 2.05
+  lengthInSec: 2.01
   simulationSpeed: 1
   looping: 0
   prewarm: 0
@@ -21635,7 +21635,7 @@ ParticleSystem:
   moveWithTransform: 2
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1212527029
+  randomSeed: 871280583
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -22031,7 +22031,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 18
+    maxNumParticles: 15
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -22195,7 +22195,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3
+      scalar: 30
       minScalar: 10
       maxCurve:
         serializedVersion: 2

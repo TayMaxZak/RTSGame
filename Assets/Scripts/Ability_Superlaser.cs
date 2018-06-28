@@ -91,8 +91,8 @@ public class Ability_Superlaser : Ability
 		{
 			if (stacks > 0) // At least one stack is required to activate this ability
 			{
-				//if (unit.team != team)
-				if (true) // Cannot target allies
+				if (unit.team != team) // Cannot target allies
+				//if (true) // Cannot target allies
 				{
 					if (InRange(unit.transform, gameRules.ABLYsuperlaserRangeUse))
 					{
@@ -161,7 +161,7 @@ public class Ability_Superlaser : Ability
 
 		if (targetUnit)
 		{
-			if (InRangeTolerance(targetUnit.transform, gameRules.ABLYsuperlaserRangeUse))
+			if (InRangeTolerance(targetUnit.transform))
 			{
 				if (!countdownStart)
 				{
@@ -180,9 +180,9 @@ public class Ability_Superlaser : Ability
 			}
 			else
 			{
-				Instantiate(pointEffectBreakPrefab, (laserPositions[1].position + targetUnit.transform.position) * 0.5f, Quaternion.LookRotation(laserPositions[1].position - targetUnit.transform.position));
+				//Instantiate(pointEffectBreakPrefab, (laserPositions[1].position + targetUnit.transform.position) * 0.5f, Quaternion.LookRotation(laserPositions[1].position - targetUnit.transform.position));
 
-				//countdownStart.SetEffectActive(false); TODO: BUGGED
+				//countdownStart.SetEffectActive(false); // TODO: BUGGED
 				ClearTarget(true);
 				StartCooldown(); // Now start cooldown
 			}
@@ -191,7 +191,7 @@ public class Ability_Superlaser : Ability
 		{
 			if (checkIfDead)
 			{
-				//countdownStart.SetEffectActive(false); TODO: BUGGED
+				//countdownStart.SetEffectActive(false); // TODO: BUGGED
 				ClearTarget(true);
 			}
 		}
@@ -241,11 +241,11 @@ public class Ability_Superlaser : Ability
 			return false;
 	}
 
-	bool InRangeTolerance(Transform tran, float range)
+	bool InRangeTolerance(Transform tran)
 	{
 		float ourDistanceSqr = Vector3.SqrMagnitude(tran.position - initPosition);
 		
-		if (ourDistanceSqr <= (initDistance - gameRules.ABLYsuperlaserRangeTolerance) * (initDistance - gameRules.ABLYsuperlaserRangeTolerance)
+		if (ourDistanceSqr <= Mathf.Max(0, initDistance - gameRules.ABLYsuperlaserRangeTolerance) * Mathf.Max(0, initDistance - gameRules.ABLYsuperlaserRangeTolerance)
 			|| ourDistanceSqr >= (initDistance + gameRules.ABLYsuperlaserRangeTolerance) * (initDistance + gameRules.ABLYsuperlaserRangeTolerance))
 			return false;
 		else

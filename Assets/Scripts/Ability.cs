@@ -131,7 +131,7 @@ public class AbilityDisplayInfo
 	public bool displayFill = false;
 	public float fill = 0;
 	public float cooldown = 0;
-	// TODO: Implement Icon B
+
 	public bool displayIconB = false;
 	public int iconBState = 0;
 }
@@ -160,7 +160,7 @@ public static class AbilityUtils
 		switch (type)
 		{
 			case AbilityType.ArmorDrain:
-				return GetDeltaOf(new Vector3(2, 10, 20));
+				return GetDeltaOf(new Vector3(2, 15, 30));
 			case AbilityType.SpawnSwarm:
 				return GetDeltaOf(new Vector3(10, 0, 0));
 			case AbilityType.MoveSwarm:

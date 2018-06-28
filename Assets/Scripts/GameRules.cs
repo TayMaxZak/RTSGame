@@ -11,10 +11,10 @@ public class GameRules
 	public float TESTinitHPAdd = 0;
 	public float TESTinitHPMult = 0.2f;
 	[Header("Armor")]
-	public float ARMabsorbFlat = 20; // How much armor absorb is guarenteed
+	public float ARMabsorbFlat = 5; // How much armor absorb is guaranteed
 	public float ARMabsorbMax = 15; // How much armor absorb is added based on current percentage of armor
-	public float ARMrangeMin = 25f; // Range past which armor range resist begins
-	public float ARMrangeMax = 100f; // Range past which armor range resist is at full effect
+	public float ARMrangeMin = 30f; // Range past which armor range resist begins
+	public float ARMrangeMax = 60f; // Range past which armor range resist is at full effect
 	public float ARMrangeMult = 0.8f; // Overall range resist multiplier
 	[Header("Health")]
 	public float HLTHthreshBurn = 0.201f; // How low does health drop before it starts automatically burning away
@@ -47,7 +47,7 @@ public class GameRules
 	[Header("Abilities")]
 	public float ABLYarmorDrainRange = 20;
 	public float ABLYarmorDrainDPSEnemy = 9;
-	public float ABLYarmorDrainDPSAlly = 4;
+	public float ABLYarmorDrainDPSAlly = 3;
 	public float ABLYarmorDrainGPS = 1; // How much armor is gained per second, per victim (total APS scales with number of victims)
 	public float ABLYarmorDrainGPSBonusMult = 1; // How much armor is gained per second, per victim, per number of victims? (total APS scales with number of victims, squared)
 	public float ABLYarmorDrainMaxVictims = 5;

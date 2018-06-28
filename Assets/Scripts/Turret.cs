@@ -32,7 +32,7 @@ public class Turret : MonoBehaviour
 	private int pelletCount = 1;
 	[SerializeField]
 	private float accuracy = 1;
-	private float allowShootThressh = 0.001f;
+	private float allowShootThressh = 0.0001f; // 0.001f
 
 	[SerializeField]
 	private float reloadCooldown = 4;
@@ -390,5 +390,12 @@ public class Turret : MonoBehaviour
 		}
 
 		//Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
+	}
+
+	// Visualize range of turrets in editor
+	void OnDrawGizmosSelected()
+	{
+		Gizmos.color = Color.white;
+		Gizmos.DrawWireSphere(transform.position, range);
 	}
 }

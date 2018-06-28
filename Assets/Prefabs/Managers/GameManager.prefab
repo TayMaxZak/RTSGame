@@ -278,10 +278,10 @@ MonoBehaviour:
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
-    ARMabsorbFlat: 20
+    ARMabsorbFlat: 5
     ARMabsorbMax: 15
-    ARMrangeMin: 25
-    ARMrangeMax: 100
+    ARMrangeMin: 30
+    ARMrangeMax: 60
     ARMrangeMult: 0.8
     HLTHthreshBurn: 0.201
     HLTHburnMin: 2
@@ -308,7 +308,7 @@ MonoBehaviour:
       m_Bits: 512
     ABLYarmorDrainRange: 20
     ABLYarmorDrainDPSEnemy: 9
-    ABLYarmorDrainDPSAlly: 4
+    ABLYarmorDrainDPSAlly: 3
     ABLYarmorDrainGPS: 1
     ABLYarmorDrainGPSBonusMult: 1
     ABLYarmorDrainMaxVictims: 5

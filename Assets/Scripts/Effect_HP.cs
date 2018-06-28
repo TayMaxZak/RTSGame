@@ -131,6 +131,7 @@ public class Effect_HP : MonoBehaviour
 		}
 	}
 
+	// TODO: Bugged, has chance to fail. Possibly bugged on Unit end rather than Effect_HP
 	public void End()
 	{
 		firePos.SetParent(null);

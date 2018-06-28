@@ -47,6 +47,8 @@ public class Manager_Projectiles : MonoBehaviour
 		{
 			Projectile proj = projectiles[i];
 			
+			// TODO: Also do positional hit detection for situations where a projectile slips into a unit without raycast hitting the outer shell (ie rotation)
+			// Raycast according to movement path
 			RaycastHit hit;
 			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.GetSpeed() * Time.deltaTime, layerMask))
 			{

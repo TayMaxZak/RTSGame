@@ -57,7 +57,7 @@ public class Controller_Commander : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		//Time.timeScale = 1;
+		//Time.timeScale = 3;
 
 		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
 		gameRules = gameManager.GameRules; // Grab copy of Game Rules
@@ -201,8 +201,8 @@ public class Controller_Commander : MonoBehaviour
 		{
 			foreach (Entity e in selection)
 			{
-				//if (newTarg && IsUnit(newTarg) && IsUnit(e) && ((Unit)newTarg).team != team)
-				if (newTarg && IsUnit(newTarg) && newTarg != e && IsUnit(e))
+				if (newTarg && IsUnit(newTarg) && IsUnit(e) && ((Unit)newTarg).team != team)
+				//if (newTarg && IsUnit(newTarg) && newTarg != e && IsUnit(e))
 					((Unit)e).OrderAttack((Unit)newTarg);
 			}
 		}

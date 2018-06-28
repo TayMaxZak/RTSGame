@@ -635,14 +635,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1302791793192360}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4935241332060562}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -134.932, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4419187618879956
 Transform:
   m_ObjectHideFlags: 1
@@ -1373,7 +1373,6 @@ MonoBehaviour:
     RS: 30
     RSAccel: 1
     allowMoveThresh: 0.5
-    stopRotateThresh: 0.3
     reachGoalThresh: 1.5
 --- !u!114 &114177749130366244
 MonoBehaviour:
@@ -1402,18 +1401,18 @@ MonoBehaviour:
   team: 0
   projTemplate:
     type: 0
-    speed: 20
-    damage: 9
+    speed: 30
+    damage: 5
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 75
-  soundShoot: {fileID: 8300000, guid: 1607e54d88add954ab7c5f4a593ef8b8, type: 3}
+  range: 40
+  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
   firePos: {fileID: 4569003861410192}
   maxAmmo: 3
   pelletCount: 1
-  accuracy: 0.01
-  reloadCooldown: 5
+  accuracy: 0.2
+  reloadCooldown: 4
   rateOfFire: 150
   shootOffsetRatio: 0
   RS: 180
@@ -1524,18 +1523,18 @@ MonoBehaviour:
   team: 0
   projTemplate:
     type: 0
-    speed: 20
-    damage: 9
+    speed: 30
+    damage: 5
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 75
-  soundShoot: {fileID: 8300000, guid: 1607e54d88add954ab7c5f4a593ef8b8, type: 3}
+  range: 40
+  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
   firePos: {fileID: 4724165641656902}
   maxAmmo: 3
   pelletCount: 1
-  accuracy: 0.01
-  reloadCooldown: 5
+  accuracy: 0.2
+  reloadCooldown: 4
   rateOfFire: 150
   shootOffsetRatio: 0.5
   RS: 180

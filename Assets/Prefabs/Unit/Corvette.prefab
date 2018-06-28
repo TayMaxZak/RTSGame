@@ -1056,7 +1056,6 @@ MonoBehaviour:
     RS: 60
     RSAccel: 1
     allowMoveThresh: 0.6
-    stopRotateThresh: 0.3
     reachGoalThresh: 1.5
 --- !u!114 &114165545472820334
 MonoBehaviour:
@@ -1170,7 +1169,7 @@ MonoBehaviour:
   team: 0
   projTemplate:
     type: 0
-    speed: 40
+    speed: 30
     damage: 1
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}

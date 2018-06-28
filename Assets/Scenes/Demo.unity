@@ -39685,6 +39685,34 @@ Transform:
   m_PrefabParentObject: {fileID: 4501992173204926, guid: c60af253d62abe645812eeda39845ac6,
     type: 2}
   m_PrefabInternal: {fileID: 103550545}
+--- !u!1 &872347483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 872347484}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &872347484
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 872347483}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &895582501
 GameObject:
   m_ObjectHideFlags: 0
@@ -57350,7 +57378,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4501992173204926, guid: c60af253d62abe645812eeda39845ac6, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -10
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4501992173204926, guid: c60af253d62abe645812eeda39845ac6, type: 2}
       propertyPath: m_LocalPosition.y
@@ -81872,14 +81900,13 @@ GameObject:
   m_Component:
   - component: {fileID: 1701327354}
   - component: {fileID: 1701327355}
-  - component: {fileID: 1701327356}
   m_Layer: 0
   m_Name: Music
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1701327354
 Transform:
   m_ObjectHideFlags: 0
@@ -81902,7 +81929,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 8dc7e8dc03b2f234ebe3234299d61d6a, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.11
   m_Pitch: 1
@@ -81973,15 +82000,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!165 &1701327356
-AudioHighPassFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1701327353}
-  m_Enabled: 1
-  m_CutoffFrequency: 500
-  m_HighpassResonanceQ: 1
 --- !u!224 &1704481908 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224343360938787016, guid: 22d0e87b32aef0241975b02f43d66f5c,
@@ -99055,6 +99073,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4042889356359010, guid: 17dc27b9a26fbe849a100039b7f37b7c, type: 2}
       propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114359600981258838, guid: 17dc27b9a26fbe849a100039b7f37b7c,
+        type: 2}
+      propertyPath: GameRules.useTestValues
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
