@@ -6,6 +6,8 @@ public class Controller_Camera : MonoBehaviour
 {
 	[Header("Settings")]
 	[SerializeField]
+	private bool offscreenMovement = true;
+	[SerializeField]
 	private float rotSpeed = 100;
 	private Quaternion initRot;
 	[SerializeField]
@@ -35,8 +37,8 @@ public class Controller_Camera : MonoBehaviour
 
 		cam.transform.position = camRoot.transform.position;
 
-		//Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
-		if (!EventSystem.current.IsPointerOverGameObject()/* && screenRect.Contains(Input.mousePosition)*/)
+		Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+		if (!EventSystem.current.IsPointerOverGameObject() && (offscreenMovement || screenRect.Contains(Input.mousePosition)))
 		{
 			Vector3 velocityVector = Vector3.zero;
 

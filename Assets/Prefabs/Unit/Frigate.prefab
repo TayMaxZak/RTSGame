@@ -571,7 +571,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1952995823771098}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.8, y: 0, z: 0.542}
+  m_LocalPosition: {x: 0.868, y: 0, z: 0.542}
   m_LocalScale: {x: 0.14999999, y: 0.14999999, z: 0.14999999}
   m_Children:
   - {fileID: 4355977369754986}
@@ -586,7 +586,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1805613568755980}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.8, y: 0, z: 0.542}
+  m_LocalPosition: {x: -0.868, y: 0, z: 0.542}
   m_LocalScale: {x: 0.14999999, y: 0.14999999, z: 0.14999999}
   m_Children:
   - {fileID: 4670288346556724}
@@ -1828,7 +1828,7 @@ MonoBehaviour:
   firePos: {fileID: 4439424789102846}
   maxAmmo: 10
   pelletCount: 1
-  accuracy: 0.3
+  accuracy: 0.15
   reloadCooldown: 4
   rateOfFire: 308
   shootOffsetRatio: 0.5
@@ -1836,8 +1836,10 @@ MonoBehaviour:
   baseRotatesOnY: 1
   pivotY: {fileID: 4104760975395180}
   pivotX: {fileID: 4439424789102846}
-  minX: 0
-  maxX: 0
+  maxH: 180
+  minH: 180
+  maxV: 180
+  minV: 0
 --- !u!114 &114539411740431232
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1876,7 +1878,7 @@ MonoBehaviour:
   firePos: {fileID: 4761075872646922}
   maxAmmo: 10
   pelletCount: 1
-  accuracy: 0.3
+  accuracy: 0.15
   reloadCooldown: 4
   rateOfFire: 308
   shootOffsetRatio: 0
@@ -1884,8 +1886,10 @@ MonoBehaviour:
   baseRotatesOnY: 1
   pivotY: {fileID: 4289189389824278}
   pivotX: {fileID: 4761075872646922}
-  minX: 0
-  maxX: 0
+  maxH: 180
+  minH: 180
+  maxV: 180
+  minV: 0
 --- !u!114 &114640104176753144
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1929,11 +1933,13 @@ MonoBehaviour:
   rateOfFire: 60
   shootOffsetRatio: 1
   RS: 180
-  baseRotatesOnY: 1
+  baseRotatesOnY: 0
   pivotY: {fileID: 4393959809981440}
   pivotX: {fileID: 4670288346556724}
-  minX: 0
-  maxX: 0
+  maxH: 2
+  minH: 180
+  maxV: 180
+  minV: 0
 --- !u!114 &114738088430999630
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1963,11 +1969,13 @@ MonoBehaviour:
   rateOfFire: 60
   shootOffsetRatio: 0
   RS: 180
-  baseRotatesOnY: 1
+  baseRotatesOnY: 0
   pivotY: {fileID: 4804128221137416}
   pivotX: {fileID: 4355977369754986}
-  minX: 0
-  maxX: 0
+  maxH: 180
+  minH: 2
+  maxV: 180
+  minV: 0
 --- !u!114 &114793434201877688
 MonoBehaviour:
   m_ObjectHideFlags: 1

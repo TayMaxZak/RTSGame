@@ -57,23 +57,27 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private bool baseRotatesOnY = true;
 	[SerializeField]
-	private Transform pivotY;
-	[SerializeField]
 	private Transform pivotX;
+	[SerializeField]
+	private Transform pivotY;
+
 
 	[Header("Rotation Limits")]
 	[SerializeField]
-	private float minX;
+	private float maxH = 180;
 	[SerializeField]
-	private float maxX;
-
+	private float minH = 180;
+	[SerializeField]
+	private float minV = 0;
+	[SerializeField]
+	private float maxV = 180;
 
 	private bool targetInRange;
 	private bool isReloading;
 	private bool isShooting;
 
 	private Quaternion lookRotation;
-	private Quaternion forwardRotation;
+	//private Quaternion forwardRotation;
 	private Vector3 direction;
 
 	private int resetRotFrame;
@@ -93,6 +97,8 @@ public class Turret : MonoBehaviour
 
 		shootCooldown = 1f / (rateOfFire / 60f);
 		shootOffset = shootCooldown * shootOffsetRatio;
+
+		rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
 	}
 
 	public void SetParentUnit(Unit unit)
@@ -328,21 +334,33 @@ public class Turret : MonoBehaviour
 			difference = transform.forward;
 
 		// Fixes strange RotateTowards bug
-		Quaternion resetRot = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
+		Quaternion resetRot = rotation;
 
 		// Rotate towards our target
 		direction = difference.normalized;
+		Quaternion prevLook = lookRotation;
 		lookRotation = Quaternion.LookRotation(direction, Vector3.up);
-		
-		rotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * RS);
+
+
+		Quaternion newRotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * RS);
 
 		// Fixes strange RotateTowards bug
 		if (Time.frameCount == resetRotFrame)
-			rotation = resetRot;
+			newRotation = resetRot;
 
-		//LimitRotation();
+		Quaternion limitRot = LimitRotation(newRotation, rotation);
 
-		// Apply rotation to object
+		// Limit
+		rotation = limitRot;
+
+		if (parentUnit.printInfo)
+		{
+			if (newRotation != limitRot)
+				Debug.Log("false");
+			else
+				Debug.Log("true");
+		}
+
 		if (baseRotatesOnY)
 		{
 			pivotY.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
@@ -351,16 +369,47 @@ public class Turret : MonoBehaviour
 		else
 		{
 			pivotY.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
-			pivotX.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
+			pivotX.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
 		}
 	}
 
-	void LimitRotation()
+	Quaternion LimitRotation(Quaternion rot, Quaternion oldRot)
 	{
-		forwardRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
+		Debug.DrawRay(transform.position, rot * Vector3.forward, Color.white);
+		Debug.DrawRay(transform.position, lookRotation * Vector3.forward, Color.red);
+		Debug.DrawRay(transform.position, transform.forward, Color.black);
+		Debug.DrawRay(transform.position, transform.up, Color.black);
 
-		Vector3 rotationEuler = new Vector3(0, ClampAngle(rotation.eulerAngles.y, forwardRotation.eulerAngles.y - 90, forwardRotation.eulerAngles.y + 90), 0);
-		rotation = Quaternion.Euler(rotationEuler);
+		Vector3 components = rot.eulerAngles;
+		Vector3 componentsOld = oldRot.eulerAngles;
+		Vector3 hComponentFwd = Quaternion.LookRotation(transform.forward).eulerAngles;
+		Vector3 vComponentFwd = Quaternion.LookRotation(transform.up).eulerAngles;
+
+		float angleH = Vector3.SignedAngle(transform.forward, rot * Vector3.forward, Vector3.up);
+		float angleV = Vector3.Angle(transform.up, rot * Vector3.forward);
+
+		// Horizontal extremes
+		if (angleH > maxH)
+		{
+			components.y = hComponentFwd.y + maxH;
+		}
+		else if (angleH < -minH)
+		{
+			components.y = hComponentFwd.y - minH;
+		}
+	
+		// Vertical extremes
+		// Don't have to do anything besides bad rotations because units will never rotate on their Z or X axes
+		if (angleV > maxV)
+		{
+			components.x = componentsOld.x;
+		}
+		else if (angleV < minV)
+		{
+			components.x = componentsOld.x;
+		}
+
+		return Quaternion.Euler(components);
 	}
 
 	float ClampAngle(float angle, float min, float max)
