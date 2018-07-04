@@ -1281,7 +1281,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.3
-  m_Pitch: 1.1
+  m_Pitch: 0.9
   Loop: 1
   Mute: 0
   Spatialize: 0
@@ -1476,8 +1476,8 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
-  m_Pitch: 1.1
+  m_Volume: 0.2
+  m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
@@ -1638,7 +1638,7 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4663811804393870}
   maxAmmo: 3
   pelletCount: 1
@@ -1648,12 +1648,12 @@ MonoBehaviour:
   shootOffsetRatio: 0
   RS: 90
   baseRotatesOnY: 1
-  pivotY: {fileID: 4468283744122512}
   pivotX: {fileID: 4663811804393870}
+  pivotY: {fileID: 4468283744122512}
   maxH: 135
   minH: 135
-  maxV: 110
   minV: 0
+  maxV: 110
 --- !u!114 &114345409677500330
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1756,9 +1756,9 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4221274989616668}
-  maxAmmo: 4
+  maxAmmo: 2
   pelletCount: 1
   accuracy: 0.1
   reloadCooldown: 5
@@ -1766,12 +1766,12 @@ MonoBehaviour:
   shootOffsetRatio: 0
   RS: 90
   baseRotatesOnY: 1
-  pivotY: {fileID: 4141085179285842}
   pivotX: {fileID: 4221274989616668}
+  pivotY: {fileID: 4141085179285842}
   maxH: 180
   minH: 180
-  maxV: 180
   minV: 70
+  maxV: 180
 --- !u!198 &198032450036477548
 ParticleSystem:
   m_ObjectHideFlags: 1

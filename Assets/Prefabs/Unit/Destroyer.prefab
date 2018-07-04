@@ -1624,18 +1624,18 @@ MonoBehaviour:
   firePos: {fileID: 4398980666122288}
   maxAmmo: 4
   pelletCount: 1
-  accuracy: 0.2
+  accuracy: 0.1
   reloadCooldown: 3
   rateOfFire: 150
   shootOffsetRatio: 0
   RS: 80
   baseRotatesOnY: 1
-  pivotY: {fileID: 4459647000952002}
   pivotX: {fileID: 4398980666122288}
+  pivotY: {fileID: 4459647000952002}
   maxH: 95
   minH: 90
-  maxV: 120
   minV: 30
+  maxV: 120
 --- !u!114 &114820288780046676
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1660,18 +1660,18 @@ MonoBehaviour:
   firePos: {fileID: 4901817886275136}
   maxAmmo: 4
   pelletCount: 1
-  accuracy: 0.2
+  accuracy: 0.1
   reloadCooldown: 3
   rateOfFire: 150
   shootOffsetRatio: 0
   RS: 80
   baseRotatesOnY: 1
-  pivotY: {fileID: 4562917478958468}
   pivotX: {fileID: 4901817886275136}
+  pivotY: {fileID: 4562917478958468}
   maxH: 90
   minH: 95
-  maxV: 120
   minV: 30
+  maxV: 120
 --- !u!114 &114971228717168258
 MonoBehaviour:
   m_ObjectHideFlags: 1

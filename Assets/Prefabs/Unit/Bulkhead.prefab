@@ -922,7 +922,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1163332279550356}
   m_LocalRotation: {x: -0, y: -0.7071065, z: -0, w: 0.7071072}
-  m_LocalPosition: {x: -0.992, y: 0.356, z: -1.75}
+  m_LocalPosition: {x: -0.992, y: 0, z: -1.75}
   m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children:
   - {fileID: 4817259448784356}
@@ -976,7 +976,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1774001494984444}
   m_LocalRotation: {x: -0, y: -0.7071065, z: -0, w: 0.7071072}
-  m_LocalPosition: {x: -0.99, y: 0.356, z: 1}
+  m_LocalPosition: {x: -0.99, y: 0, z: 1}
   m_LocalScale: {x: 0.15000005, y: 0.14999999, z: 0.15000005}
   m_Children:
   - {fileID: 4376580267898420}
@@ -1018,7 +1018,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1312403691515958}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5099999, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.6565092, y: 0.062109087, z: 1.6565095}
   m_Children: []
   m_Father: {fileID: 4499455323337708}
@@ -1072,7 +1072,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1428531755094096}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5099999, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.6565092, y: 0.062109087, z: 1.6565095}
   m_Children: []
   m_Father: {fileID: 4012061720135360}
@@ -1167,7 +1167,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1356173203005540}
   m_LocalRotation: {x: -0, y: -0.7071065, z: -0, w: 0.7071072}
-  m_LocalPosition: {x: -0.99, y: 0.356, z: 2.5}
+  m_LocalPosition: {x: -0.99, y: 0, z: 2.5}
   m_LocalScale: {x: 0.15000005, y: 0.14999999, z: 0.15000005}
   m_Children:
   - {fileID: 4867935008702602}
@@ -1182,7 +1182,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1890338633680304}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.51, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0352867, y: 0.6319458, z: 0.6}
   m_Children:
   - {fileID: 4017084131084064}
@@ -1197,7 +1197,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1530500153596872}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.70710677}
-  m_LocalPosition: {x: 1.01, y: 0.356, z: 1}
+  m_LocalPosition: {x: 1.01, y: 0, z: 1}
   m_LocalScale: {x: 0.15000005, y: 0.14999999, z: 0.15000005}
   m_Children:
   - {fileID: 4548263936128652}
@@ -1212,7 +1212,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1454456893695556}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5099999, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.6565092, y: 0.062109087, z: 1.6565095}
   m_Children: []
   m_Father: {fileID: 4048320403044904}
@@ -1264,7 +1264,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1892216319637290}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.70710677}
-  m_LocalPosition: {x: 1.01, y: 0.356, z: 2.5}
+  m_LocalPosition: {x: 1.01, y: 0, z: 2.5}
   m_LocalScale: {x: 0.15000005, y: 0.14999999, z: 0.15000005}
   m_Children:
   - {fileID: 4576295160761292}
@@ -1306,7 +1306,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1177882608237712}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.51, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0352867, y: 0.6319458, z: 0.6}
   m_Children:
   - {fileID: 4213655901984566}
@@ -1335,7 +1335,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1317894011008250}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.51, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0352867, y: 0.6319458, z: 0.6}
   m_Children:
   - {fileID: 4650017839835082}
@@ -1392,7 +1392,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1741515952124334}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5099999, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.6565092, y: 0.062109087, z: 1.6565095}
   m_Children: []
   m_Father: {fileID: 4407887804420102}
@@ -1418,7 +1418,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1308957475845386}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5099999, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.6565092, y: 0.062109087, z: 1.6565095}
   m_Children: []
   m_Father: {fileID: 4322309455574546}
@@ -1497,7 +1497,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1986474359057774}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.70710677}
-  m_LocalPosition: {x: 1.008, y: 0.356, z: -1.75}
+  m_LocalPosition: {x: 1.008, y: 0, z: -1.75}
   m_LocalScale: {x: 0.15000005, y: 0.14999999, z: 0.15000005}
   m_Children:
   - {fileID: 4822723693647872}
@@ -1512,7 +1512,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1006229859887980}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.51, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0352867, y: 0.6319458, z: 0.6}
   m_Children:
   - {fileID: 4448921002295976}
@@ -1527,7 +1527,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1120640284670824}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.51, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0352867, y: 0.6319458, z: 0.6}
   m_Children:
   - {fileID: 4716037299648348}
@@ -1555,7 +1555,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1921202167025542}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.51, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0352867, y: 0.6319458, z: 0.6}
   m_Children:
   - {fileID: 4066694528768112}
@@ -1637,7 +1637,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1928881662629510}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5099999, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.6565092, y: 0.062109087, z: 1.6565095}
   m_Children: []
   m_Father: {fileID: 4776137704731642}
@@ -2888,7 +2888,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -2986,7 +2986,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -3084,7 +3084,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -3182,7 +3182,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -3378,7 +3378,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -3476,7 +3476,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -3597,21 +3597,21 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4548263936128652}
   maxAmmo: 2
   pelletCount: 1
   accuracy: 0.2
   reloadCooldown: 1
   rateOfFire: 150
-  shootOffsetRatio: 0
+  shootOffsetRatio: 0.33
   RS: 180
   baseRotatesOnY: 1
   pivotX: {fileID: 4548263936128652}
   pivotY: {fileID: 4646819735466828}
   maxH: 90
   minH: 90
-  minV: 0
+  minV: 60
   maxV: 120
 --- !u!114 &114097301728543350
 MonoBehaviour:
@@ -3633,7 +3633,7 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4822723693647872}
   maxAmmo: 2
   pelletCount: 1
@@ -3647,7 +3647,7 @@ MonoBehaviour:
   pivotY: {fileID: 4993391400368488}
   maxH: 90
   minH: 90
-  minV: 0
+  minV: 60
   maxV: 120
 --- !u!114 &114105696511173144
 MonoBehaviour:
@@ -3669,21 +3669,21 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4376580267898420}
   maxAmmo: 2
   pelletCount: 1
   accuracy: 0.2
   reloadCooldown: 1
   rateOfFire: 150
-  shootOffsetRatio: 0
+  shootOffsetRatio: 0.33
   RS: 180
   baseRotatesOnY: 1
   pivotX: {fileID: 4376580267898420}
   pivotY: {fileID: 4430534571108302}
   maxH: 90
   minH: 90
-  minV: 0
+  minV: 60
   maxV: 120
 --- !u!114 &114133806779069504
 MonoBehaviour:
@@ -3750,21 +3750,21 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4867935008702602}
   maxAmmo: 2
   pelletCount: 1
   accuracy: 0.2
   reloadCooldown: 1
   rateOfFire: 150
-  shootOffsetRatio: 0
+  shootOffsetRatio: 0.67
   RS: 180
   baseRotatesOnY: 1
   pivotX: {fileID: 4867935008702602}
   pivotY: {fileID: 4653166935051740}
   maxH: 90
   minH: 90
-  minV: 0
+  minV: 60
   maxV: 120
 --- !u!114 &114177749130366244
 MonoBehaviour:
@@ -3827,21 +3827,21 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4576295160761292}
   maxAmmo: 2
   pelletCount: 1
   accuracy: 0.2
   reloadCooldown: 1
   rateOfFire: 150
-  shootOffsetRatio: 0
+  shootOffsetRatio: 0.67
   RS: 180
   baseRotatesOnY: 1
   pivotX: {fileID: 4576295160761292}
   pivotY: {fileID: 4101159731529438}
   maxH: 90
   minH: 90
-  minV: 0
+  minV: 60
   maxV: 120
 --- !u!114 &114620008909814110
 MonoBehaviour:
@@ -3891,7 +3891,7 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 151d9300b8c974b4d8fc7d2719709f5f, type: 3}
+  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4817259448784356}
   maxAmmo: 2
   pelletCount: 1
@@ -3905,7 +3905,7 @@ MonoBehaviour:
   pivotY: {fileID: 4151316824343390}
   maxH: 90
   minH: 90
-  minV: 0
+  minV: 60
   maxV: 120
 --- !u!114 &114908002695254704
 MonoBehaviour:

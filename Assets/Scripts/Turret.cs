@@ -363,13 +363,17 @@ public class Turret : MonoBehaviour
 
 		if (baseRotatesOnY)
 		{
-			pivotY.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
-			pivotX.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
+			if (pivotY)
+				pivotY.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
+			if (pivotX)
+				pivotX.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
 		}
 		else
 		{
-			pivotY.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
-			pivotX.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
+			if (pivotY)
+				pivotY.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
+			if (pivotX)
+				pivotX.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
 		}
 	}
 
