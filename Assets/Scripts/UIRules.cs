@@ -13,7 +13,7 @@ public class UIRules
 	[Header("Build Progress Bar")]
 	public Vector2 BPBoffset = new Vector2(0, 3);
 	[Header("Selection Indicator")]
-	public float SELrotateSpeed = 50;
+	public float SELrotateSpeed = 30;
 
 	[Header("Ability Bars")]
 	// ShieldProject //
@@ -21,6 +21,6 @@ public class UIRules
 	public float AB_SPblinkTime = 0.2f;
 
 	[Header("Entity Stats")]
-	public float ESiconBState1Speed = 45f;
+	public float ESiconBState1Speed = 30f;
 	public float ESiconBState2Speed = -15f;
 }

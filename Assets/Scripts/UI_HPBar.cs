@@ -81,7 +81,11 @@ public class UI_HPBar : UI_Bar
 	{
 		uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
 		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+	}
 
+	// TODO: Investigate why this code has to be in Start and not Awake
+	void Start()
+	{
 		transform.SetSiblingIndex(0); // Draw behind other UI elements
 	}
 
@@ -111,6 +115,7 @@ public class UI_HPBar : UI_Bar
 		shieldFill.rectTransform.sizeDelta = new Vector2(shieldWidth * shieldCur, shieldFill.rectTransform.sizeDelta.y);
 
 		// What color should the border be?
+		
 		borderFill.color = armorTarg > uiRules.HPBbordColorThresh ? (enemy ? armorEnemyColor : armorAllyColor) : (enemy ? healthEnemyColor : healthAllyColor);
 
 		// If we are burning,
@@ -180,7 +185,11 @@ public class UI_HPBar : UI_Bar
 
 	public void SetIsAlly(bool isAlly)
 	{
-		enemy = !isAlly;
+		// Only update colors if a new value was assigned
+		if (enemy != !isAlly)
+			enemy = !isAlly;
+		else
+			return;
 
 		healthFill.color = (enemy ? healthEnemyColor : healthAllyColor);
 		healthBkg.color = (enemy ? healthBkgEnemyColor : healthBkgAllyColor);

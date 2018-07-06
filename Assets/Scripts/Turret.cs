@@ -338,7 +338,6 @@ public class Turret : MonoBehaviour
 
 		// Rotate towards our target
 		direction = difference.normalized;
-		Quaternion prevLook = lookRotation;
 		lookRotation = Quaternion.LookRotation(direction, Vector3.up);
 
 

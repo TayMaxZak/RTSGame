@@ -38,7 +38,7 @@ public class GameRules
 	[Header("Audio")]
 	public float AUDpitchVariance = 0.05f; // Audio pitch variation for each clip instance
 	[Header("Projectiles")]
-	public float PRJmaxTimeAlive = 9f; // How long each projectile lives
+	public float PRJmaxTimeAlive = 5f; // How long each projectile lives
 	public float PRJhitOffset = 0.05f; // When hitting an object, a projectile always detonates this back far from the hit point
 	[Header("Layer Masks")]
 	public LayerMask entityLayerMask;
@@ -72,7 +72,7 @@ public class GameRules
 	public float ABLYhealFieldAllyGPSBonusMult = 0.005f; // What percentage of missing health should contribute to health gained per second
 	public float ABLYhealFieldUserGPS = 5; // Health gained per second by user as long as one ally is being healed
 	public int ABLYhealFieldResCost = 4; // Amount of resource points held by this ability while active
-	public float ABLYhealFieldResTime = 10; // Delay to return resource points when the ability ends
+	public float ABLYhealFieldResTime = 5; // Delay to return resource points when the ability ends
 
 	public float ABLYchainRange = 25; // Max distance for cast
 	public float ABLYchainAllyMult = 0.667f; // Multiplier applied to velocity when adding to it the target

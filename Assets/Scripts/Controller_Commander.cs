@@ -184,10 +184,37 @@ public class Controller_Commander : MonoBehaviour
 	{
 		if (HasSelection())
 		{
+			Vector3 avgPos = Vector3.zero;
+			int divisor = 0;
+			List<Unit> units = new List<Unit>();
+
+			// Calculate average position
 			foreach (Entity e in selection)
 			{
 				if (IsUnit(e))
-					((Unit)e).OrderMove(newPos);
+				{
+					units.Add((Unit)e);
+					avgPos += e.transform.position;
+					divisor++;
+					
+				}
+			}
+
+			// All entities
+			if (divisor == 0)
+				return;
+
+			avgPos /= divisor;
+
+			// Offset
+			Vector3 dif = newPos - avgPos;
+
+			// Relative goal
+			foreach (Unit u in units)
+			{
+				Vector3 newVec = u.transform.position + dif;
+				newVec.y = u.transform.position.y;
+				u.OrderMove(newVec);
 			}
 
 			AudioUtils.PlayClipAt(soundMove, transform.position, audioSource);

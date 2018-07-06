@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e7407840e1c4094cb130f05fbbfe37e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offscreenMovement: 0
+  offscreenMovement: 1
   rotSpeed: 110
   speed: 21
   screenBorderSize: 30
@@ -82134,7 +82134,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: e7d1182573b375f4a9647d4a2f5dc473, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.11
   m_Pitch: 1
@@ -99282,14 +99282,9 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114359600981258838, guid: 17dc27b9a26fbe849a100039b7f37b7c,
         type: 2}
-      propertyPath: GameRules.useTestValues
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114359600981258838, guid: 17dc27b9a26fbe849a100039b7f37b7c,
-        type: 2}
-      propertyPath: GameRules.PRJmaxTimeAlive
-      value: 5
-      objectReference: {fileID: 0}
+      propertyPath: commanderController
+      value: 
+      objectReference: {fileID: 1527646376}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 17dc27b9a26fbe849a100039b7f37b7c, type: 2}
   m_IsPrefabParent: 0

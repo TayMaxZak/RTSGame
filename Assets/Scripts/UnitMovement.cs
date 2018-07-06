@@ -43,12 +43,13 @@ public class UnitMovement
 	//private float bankAngle = 30;
 
 	[Header("Pathing")]
-	
 	[SerializeField]
 	private float reachGoalThresh = 1; // How close to the goal position is close enough?
+	private Vector3 hGoal;
+	private int vGoal;
 
 	private float deltaBias = 99999;
-	private Vector3 goal;
+
 	private AbilityTarget rotationGoal; // Set by abilities. If not null, forces the unit to face towards a different goal than the one it wants to path to
 	private bool reachedHGoal = false;
 	private bool reachedVGoal = false;
@@ -64,7 +65,7 @@ public class UnitMovement
 		parentUnit = parent;
 		transform = parentUnit.transform;
 
-		goal = parentUnit.transform.position; // Path towards current location (i.e. nowhere)
+		hGoal = parentUnit.transform.position; // Path towards current location (i.e. nowhere)
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
@@ -85,7 +86,7 @@ public class UnitMovement
 
 	void UpdateMovement()
 	{
-		Vector3 dif = goal - transform.position;
+		Vector3 dif = hGoal - transform.position;
 
 		// Rotate
 		float leftOrRight  = UpdateRotation(rotationGoal == null ? dif.normalized : (rotationGoal.position - transform.position).normalized);
@@ -157,7 +158,7 @@ public class UnitMovement
 
 	Vector3 UpdatePositionH(float leftOrRight)
 	{
-		if (Vector3.SqrMagnitude(transform.position - new Vector3(goal.x, transform.position.y, goal.z)) < reachGoalThresh * reachGoalThresh)
+		if (Vector3.SqrMagnitude(transform.position - new Vector3(hGoal.x, transform.position.y, hGoal.z)) < reachGoalThresh * reachGoalThresh)
 			reachedHGoal = true;
 
 		if (!reachedHGoal && Mathf.Abs(leftOrRight) < allowMoveThresh)
@@ -182,10 +183,10 @@ public class UnitMovement
 
 	Vector3 UpdatePositionV()
 	{
-		if (Mathf.Abs(goal.y - transform.position.y) < reachGoalThresh * MSVMult)
+		if (Mathf.Abs(hGoal.y - transform.position.y) < reachGoalThresh * MSVMult)
 			reachedVGoal = true;
 
-		float aboveOrBelow = goal.y - transform.position.y; // > 0 if goal is above, < 0 if goal is below
+		float aboveOrBelow = hGoal.y - transform.position.y; // > 0 if goal is above, < 0 if goal is below
 
 		if (!reachedVGoal)
 		{
@@ -277,9 +278,9 @@ public class UnitMovement
 	}
 
 
-	public void OrderMove(Vector3 newGoal)
+	public void SetGoal(Vector3 newGoal)
 	{
-		goal = newGoal;
+		hGoal = newGoal;
 		reachedHGoal = false;
 		reachedVGoal = false;
 	}

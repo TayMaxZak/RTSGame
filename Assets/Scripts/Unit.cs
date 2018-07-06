@@ -197,6 +197,7 @@ public class Unit : Entity
 		UpdateEffects();
 	}
 
+	// Update HPBar position and enemy/ally state
 	void UpdateHPBarPosAndVis()
 	{
 		if (!isSelected && !isHovered)
@@ -206,14 +207,19 @@ public class Unit : Entity
 			return;
 		}
 
+		// Position bar
 		Vector3 barPosition = new Vector3(transform.position.x + hpBarOffset.x, swarmTarget.position.y + hpBarOffset.y, transform.position.z + hpBarOffset.x);
 		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
 
+		// Is the bar behind us, should it be hidden?
 		float dot = Vector3.Dot((barPosition - Camera.main.transform.position).normalized, Camera.main.transform.forward);
 		if (dot < 0)
 		{
 			if (hpBar.gameObject.activeSelf)
+			{
 				hpBar.gameObject.SetActive(false);
+				return;
+			}
 		}
 		else
 		{
@@ -224,12 +230,15 @@ public class Unit : Entity
 			rect.position = new Vector2(screenPoint.x, screenPoint.y);
 			//rect.localScale = ;
 		}
+
+		UpdateHPBarAlly();
 	}
 
 	protected void UpdateHPBarVal(bool fastUpdate)
 	{
-		float max = CalcShieldPoolMax();
-		bool newValues = hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / maxArmor, CalcShieldPoolCur() / (max == 0 ? 1 : max)), isBurning);
+		int armorMax = Mathf.RoundToInt(maxArmor);
+		int shieldMax = Mathf.RoundToInt(CalcShieldPoolMax());
+		bool newValues = hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / (armorMax == 0 ? 1 : armorMax), CalcShieldPoolCur() / (shieldMax == 0 ? 1 : shieldMax)), isBurning);
 		if (fastUpdate)
 			hpBar.FastUpdate();
 
@@ -239,6 +248,15 @@ public class Unit : Entity
 			controller.UpdateStatsHP(this);
 			controller.UpdateStatsShields(this);
 		}
+	}
+
+	void UpdateHPBarAlly()
+	{
+		// Check enemy/ally state
+		if (gameManager.GetController().team == team)
+			hpBar.SetIsAlly(true);
+		else
+			hpBar.SetIsAlly(false);
 	}
 
 	void UpdateEffects()
@@ -504,7 +522,7 @@ public class Unit : Entity
 	
 	public void OrderMove(Vector3 newGoal)
 	{
-		movement.OrderMove(newGoal);
+		movement.SetGoal(newGoal);
 	}
 
 	public void OrderAttack(Unit newTarg)
@@ -779,7 +797,10 @@ public class Unit : Entity
 	{
 		base.OnHover(hovered);
 		if (hovered)
+		{
+			UpdateHPBarAlly(); // Must be done here before UpdateHPBarVal to prevent visual incongruity
 			UpdateHPBarVal(true); // Instantly update HPBar the moment this object is hovered
+		}
 		UpdateHPBarPosAndVis();
 	}
 
