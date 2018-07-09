@@ -17,7 +17,7 @@ public class GameRules
 	public float ARMrangeMax = 60f; // Range past which armor range resist is at full effect
 	public float ARMrangeMult = 0.8f; // Overall range resist multiplier
 	[Header("Health")]
-	public float HLTHthreshBurn = 0.201f; // How low does health drop before it starts automatically burning away
+	public float HLTHburnThresh = 0.201f; // How low does health drop before it starts automatically burning away
 	public float HLTHburnMin = 2; // Burn damage per second
 	public float HLTHburnMax = 3; // Burn damage per second
 	[Header("Wrecks")]

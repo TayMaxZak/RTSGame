@@ -65,6 +65,11 @@ public class Unit : Entity
 		hpBar = Instantiate(hpBarPrefab);
 	}
 
+	//public void SetHeightCurrent(int cur)
+	//{
+	//	movement.SetVCurrent(cur);
+	//}
+
 	// Use this for initialization
 	protected new void Start()
 	{
@@ -127,7 +132,7 @@ public class Unit : Entity
 		// Burning
 		if (!alwaysBurnImmune)
 		{
-			isBurning = curHealth / maxHealth <= gameRules.HLTHthreshBurn;
+			isBurning = curHealth / maxHealth <= gameRules.HLTHburnThresh;
 
 			foreach (Status s in statuses)
 				if (s.statusType == StatusType.CriticalBurnImmune)
@@ -519,30 +524,6 @@ public class Unit : Entity
 		if (updateIconB)
 			controller.UpdateStatsAbilityIconB(this, index);
 	}
-	
-	public void OrderMove(Vector3 newGoal)
-	{
-		movement.SetGoal(newGoal);
-	}
-
-	public void OrderAttack(Unit newTarg)
-	{
-		target = newTarg;
-		foreach (Turret tur in turrets)
-			tur.SetTarget(target);
-	}
-
-	public void OrderAbility(int i, AbilityTarget targ)
-	{
-		abilities[i].UseAbility(targ);
-	}
-
-	public void OrderCommandWheel(int i, AbilityTarget targ)
-	{
-		if (i == 2) // 
-			foreach (Turret tur in turrets)
-				tur.SetTarget(null);
-	}
 
 	public bool Damage(float damageBase, float range, DamageType dmgType) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
 	{
@@ -813,5 +794,41 @@ public class Unit : Entity
 	public override void LinkStats(bool detailed, Controller_Commander controller)
 	{
 		base.LinkStats(detailed, controller);
+	}
+
+
+
+	public void OrderMove(Vector3 newGoal)
+	{
+		movement.SetHGoal(newGoal);
+	}
+
+	public void OrderChangeHeight(int heightChange)
+	{
+		movement.SetVGoal(heightChange);
+	}
+
+	public int GetCurrentHeight()
+	{
+		return movement.GetVCurrent();
+	}
+
+	public void OrderAttack(Unit newTarg)
+	{
+		target = newTarg;
+		foreach (Turret tur in turrets)
+			tur.SetTarget(target);
+	}
+
+	public void OrderAbility(int i, AbilityTarget targ)
+	{
+		abilities[i].UseAbility(targ);
+	}
+
+	public void OrderCommandWheel(int i, AbilityTarget targ)
+	{
+		if (i == 2) // 
+			foreach (Turret tur in turrets)
+				tur.SetTarget(null);
 	}
 }

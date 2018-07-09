@@ -107,7 +107,7 @@ public static class EntityUtils
 				}
 			case EntityType.Frigate:
 				{
-					return "Frigate";
+					return "Minuteman";
 				}
 			case EntityType.Apollo:
 				{
@@ -120,13 +120,48 @@ public static class EntityUtils
 		}
 	}
 
+	public static string GetDisplayDesc(EntityType type)
+	{
+		switch (type)
+		{
+			default:
+				{
+					return "No data found.";
+				}
+			case EntityType.Destroyer:
+				{
+					return "The pinnacle of modern warship design, this unit is equipped with experimental superlaser weaponry and regenerating armor.";
+				}
+			case EntityType.Corvette:
+				{
+					return "A small towing unit which has been outfitted with rapid-fire energy cannons for shooting down enemy fighters.";
+				}
+			case EntityType.Flagship:
+				{
+					return "The most advanced starship ever assembled by humanity, it has its own FTL anchor for long distance exploration.";
+				}
+			case EntityType.Frigate:
+				{
+					return "A compact combat frigate which carries fighters into battle. Armed with a variety of long- and close-range weapons systems.";
+				}
+			case EntityType.Apollo:
+				{
+					return "A bodyguard unit designed to protect valuable cargo with its energy-absorbing shield projector and ship-disabling ion missiles.";
+				}
+			case EntityType.Bulkhead:
+				{
+					return "Creative fleet commanders have found that this massive chemical transport is useful for delivering metasteel to damaged ships.";
+				}
+		}
+	}
+
 	public static string GetInfoBlurb(EntityType type)
 	{
 		switch (type)
 		{
 			default:
 				{
-					return "";
+					return "No data found.";
 				}
 			case EntityType.Destroyer:
 				{

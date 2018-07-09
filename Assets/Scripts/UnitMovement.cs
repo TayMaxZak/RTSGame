@@ -47,14 +47,13 @@ public class UnitMovement
 	private float reachGoalThresh = 1; // How close to the goal position is close enough?
 	private Vector3 hGoal;
 	private int vGoal;
+	private int vCurrent;
 
 	private float deltaBias = 99999;
 
 	private AbilityTarget rotationGoal; // Set by abilities. If not null, forces the unit to face towards a different goal than the one it wants to path to
 	private bool reachedHGoal = false;
 	private bool reachedVGoal = false;
-
-
 
 	//protected Manager_Game gameManager;
 	protected GameRules gameRules;
@@ -65,12 +64,20 @@ public class UnitMovement
 		parentUnit = parent;
 		transform = parentUnit.transform;
 
-		hGoal = parentUnit.transform.position; // Path towards current location (i.e. nowhere)
+		reachedHGoal = true;
+		reachedVGoal = true;
+		vCurrent = Mathf.RoundToInt(transform.position.y);
+		//hGoal = parentUnit.transform.position; // Path towards current location (i.e. nowhere)
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
 		curRSRatio = 0;
 	}
+
+	//public void SetVCurrent(int cur)
+	//{
+	//	vCurrent = cur;
+	//}
 
 	// Banking
 	//float bank = bankAngle * -Vector3.Dot(transform.right, direction);
@@ -183,10 +190,13 @@ public class UnitMovement
 
 	Vector3 UpdatePositionV()
 	{
-		if (Mathf.Abs(hGoal.y - transform.position.y) < reachGoalThresh * MSVMult)
+		if (Mathf.Abs(vGoal - transform.position.y) < reachGoalThresh * MSVMult)
+		{
 			reachedVGoal = true;
+			vCurrent = vGoal; // vCurrent used for calculating next relative height
+		}
 
-		float aboveOrBelow = hGoal.y - transform.position.y; // > 0 if goal is above, < 0 if goal is below
+		float aboveOrBelow = vGoal - transform.position.y; // > 0 if goal is above, < 0 if goal is below
 
 		if (!reachedVGoal)
 		{
@@ -277,17 +287,26 @@ public class UnitMovement
 		return statusSpeedMult;
 	}
 
-
-	public void SetGoal(Vector3 newGoal)
+	public void SetHGoal(Vector3 newHGoal)
 	{
-		hGoal = newGoal;
+		hGoal = newHGoal;
 		reachedHGoal = false;
+	}
+
+	public void SetVGoal(int newVGoal)
+	{
+		vGoal = newVGoal;
 		reachedVGoal = false;
 	}
-	
+
 	public Vector3 GetVelocity()
 	{
 		return velocity;
+	}
+
+	public int GetVCurrent()
+	{
+		return vCurrent;
 	}
 
 	public void SetRotationGoal(AbilityTarget newGoal)

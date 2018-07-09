@@ -23,4 +23,7 @@ public class UIRules
 	[Header("Entity Stats")]
 	public float ESiconBState1Speed = 30f;
 	public float ESiconBState2Speed = -15f;
+
+	[Header("Tooltip")]
+	public float TTappearTime = 1f;
 }

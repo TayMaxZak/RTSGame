@@ -9,6 +9,8 @@ public class UI_EntityStats : MonoBehaviour
 	[SerializeField]
 	private Text nameText;
 	[SerializeField]
+	private UI_TooltipSource nameTooltip;
+	[SerializeField]
 	private RectTransform root;
 	private float rootWidth;
 
@@ -17,16 +19,24 @@ public class UI_EntityStats : MonoBehaviour
 	private Text[] healthText;
 	[SerializeField]
 	private Image healthFill;
+	[SerializeField]
+	private UI_TooltipSource healthTooltip;
+
 	[Header("Armor")]
 	[SerializeField]
 	private Text[] armorText;
 	[SerializeField]
 	private Image armorFill;
+	[SerializeField]
+	private UI_TooltipSource armorTooltip;
+
 	[Header("Shields")]
 	[SerializeField]
 	private Text[] shieldsText;
 	[SerializeField]
 	private Image shieldBkg;
+	[SerializeField]
+	private UI_TooltipSource shieldTooltip;
 
 	[Header("Ability 1")]
 	[SerializeField]
@@ -106,17 +116,26 @@ public class UI_EntityStats : MonoBehaviour
 	// Set health and armor values, which are translated into fill amounts and text numbers
 	public void SetHealthArmor(float healthCur, float healthMax, float armorCur, float armorMax)
 	{
-		float healthRatio = healthCur / (healthMax != 0 ? healthMax : 1);
+		float healthRatio = healthCur / (Mathf.RoundToInt(healthMax) != 0 ? healthMax : 1);
 		healthFill.rectTransform.sizeDelta = new Vector2((1 - healthRatio) * -rootWidth, healthFill.rectTransform.sizeDelta.y);
-		//healthText.text = (int)healthCur + "/" + (int)healthMax;
+
 		foreach (Text text in healthText)
 			text.text = StringFromFloat(healthCur) + "/" + StringFromFloat(healthMax);
 
-		float armorRatio = armorCur / (armorMax != 0 ? armorMax : 1);
+		// Tooltip
+		healthTooltip.SetText(string.Format("Burn threshold: {0:0.0}\nIf health drops below this threshold, it will start taking {1:0} damage over every 10 seconds.", healthMax * gameRules.HLTHburnThresh, (gameRules.HLTHburnMin + gameRules.HLTHburnMax) * 5));
+
+
+		float armorRatio = armorCur / (Mathf.RoundToInt(armorMax) != 0 ? armorMax : 1);
 		armorFill.rectTransform.sizeDelta = new Vector2((1 - armorRatio) * -rootWidth, armorFill.rectTransform.sizeDelta.y);
-		//armorText.text = (int)armorCur + "/" + (int)armorMax;
+
 		foreach (Text text in armorText)
 			text.text = StringFromFloat(armorCur) + "/" + StringFromFloat(armorMax);
+
+		//Tooltip
+		armorTooltip.SetText(Mathf.RoundToInt(armorMax) != 0 ?
+			 string.Format("Absorption limit: {0:0.0}\nCan take up to {0:0.0} damage in one shot before letting excess damage through to health.", (armorCur / armorMax) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat) :
+			"This unit has no armor.");
 	}
 
 	// Set visibility of the shield icon and set text number to be displayed next to the shield icon
@@ -129,16 +148,21 @@ public class UI_EntityStats : MonoBehaviour
 
 		foreach (Text text in shieldsText)
 			text.text = StringFromFloat(shieldsCur) + "/" + StringFromFloat(shieldsMax);
+
+		shieldTooltip.SetText(Mathf.RoundToInt(shieldsMax) != 0 ?
+			 string.Format("Current shield pool: {0:0.0} / {0:0.0}\nShields take damage before this unit's health pool and regenerate over time.", shieldsCur, shieldsMax) :
+			"This unit has no shields.");
 	}
 
 	// Set name to be displayed as the title of the EntityStats panel
-	public void SetDisplayName(string name)
+	public void SetDisplayEntity(EntityType type)
 	{
-		nameText.text = name.ToUpper();
+		nameText.text = EntityUtils.GetDisplayName(type).ToUpper();
+		nameTooltip.SetText(EntityUtils.GetDisplayDesc(type));
 	}
 
 	// Set what image is displayed for each ability slot
-	public void SetAbilityIcons(AbilityType[] abilities)
+	public void SetAbilityIconsAndInfo(AbilityType[] abilities)
 	{	
 		if (abilities.Length == 0)
 		{
@@ -149,6 +173,7 @@ public class UI_EntityStats : MonoBehaviour
 		{
 			ability1Bkg.gameObject.SetActive(true);
 			ability1Icon.sprite = AbilityUtils.GetDisplayIcon(abilities[0]);
+			ability1Bkg.GetComponent<UI_TooltipSource>().SetText(AbilityUtils.GetDisplayName(abilities[0]) + "\n" + AbilityUtils.GetDisplayDesc(abilities[0]));
 
 			ability2Bkg.gameObject.SetActive(false);
 		}
@@ -156,9 +181,11 @@ public class UI_EntityStats : MonoBehaviour
 		{
 			ability1Bkg.gameObject.SetActive(true);
 			ability1Icon.sprite = AbilityUtils.GetDisplayIcon(abilities[0]);
+			ability1Bkg.GetComponent<UI_TooltipSource>().SetText(AbilityUtils.GetDisplayName(abilities[0]) + "\n" + AbilityUtils.GetDisplayDesc(abilities[0]));
 
 			ability2Bkg.gameObject.SetActive(true);
 			ability2Icon.sprite = AbilityUtils.GetDisplayIcon(abilities[1]);
+			ability2Bkg.GetComponent<UI_TooltipSource>().SetText(AbilityUtils.GetDisplayName(abilities[1]) + "\n" + AbilityUtils.GetDisplayDesc(abilities[1]));
 		}
 	}
 
@@ -232,6 +259,46 @@ public class UI_EntityStats : MonoBehaviour
 		}
 	}
 
+	public void SetStatuses(List<Status> statuses)
+	{
+		// Loop through all statuses
+		List<StatusType> displayedStatuses = new List<StatusType>();
+
+		int swarmResistCount = 0;
+		foreach (Status s in statuses)
+		{
+			// Only display a relevant number of SwarmResist icons
+			if (s.statusType == StatusType.SwarmResist)
+			{
+				swarmResistCount++;
+				if (swarmResistCount > gameRules.STATswarmResistMaxStacks)
+					continue;
+			}
+
+			if (StatusUtils.ShouldDisplay(s.statusType))
+				displayedStatuses.Add(s.statusType);
+		}
+
+		// For each status icon, enable or disable, apply colors, and set inner icon
+		for (int i = 0; i < statusBkgs.Length; i++)
+		{
+			if (i < displayedStatuses.Count)
+			{
+				statusBkgs[i].gameObject.SetActive(true);
+
+				Color[] colors = StatusUtils.GetDisplayColors(displayedStatuses[i]);
+				statusBkgs[i].color = colors[0];
+				statusBkgs[i].GetComponent<UI_TooltipSource>().SetText(StatusUtils.GetDisplayName(displayedStatuses[i]) + "\n" + StatusUtils.GetDisplayDesc(displayedStatuses[i]));
+
+				Image icon = statusBkgs[i].GetComponentsInChildren<Image>()[1];
+				icon.color = colors[1];
+				icon.sprite = StatusUtils.GetDisplayIcon(displayedStatuses[i]);
+			}
+			else
+				statusBkgs[i].gameObject.SetActive(false);
+		}
+	}
+
 	string StringFromFloat(float number)
 	{
 		int val = Mathf.CeilToInt(number);
@@ -266,43 +333,4 @@ public class UI_EntityStats : MonoBehaviour
 		}
 	}
 	*/
-
-	public void SetStatuses(List<Status> statuses)
-	{
-		// Loop through all statuses
-		List<StatusType> displayedStatuses = new List<StatusType>();
-
-		int swarmResistCount = 0;
-		foreach (Status s in statuses)
-		{
-			// Only display a relevant number of SwarmResist icons
-			if (s.statusType == StatusType.SwarmResist)
-			{
-				swarmResistCount++;
-				if (swarmResistCount > gameRules.STATswarmResistMaxStacks)
-					continue;
-			}
-
-			if (StatusUtils.ShouldDisplay(s.statusType))
-				displayedStatuses.Add(s.statusType);
-		}
-
-		// For each status icon, enable or disable, apply colors, and set inner icon
-		for (int i = 0; i < statusBkgs.Length; i++)
-		{
-			if (i < displayedStatuses.Count)
-			{
-				statusBkgs[i].gameObject.SetActive(true);
-
-				Color[] colors = StatusUtils.GetDisplayColors(displayedStatuses[i]);
-				statusBkgs[i].color = colors[0];
-
-				Image icon = statusBkgs[i].GetComponentsInChildren<Image>()[1];
-				icon.color = colors[1];
-				icon.sprite = StatusUtils.GetDisplayIcon(displayedStatuses[i]);
-			}
-			else
-				statusBkgs[i].gameObject.SetActive(false);
-		}
-	}
 }

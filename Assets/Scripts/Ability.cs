@@ -220,9 +220,9 @@ public static class AbilityUtils
 			case AbilityType.ArmorDrain:
 				return "Armor Well";
 			case AbilityType.SpawnSwarm:
-				return "Deploy Fighters";
+				return "Launch Fighters";
 			case AbilityType.MoveSwarm:
-				return "Order Fighters";
+				return "Move Fighters";
 			case AbilityType.ShieldProject:
 				return "Project Shield";
 			case AbilityType.HealField:
@@ -230,7 +230,31 @@ public static class AbilityUtils
 			case AbilityType.Chain:
 				return "Gravity Chain";
 			case AbilityType.Superlaser:
-				return "Hellrazor";
+				return "Hellrazor Superlaser";
+			default:
+				return "default";
+		}
+	}
+
+	// Display name of ability
+	public static string GetDisplayDesc(AbilityType type)
+	{
+		switch (type)
+		{
+			case AbilityType.ArmorDrain:
+				return "Gradually drains armor from nearby enemy and allied units.";
+			case AbilityType.SpawnSwarm:
+				return "Deploys new fighters and moves them to the target. Limited uses.";
+			case AbilityType.MoveSwarm:
+				return "Fighters will follow the target, either protecting or attacking it.";
+			case AbilityType.ShieldProject:
+				return "Covers the target allied unit in a destructible shield.";
+			case AbilityType.HealField:
+				return "Temporarily borrows resources to create a health repair field around this unit.";
+			case AbilityType.Chain:
+				return "Attaches to a target, pulling it wherever this unit goes.";
+			case AbilityType.Superlaser:
+				return "Collects charges for every kill. Firing requires at least 1 charge, dealing massive damage to the target.";
 			default:
 				return "default";
 		}

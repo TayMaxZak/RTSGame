@@ -101,9 +101,26 @@ public static class StatusUtils
 			case StatusType.CriticalBurnImmune:
 				return "Burn Immune";
 			case StatusType.SpawnSwarmSpeedNerf:
-				return "Hangars open, engines on low power";
+				return "Hangars Open";
 			case StatusType.SuperlaserMark:
 				return "Hellrazor Mark";
+			default:
+				return "default";
+		}
+	}
+
+	public static string GetDisplayDesc(StatusType statType)
+	{
+		switch (statType)
+		{
+			case StatusType.SwarmResist:
+				return "Allied fighters will absorb some of all incoming damage and guard this unit from enemy fighters.";
+			case StatusType.CriticalBurnImmune:
+				return "Even if this unit's health is below the burn threshold, it will not take burn damage over time.";
+			case StatusType.SpawnSwarmSpeedNerf:
+				return "Once all fighters have been deployed, hangars will close and engines will return to full power.";
+			case StatusType.SuperlaserMark:
+				return "Marked for reactor radiation collection by an enemy Hellrazor cannon.";
 			default:
 				return "default";
 		}

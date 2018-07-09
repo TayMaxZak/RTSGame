@@ -104,6 +104,11 @@ public class UI_BuildButton : MonoBehaviour
 		UpdateInteractable();
 	}
 
+	public void SetTooltip(string tooltip)
+	{
+		button.GetComponent<UI_TooltipSource>().SetText(tooltip);
+	}
+
 	bool ButtonInteractable()
 	{
 		for (int i = 0; i < interactable.Length; i++)

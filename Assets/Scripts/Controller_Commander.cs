@@ -26,6 +26,7 @@ public class Controller_Commander : MonoBehaviour
 	private GameObject buildPreview;
 	private List<GameObject> pendingBuilds;
 
+	private int heightState; // 0 = standby, 1 = changing
 	private int buildState; // 0 = standby, 1 = moving preview, 2 = rotating preview
 
 	[Header("Sound")]
@@ -39,12 +40,19 @@ public class Controller_Commander : MonoBehaviour
 	private GameObject clickEffect;
 	private float clickRayLength = 1000;
 
-	[Header("Grids")]
+	[Header("Heights")]
 	[SerializeField]
-	private GameObject[] grids;
+	private Effect_Line lineMouse;
 	[SerializeField]
-	private int defaultGrid = 1;
-	private int curGrid;
+	private Effect_Line lineVert;
+	[SerializeField]
+	private GameObject movementGrid;
+	[SerializeField]
+	private int heightSpacing = 10;
+	[SerializeField]
+	private int heightMinNum = -5; // TODO
+	[SerializeField]
+	private int heightMaxNum = 5; // TODO
 
 	private List<Entity> selection;
 	private Entity currentHoveredEntity;
@@ -66,12 +74,10 @@ public class Controller_Commander : MonoBehaviour
 		selection = new List<Entity>();
 		Select(null, false);
 
-		curGrid = defaultGrid;
-		foreach (GameObject go in grids)
-			go.SetActive(false);
-		UpdateGrid(curGrid);
-
 		audioSource = GetComponent<AudioSource>();
+
+		lineMouse.SetEffectActive(0);
+		lineVert.SetEffectActive(0);
 	}
 
 	void SetCommander(Commander newCommander)
@@ -119,7 +125,7 @@ public class Controller_Commander : MonoBehaviour
 				{
 					e.OnSelect(false);
 					selection.RemoveAt(i);
-					ShowHideStatsBuildButtons();
+					SelectionChanged();
 					return;
 				}
 			}
@@ -130,7 +136,7 @@ public class Controller_Commander : MonoBehaviour
 
 			newSel.OnSelect(true);
 			selection.Add(newSel);
-			ShowHideStatsBuildButtons();
+			SelectionChanged();
 		}
 		else
 		{
@@ -151,10 +157,46 @@ public class Controller_Commander : MonoBehaviour
 			{
 				newSel.OnSelect(true);
 				selection.Add(newSel);
-				ShowHideStatsBuildButtons();
+				SelectionChanged();
 			}
 			else
-				ShowHideStatsBuildButtons();
+				SelectionChanged();
+		}
+	}
+
+	void SelectionChanged()
+	{
+		//UpdateMovementGrid();
+		ShowHideStatsBuildButtons();
+	}
+
+	void UpdateMovementGrid()
+	{
+		if (buildState < 2)
+		{
+			float pos = 0;
+			int unitCount = 0;
+
+			foreach (Entity e in selection)
+			{
+				if (IsUnit(e))
+				{
+					pos += e.transform.position.y;
+					unitCount++;
+				}
+			}
+
+			if (unitCount > 0)
+			{
+				pos /= unitCount;
+				movementGrid.transform.position = new Vector3(0, pos, 0); // TODO: Should grid be centered somewhere other than the origin?
+			}
+			else
+				movementGrid.transform.position = Vector3.zero;
+		}
+		else
+		{
+			movementGrid.transform.position = new Vector3(0, buildPreview.transform.position.y, 0); // TODO: Should grid be centered somewhere other than the origin?
 		}
 	}
 
@@ -267,15 +309,22 @@ public class Controller_Commander : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		UpdateMovementGrid();
 		UpdateInput();
 	}
 
 	void UpdateInput()
 	{
+		// Modifier keys
 		bool control = false;
 		if (Input.GetButton("Control"))
 		{
 			control = true;
+		}
+
+		if (heightState == 0 && Input.GetButtonDown("Shift"))
+		{
+			heightState = 1;
 		}
 
 		// Cursor position code
@@ -284,8 +333,10 @@ public class Controller_Commander : MonoBehaviour
 		{
 			RaycastHit hit = RaycastFromCursor(0);
 			Entity ent = GetEntityFromHit(hit);
+			// Hovering an entity
 			if (ent)
 			{
+				// New hovered entity
 				if (currentHoveredEntity != ent)
 				{
 					if (currentHoveredEntity)
@@ -294,11 +345,40 @@ public class Controller_Commander : MonoBehaviour
 					currentHoveredEntity = ent;
 				}
 			}
+			// Stopped hovering an entity
 			else if (currentHoveredEntity)
 			{
 				currentHoveredEntity.OnHover(false);
 				currentHoveredEntity = null;
 			}
+
+			if (heightState == 1)
+			{
+				if (selection.Count == 1 && IsUnit(selection[0]))
+				{
+					Vector3 mousePos = Input.mousePosition;
+					Unit u = (Unit)selection[0];
+					float selPos = Camera.main.WorldToScreenPoint(u.transform.position).y;
+					int upOrDown = 0;
+					if (selPos < mousePos.y) // Greater Y is lower on screen
+						upOrDown = 1;
+					else
+						upOrDown = -1;
+
+					int curGrid = (u.GetCurrentHeight()) / heightSpacing;
+					int newGridHeight = (curGrid + upOrDown) * heightSpacing;
+
+					Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 20));
+					lineMouse.SetEffectActive(1, u.transform.position, worldPoint);
+					lineVert.SetEffectActive(1, u.transform.position, new Vector3(u.transform.position.x, newGridHeight, u.transform.position.z));
+
+					if (Input.GetButtonUp("Shift"))
+					{
+						u.OrderChangeHeight(newGridHeight);
+						HeightCancel(); // Finish height change
+					}
+				}
+			} // heightState
 		}
 		else if (buildState == 1)
 		{
@@ -308,6 +388,7 @@ public class Controller_Commander : MonoBehaviour
 				// From the flagship (selection), find a position within the spawning radius which is closest to our preview position
 				Vector3 dif = Vector3.ClampMagnitude(hit.point - selection[0].transform.position, gameRules.SPWNflagshipRadius);
 				Vector3 pos = selection[0].transform.position + dif;
+				pos.y = HeightSnap(pos.y);
 
 				buildPreview.transform.position = pos;
 				if (!buildPreview.activeSelf)
@@ -330,11 +411,14 @@ public class Controller_Commander : MonoBehaviour
 			RaycastHit hit = RaycastFromCursor(1);
 			if (hit.collider && !GetEntityFromHit(hit))
 			{
-				buildPreview.transform.LookAt(hit.point);
+				Vector3 point = hit.point;
+				point.y = buildPreview.transform.position.y;
+				buildPreview.transform.LookAt(point);
 			}
 		}
 
 		// Clicking
+		// Left mouse button
 		if (Input.GetMouseButtonDown(0))
 		{
 			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
@@ -343,6 +427,8 @@ public class Controller_Commander : MonoBehaviour
 				Entity ent = GetEntityFromHit(hit);
 				if (buildState == 0) // Normal select mode
 				{
+					if (heightState > 0)
+						HeightCancel();
 					if (control)
 					{
 						if (ent)
@@ -380,12 +466,22 @@ public class Controller_Commander : MonoBehaviour
 			}
 		} //lmb up
 
+		// Right mouse button
 		if (Input.GetMouseButtonDown(1))
 		{
 			if (!EventSystem.current.IsPointerOverGameObject()) // Right clicks should not do anything if we are over UI, regardless of clicking on grid or not
 			{
-				if (buildState > 0)
-					BuildCancel();
+				if (buildState > 0 || heightState > 0) // Cancel build or eight change without ordering anything to the selection
+				{
+					if (buildState > 0)
+					{
+						BuildCancel();
+					}
+					else if (heightState > 0)
+					{
+						HeightCancel();
+					}
+				}
 				else if (HasSelection())
 				{
 					RaycastHit hit = RaycastFromCursor(2);
@@ -400,20 +496,6 @@ public class Controller_Commander : MonoBehaviour
 				} //selected
 			}
 		} //rmb
-
-		// Raise/lower grid
-		if (Input.GetButtonDown("RaiseGrid"))
-		{
-			UpdateGrid(Mathf.Clamp(curGrid + 1, 0, grids.Length - 1));
-		}
-		else if (Input.GetButtonDown("LowerGrid"))
-		{
-			UpdateGrid(Mathf.Clamp(curGrid - 1, 0, grids.Length - 1));
-		}
-		else if (Input.GetButtonDown("DefaultGrid"))
-		{
-			UpdateGrid(defaultGrid);
-		}
 
 		// Abilities
 		if (Input.GetButtonDown("Ability1"))
@@ -446,6 +528,21 @@ public class Controller_Commander : MonoBehaviour
 					SetTeam(0);
 			}
 		}
+	}
+
+	public int HeightSnap(float org)
+	{
+		float newVal = org / heightSpacing;
+		int newInt = Mathf.RoundToInt(newVal);
+		return newInt * heightSpacing;
+	}
+
+	void HeightCancel()
+	{
+		lineMouse.SetEffectActive(0);
+		lineVert.SetEffectActive(0);
+
+		heightState = 0;
 	}
 
 	void UseAbility(int index)
@@ -535,13 +632,6 @@ public class Controller_Commander : MonoBehaviour
 		}
 	}
 
-	void UpdateGrid(int newGrid)
-	{
-		grids[curGrid].SetActive(false);
-		curGrid = newGrid;
-		grids[curGrid].SetActive(true);
-	}
-
 	void ShowHideStatsBuildButtons()
 	{
 		// If we updated our selection and only one Entity is left selected,
@@ -628,14 +718,14 @@ public class Controller_Commander : MonoBehaviour
 		{
 			abilityCounter.Add(a.GetAbilityType());
 		}
-		entityStats.SetAbilityIcons(abilityCounter.ToArray());
+		entityStats.SetAbilityIconsAndInfo(abilityCounter.ToArray());
 		for (int i = 0; i < who.abilities.Count; i++)
 		{
 			UpdateStatsAbility(who, i, true);
 			UpdateStatsAbilityIconB(who, i);
 		}
 
-		entityStats.SetDisplayName(EntityUtils.GetDisplayName(who.Type));
+		entityStats.SetDisplayEntity(who.Type);
 
 		UpdateStatsHP(who);
 		UpdateStatsShields(who);
@@ -699,7 +789,6 @@ public class Controller_Commander : MonoBehaviour
 		entityStats.SetStatuses(statuses);
 	}
 
-
 	public void UpdateResourceAmounts(int resPoints, int reclaimPoints)
 	{
 		resPointsCounter.UpdateResCounter(resPoints, reclaimPoints);
@@ -730,6 +819,7 @@ public class Controller_Commander : MonoBehaviour
 			buildButtons[i].SetIndex(i);
 			buildButtons[i].SetCost();
 			buildButtons[i].SetCounter(buildUnitCounters[i]);
+			buildButtons[i].SetTooltip(EntityUtils.GetDisplayDesc(commander.GetBuildUnit(i).type));
 		}
 	}
 

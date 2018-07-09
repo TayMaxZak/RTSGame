@@ -14,7 +14,12 @@ public class Effect_Line : MonoBehaviour
 		SetEffectActive(state, Vector3.zero, Vector3.zero);
 	}
 
-		public void SetEffectActive(int state, Vector3 start, Vector3 end)
+	public void SetEffectActive(Vector3 start, Vector3 end)
+	{
+		SetEffectActive(1, Vector3.zero, Vector3.zero);
+	} //SetEffectActive
+
+	public void SetEffectActive(int state, Vector3 start, Vector3 end)
 	{
 		if (state == 1)
 		{

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BuildUnit : MonoBehaviour
 {
-	//[SerializeField]
+	public EntityType type;
 	public GameObject previewObject;
 	public GameObject spawnObject;
 	public int cost;

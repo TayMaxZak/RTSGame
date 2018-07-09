@@ -35,7 +35,7 @@ public class Commander : MonoBehaviour
 		reclaimTimer = gameRules.RESreclaimTime; // Don't start at 0. This way the first reclaimPoint will take time to reclaim
 	}
 
-	public void InitUI()
+	public void InitUI() // TODO: Do differently
 	{
 		Controller_InitBuildButtons(); // Initialize UI through our controller
 		Controller_UpdateResourceAmounts(); // Initualize UI through our controller

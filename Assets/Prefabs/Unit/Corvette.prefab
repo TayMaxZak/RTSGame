@@ -1829,12 +1829,12 @@ MonoBehaviour:
   shootOffsetRatio: 0
   RS: 800
   baseRotatesOnY: 0
-  pivotY: {fileID: 4178511920378218}
   pivotX: {fileID: 4821749778405516}
+  pivotY: {fileID: 4178511920378218}
   maxH: 90
   minH: 95
-  maxV: 180
   minV: 0
+  maxV: 180
 --- !u!114 &114088720234087204
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1875,7 +1875,7 @@ MonoBehaviour:
     RS: 60
     RSAccel: 1
     allowMoveThresh: 0.6
-    reachGoalThresh: 1.5
+    reachGoalThresh: 3
 --- !u!114 &114165545472820334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1970,12 +1970,12 @@ MonoBehaviour:
   shootOffsetRatio: 0
   RS: 800
   baseRotatesOnY: 0
-  pivotY: {fileID: 4069287876586250}
   pivotX: {fileID: 4071539184535878}
+  pivotY: {fileID: 4069287876586250}
   maxH: 95
   minH: 90
-  maxV: 180
   minV: 0
+  maxV: 180
 --- !u!114 &114737544698993638
 MonoBehaviour:
   m_ObjectHideFlags: 1

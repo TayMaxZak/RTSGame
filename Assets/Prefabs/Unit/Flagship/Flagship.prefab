@@ -288,4 +288,4 @@ MonoBehaviour:
     RS: 5
     RSAccel: 3
     allowMoveThresh: 0.3
-    reachGoalThresh: 11.75
+    reachGoalThresh: 6.2

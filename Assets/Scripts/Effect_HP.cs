@@ -32,7 +32,7 @@ public class Effect_HP : MonoBehaviour
 
 	void Start()
 	{
-		fireThresh = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules.HLTHthreshBurn;
+		fireThresh = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules.HLTHburnThresh;
 
 		smokePSystems = new List<ParticleSystem>();
 		firePSystems = new List<ParticleSystem>();
