@@ -113,8 +113,12 @@ public class UI_EntityStats : MonoBehaviour
 			ability2IconB.transform.rotation = Quaternion.identity;
 	}
 
-	// Set health and armor values, which are translated into fill amounts and text numbers
 	public void SetHealthArmor(float healthCur, float healthMax, float armorCur, float armorMax)
+	{
+		SetHealthArmor(healthCur, healthMax, armorCur, armorMax, true);
+	}
+	// Set health and armor values, which are translated into fill amounts and text numbers
+	public void SetHealthArmor(float healthCur, float healthMax, float armorCur, float armorMax, bool burnPossible)
 	{
 		float healthRatio = healthCur / (Mathf.RoundToInt(healthMax) != 0 ? healthMax : 1);
 		healthFill.rectTransform.sizeDelta = new Vector2((1 - healthRatio) * -rootWidth, healthFill.rectTransform.sizeDelta.y);
@@ -123,7 +127,8 @@ public class UI_EntityStats : MonoBehaviour
 			text.text = StringFromFloat(healthCur) + "/" + StringFromFloat(healthMax);
 
 		// Tooltip
-		healthTooltip.SetText(string.Format("Burn threshold: {0:0.0}\nIf health drops below this threshold, it will start taking {1:0} damage over every 10 seconds.", healthMax * gameRules.HLTHburnThresh, (gameRules.HLTHburnMin + gameRules.HLTHburnMax) * 5));
+		healthTooltip.SetText(!burnPossible ? "Burn Immune\nEven if this unit's health is below the burn threshold, it will not take burn damage over time." : 
+			string.Format("Burn threshold: {0:0}\nIf health drops below this threshold, it will start taking {1:0} damage over every 10 seconds.", healthMax * gameRules.HLTHburnThresh, (gameRules.HLTHburnMin + gameRules.HLTHburnMax) * 5));
 
 
 		float armorRatio = armorCur / (Mathf.RoundToInt(armorMax) != 0 ? armorMax : 1);
@@ -132,10 +137,12 @@ public class UI_EntityStats : MonoBehaviour
 		foreach (Text text in armorText)
 			text.text = StringFromFloat(armorCur) + "/" + StringFromFloat(armorMax);
 
+		string armorToolotipText = Mathf.RoundToInt(armorMax) == 0 ? "This unit has no armor." : 
+			Mathf.FloorToInt(armorCur) < gameRules.ABLYarmorDrainGPS * 2 ? "Armor has been destroyed." : 
+			string.Format("Absorption limit: {0:0.0}\nCan take up to {0:0.0} damage in one shot before letting excess damage through to health.", (armorCur / armorMax) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat);
+
 		//Tooltip
-		armorTooltip.SetText(Mathf.RoundToInt(armorMax) != 0 ?
-			 string.Format("Absorption limit: {0:0.0}\nCan take up to {0:0.0} damage in one shot before letting excess damage through to health.", (armorCur / armorMax) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat) :
-			"This unit has no armor.");
+		armorTooltip.SetText(armorToolotipText);
 	}
 
 	// Set visibility of the shield icon and set text number to be displayed next to the shield icon

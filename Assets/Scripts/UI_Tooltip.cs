@@ -13,6 +13,10 @@ public class UI_Tooltip : MonoBehaviour
 	private RectTransform root; // Used to hide
 	//private float rootWidth;
 
+	[Header("Audio")]
+	[SerializeField]
+	private AudioSource tooltipAudio;
+
 	//[SerializeField]
 	//private Image borderFill;
 
@@ -23,6 +27,8 @@ public class UI_Tooltip : MonoBehaviour
 	private float timer = 0;
 
 	private Vector3 initialPosition;
+
+	
 
 	void Awake()
 	{
@@ -70,6 +76,8 @@ public class UI_Tooltip : MonoBehaviour
 						else
 						{
 							timer = 0;
+							tooltipAudio.pitch = 1 + RandomValue() * uiRules.TTaudioPitchVariance;
+							tooltipAudio.Play();
 							current = src;
 						}
 					}
@@ -86,7 +94,9 @@ public class UI_Tooltip : MonoBehaviour
 	void SetActive(bool state)
 	{
 		if (state && !root.gameObject.activeSelf)
+		{
 			root.gameObject.SetActive(true);
+		}
 		else if (!state && root.gameObject.activeSelf)
 			root.gameObject.SetActive(false);
 	}
@@ -99,5 +109,10 @@ public class UI_Tooltip : MonoBehaviour
 	public void ResetPosition()
 	{
 		root.position = initialPosition;
+	}
+
+	float RandomValue()
+	{
+		return Random.value * 2 - 1;
 	}
 }

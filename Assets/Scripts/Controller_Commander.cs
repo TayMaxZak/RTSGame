@@ -742,7 +742,7 @@ public class Controller_Commander : MonoBehaviour
 	public void UpdateStatsHP(Unit who)
 	{
 		Vector4 healthArmor = who.GetHP();
-		entityStats.SetHealthArmor(healthArmor.x, healthArmor.y, healthArmor.z, healthArmor.w);
+		entityStats.SetHealthArmor(healthArmor.x, healthArmor.y, healthArmor.z, healthArmor.w, !who.alwaysBurnImmune);
 	}
 
 	// Update visibility of shield status and number for shield counter
@@ -800,6 +800,11 @@ public class Controller_Commander : MonoBehaviour
 	public void UpdateResourceTime(float reclaimTimer)
 	{
 		resPointsCounter.UpdateTime(1.0f - (reclaimTimer / gameRules.RESreclaimTime));
+	}
+
+	public void UpdateResourceAudio(float timer)
+	{
+		resPointsCounter.PlayReclaimAudio(timer);
 	}
 
 	public void UpdateBuildButtonInteract()

@@ -26,4 +26,5 @@ public class UIRules
 
 	[Header("Tooltip")]
 	public float TTappearTime = 1f;
+	public float TTaudioPitchVariance = 0.02f;
 }

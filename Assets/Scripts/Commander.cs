@@ -39,6 +39,7 @@ public class Commander : MonoBehaviour
 	{
 		Controller_InitBuildButtons(); // Initialize UI through our controller
 		Controller_UpdateResourceAmounts(); // Initualize UI through our controller
+		Controller_UpdateResourceTime(true); // Initualize UI through our controller
 	}
 
 	public void SetController(Controller_Commander newController)
@@ -58,7 +59,8 @@ public class Commander : MonoBehaviour
 		if (reclaimPoints > 0)
 		{
 			reclaimTimer -= Time.deltaTime;
-			Controller_UpdateResourceTime();
+			Controller_UpdateResourceTime(false);
+			Controller_UpdateResourceAudio(reclaimTimer);
 
 			if (reclaimTimer <= 0)
 			{
@@ -81,10 +83,17 @@ public class Commander : MonoBehaviour
 	}
 
 	// Pass updated information to our controller
-	void Controller_UpdateResourceTime()
+	void Controller_UpdateResourceTime(bool init)
 	{
 		if (controller)
-			controller.UpdateResourceTime(reclaimTimer);
+			controller.UpdateResourceTime(init ? 0 : reclaimTimer);
+	}
+
+	// Play audio through our controller
+	void Controller_UpdateResourceAudio(float timer)
+	{
+		if (controller)
+			controller.UpdateResourceAudio(timer);
 	}
 
 	// Initialize building UI according to this Commander

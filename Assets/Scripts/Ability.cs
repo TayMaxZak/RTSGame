@@ -248,7 +248,7 @@ public static class AbilityUtils
 			case AbilityType.MoveSwarm:
 				return "Fighters will follow the target, either protecting or attacking it.";
 			case AbilityType.ShieldProject:
-				return "Covers the target allied unit in a destructible shield.";
+				return "Covers the target allied unit in a destructible shield. Cannot shield itself.";
 			case AbilityType.HealField:
 				return "Temporarily borrows resources to create a health repair field around this unit.";
 			case AbilityType.Chain:

@@ -107,7 +107,7 @@ public static class EntityUtils
 				}
 			case EntityType.Frigate:
 				{
-					return "Minuteman";
+					return "Carrier";
 				}
 			case EntityType.Apollo:
 				{
