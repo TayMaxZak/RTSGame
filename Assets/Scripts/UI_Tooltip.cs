@@ -10,7 +10,7 @@ public class UI_Tooltip : MonoBehaviour
 	[SerializeField]
 	private Text text;
 	[SerializeField]
-	private RectTransform root; // Used to hide
+	private RectTransform tooltipRoot; // Used to hide
 	//private float rootWidth;
 
 	[Header("Audio")]
@@ -34,7 +34,7 @@ public class UI_Tooltip : MonoBehaviour
 	{
 		uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
 
-		initialPosition = root.position;
+		initialPosition = tooltipRoot.position;
 	}
 
 	//void Start()
@@ -48,6 +48,11 @@ public class UI_Tooltip : MonoBehaviour
 		{
 			SetActive(true);
 			text.text = current.GetText();
+			RectTransform rect = current.GetRect();
+			if (rect)
+				SetPosition(rect);
+			else
+				ResetPosition();
 		}
 		else
 		{
@@ -93,22 +98,25 @@ public class UI_Tooltip : MonoBehaviour
 
 	void SetActive(bool state)
 	{
-		if (state && !root.gameObject.activeSelf)
+		if (state && !tooltipRoot.gameObject.activeSelf)
 		{
-			root.gameObject.SetActive(true);
+			tooltipRoot.gameObject.SetActive(true);
 		}
-		else if (!state && root.gameObject.activeSelf)
-			root.gameObject.SetActive(false);
+		else if (!state && tooltipRoot.gameObject.activeSelf)
+			tooltipRoot.gameObject.SetActive(false);
 	}
 
-	public void SetPosition(Vector3 pos)
+	public void SetPosition(RectTransform rect)
 	{
-		root.position = pos;
+		tooltipRoot.position = rect.position;
+		//tooltipRoot.SetParent(rect);
+		//tooltipRoot.anchoredPosition = Vector2.zero;
+		//tooltipRoot.SetParent(transform); // Reset parent
 	}
 
 	public void ResetPosition()
 	{
-		root.position = initialPosition;
+		tooltipRoot.position = initialPosition;
 	}
 
 	float RandomValue()

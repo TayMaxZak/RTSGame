@@ -103,7 +103,7 @@ public static class EntityUtils
 				}
 			case EntityType.Flagship:
 				{
-					return "Flagship";
+					return "Capital Ship";
 				}
 			case EntityType.Frigate:
 				{

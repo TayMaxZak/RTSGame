@@ -252,7 +252,7 @@ public static class AbilityUtils
 			case AbilityType.HealField:
 				return "Temporarily borrows resources to create a health repair field around this unit.";
 			case AbilityType.Chain:
-				return "Attaches to a target, pulling it wherever this unit goes.";
+				return "Attaches to the target, pulling it wherever this unit goes.";
 			case AbilityType.Superlaser:
 				return "Collects charges for every kill. Firing requires at least 1 charge, dealing massive damage to the target.";
 			default:

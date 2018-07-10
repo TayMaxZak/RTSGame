@@ -8,6 +8,9 @@ public class UI_TooltipSource : MonoBehaviour
 {
 	//[SerializeField]
 	//private string defaultText = "";
+	[SerializeField]
+	private RectTransform position;
+	
 	private string displayText;
 
 	//void Awake()
@@ -15,6 +18,11 @@ public class UI_TooltipSource : MonoBehaviour
 	//	if (defaultText.Length > 0)
 	//		displayText = defaultText;
 	//}
+
+	public RectTransform GetRect()
+	{
+		return position;
+	}
 
 	public string GetText()
 	{

@@ -150,14 +150,15 @@ public class Turret : MonoBehaviour
 		Rotate(difference.normalized);
 	}
 
+	// TODO: Consolidate conditions which appear in both attempt shot and start shooting
 	void StartShooting()
 	{
-		if (!targetInRange) // Don't start shooting while out of range
+		if (isShooting) // Don't start shooting if we are already shooting
 		{
 			return;
 		}
 
-		if (isShooting) // Don't start shooting if we are already shooting
+		if (!targetInRange) // Don't start shooting while out of range
 		{
 			return;
 		}
@@ -182,6 +183,9 @@ public class Turret : MonoBehaviour
 		{
 			return;
 		}
+
+		// Is our line of fire blocked by an allied unit?
+
 
 		isShooting = true;
 		StartCoroutine(CoroutineToggleFiringAudio(true, shootOffset)); // Start firing audio loop
@@ -258,6 +262,8 @@ public class Turret : MonoBehaviour
 			ToggleFiringAudio(false); // Stop firing audio loop
 			return;
 		}
+
+
 
 		StartCoroutine(CoroutineShoot(delay));
 	}
