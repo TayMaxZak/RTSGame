@@ -277,7 +277,7 @@ MonoBehaviour:
     useTestValues: 1
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
-    TESTinitHPMult: 0.25
+    TESTinitHPMult: 1
     ARMabsorbFlat: 5
     ARMabsorbMax: 15
     ARMrangeMin: 30
@@ -300,7 +300,8 @@ MonoBehaviour:
     AUDpitchVariance: 0.05
     PRJmaxTimeAlive: 5
     PRJhitOffset: 0.05
-    PRJfriendlyFireRangeMult: 1
+    PRJfriendlyFireCheckRangeMult: 1
+    PRJfriendlyFireDamageMult: 0.5
     entityLayerMask:
       serializedVersion: 2
       m_Bits: 1

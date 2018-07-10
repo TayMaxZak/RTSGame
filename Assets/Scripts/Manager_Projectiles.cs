@@ -66,7 +66,15 @@ public class Manager_Projectiles : MonoBehaviour
 
 							unit.AddStatus(status);
 						}
-						unit.Damage(proj.GetDamage(), proj.CalcRange(), DamageType.Normal);
+
+						if (unit.team != proj.GetFrom().team) // If we hit an enemy, do full damage
+						{
+							unit.Damage(proj.GetDamage(), proj.CalcRange(), DamageType.Normal);
+						}
+						else // If we hit an ally, do reduced damage because it was an accidental hit
+						{
+							unit.Damage(proj.GetDamage() * gameRules.PRJfriendlyFireDamageMult, proj.CalcRange(), DamageType.Normal);
+						}
 					}
 					else
 					{

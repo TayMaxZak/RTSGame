@@ -160,7 +160,7 @@ public class Turret : MonoBehaviour
 		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
 		RaycastHit hit;
 		float offset = 0.02f; // How much we move in towards our first raycast hit location to make sure the next raycast is technically inside the collider we hit the first time around
-		if (Physics.Raycast(firePos.position, forward, out hit, range * gameRules.PRJfriendlyFireRangeMult, gameRules.entityLayerMask))
+		if (Physics.Raycast(firePos.position, forward, out hit, range * gameRules.PRJfriendlyFireCheckRangeMult, gameRules.entityLayerMask))
 		{
 			// Is it a unit? This could be either self-detection or hitting a different unit.
 			Transform parent = hit.collider.transform.parent;
@@ -181,7 +181,7 @@ public class Turret : MonoBehaviour
 						{
 							// TODO: Reuse hit
 							// Start where the last raycast left off, plus moved in a little bit to make sure we dont hit the same collider again
-							if (Physics.Raycast(hit.point + forward * offset, forward, out hit, range * gameRules.PRJfriendlyFireRangeMult, gameRules.entityLayerMask))
+							if (Physics.Raycast(hit.point + forward * offset, forward, out hit, range * gameRules.PRJfriendlyFireCheckRangeMult, gameRules.entityLayerMask))
 							{
 								parent = hit.collider.transform.parent;
 								unit = parent ? parent.GetComponent<Unit>() : null;
@@ -369,28 +369,6 @@ public class Turret : MonoBehaviour
 		curAmmo = maxAmmo;
 	}
 
-	void Fire()
-	{
-		curAmmo--;
-
-		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
-		// Projectile
-		for (int i = 0; i < pelletCount; i++)
-		{
-			Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
-			Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y)).normalized;
-
-			if (onHitStatus == null)
-				projs.SpawnProjectile(projTemplate, firePos.position, errForward, parentUnit, null); // TODO: Do we need to make a new status each time?
-			else
-				projs.SpawnProjectile(projTemplate, firePos.position, errForward, parentUnit, new Status(onHitStatus.from, onHitStatus.statusType)); // TODO: Do we need to make a new status each time?
-		}
-
-		// Sound
-		if (!audioSource.clip)
-			AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource);
-	}
-
 	void Rotate(Vector3 difference)
 	{
 		// What do we rotate towards?
@@ -491,6 +469,29 @@ public class Turret : MonoBehaviour
 	{
 		return angle;
 	}
+
+	void Fire()
+	{
+		curAmmo--;
+
+		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
+		// Projectile
+		for (int i = 0; i < pelletCount; i++)
+		{
+			Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
+			Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y)).normalized;
+
+			if (onHitStatus == null)
+				projs.SpawnProjectile(projTemplate, firePos.position, errForward, parentUnit, null); // TODO: Do we need to make a new status each time?
+			else
+				projs.SpawnProjectile(projTemplate, firePos.position, errForward, parentUnit, new Status(onHitStatus.from, onHitStatus.statusType)); // TODO: Do we need to make a new status each time?
+		}
+
+		// Sound
+		if (!audioSource.clip)
+			AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource);
+	}
+
 
 	public void SetTarget(Unit newTarg)
 	{

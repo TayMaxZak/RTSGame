@@ -40,7 +40,8 @@ public class GameRules
 	[Header("Projectiles")]
 	public float PRJmaxTimeAlive = 5f; // How long each projectile lives
 	public float PRJhitOffset = 0.05f; // When hitting an object, a projectile always detonates this back far from the hit point
-	public float PRJfriendlyFireRangeMult = 1.0f; // When testing for the potential of friendly fire, how far ahead do we want to check? This is a multiplier on the turret's base range
+	public float PRJfriendlyFireCheckRangeMult = 1.0f; // When testing for the potential of friendly fire, how far ahead do we want to check? This is a multiplier on the turret's base range
+	public float PRJfriendlyFireDamageMult = 0.5f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
 	[Header("Layer Masks")]
 	public LayerMask entityLayerMask;
 	public LayerMask gridLayerMask;
