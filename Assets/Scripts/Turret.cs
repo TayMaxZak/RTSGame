@@ -82,7 +82,7 @@ public class Turret : MonoBehaviour
 
 	private int resetRotFrame;
 
-	//private GameRules gameRules;
+	private GameRules gameRules;
 	private Manager_Projectiles projs;
 	private AudioSource audioSource;
 
@@ -91,7 +91,7 @@ public class Turret : MonoBehaviour
 	{
 		curAmmo = maxAmmo;
 
-		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
+		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 		projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab copy of Projectiles Manager
 		audioSource = GetComponent<AudioSource>();
 
@@ -150,6 +150,62 @@ public class Turret : MonoBehaviour
 		Rotate(difference.normalized);
 	}
 
+	bool CheckFriendlyFire()
+	{
+		// We know how many potential collisions we can have with the parent unit's colliders, so we will cast multiple rays in succession to skip past the collisions that we want to ignore
+		// RaycastAll will not work in this case because it will pass through everything, rather than only passing through the parent unit's colliders and stopping on the first collision after them
+		Collider[] cols = parentUnit.GetComponentsInChildren<Collider>();
+
+		// First, try to raycast and hope we don't hit ourselves
+		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
+		RaycastHit hit;
+		float offset = 0.02f; // How much we move in towards our first raycast hit location to make sure the next raycast is technically inside the collider we hit the first time around
+		if (Physics.Raycast(firePos.position, forward, out hit, range * gameRules.PRJfriendlyFireRangeMult, gameRules.entityLayerMask))
+		{
+			// Is it a unit? This could be either self-detection or hitting a different unit.
+			Transform parent = hit.collider.transform.parent;
+			Unit unit = parent ? parent.GetComponent<Unit>() : null;
+			if (unit)
+			{
+				if (unit.team == team)
+				{
+					// If we hit a non-parent teammate, immediately return false.
+					if (unit != parentUnit)
+					{
+						return false;
+					}
+					else
+					{
+						// Here's the fun part. We have to try to brute-force through the parent unit's colliders
+						for (int i = 0; i < cols.Length; i++)
+						{
+							// TODO: Reuse hit
+							// Start where the last raycast left off, plus moved in a little bit to make sure we dont hit the same collider again
+							if (Physics.Raycast(hit.point + forward * offset, forward, out hit, range * gameRules.PRJfriendlyFireRangeMult, gameRules.entityLayerMask))
+							{
+								parent = hit.collider.transform.parent;
+								unit = parent ? parent.GetComponent<Unit>() : null;
+								if (unit)
+								{
+									if (unit.team == team)
+									{
+										// If we hit a non-parent teammate, immediately return false.
+										if (unit != parentUnit)
+										{
+											return false;
+										}
+										// If we hit the parent unit, the hit.point from this raycast will be used by the next raycast as a starting point
+									} // teammate 2
+								} // unit 2
+							} // second raycast
+						}
+					} // parent
+				} // teammate
+			} // unit
+		} // first raycast
+		return true;
+	}
+
 	// TODO: Consolidate conditions which appear in both attempt shot and start shooting
 	void StartShooting()
 	{
@@ -185,7 +241,8 @@ public class Turret : MonoBehaviour
 		}
 
 		// Is our line of fire blocked by an allied unit?
-
+		if (!CheckFriendlyFire())
+			return;
 
 		isShooting = true;
 		StartCoroutine(CoroutineToggleFiringAudio(true, shootOffset)); // Start firing audio loop
@@ -243,7 +300,10 @@ public class Turret : MonoBehaviour
 		if (isReloading) // If we have ammo left and are in range, cancel the current reload
 		{
 			if (!isReloadCancellable)
+			{
+				ToggleFiringAudio(false); // Stop firing audio loop
 				return;
+			}
 			else // Shot after manually clearing target
 			{
 				StopCoroutine(reloadCoroutine);
@@ -263,7 +323,13 @@ public class Turret : MonoBehaviour
 			return;
 		}
 
-
+		// Is our line of fire blocked by an allied unit?
+		if (!CheckFriendlyFire())
+		{
+			isShooting = false;
+			ToggleFiringAudio(false); // Stop firing audio loop
+			return;
+		}
 
 		StartCoroutine(CoroutineShoot(delay));
 	}

@@ -277,13 +277,13 @@ MonoBehaviour:
     useTestValues: 1
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
-    TESTinitHPMult: 1
+    TESTinitHPMult: 0.25
     ARMabsorbFlat: 5
     ARMabsorbMax: 15
     ARMrangeMin: 30
     ARMrangeMax: 60
     ARMrangeMult: 0.8
-    HLTHthreshBurn: 0.201
+    HLTHburnThresh: 0.2001
     HLTHburnMin: 2
     HLTHburnMax: 3
     WRCKfallSpeedMax: 10
@@ -300,6 +300,7 @@ MonoBehaviour:
     AUDpitchVariance: 0.05
     PRJmaxTimeAlive: 5
     PRJhitOffset: 0.05
+    PRJfriendlyFireRangeMult: 1
     entityLayerMask:
       serializedVersion: 2
       m_Bits: 1
@@ -355,6 +356,7 @@ MonoBehaviour:
   commanders:
   - {fileID: 114578553437470668}
   - {fileID: 114476393172418668}
+  commanderController: {fileID: 0}
 --- !u!114 &114476393172418668
 MonoBehaviour:
   m_ObjectHideFlags: 1

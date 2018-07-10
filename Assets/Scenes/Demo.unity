@@ -99285,23 +99285,8 @@ Prefab:
       objectReference: {fileID: 1527646376}
     - target: {fileID: 114359600981258838, guid: 17dc27b9a26fbe849a100039b7f37b7c,
         type: 2}
-      propertyPath: GameRules.HLTHburnThresh
-      value: 0.2001
-      objectReference: {fileID: 0}
-    - target: {fileID: 114359600981258838, guid: 17dc27b9a26fbe849a100039b7f37b7c,
-        type: 2}
       propertyPath: GameRules.TESTinitHPMult
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114359600981258838, guid: 17dc27b9a26fbe849a100039b7f37b7c,
-        type: 2}
-      propertyPath: GameRules.WRCKlifetime
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114359600981258838, guid: 17dc27b9a26fbe849a100039b7f37b7c,
-        type: 2}
-      propertyPath: GameRules.useTestValues
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 17dc27b9a26fbe849a100039b7f37b7c, type: 2}
