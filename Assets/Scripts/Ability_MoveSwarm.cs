@@ -41,13 +41,18 @@ public class Ability_MoveSwarm : Ability
 		{
 			if (target.unit != targetUnit && target.unit != swarmController.GetTargetUnit())
 			{
-				targetUnit = target.unit;
-				swarmController.MoveSwarm(targetUnit);
+				//targetUnit = target.unit; // swarmController will set this property for us
+				swarmController.MoveSwarm(target.unit);
 			}
 			else // Unit is already targeted
 				ResetCooldown();
 		}
 		else // No swarms to control
 			ResetCooldown();
+	}
+
+	public void SetTargetUnit(Unit unit)
+	{
+		targetUnit = unit;
 	}
 }

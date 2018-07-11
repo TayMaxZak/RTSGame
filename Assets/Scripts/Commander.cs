@@ -24,15 +24,24 @@ public class Commander : MonoBehaviour
 	private int reclaimPoints; // Transferred over time into resPoints
 	private float reclaimTimer; // Progress turning a reclaimPoint into a resPoint
 
+	private List<Unit> selectableUnits;
+
 	private GameRules gameRules;
 
 	// Use this for initialization
 	void Awake()
 	{
+		selectableUnits = new List<Unit>();
+
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
 		buildUnitCounters = new int[buildUnits.Length]; // All BuildUnit counters start at 0
 		reclaimTimer = gameRules.RESreclaimTime; // Don't start at 0. This way the first reclaimPoint will take time to reclaim
+	}
+
+	public void SetController(Controller_Commander newController)
+	{
+		controller = newController;
 	}
 
 	public void InitUI() // TODO: Do differently
@@ -40,11 +49,6 @@ public class Commander : MonoBehaviour
 		Controller_InitBuildButtons(); // Initialize UI through our controller
 		Controller_UpdateResourceAmounts(); // Initualize UI through our controller
 		Controller_UpdateResourceTime(true); // Initualize UI through our controller
-	}
-
-	public void SetController(Controller_Commander newController)
-	{
-		controller = newController;
 	}
 
 	// Update is called once per frame
@@ -71,6 +75,7 @@ public class Commander : MonoBehaviour
 			}
 		}
 	}
+
 
 	// Pass updated information to our controller
 	void Controller_UpdateResourceAmounts()
@@ -212,5 +217,23 @@ public class Commander : MonoBehaviour
 		{
 			return false;
 		}
+	}
+
+
+	// Add unit to the list of selectable units for this commander
+	public void AddSelectableUnit(Unit selUnit)
+	{
+		selectableUnits.Add(selUnit);
+	}
+
+	public void RemoveSelectableUnit(Unit selUnit)
+	{
+		selectableUnits.Remove(selUnit);
+	}
+
+
+	public List<Unit> GetSelectableUnits()
+	{
+		return selectableUnits;
 	}
 }

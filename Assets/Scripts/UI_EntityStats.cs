@@ -157,7 +157,7 @@ public class UI_EntityStats : MonoBehaviour
 			text.text = StringFromFloat(shieldsCur) + "/" + StringFromFloat(shieldsMax);
 
 		shieldTooltip.SetText(Mathf.RoundToInt(shieldsMax) != 0 ?
-			 string.Format("Current shield pool: {0:0.0} / {0:0.0}\nShields take damage before this unit's health pool and regenerate over time.", shieldsCur, shieldsMax) :
+			 string.Format("Current shield pool: {0:0.0} / {1:0.0}\nShields take damage before this unit's health pool and regenerate over time.", shieldsCur, shieldsMax) :
 			"This unit has no shields.");
 	}
 

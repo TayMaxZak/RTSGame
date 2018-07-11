@@ -84,6 +84,7 @@ public class Ability_SpawnSwarm : Ability
 	public void MoveSwarm(Unit unit)
 	{
 		targetUnit = unit;
+		swarmMover.SetTargetUnit(targetUnit);
 		if (unit != parentUnit)
 			checkIfDead = true;
 	}

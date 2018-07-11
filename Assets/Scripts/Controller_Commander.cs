@@ -40,6 +40,13 @@ public class Controller_Commander : MonoBehaviour
 	private GameObject clickEffect;
 	private float clickRayLength = 1000;
 
+	[Header("Box Select")]
+	[SerializeField]
+	private Image marquee;
+	private Vector3 boxSelectStart;
+	private Vector3 boxSelectEnd;
+	private Entity startSelectedEntity; // How far apart should the start and end be to count as a box selection?
+
 	[Header("Heights")]
 	[SerializeField]
 	private Effect_Line lineMouse;
@@ -97,7 +104,7 @@ public class Controller_Commander : MonoBehaviour
 		SetCommander(gameManager.GetCommander(team)); // Set commander
 	}
 
-	public void Select(Entity newSel, bool add)
+	public void Select(Entity newSel, bool add, bool multiSelectRemoveExisting)
 	{
 		bool newSelIsUnit = IsUnit(newSel);
 
@@ -123,8 +130,11 @@ public class Controller_Commander : MonoBehaviour
 				// If we already have this Entity, remove it
 				if (e == newSel)
 				{
-					e.OnSelect(false);
-					selection.RemoveAt(i);
+					if (multiSelectRemoveExisting)
+					{
+						e.OnSelect(false);
+						selection.RemoveAt(i);
+					}
 					SelectionChanged();
 					return;
 				}
@@ -162,6 +172,11 @@ public class Controller_Commander : MonoBehaviour
 			else
 				SelectionChanged();
 		}
+	}
+
+	public void Select(Entity newSel, bool add)
+	{
+		Select(newSel, add, true);
 	}
 
 	void SelectionChanged()
@@ -317,12 +332,12 @@ public class Controller_Commander : MonoBehaviour
 	{
 		// Modifier keys
 		bool control = false;
-		if (Input.GetButton("Control"))
+		if (Input.GetButton("Control") || Input.GetButtonUp("Control"))
 		{
 			control = true;
 		}
 
-		if (heightState == 0 && Input.GetButtonDown("Shift"))
+		if (heightState == 0 && Input.GetButtonDown("ChangeHeight"))
 		{
 			heightState = 1;
 		}
@@ -331,28 +346,46 @@ public class Controller_Commander : MonoBehaviour
 		// Should be done before clicking code
 		if (buildState == 0)
 		{
-			RaycastHit hit = RaycastFromCursor(0);
-			Entity ent = GetEntityFromHit(hit);
-			// Hovering an entity
-			if (ent)
+			if (heightState == 0)
 			{
-				// New hovered entity
-				if (currentHoveredEntity != ent)
+				RaycastHit hit = RaycastFromCursor(0);
+				Entity ent = GetEntityFromHit(hit);
+				// Hovering an entity
+				if (ent)
 				{
-					if (currentHoveredEntity)
-						currentHoveredEntity.OnHover(false);
-					ent.OnHover(true);
-					currentHoveredEntity = ent;
+					// New hovered entity
+					if (currentHoveredEntity != ent)
+					{
+						if (currentHoveredEntity)
+							currentHoveredEntity.OnHover(false);
+						ent.OnHover(true);
+						currentHoveredEntity = ent;
+					}
 				}
-			}
-			// Stopped hovering an entity
-			else if (currentHoveredEntity)
-			{
-				currentHoveredEntity.OnHover(false);
-				currentHoveredEntity = null;
-			}
+				// Stopped hovering an entity
+				else if (currentHoveredEntity)
+				{
+					currentHoveredEntity.OnHover(false);
+					currentHoveredEntity = null;
+				}
 
-			if (heightState == 1)
+				// Box select preview
+				if (Input.GetMouseButton(0))
+				{
+					SetMarqueeActive(true);
+					Vector3 mousePosition = Input.mousePosition;
+					if (Input.GetMouseButtonDown(0)) // This code will run earlier in the frame than the actual LMB code // TODO: Clean up
+						boxSelectStart = mousePosition;
+
+					marquee.rectTransform.position = new Vector2(mousePosition.x < boxSelectStart.x ?mousePosition.x : boxSelectStart.x,
+						mousePosition.y < boxSelectStart.y ? mousePosition.y : boxSelectStart.y);
+					marquee.rectTransform.sizeDelta = new Vector2(mousePosition.x < boxSelectStart.x ? boxSelectStart.x - mousePosition.x : mousePosition.x - boxSelectStart.x,
+						mousePosition.y < boxSelectStart.y ? boxSelectStart.y - mousePosition.y : mousePosition.y - boxSelectStart.y);
+				}
+				else
+					SetMarqueeActive(false);
+			}
+			else // Changing height
 			{
 				if (selection.Count == 1 && IsUnit(selection[0]))
 				{
@@ -372,7 +405,7 @@ public class Controller_Commander : MonoBehaviour
 					lineMouse.SetEffectActive(1, u.transform.position, worldPoint);
 					lineVert.SetEffectActive(1, u.transform.position, new Vector3(u.transform.position.x, newGridHeight, u.transform.position.z));
 
-					if (Input.GetButtonUp("Shift"))
+					if (Input.GetButtonUp("ChangeHeight"))
 					{
 						u.OrderChangeHeight(newGridHeight);
 						HeightCancel(); // Finish height change
@@ -425,43 +458,86 @@ public class Controller_Commander : MonoBehaviour
 			{
 				RaycastHit hit = RaycastFromCursor(0);
 				Entity ent = GetEntityFromHit(hit);
-				if (buildState == 0) // Normal select mode
+				if (buildState == 0)
 				{
-					if (heightState > 0)
-						HeightCancel();
-					if (control)
+					if (heightState == 0) // Not building or changing height
 					{
-						if (ent)
+						boxSelectStart = Input.mousePosition;
+						if (control) // Multi select
+						{
+							if (ent)
+							{
 								Select(ent, true);
-						else
-							Select(null, true);
+								startSelectedEntity = ent;
+							}
+							//else
+							//	Select(null, true);
+						}
+						else // Normal select
+						{
+							if (ent)
+							{
+								Select(ent, false);
+								startSelectedEntity = ent;
+							}
+							//else
+							//	Select(null, false);
+						}
 					}
-					else
+					else // Changing height
 					{
-						if (ent)
-							Select(ent, false);
-						else
-							Select(null, false);
+						HeightCancel();
 					}
 				}
 			}
 		} //lmb
 
 		bool previewingBuild = buildState == 1 || buildState == 2;
-		if (previewingBuild && Input.GetMouseButtonUp(0))
+		if (Input.GetMouseButtonUp(0))
 		{
-			RaycastHit hit = RaycastFromCursor(1);
-			//Entity ent = GetEntityFromHit(hit);
-
-			if (hit.collider)
+			if (previewingBuild)
 			{
-				if (buildState == 1) // Currently moving around preview, left clicking now will place the preview and let us start rotating it
+				RaycastHit hit = RaycastFromCursor(1);
+				//Entity ent = GetEntityFromHit(hit);
+
+				if (hit.collider)
 				{
-					PlacePreview();
+					if (buildState == 1) // Currently moving around preview, left clicking now will place the preview and let us start rotating it
+					{
+						PlacePreview();
+					}
+					else if (buildState == 2) // Currently rotating preview, left clicking now will finalize preview
+					{
+						BuildStart();
+					}
 				}
-				else if (buildState == 2) // Currently rotating preview, left clicking now will finalize preview
+			}
+			else // Box select
+			{
+				boxSelectEnd = Input.mousePosition;
+
+				// If not holding control, clear current selection first
+				RaycastHit hit = RaycastFromCursor(0);
+				Entity ent = GetEntityFromHit(hit);
+				boxSelectEnd = Input.mousePosition;
+				if (ent && ent != startSelectedEntity)
 				{
-					BuildStart();
+					Select(ent, true, false);
+				}
+				else if (!startSelectedEntity && !control)
+					Select(null, false);
+				startSelectedEntity = null;
+
+				Rect boxSelect = new Rect(boxSelectStart.x, boxSelectStart.y, boxSelectEnd.x - boxSelectStart.x, boxSelectEnd.y - boxSelectStart.y);
+
+				List<Unit> selectable = commander.GetSelectableUnits();
+				for (int i = 0; i < selectable.Count; i++)
+				{
+					Vector3 screenPoint = Camera.main.WorldToScreenPoint(selectable[i].transform.position);
+					if (boxSelect.Contains(screenPoint, true))
+					{
+						Select(selectable[i], true, false);
+					}
 				}
 			}
 		} //lmb up
@@ -517,6 +593,20 @@ public class Controller_Commander : MonoBehaviour
 			UseCommandWheel();
 		}
 
+		// Control-enabled actions
+		if (control)
+		{
+			if (Input.GetButtonDown("SelectAll"))
+			{
+				List<Unit> selectable = commander.GetSelectableUnits();
+				for (int i = 0; i < selectable.Count; i++)
+				{
+					if (selectable[i].Type != EntityType.Flagship)
+						Select(selectable[i], true, false);
+				}
+			}
+		}
+
 		// Switch teams when a key is pressed
 		if (allowTeamSwaps)
 		{
@@ -528,6 +618,14 @@ public class Controller_Commander : MonoBehaviour
 					SetTeam(0);
 			}
 		}
+	}
+
+	void SetMarqueeActive(bool isActive)
+	{
+		if (isActive && !marquee.gameObject.activeSelf)
+			marquee.gameObject.SetActive(true);
+		else if (!isActive && marquee.gameObject.activeSelf)
+			marquee.gameObject.SetActive(false);
 	}
 
 	public int HeightSnap(float org)

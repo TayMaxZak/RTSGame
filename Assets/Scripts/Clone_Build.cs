@@ -25,13 +25,16 @@ public class Clone_Build : MonoBehaviour
 
 	private float warpingTime;
 	private float warpingAmount;
-	private GameRules gameRules;
+
+	
 
 	private int buildUnitIndex;
 	private int unitTeam;
 
 	private float startTime;
 	private float finishTime;
+
+	private GameRules gameRules;
 
 	void Start()
 	{
@@ -115,8 +118,7 @@ public class Clone_Build : MonoBehaviour
 
 			RectTransform rect = progBar.GetComponent<RectTransform>();
 			rect.position = new Vector2(screenPoint.x, screenPoint.y);
-			//rect.localScale = ;
-			progBar.UpdateProgBar((Time.time - startTime) / finishTime); // BUG: FINISH TIME IS ZERO
+			progBar.UpdateProgBar((Time.time - startTime) / finishTime);
 		}
 	}
 
@@ -127,6 +129,7 @@ public class Clone_Build : MonoBehaviour
 		{
 			unit.buildIndex = buildUnitIndex;
 			unit.team = unitTeam;
+
 		}
 
 		Destroy(progBar.gameObject);

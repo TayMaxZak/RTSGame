@@ -1599,7 +1599,7 @@ MonoBehaviour:
     RS: 15
     RSAccel: 1
     allowMoveThresh: 0.3
-    reachGoalThresh: 3
+    reachGoalThresh: 2
 --- !u!114 &114586557395070512
 MonoBehaviour:
   m_ObjectHideFlags: 1

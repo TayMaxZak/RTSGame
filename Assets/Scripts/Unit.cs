@@ -10,7 +10,7 @@ public class Unit : Entity
 	[SerializeField]
 	private UI_HPBar hpBarPrefab;
 	[SerializeField]
-	private Effect_HP hpEffects;
+	private Effect_HP hpEffects; // TODO: Bugged, sometimes this property is not set?
 
 	private Unit target;
 	public int team = 0;
@@ -63,6 +63,8 @@ public class Unit : Entity
 	void Awake()
 	{
 		hpBar = Instantiate(hpBarPrefab);
+
+		
 	}
 
 	//public void SetHeightCurrent(int cur)
@@ -84,6 +86,7 @@ public class Unit : Entity
 			gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
 		if (gameRules == null) // Subclass may have already set this field
 			gameRules = gameManager.GameRules; // Grab copy of Game Rules
+		gameManager.GetCommander(team).AddSelectableUnit(this); // Make sure commander knows what units can be selected
 
 		if (gameRules.useTestValues)
 		{
@@ -97,9 +100,6 @@ public class Unit : Entity
 		hpBarOffset = uiManager.UIRules.HPBoffset;
 		UpdateHPBarPosAndVis(); // Make sure healthbar is hidden until the unit is first selected
 		UpdateHPBarVal(true);
-
-		//foreach (AbilityOld ab in abilities) // Init abilities
-		//	ab.Init(this, gameRules);
 
 		foreach (Turret tur in turrets) // Init turrets
 		{
@@ -233,7 +233,6 @@ public class Unit : Entity
 
 			RectTransform rect = hpBar.GetComponent<RectTransform>();
 			rect.position = new Vector2(screenPoint.x, screenPoint.y);
-			//rect.localScale = ;
 		}
 
 		UpdateHPBarAlly();
@@ -717,6 +716,8 @@ public class Unit : Entity
 
 		if (hpEffects)
 			hpEffects.End();
+		else
+			Debug.LogError("HP Effects not set");
 
 		if (deathClone)
 		{
@@ -726,16 +727,20 @@ public class Unit : Entity
 				wreck.SetHP(maxHealth, maxArmor);
 		}
 
-		if (gameManager.GetCommander(team))
-			gameManager.GetCommander(team).RefundUnitCounter(buildIndex);
-
-		// Refund resources if build index is initialized
-		if (buildIndex >= 0)
+		Commander comm = gameManager.GetCommander(team);
+		if (comm)
 		{
-			GameObject go2 = Instantiate(new GameObject());
-			Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
+			comm.RemoveSelectableUnit(this);
+			comm.RefundUnitCounter(buildIndex);
 
-			resDelay.GiveRecAfterDelay(gameManager.GetCommander(team).GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
+			// Refund resources if build index is initialized
+			if (buildIndex >= 0)
+			{
+				GameObject go2 = Instantiate(new GameObject());
+				Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
+
+				resDelay.GiveRecAfterDelay(comm.GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
+			}
 		}
 
 		Destroy(hpBar.gameObject);

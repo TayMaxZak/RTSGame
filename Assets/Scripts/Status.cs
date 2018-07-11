@@ -114,7 +114,7 @@ public static class StatusUtils
 		switch (statType)
 		{
 			case StatusType.SwarmResist:
-				return "Allied fighters will absorb some of all incoming damage and guard this unit from enemy fighters.";
+				return "Allied fighters will absorb some of all incoming damage and guard this unit from enemy fighters. Stacks 2x.";
 			case StatusType.CriticalBurnImmune:
 				return "Even if this unit's health is below the burn threshold, it will not take burn damage over time.";
 			case StatusType.SpawnSwarmSpeedNerf:
