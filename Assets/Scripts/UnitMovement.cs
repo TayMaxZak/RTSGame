@@ -67,7 +67,9 @@ public class UnitMovement
 		reachedHGoal = true;
 		reachedVGoal = true;
 		vCurrent = Mathf.RoundToInt(transform.position.y);
-		//hGoal = parentUnit.transform.position; // Path towards current location (i.e. nowhere)
+
+		hGoal = parentUnit.transform.position; // Path towards current location (i.e. nowhere)
+		vGoal = vCurrent;
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
