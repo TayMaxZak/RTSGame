@@ -89,8 +89,8 @@ public class Clone_Wreck : MonoBehaviour
 		if (shatter)
 			Instantiate(shatterEffect, transform.position, Quaternion.identity);
 
-		Effect_Container container = GetComponent<Effect_Container>();
-		if (container)
+		Effect_Container[] containers = GetComponents<Effect_Container>();
+		foreach (Effect_Container container in containers)
 			container.End(velocity);
 
 		if (shatter)

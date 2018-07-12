@@ -24,7 +24,8 @@ public class Effect_Line : MonoBehaviour
 		if (state == 1)
 		{
 			lineMain.gameObject.SetActive(true);
-			lineSecondary.gameObject.SetActive(false);
+			if (lineSecondary)
+				lineSecondary.gameObject.SetActive(false);
 
 			lineMain.SetPosition(0, start);
 			lineMain.SetPosition(1, end);
@@ -34,15 +35,20 @@ public class Effect_Line : MonoBehaviour
 			if (lineSecondary)
 			{
 				lineMain.gameObject.SetActive(false);
-				lineSecondary.gameObject.SetActive(true);
+				if (lineSecondary)
+					lineSecondary.gameObject.SetActive(true);
 
-				lineSecondary.SetPosition(0, start);
-				lineSecondary.SetPosition(1, end);
+				if (lineSecondary)
+				{
+					lineSecondary.SetPosition(0, start);
+					lineSecondary.SetPosition(1, end);
+				}
 			}
 		}
 		else
 		{
-			lineSecondary.gameObject.SetActive(false);
+			if (lineSecondary)
+				lineSecondary.gameObject.SetActive(false);
 			lineMain.gameObject.SetActive(false);
 		}
 	} //SetEffectActive

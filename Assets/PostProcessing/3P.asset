@@ -298,7 +298,7 @@ MonoBehaviour:
       mode: 0
       color: {r: 0, g: 0, b: 0, a: 1}
       center: {x: 0.5, y: 0.5}
-      intensity: 0.45
+      intensity: 0.239
       smoothness: 0.2
       roundness: 1
       mask: {fileID: 0}
@@ -309,7 +309,7 @@ MonoBehaviour:
   monitors:
     currentMonitorID: 0
     refreshOnPlay: 0
-    histogramMode: 0
+    histogramMode: 5
     waveformExposure: 0.12
     waveformY: 0
     waveformR: 1

@@ -5,10 +5,10 @@ using UnityEngine;
 public class Effect_Container : MonoBehaviour
 {
 	[SerializeField]
-	private ParticleSystem firePrefab;
+	private ParticleSystem effectPrefab;
 	[SerializeField]
-	private Transform firePos;
-	private Transform[] firePositions;
+	private Transform effectPosRoot;
+	private Transform[] effectPositions;
 
 	private List<ParticleSystem> firePSystems;
 
@@ -16,16 +16,16 @@ public class Effect_Container : MonoBehaviour
 	{
 		firePSystems = new List<ParticleSystem>();
 
-		Transform[] fPos = firePos.GetComponentsInChildren<Transform>();
-		firePositions = new Transform[fPos.Length - 1];
+		Transform[] fPos = effectPosRoot.GetComponentsInChildren<Transform>();
+		effectPositions = new Transform[fPos.Length - 1];
 		for (int i = 1; i < fPos.Length; i++)
 		{
-			firePositions[i - 1] = fPos[i];
+			effectPositions[i - 1] = fPos[i];
 		}
 
-		foreach (Transform pos in firePositions)
+		foreach (Transform pos in effectPositions)
 		{
-			GameObject go = Instantiate(firePrefab.gameObject, pos.position, pos.rotation);
+			GameObject go = Instantiate(effectPrefab.gameObject, pos.position, pos.rotation);
 			go.transform.SetParent(pos);
 			firePSystems.Add(go.GetComponent<ParticleSystem>());
 		}
@@ -55,14 +55,14 @@ public class Effect_Container : MonoBehaviour
 
 	public void End(Vector3 releaseVelocity)
 	{
-		firePos.SetParent(null);
+		effectPosRoot.SetParent(null);
 
-		Util_Mover mover = firePos.GetComponent<Util_Mover>();
+		Util_Mover mover = effectPosRoot.GetComponent<Util_Mover>();
 		if (mover)
 			mover.SetVelocity(releaseVelocity);
 
 		SetFireActive(false);
 
-		Destroy(gameObject, firePrefab.main.duration);
+		Destroy(gameObject, effectPrefab.main.duration);
 	}
 }

@@ -428,10 +428,10 @@ public class Turret : MonoBehaviour
 
 	Quaternion LimitRotation(Quaternion rot, Quaternion oldRot)
 	{
-		Debug.DrawRay(transform.position, rot * Vector3.forward, Color.white);
-		Debug.DrawRay(transform.position, lookRotation * Vector3.forward, Color.red);
-		Debug.DrawRay(transform.position, transform.forward, Color.black);
-		Debug.DrawRay(transform.position, transform.up, Color.black);
+		//Debug.DrawRay(transform.position, rot * Vector3.forward, Color.white);
+		//Debug.DrawRay(transform.position, lookRotation * Vector3.forward, Color.red);
+		//Debug.DrawRay(transform.position, transform.forward, Color.black);
+		//Debug.DrawRay(transform.position, transform.up, Color.black);
 
 		Vector3 components = rot.eulerAngles;
 		Vector3 componentsOld = oldRot.eulerAngles;

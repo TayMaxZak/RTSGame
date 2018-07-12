@@ -197,9 +197,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 619a6fc72e404a840b41b69725aa9359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firePrefab: {fileID: 198426730600910152, guid: a7ad353a9d0bd3d4c9952874a707b2ab,
+  effectPrefab: {fileID: 198426730600910152, guid: a7ad353a9d0bd3d4c9952874a707b2ab,
     type: 2}
-  firePos: {fileID: 4503015096722840}
+  effectPosRoot: {fileID: 4503015096722840}
 --- !u!114 &114638728700603184
 MonoBehaviour:
   m_ObjectHideFlags: 1

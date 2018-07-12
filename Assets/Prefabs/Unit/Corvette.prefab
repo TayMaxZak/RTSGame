@@ -1818,7 +1818,7 @@ MonoBehaviour:
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 40
+  range: 25
   soundShoot: {fileID: 8300000, guid: 13c45b4f30054584681d50011b1d12f0, type: 3}
   firePos: {fileID: 4821749778405516}
   maxAmmo: 20
@@ -1959,7 +1959,7 @@ MonoBehaviour:
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
-  range: 40
+  range: 25
   soundShoot: {fileID: 8300000, guid: 13c45b4f30054584681d50011b1d12f0, type: 3}
   firePos: {fileID: 4071539184535878}
   maxAmmo: 20
