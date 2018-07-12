@@ -456,13 +456,14 @@ public class Controller_Commander : MonoBehaviour
 		{
 			if (!EventSystem.current.IsPointerOverGameObject()) // Even a failed raycast would still result in a Select(null) call without this check in place
 			{
-				RaycastHit hit = RaycastFromCursor(0);
-				Entity ent = GetEntityFromHit(hit);
 				if (buildState == 0)
 				{
 					if (heightState == 0) // Not building or changing height
 					{
-						boxSelectStart = Input.mousePosition;
+						RaycastHit hit = RaycastFromCursor(0);
+						Entity ent = GetEntityFromHit(hit);
+
+						boxSelectStart = Input.mousePosition; // Remember where we first clicked
 						if (control) // Multi select
 						{
 							if (ent)
@@ -516,23 +517,25 @@ public class Controller_Commander : MonoBehaviour
 			{
 				boxSelectEnd = Input.mousePosition;
 
-				// If not holding control, clear current selection first
+				// If not holding control, clear current selection first (keeping the entity we selected on mouse down)
+				if (!control)
+					Select(startSelectedEntity, false);
+
+				// Raycast
 				RaycastHit hit = RaycastFromCursor(0);
 				Entity ent = GetEntityFromHit(hit);
-				boxSelectEnd = Input.mousePosition;
-				if (ent && ent != startSelectedEntity)
-				{
+				boxSelectEnd = Input.mousePosition; // Remember where we let go of the mouse
+				if (ent && ent != startSelectedEntity) // Add second entity to selection
 					Select(ent, true, false);
-				}
-				else if (!startSelectedEntity && !control)
-					Select(null, false);
-				startSelectedEntity = null;
+				startSelectedEntity = null; // Forget our initial selection for next time
 
+				// Construct a rect for checking screen positions
 				Rect boxSelect = new Rect(boxSelectStart.x, boxSelectStart.y, boxSelectEnd.x - boxSelectStart.x, boxSelectEnd.y - boxSelectStart.y);
 
 				List<Unit> selectable = commander.GetSelectableUnits();
 				for (int i = 0; i < selectable.Count; i++)
 				{
+					// For each selectable unit, if its visual center lies in the rect, we add it to our current selection
 					Vector3 screenPoint = Camera.main.WorldToScreenPoint(selectable[i].transform.position);
 					if (boxSelect.Contains(screenPoint, true))
 					{

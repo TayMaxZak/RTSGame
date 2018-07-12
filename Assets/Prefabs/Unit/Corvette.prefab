@@ -1857,8 +1857,8 @@ MonoBehaviour:
   buildIndex: -1
   curArmor: 100
   maxArmor: 100
-  curHealth: 100
-  maxHealth: 100
+  curHealth: 50
+  maxHealth: 50
   alwaysBurnImmune: 0
   deathClone: {fileID: 1796662562453436, guid: 92a8ad440104d3b4fa9c1b30e2acd5da, type: 2}
   turrets:
