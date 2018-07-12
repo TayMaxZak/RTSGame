@@ -11,6 +11,8 @@ public class UI_Tooltip : MonoBehaviour
 	private Text text;
 	[SerializeField]
 	private RectTransform tooltipRoot; // Used to hide
+	[SerializeField]
+	private RectTransform resetPosition; // Used to reset position after moving tooltip
 	//private float rootWidth;
 
 	[Header("Audio")]
@@ -116,7 +118,7 @@ public class UI_Tooltip : MonoBehaviour
 
 	public void ResetPosition()
 	{
-		tooltipRoot.position = initialPosition;
+		tooltipRoot.position = resetPosition.position;
 	}
 
 	float RandomValue()

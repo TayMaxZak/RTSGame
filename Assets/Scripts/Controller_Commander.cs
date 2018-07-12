@@ -49,10 +49,6 @@ public class Controller_Commander : MonoBehaviour
 
 	[Header("Heights")]
 	[SerializeField]
-	private Effect_Line lineMouse;
-	[SerializeField]
-	private Effect_Line lineVert;
-	[SerializeField]
 	private GameObject movementGrid;
 	[SerializeField]
 	private int heightSpacing = 10;
@@ -60,6 +56,12 @@ public class Controller_Commander : MonoBehaviour
 	private int heightMinNum = -5; // TODO
 	[SerializeField]
 	private int heightMaxNum = 5; // TODO
+
+	[SerializeField]
+	private Effect_Line lineMouse;
+	[SerializeField]
+	private Effect_Line lineVert;
+	private int currentHeight;
 
 	private List<Entity> selection;
 	private Entity currentHoveredEntity;
@@ -85,6 +87,7 @@ public class Controller_Commander : MonoBehaviour
 
 		lineMouse.SetEffectActive(0);
 		lineVert.SetEffectActive(0);
+		SetMarqueeActive(false);
 	}
 
 	void SetCommander(Commander newCommander)
@@ -337,9 +340,33 @@ public class Controller_Commander : MonoBehaviour
 			control = true;
 		}
 
+		// Start changing height
+		// Any checks can be done here, selection will not change during height change unless a unit dies
 		if (heightState == 0 && Input.GetButtonDown("ChangeHeight"))
 		{
-			heightState = 1;
+			List<Unit> units = new List<Unit>();
+			foreach (Entity e in selection)
+			{
+				if (IsUnit(e))
+					units.Add((Unit)e);
+			}
+
+			if (units.Count > 0)
+			{
+				currentHeight = units[0].GetCurrentHeight();
+				bool sameHeights = true;
+
+				// TODO: Maybe still allow height change functionality if the different-height units are in the minority?
+				for (int i = 1; i < units.Count; i++) // Skip first unit
+				{
+					if (units[i].GetCurrentHeight() != currentHeight)
+						sameHeights = false;
+				}
+
+				if (sameHeights)
+					heightState = 1;
+			}
+			// else don't initiate height change
 		}
 
 		// Cursor position code
@@ -348,6 +375,7 @@ public class Controller_Commander : MonoBehaviour
 		{
 			if (heightState == 0)
 			{
+				
 				RaycastHit hit = RaycastFromCursor(0);
 				Entity ent = GetEntityFromHit(hit);
 				// Hovering an entity
@@ -372,45 +400,68 @@ public class Controller_Commander : MonoBehaviour
 				// Box select preview
 				if (Input.GetMouseButton(0))
 				{
-					SetMarqueeActive(true);
 					Vector3 mousePosition = Input.mousePosition;
 					if (Input.GetMouseButtonDown(0)) // This code will run earlier in the frame than the actual LMB code // TODO: Clean up
+					{
 						boxSelectStart = mousePosition;
+					}
 
 					marquee.rectTransform.position = new Vector2(mousePosition.x < boxSelectStart.x ?mousePosition.x : boxSelectStart.x,
 						mousePosition.y < boxSelectStart.y ? mousePosition.y : boxSelectStart.y);
 					marquee.rectTransform.sizeDelta = new Vector2(mousePosition.x < boxSelectStart.x ? boxSelectStart.x - mousePosition.x : mousePosition.x - boxSelectStart.x,
 						mousePosition.y < boxSelectStart.y ? boxSelectStart.y - mousePosition.y : mousePosition.y - boxSelectStart.y);
 				}
-				else
-					SetMarqueeActive(false);
 			}
 			else // Changing height
 			{
-				if (selection.Count == 1 && IsUnit(selection[0]))
+				Vector3 mousePos = Input.mousePosition;
+				Vector3 unitPos = Vector3.zero;
+
+				List<Unit> units = new List<Unit>();
+				foreach (Entity e in selection)
 				{
-					Vector3 mousePos = Input.mousePosition;
-					Unit u = (Unit)selection[0];
-					float selPos = Camera.main.WorldToScreenPoint(u.transform.position).y;
+					if (IsUnit(e))
+						units.Add((Unit)e);
+				}
+
+				if (units.Count > 0)
+				{
+					for (int i = 0; i < units.Count; i++)
+					{
+						unitPos += units[i].transform.position;
+					}
+
+					unitPos /= units.Count;
+
+					float selPos = Camera.main.WorldToScreenPoint(unitPos).y;
 					int upOrDown = 0;
 					if (selPos < mousePos.y) // Greater Y is lower on screen
 						upOrDown = 1;
 					else
 						upOrDown = -1;
 
-					int curGrid = (u.GetCurrentHeight()) / heightSpacing;
+					int curGrid = currentHeight / heightSpacing;
 					int newGridHeight = (curGrid + upOrDown) * heightSpacing;
 
 					Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 20));
-					lineMouse.SetEffectActive(1, u.transform.position, worldPoint);
-					lineVert.SetEffectActive(1, u.transform.position, new Vector3(u.transform.position.x, newGridHeight, u.transform.position.z));
+					lineMouse.SetEffectActive(1, unitPos, worldPoint);
+					lineVert.SetEffectActive(1, unitPos, new Vector3(unitPos.x, newGridHeight, unitPos.z));
 
 					if (Input.GetButtonUp("ChangeHeight"))
 					{
-						u.OrderChangeHeight(newGridHeight);
+						for (int i = 0; i < units.Count; i++)
+						{
+							units[i].OrderChangeHeight(newGridHeight);
+						}
 						HeightCancel(); // Finish height change
 					}
+				} // count
+				else if (Input.GetButtonUp("ChangeHeight")) // All units died during height change
+				{
+					HeightCancel(); // Finish height change
 				}
+
+
 			} // heightState
 		}
 		else if (buildState == 1)
@@ -464,6 +515,9 @@ public class Controller_Commander : MonoBehaviour
 						Entity ent = GetEntityFromHit(hit);
 
 						boxSelectStart = Input.mousePosition; // Remember where we first clicked
+						SetMarqueeActive(true);
+
+
 						if (control) // Multi select
 						{
 							if (ent)
@@ -484,10 +538,6 @@ public class Controller_Commander : MonoBehaviour
 							//else
 							//	Select(null, false);
 						}
-					}
-					else // Changing height
-					{
-						HeightCancel();
 					}
 				}
 			}
@@ -513,36 +563,45 @@ public class Controller_Commander : MonoBehaviour
 					}
 				}
 			}
-			else // Box select
+			else
 			{
-				boxSelectEnd = Input.mousePosition;
-
-				// If not holding control, clear current selection first (keeping the entity we selected on mouse down)
-				if (!control)
-					Select(startSelectedEntity, false);
-
-				// Raycast
-				RaycastHit hit = RaycastFromCursor(0);
-				Entity ent = GetEntityFromHit(hit);
-				boxSelectEnd = Input.mousePosition; // Remember where we let go of the mouse
-				if (ent && ent != startSelectedEntity) // Add second entity to selection
-					Select(ent, true, false);
-				startSelectedEntity = null; // Forget our initial selection for next time
-
-				// Construct a rect for checking screen positions
-				Rect boxSelect = new Rect(boxSelectStart.x, boxSelectStart.y, boxSelectEnd.x - boxSelectStart.x, boxSelectEnd.y - boxSelectStart.y);
-
-				List<Unit> selectable = commander.GetSelectableUnits();
-				for (int i = 0; i < selectable.Count; i++)
+				if (heightState == 0) // Box select
 				{
-					// For each selectable unit, if its visual center lies in the rect, we add it to our current selection
-					Vector3 screenPoint = Camera.main.WorldToScreenPoint(selectable[i].transform.position);
-					if (boxSelect.Contains(screenPoint, true))
+					boxSelectEnd = Input.mousePosition;
+
+					// If not holding control, clear current selection first (keeping the entity we selected on mouse down)
+					if (!control)
+						Select(startSelectedEntity, false);
+
+					// Raycast
+					RaycastHit hit = RaycastFromCursor(0);
+					Entity ent = GetEntityFromHit(hit);
+					boxSelectEnd = Input.mousePosition; // Remember where we let go of the mouse
+					if (ent && ent != startSelectedEntity) // Add second entity to selection
+						Select(ent, true, false);
+					startSelectedEntity = null; // Forget our initial selection for next time
+
+					// Construct a rect for checking screen positions
+					Rect boxSelect = new Rect(boxSelectStart.x, boxSelectStart.y, boxSelectEnd.x - boxSelectStart.x, boxSelectEnd.y - boxSelectStart.y);
+
+					List<Unit> selectable = commander.GetSelectableUnits();
+					for (int i = 0; i < selectable.Count; i++)
 					{
-						Select(selectable[i], true, false);
+						// For each selectable unit, if its visual center lies in the rect, we add it to our current selection
+						Vector3 screenPoint = Camera.main.WorldToScreenPoint(selectable[i].transform.position);
+						if (boxSelect.Contains(screenPoint, true))
+						{
+							Select(selectable[i], true, false);
+						}
 					}
+
+					SetMarqueeActive(false);
+				} // not changing height
+				else // Changing height
+				{
+					HeightCancel();
 				}
-			}
+			} // not building
 		} //lmb up
 
 		// Right mouse button

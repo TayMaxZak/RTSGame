@@ -71820,12 +71820,12 @@ MonoBehaviour:
   clickEffect: {fileID: 1529201956315844, guid: 1f7deb15452254d4d9e1c7df6a4d4b65,
     type: 2}
   marquee: {fileID: 1552297109}
-  lineMouse: {fileID: 673230379}
-  lineVert: {fileID: 2116991733}
   movementGrid: {fileID: 827275813}
   heightSpacing: 5
   heightMinNum: -5
   heightMaxNum: 5
+  lineMouse: {fileID: 673230379}
+  lineVert: {fileID: 2116991733}
 --- !u!82 &1527646377
 AudioSource:
   m_ObjectHideFlags: 0
