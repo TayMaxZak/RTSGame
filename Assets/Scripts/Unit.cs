@@ -80,6 +80,8 @@ public class Unit : Entity
 		velocityMods = new List<VelocityMod>();
 		shieldMods = new List<ShieldMod>();
 
+		selCircleSpeed = movement.GetRotationSpeed(); // Make the circle better reflect the unit's scale and mobility
+
 		movement.Init(this);
 
 		if (gameManager == null)
@@ -724,7 +726,7 @@ public class Unit : Entity
 			GameObject go = Instantiate(deathClone, transform.position, transform.rotation);
 			Clone_Wreck wreck = go.GetComponent<Clone_Wreck>();
 			if (wreck)
-				wreck.SetHP(maxHealth, maxArmor);
+				wreck.SetMass(maxHealth, maxArmor);
 		}
 
 		Commander comm = gameManager.GetCommander(team);
@@ -803,9 +805,9 @@ public class Unit : Entity
 
 
 
-	public void OrderMove(Vector3 newGoal)
+	public void OrderMove(Vector3 newGoal, bool group)
 	{
-		movement.SetHGoal(newGoal);
+		movement.SetHGoal(newGoal, group);
 	}
 
 	public void OrderChangeHeight(int heightChange)

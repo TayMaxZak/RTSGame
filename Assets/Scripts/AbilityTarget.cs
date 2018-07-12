@@ -20,7 +20,7 @@ public class AbilityTarget
 
 	public override string ToString()
 	{
-		return EntityUtils.GetDisplayName(unit.Type) + " " + position;
+		return unit ? EntityUtils.GetDisplayName(unit.Type) : position.ToString();
 	}
 
 	//public bool UnitOrPos()

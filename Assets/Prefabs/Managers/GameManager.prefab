@@ -291,7 +291,7 @@ MonoBehaviour:
     WRCKlifetime: 10
     WRCKmassHealthMult: 1
     WRCKmassArmorMult: 0.5
-    WRCKcollisionSpeedPenalty: 0.6
+    WRCKcollisionSpeedPenalty: 0.8
     FLAGshieldMaxPool: 500
     FLAGshieldRegenGPS: 5
     FLAGshieldRegenDelay: 10

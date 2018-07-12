@@ -906,7 +906,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1216876717439498}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: 4.958767, y: 0, z: -13.316377}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4268561022817726}
@@ -3066,7 +3066,7 @@ MonoBehaviour:
   reloadCooldown: 5
   rateOfFire: 60
   shootOffsetRatio: 0
-  RS: 180
+  RS: 60
   baseRotatesOnY: 1
   pivotX: {fileID: 4365003288196042}
   pivotY: {fileID: 4567061863181758}
@@ -3144,12 +3144,12 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 25
-  soundShoot: {fileID: 8300000, guid: 40bfb129bf4d8f44d9c2328dda50fafd, type: 3}
+  soundShoot: {fileID: 8300000, guid: 248bbe23b4ba9e440a836b0726b8320b, type: 3}
   firePos: {fileID: 4439424789102846}
-  maxAmmo: 10
+  maxAmmo: 5
   pelletCount: 1
   accuracy: 0.15
-  reloadCooldown: 2
+  reloadCooldown: 1
   rateOfFire: 308
   shootOffsetRatio: 0.5
   RS: 180
@@ -3194,12 +3194,12 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
   range: 25
-  soundShoot: {fileID: 8300000, guid: 40bfb129bf4d8f44d9c2328dda50fafd, type: 3}
+  soundShoot: {fileID: 8300000, guid: 248bbe23b4ba9e440a836b0726b8320b, type: 3}
   firePos: {fileID: 4761075872646922}
-  maxAmmo: 10
+  maxAmmo: 5
   pelletCount: 1
   accuracy: 0.15
-  reloadCooldown: 2
+  reloadCooldown: 1
   rateOfFire: 308
   shootOffsetRatio: 0
   RS: 180
@@ -3252,7 +3252,7 @@ MonoBehaviour:
   reloadCooldown: 5
   rateOfFire: 60
   shootOffsetRatio: 0
-  RS: 180
+  RS: 60
   baseRotatesOnY: 1
   pivotX: {fileID: 4073697168354998}
   pivotY: {fileID: 4244107031580328}
@@ -3273,7 +3273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 4
   swarmTarget: {fileID: 4907543980749030}
-  selCircleSize: 2.5
+  selCircleSize: 2.4
   printInfo: 0
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}

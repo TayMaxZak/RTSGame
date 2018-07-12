@@ -439,7 +439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   swarmTarget: {fileID: 4472865978280284}
-  selCircleSize: 6
+  selCircleSize: 5.5
   printInfo: 0
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}

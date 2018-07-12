@@ -24,7 +24,7 @@ public class Entity : MonoBehaviour
 	private float selCircleSize = 1;
 
 	protected GameObject selCircle;
-	private float selCircleSpeed;
+	protected float selCircleSpeed;
 	protected bool isSelected;
 	protected bool isHovered;
 
@@ -80,6 +80,11 @@ public class Entity : MonoBehaviour
 			controller = newController;
 		else
 			controller = null;
+	}
+
+	public float GetSelCircleSize()
+	{
+		return selCircleSize;
 	}
 }
 

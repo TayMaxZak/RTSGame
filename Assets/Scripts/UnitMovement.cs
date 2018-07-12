@@ -51,7 +51,7 @@ public class UnitMovement
 
 	private float deltaBias = 99999;
 
-	private AbilityTarget rotationGoal; // Set by abilities. If not null, forces the unit to face towards a different goal than the one it wants to path to
+	private AbilityTarget rotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
 	private bool reachedHGoal = false;
 	private bool reachedVGoal = false;
 
@@ -68,7 +68,7 @@ public class UnitMovement
 		reachedVGoal = true;
 		vCurrent = Mathf.RoundToInt(transform.position.y);
 
-		hGoal = parentUnit.transform.position; // Path towards current location (i.e. nowhere)
+		hGoal = transform.position; // Path towards current location (i.e. nowhere)
 		vGoal = vCurrent;
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
@@ -97,8 +97,10 @@ public class UnitMovement
 	{
 		Vector3 dif = hGoal - transform.position;
 
+		bool useRotationGoal = rotationGoal != null;
+
 		// Rotate
-		float leftOrRight  = UpdateRotation(rotationGoal == null ? dif.normalized : (rotationGoal.position - transform.position).normalized);
+		float leftOrRight  = UpdateRotation(useRotationGoal ? (rotationGoal.position - transform.position).normalized : dif.normalized, useRotationGoal);
 		// If we are facing the goal after rotating, "move" towards it, saving velocity for actual position change later
 		Vector3 hVel = UpdatePositionH(leftOrRight);
 		// "Move" vertically, independent from all the other movement so far, saving velocity for actual position change later
@@ -113,12 +115,12 @@ public class UnitMovement
 	}
 
 	// TODO: Use Quaternion.Angle to measure angle differences
-	float UpdateRotation(Vector3 dir)
+	float UpdateRotation(Vector3 dir, bool ignoreHGoal)
 	{
 		float RdirectionOrg = AngleDir(transform.forward, dir, Vector3.up);
 		float Rdirection = Mathf.Clamp(RdirectionOrg * deltaBias, -1, 1);
 
-		if (!reachedHGoal)
+		if (ignoreHGoal || !reachedHGoal)
 		{
 			if (Rdirection > 0)
 				CurRS(1);
@@ -289,10 +291,27 @@ public class UnitMovement
 		return statusSpeedMult;
 	}
 
-	public void SetHGoal(Vector3 newHGoal)
+	public void SetHGoal(Vector3 newHGoal, bool group)
 	{
-		hGoal = newHGoal;
-		reachedHGoal = false;
+		float selCircleRadius = parentUnit.GetSelCircleSize() * 1.85f; // Approximation of visual area inside selection circle graphic
+		//Debug.Log(Vector3.Magnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) + " " + selCircleRadius);
+		if (group || Vector3.SqrMagnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) > selCircleRadius * selCircleRadius)
+		{
+			if (rotationGoal != null)
+				rotationGoal = null; // Clear any current rotation goal
+			hGoal = newHGoal;
+			reachedHGoal = false;
+		}
+		else // Not grouped or clicked outside of selection circle
+		{
+			if (!reachedHGoal) // Only able to rotate while stationary
+			{
+				hGoal = transform.position;
+				reachedHGoal = true;
+			}
+			rotationGoal = new AbilityTarget(newHGoal);
+		}
+		// else to do if rotation order but grouped
 	}
 
 	public void SetVGoal(int newVGoal)
@@ -319,5 +338,10 @@ public class UnitMovement
 	public void ClearRotationGoal()
 	{
 		rotationGoal = null;
+	}
+
+	public float GetRotationSpeed()
+	{
+		return RS;
 	}
 }

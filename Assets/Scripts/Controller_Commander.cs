@@ -274,7 +274,7 @@ public class Controller_Commander : MonoBehaviour
 			{
 				Vector3 newVec = u.transform.position + dif;
 				newVec.y = u.transform.position.y;
-				u.OrderMove(newVec);
+				u.OrderMove(newVec, units.Count > 1);
 			}
 
 			AudioUtils.PlayClipAt(soundMove, transform.position, audioSource);

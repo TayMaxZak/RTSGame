@@ -26,7 +26,7 @@ public class GameRules
 	public float WRCKlifetime = 10;
 	public float WRCKmassHealthMult = 1f; // When calculating mass, how much should max health count for ("mass" determines damage dealt on collision with a unit)
 	public float WRCKmassArmorMult = 0.5f; // When calculating mass, how much should max armor count for
-	public float WRCKcollisionSpeedPenalty = 0.6f; // If it hits something, how much speed should it lose
+	public float WRCKcollisionSpeedPenalty = 0.8f; // If it hits something, how much speed should it lose
 	[Header("Flagship")]
 	public float FLAGshieldMaxPool = 500;
 	public float FLAGshieldRegenGPS = 5;

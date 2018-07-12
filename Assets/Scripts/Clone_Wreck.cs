@@ -22,10 +22,15 @@ public class Clone_Wreck : MonoBehaviour
 
 	private GameRules gameRules;
 
+	void Awake()
+	{
+		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+	}
+
 	void Start ()
 	{
 		Instantiate(startEffect, transform.position, Quaternion.identity);
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+		
 
 		destroyCoroutine = StartCoroutine(DestroyCoroutine());
 
@@ -38,14 +43,8 @@ public class Clone_Wreck : MonoBehaviour
 		//return 1;
 	}
 
-	public void SetHP(float health, float armor)
+	public void SetMass(float health, float armor)
 	{
-		StartCoroutine(SetHPCoroutine(health, armor));
-	}
-
-	IEnumerator SetHPCoroutine(float health, float armor)
-	{
-		yield return new WaitForEndOfFrame();
 		mass = health * gameRules.WRCKmassHealthMult + armor * gameRules.WRCKmassArmorMult;
 	}
 
