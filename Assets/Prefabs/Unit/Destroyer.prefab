@@ -1814,8 +1814,9 @@ MonoBehaviour:
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
+  parentUnitTarget: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 1607e54d88add954ab7c5f4a593ef8b8, type: 3}
+  soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4398980666122288}
   maxAmmo: 3
   pelletCount: 1
@@ -1850,8 +1851,9 @@ MonoBehaviour:
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 1}
   target: {fileID: 0}
+  parentUnitTarget: {fileID: 0}
   range: 40
-  soundShoot: {fileID: 8300000, guid: 1607e54d88add954ab7c5f4a593ef8b8, type: 3}
+  soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4261729019094134}
   maxAmmo: 3
   pelletCount: 1

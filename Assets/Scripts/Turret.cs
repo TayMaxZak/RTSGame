@@ -6,7 +6,6 @@ public class Turret : MonoBehaviour
 {
 	public int team = 0;
 	private Unit parentUnit;
-	private int state = 0; // 0 = standby, 1 = shooting
 
 	[SerializeField]
 	private Projectile projTemplate;
@@ -15,6 +14,9 @@ public class Turret : MonoBehaviour
 	[Header("Targeting")]
 	[SerializeField]
 	private Unit target;
+	[SerializeField]
+	private Unit parentUnitTarget;
+	private bool checkIfDead = false;
 	[SerializeField]
 	private float range = 25;
 
@@ -83,8 +85,8 @@ public class Turret : MonoBehaviour
 	private int resetRotFrame;
 
 	private GameRules gameRules;
-	private Manager_Projectiles projs;
 	private AudioSource audioSource;
+	private Manager_Projectiles projs;
 
 	// Use this for initialization
 	void Start()
@@ -92,7 +94,7 @@ public class Turret : MonoBehaviour
 		curAmmo = maxAmmo;
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
-		projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab copy of Projectiles Manager
+		projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab reference to Projectiles Manager
 		audioSource = GetComponent<AudioSource>();
 
 		shootCooldown = 1f / (rateOfFire / 60f);
@@ -115,39 +117,97 @@ public class Turret : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		if (state == 1 && !target)
-			UpdateTarget();
-
-		// 0 = standby, 1 = shooting
-		if (state == 0)
+		if (!target) // No target
 		{
-			targetInRange = false;
-			AttemptEarlyReload();
+			// No current target, try automatically finding a new one
+			if (FindNewTarget()) // Found one. Updates target in function
+			{
+				// Only gets called once
+				CheckRangeAndAim(); // Rotate towards target if possible
+				AttemptStartShooting(); // Start shooting if possible
+			}
+			else // Unsuccessful
+			{
+				// If we should have a target right now but we don't
+				if (checkIfDead)
+					UpdateTarget();
 
-			Rotate(transform.forward); // Default aim
+				targetInRange = false;
+				AttemptEarlyReload();
+				Rotate(transform.forward); // Default aim
+			}
 		}
-		else
+		else // Has target
 		{
-			Aim(); // Rotate towards target if possible
-			StartShooting();
+			CheckRangeAndAim(); // Rotate towards target if possible
+			AttemptStartShooting(); // Start shooting if possible
 		}
 	}
 
-	void Aim()
+	bool FindNewTarget()
 	{
-		Vector3 difference = target ? target.transform.position - transform.position : transform.forward * 0.25f; // To make sure its always in range
+		// Look for an enemy within range
+		Unit automaticTarget = ScanForTarget();
+		Unit prevTarget = target;
+		target = automaticTarget;
 
-		if (difference.sqrMagnitude <= range * range)
+		if (target != prevTarget)
+			UpdateTarget();
+
+		if (automaticTarget)
+			return true;
+		return false;
+	}
+
+	// In a sphere with the radius of range, find all enemy units and pick one to target
+	Unit ScanForTarget()
+	{
+		Collider[] cols = Physics.OverlapSphere(transform.position, range, gameRules.entityLayerMask);
+		List<Unit> units = new List<Unit>();
+
+		for (int i = 0; i < cols.Length; i++)
+		{
+			Unit unit = GetUnitFromCol(cols[i]);
+
+			if (!unit) // Only works on units
+				continue;
+			if (units.Contains(unit)) // Ignore multiple colliders for one unit
+				continue;
+			if (unit.team == team) // Can't target allies
+				continue;
+			// The list of colliders is created by intersection with a range-radius sphere, but the center of this unit can still actually be out of range, leading to a target which cannot be shot at
+			if ((unit.transform.position - transform.position).sqrMagnitude >= range * range)
+				continue;
+
+			units.Add(unit);
+		}
+
+		// TODO: Sort by distance or health or other property
+
+		if (units.Count > 0)
+			return units[0];
+		else
+			return null;
+	}
+
+	void CheckRangeAndAim()
+	{
+		Vector3 difference = target ? target.transform.position - transform.position : transform.forward; // To make sure its always in range
+
+		if (target && difference.sqrMagnitude <= range * range)
 		{
 			targetInRange = true;
 		}
 		else
 		{
-			targetInRange = false;
-			AttemptEarlyReload();
+			if (!FindNewTarget()) // Target is not viable so we look for a new one
+			{ // Unsuccessful
+				targetInRange = false;
+				AttemptEarlyReload();
+			}
 		}
 
-		Rotate(difference.normalized);
+		Rotate(difference);
 	}
 
 	bool CheckFriendlyFire()
@@ -207,17 +267,13 @@ public class Turret : MonoBehaviour
 	}
 
 	// TODO: Consolidate conditions which appear in both attempt shot and start shooting
-	void StartShooting()
+	void AttemptStartShooting()
 	{
 		if (isShooting) // Don't start shooting if we are already shooting
-		{
 			return;
-		}
 
 		if (!targetInRange) // Don't start shooting while out of range
-		{
 			return;
-		}
 
 		if (isReloading) // Don't start shooting if we are reloading
 		{
@@ -225,6 +281,7 @@ public class Turret : MonoBehaviour
 				return;
 			else
 			{
+				// Cancel reload
 				StopCoroutine(reloadCoroutine);
 				isReloadCancellable = false;
 				isReloading = false;
@@ -236,9 +293,7 @@ public class Turret : MonoBehaviour
 		float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
 
 		if (dot < 1 - allowShootThressh)
-		{
 			return;
-		}
 
 		// Is our line of fire blocked by an allied unit?
 		if (!CheckFriendlyFire())
@@ -373,12 +428,24 @@ public class Turret : MonoBehaviour
 	{
 		// What do we rotate towards?
 		if (targetInRange)
-		{
+		{			
 			// How far to aim ahead given how long it would take to reach current position
-			Vector3 offsetTarget = target.transform.position + target.GetVelocity() * (difference.magnitude / projTemplate.GetSpeed());
+			// current target position + target velocity * time for projectile to reach current target position
+			Vector3 offsetTarget = target.transform.position + target.GetVelocity() * ((target.transform.position - transform.position).magnitude / projTemplate.GetSpeed());
+			
 			// How far to aim ahead given how long it would take to reach predicted position
+			// current target position + target velocity * time for projectile to reach predicted target position
 			Vector3 offsetTargetAdj = target.transform.position + target.GetVelocity() * ((offsetTarget - transform.position).magnitude / projTemplate.GetSpeed());
+			
 			difference = offsetTargetAdj - transform.position;
+
+			// Visuals
+			if (parentUnit.printInfo)
+			{
+				Debug.DrawLine(target.transform.position, transform.position, Color.red);
+				Debug.DrawLine(offsetTarget, transform.position, Color.green);
+				Debug.DrawLine(offsetTargetAdj, transform.position, Color.blue);
+			}
 		}
 		else
 			difference = transform.forward;
@@ -390,7 +457,6 @@ public class Turret : MonoBehaviour
 		direction = difference.normalized;
 		lookRotation = Quaternion.LookRotation(direction, Vector3.up);
 
-
 		Quaternion newRotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * RS);
 
 		// Fixes strange RotateTowards bug
@@ -401,14 +467,6 @@ public class Turret : MonoBehaviour
 
 		// Limit
 		rotation = limitRot;
-
-		if (parentUnit.printInfo)
-		{
-			if (newRotation != limitRot)
-				Debug.Log("false");
-			else
-				Debug.Log("true");
-		}
 
 		if (baseRotatesOnY)
 		{
@@ -428,11 +486,6 @@ public class Turret : MonoBehaviour
 
 	Quaternion LimitRotation(Quaternion rot, Quaternion oldRot)
 	{
-		//Debug.DrawRay(transform.position, rot * Vector3.forward, Color.white);
-		//Debug.DrawRay(transform.position, lookRotation * Vector3.forward, Color.red);
-		//Debug.DrawRay(transform.position, transform.forward, Color.black);
-		//Debug.DrawRay(transform.position, transform.up, Color.black);
-
 		Vector3 components = rot.eulerAngles;
 		Vector3 componentsOld = oldRot.eulerAngles;
 		Vector3 hComponentFwd = Quaternion.LookRotation(transform.forward).eulerAngles;
@@ -452,7 +505,7 @@ public class Turret : MonoBehaviour
 		}
 	
 		// Vertical extremes
-		// Don't have to do anything besides bad rotations because units will never rotate on their Z or X axes
+		// Don't have to do anything besides ignoring bad rotations because units will never rotate on their Z or X axes
 		if (angleV > maxV)
 		{
 			components.x = componentsOld.x;
@@ -492,11 +545,11 @@ public class Turret : MonoBehaviour
 			AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource);
 	}
 
-
-	public void SetTarget(Unit newTarg)
+	// Called by parentUnit to give this turret an idea of what to shoot at
+	public void SetManualTarget(Unit newTarg)
 	{
-		target = newTarg;
-
+		parentUnitTarget = newTarg;
+		target = parentUnitTarget;
 		UpdateTarget();
 	}
 
@@ -504,17 +557,30 @@ public class Turret : MonoBehaviour
 	{
 		resetRotFrame = Time.frameCount;
 
-		if (target)
+		if (!target)
 		{
-			if (state == 0)
-				state = 1;
+			checkIfDead = false;
+		}
+		else
+			checkIfDead = true;
+
+		//Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
+	}
+
+	Unit GetUnitFromCol(Collider col)
+	{
+		Entity ent = col.GetComponentInParent<Entity>();
+		if (ent)
+		{
+			if (ent.GetType() == typeof(Unit) || ent.GetType().IsSubclassOf(typeof(Unit)))
+				return (Unit)ent;
+			else
+				return null;
 		}
 		else
 		{
-			state = 0;
+			return null;
 		}
-
-		//Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
 	}
 
 	// Visualize range of turrets in editor

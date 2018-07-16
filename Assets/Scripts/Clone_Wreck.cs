@@ -16,7 +16,7 @@ public class Clone_Wreck : MonoBehaviour
 	private Vector3 angularVelocity;
 
 	private float curFallSpeed = 0;
-	private Vector3 velocity;
+	private Vector3 velocity; // TODO: Add final velocity of source unit to initial velocity of wreck
 
 	private Coroutine destroyCoroutine;
 

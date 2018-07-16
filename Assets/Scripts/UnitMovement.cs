@@ -307,7 +307,7 @@ public class UnitMovement
 	public void SetHGoal(Vector3 newHGoal, bool group)
 	{
 		float selCircleRadius = parentUnit.GetSelCircleSize() * 1.85f; // Approximation of visual area inside selection circle graphic
-		//Debug.Log(Vector3.Magnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) + " " + selCircleRadius);
+
 		if (group || Vector3.SqrMagnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) > selCircleRadius * selCircleRadius)
 		{
 			if (rotationGoal != null)

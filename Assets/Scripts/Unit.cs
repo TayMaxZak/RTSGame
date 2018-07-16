@@ -824,7 +824,7 @@ public class Unit : Entity
 	{
 		target = newTarg;
 		foreach (Turret tur in turrets)
-			tur.SetTarget(target);
+			tur.SetManualTarget(target);
 	}
 
 	public void OrderAbility(int i, AbilityTarget targ)
@@ -836,6 +836,6 @@ public class Unit : Entity
 	{
 		if (i == 2) // 
 			foreach (Turret tur in turrets)
-				tur.SetTarget(null);
+				tur.SetManualTarget(null);
 	}
 }
