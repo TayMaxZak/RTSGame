@@ -308,7 +308,7 @@ public class UnitMovement
 	{
 		float selCircleRadius = parentUnit.GetSelCircleSize() * 1.85f; // Approximation of visual area inside selection circle graphic
 
-		if (group || Vector3.SqrMagnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) > selCircleRadius * selCircleRadius)
+		if (Vector3.SqrMagnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) > selCircleRadius * selCircleRadius)
 		{
 			if (rotationGoal != null)
 				rotationGoal = null; // Clear any current rotation goal
@@ -322,7 +322,8 @@ public class UnitMovement
 				hGoal = transform.position;
 				reachedHGoal = true;
 			}
-			rotationGoal = new AbilityTarget(newHGoal);
+			if (!group)
+				rotationGoal = new AbilityTarget(newHGoal);
 		}
 		// else to do if rotation order but grouped
 	}

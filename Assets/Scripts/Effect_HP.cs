@@ -21,7 +21,6 @@ public class Effect_HP : MonoBehaviour
 	private Transform firePos;
 	private Transform[] firePositions;
 
-
 	private List<ParticleSystem> smokePSystems;
 	private List<ParticleSystem> firePSystems;
 
@@ -103,7 +102,9 @@ public class Effect_HP : MonoBehaviour
 	void SetFireActive(bool isActive)
 	{
 		if (firePSystems.Count == 0)
+		{
 			InitFire();
+		}
 
 		foreach (ParticleSystem firePS in firePSystems)
 		{

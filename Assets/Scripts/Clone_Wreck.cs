@@ -48,12 +48,17 @@ public class Clone_Wreck : MonoBehaviour
 		mass = health * gameRules.WRCKmassHealthMult + armor * gameRules.WRCKmassArmorMult;
 	}
 
+	public void SetHVelocity(Vector3 vel)
+	{
+		velocity = new Vector3(vel.x, 0, vel.z) * gameRules.WRCKinitialVelMult;
+	}
+
 	void Update()
 	{
 		transform.Rotate(angularVelocity * (curFallSpeed / gameRules.WRCKfallSpeedMax) * Time.deltaTime);
 
 		curFallSpeed = Mathf.Clamp(curFallSpeed + gameRules.WRCKfallSpeedAccel * Time.deltaTime, -gameRules.WRCKfallSpeedMax, gameRules.WRCKfallSpeedMax);
-		velocity = Vector3.down * curFallSpeed;
+		velocity.y = -curFallSpeed;
 		transform.Translate(velocity * Time.deltaTime, Space.World);
 	}
 

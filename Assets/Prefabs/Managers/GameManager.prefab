@@ -291,6 +291,7 @@ MonoBehaviour:
     WRCKlifetime: 10
     WRCKmassHealthMult: 1
     WRCKmassArmorMult: 0.5
+    WRCKinitialVelMult: 0.5
     WRCKcollisionSpeedPenalty: 0.8
     FLAGshieldMaxPool: 500
     FLAGshieldRegenGPS: 5
@@ -341,7 +342,7 @@ MonoBehaviour:
     ABLYchainAllyMult: 0.667
     ABLYchainEnemyMult: 0.667
     ABLYchainFlagshipMult: 0.5
-    ABLYsuperlaserRangeUse: 25
+    ABLYsuperlaserRangeUse: 60
     ABLYsuperlaserRangeTolerance: 10
     ABLYsuperlaserDelay: 3.5
     ABLYsuperlaserInitStacks: 0

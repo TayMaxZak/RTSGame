@@ -23,9 +23,10 @@ public class GameRules
 	[Header("Wrecks")]
 	public float WRCKfallSpeedMax = 10;
 	public float WRCKfallSpeedAccel = 3;
-	public float WRCKlifetime = 10;
+	public float WRCKlifetime = 10; // How long the wreck lasts before dissapearing. Also how long before resources begin to be recovered from a dead unit
 	public float WRCKmassHealthMult = 1f; // When calculating mass, how much should max health count for ("mass" determines damage dealt on collision with a unit)
 	public float WRCKmassArmorMult = 0.5f; // When calculating mass, how much should max armor count for
+	public float WRCKinitialVelMult = 0.5f; // When a unit dies, this ratio of its current horizontal velocity is transferred to its wreck
 	public float WRCKcollisionSpeedPenalty = 0.8f; // If it hits something, how much speed should it lose
 	[Header("Flagship")]
 	public float FLAGshieldMaxPool = 500;
@@ -81,7 +82,7 @@ public class GameRules
 	public float ABLYchainEnemyMult = 0.667f;
 	public float ABLYchainFlagshipMult = 0.5f; // Stacks with prior 2 multipliers (0.667 * 0.5 = 0.333)
 
-	public float ABLYsuperlaserRangeUse = 25; // Max distance for cast
+	public float ABLYsuperlaserRangeUse = 60; // Max distance for cast
 	public float ABLYsuperlaserRangeTolerance = 10; // If distance changes by this much or more post-cast, superlaser is put on a shorter cooldown without firing
 	public float ABLYsuperlaserDelay = 3.5f; // Delay before damage is dealt during ability can be interupted or range-cancelled
 	public int ABLYsuperlaserInitStacks = 0; // Stacks the ability starts with

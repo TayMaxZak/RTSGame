@@ -52,8 +52,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4958349106454662}
-  - component: {fileID: 114586557395070512}
   - component: {fileID: 82364831499416146}
+  - component: {fileID: 114200766482715334}
   m_Layer: 0
   m_Name: TurretR
   m_TagString: Untagged
@@ -383,7 +383,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4628757067505284}
-  - component: {fileID: 114725559135124704}
+  - component: {fileID: 114961553349981566}
   - component: {fileID: 82831566058064816}
   m_Layer: 0
   m_Name: TurretL
@@ -627,7 +627,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1113167753681128}
   m_LocalRotation: {x: -0.26848042, y: -0.017802002, z: -0.040296778, w: 0.9622773}
-  m_LocalPosition: {x: -0.40907, y: 0.28311, z: -2.692}
+  m_LocalPosition: {x: -0.583, y: -0.291, z: -3.33}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4303363706125878}
@@ -673,7 +673,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1412150699776818}
   m_LocalRotation: {x: -0.3841525, y: 0.10558077, z: -0.2860295, w: 0.8714739}
-  m_LocalPosition: {x: -0.357, y: 0.9152, z: -0.03}
+  m_LocalPosition: {x: -0.4, y: 0.73, z: 0.26}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4303363706125878}
@@ -806,7 +806,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1902947336223294}
   m_LocalRotation: {x: -0.038374238, y: 0.13401504, z: 0.004846081, w: 0.9902242}
-  m_LocalPosition: {x: 1.136, y: 0.006, z: -0.904}
+  m_LocalPosition: {x: 0.887, y: -0.154, z: -0.822}
   m_LocalScale: {x: 1.0000002, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4303363706125878}
@@ -861,7 +861,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1316303246045758}
   m_LocalRotation: {x: -0.39311862, y: 0.06463851, z: -0.19289212, w: 0.8967008}
-  m_LocalPosition: {x: 0.391, y: -0.11681, z: 2.564}
+  m_LocalPosition: {x: 0.673, y: -0.239, z: 2.575}
   m_LocalScale: {x: 1, y: 0.9999999, z: 1}
   m_Children: []
   m_Father: {fileID: 4303363706125878}
@@ -874,7 +874,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1848386785413160}
   m_LocalRotation: {x: -0.39311862, y: 0.06463851, z: -0.19289212, w: 0.8967008}
-  m_LocalPosition: {x: -1.637, y: -0.118, z: -0.596}
+  m_LocalPosition: {x: -1.5463, y: -0.36309, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1.0000002}
   m_Children: []
   m_Father: {fileID: 4303363706125878}
@@ -1707,6 +1707,41 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &114200766482715334
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1073380907290102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b25eda16504a6af4ea9a2c387b027740, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 0
+  range: 40
+  soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
+  firePos: {fileID: 4398980666122288}
+  maxAmmo: 3
+  reloadCooldown: 3
+  rateOfFire: 150
+  shootOffsetRatio: 0
+  RS: 80
+  baseRotatesOnY: 1
+  pivotX: {fileID: 4398980666122288}
+  pivotY: {fileID: 4459647000952002}
+  maxH: 95
+  minH: 100
+  minV: 30
+  maxV: 120
+  projTemplate:
+    type: 0
+    speed: 20
+    damage: 20
+    position: {x: 0, y: 0, z: 0}
+    direction: {x: 0, y: 0, z: 0}
+  pelletCount: 1
+  accuracy: 0.1
 --- !u!114 &114248553201379134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1780,8 +1815,8 @@ MonoBehaviour:
   alwaysBurnImmune: 0
   deathClone: {fileID: 1796662562453436, guid: 60e7666e1b928184a82e6f22436ce2d9, type: 2}
   turrets:
-  - {fileID: 114725559135124704}
-  - {fileID: 114586557395070512}
+  - {fileID: 114961553349981566}
+  - {fileID: 114200766482715334}
   abilities:
   - {fileID: 114971228717168258}
   - {fileID: 114553389254284404}
@@ -1793,46 +1828,9 @@ MonoBehaviour:
     model: {fileID: 4964686013811900}
     RS: 15
     RSAccel: 1
-    allowMoveThresh: 0.3
+    allowMoveThresh: 0.5
     reachGoalThresh: 2
---- !u!114 &114586557395070512
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1073380907290102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b108626a16911844b8672f4a70cd97d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  team: 0
-  projTemplate:
-    type: 0
-    speed: 20
-    damage: 20
-    position: {x: 0, y: 0, z: 0}
-    direction: {x: 0, y: 0, z: 1}
-  target: {fileID: 0}
-  parentUnitTarget: {fileID: 0}
-  range: 40
-  soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
-  firePos: {fileID: 4398980666122288}
-  maxAmmo: 3
-  pelletCount: 1
-  accuracy: 0.1
-  reloadCooldown: 3
-  rateOfFire: 150
-  shootOffsetRatio: 0
-  RS: 80
-  baseRotatesOnY: 1
-  pivotX: {fileID: 4398980666122288}
-  pivotY: {fileID: 4459647000952002}
-  maxH: 95
-  minH: 100
-  minV: 30
-  maxV: 120
---- !u!114 &114725559135124704
+--- !u!114 &114961553349981566
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1840,24 +1838,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1740342110001086}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b108626a16911844b8672f4a70cd97d, type: 3}
+  m_Script: {fileID: 11500000, guid: b25eda16504a6af4ea9a2c387b027740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
-  projTemplate:
-    type: 0
-    speed: 20
-    damage: 20
-    position: {x: 0, y: 0, z: 0}
-    direction: {x: 0, y: 0, z: 1}
-  target: {fileID: 0}
-  parentUnitTarget: {fileID: 0}
   range: 40
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4261729019094134}
   maxAmmo: 3
-  pelletCount: 1
-  accuracy: 0.1
   reloadCooldown: 3
   rateOfFire: 150
   shootOffsetRatio: 0
@@ -1869,6 +1857,14 @@ MonoBehaviour:
   minH: 95
   minV: 30
   maxV: 120
+  projTemplate:
+    type: 0
+    speed: 20
+    damage: 20
+    position: {x: 0, y: 0, z: 0}
+    direction: {x: 0, y: 0, z: 0}
+  pelletCount: 1
+  accuracy: 0.1
 --- !u!114 &114971228717168258
 MonoBehaviour:
   m_ObjectHideFlags: 1

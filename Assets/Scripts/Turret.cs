@@ -5,16 +5,12 @@ using UnityEngine;
 public class Turret : MonoBehaviour
 {
 	public int team = 0;
-	private Unit parentUnit;
+	protected Unit parentUnit;
 
-	[SerializeField]
-	private Projectile projTemplate;
-	private Status onHitStatus;
+	protected Status onHitStatus;
 
 	[Header("Targeting")]
-	[SerializeField]
-	private Unit target;
-	[SerializeField]
+	protected Unit target;
 	private Unit parentUnitTarget;
 	private bool checkIfDead = false;
 	[SerializeField]
@@ -22,18 +18,14 @@ public class Turret : MonoBehaviour
 
 	[Header("Sound")]
 	[SerializeField]
-	private AudioClip soundShoot; // Played on each shot or, if there is an audio loop, when the loop ends
+	protected AudioClip soundShoot; // Played on each shot or, if there is an audio loop, when the loop ends
 
 	[Header("Shooting")]
 	[SerializeField]
-	private Transform firePos;
-	private int curAmmo = 4;
+	protected Transform firePos;
+	protected int curAmmo = 4;
 	[SerializeField]
 	private int maxAmmo = 4;
-	[SerializeField]
-	private int pelletCount = 1;
-	[SerializeField]
-	private float accuracy = 1;
 	private float allowShootThressh = 0.0001f; // 0.001f
 
 	[SerializeField]
@@ -86,15 +78,13 @@ public class Turret : MonoBehaviour
 
 	private GameRules gameRules;
 	private AudioSource audioSource;
-	private Manager_Projectiles projs;
 
 	// Use this for initialization
-	void Start()
+	protected void Awake()
 	{
 		curAmmo = maxAmmo;
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
-		projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab reference to Projectiles Manager
 		audioSource = GetComponent<AudioSource>();
 
 		shootCooldown = 1f / (rateOfFire / 60f);
@@ -210,6 +200,21 @@ public class Turret : MonoBehaviour
 		Rotate(difference);
 	}
 
+	protected Vector3 GetForward()
+	{
+		return baseRotatesOnY ? pivotX.forward : pivotY.forward;
+	}
+
+	protected Vector3 GetRight()
+	{
+		return baseRotatesOnY ? pivotX.right : pivotY.right;
+	}
+
+	protected Vector3 GetUp()
+	{
+		return baseRotatesOnY ? pivotX.up : pivotY.up;
+	}
+
 	bool CheckFriendlyFire()
 	{
 		// We know how many potential collisions we can have with the parent unit's colliders, so we will cast multiple rays in succession to skip past the collisions that we want to ignore
@@ -217,7 +222,7 @@ public class Turret : MonoBehaviour
 		Collider[] cols = parentUnit.GetComponentsInChildren<Collider>();
 
 		// First, try to raycast and hope we don't hit ourselves
-		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
+		Vector3 forward = GetForward();
 		RaycastHit hit;
 		float offset = 0.02f; // How much we move in towards our first raycast hit location to make sure the next raycast is technically inside the collider we hit the first time around
 		if (Physics.Raycast(firePos.position, forward, out hit, range * gameRules.PRJfriendlyFireCheckRangeMult, gameRules.entityLayerMask))
@@ -239,7 +244,6 @@ public class Turret : MonoBehaviour
 						// Here's the fun part. We have to try to brute-force through the parent unit's colliders
 						for (int i = 0; i < cols.Length; i++)
 						{
-							// TODO: Reuse hit
 							// Start where the last raycast left off, plus moved in a little bit to make sure we dont hit the same collider again
 							if (Physics.Raycast(hit.point + forward * offset, forward, out hit, range * gameRules.PRJfriendlyFireCheckRangeMult, gameRules.entityLayerMask))
 							{
@@ -289,7 +293,7 @@ public class Turret : MonoBehaviour
 		}
 
 		// Are we pointed at the target?
-		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
+		Vector3 forward = GetForward();
 		float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
 
 		if (dot < 1 - allowShootThressh)
@@ -368,7 +372,7 @@ public class Turret : MonoBehaviour
 		}
 
 		// Are we pointed at the target?
-		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
+		Vector3 forward = GetForward();
 		float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
 
 		if (dot < 1 - allowShootThressh)
@@ -424,28 +428,17 @@ public class Turret : MonoBehaviour
 		curAmmo = maxAmmo;
 	}
 
+	protected virtual Vector3 FindAdjDifference()
+	{
+		return target.transform.position - transform.position;
+	}
+
 	void Rotate(Vector3 difference)
 	{
 		// What do we rotate towards?
 		if (targetInRange)
-		{			
-			// How far to aim ahead given how long it would take to reach current position
-			// current target position + target velocity * time for projectile to reach current target position
-			Vector3 offsetTarget = target.transform.position + target.GetVelocity() * ((target.transform.position - transform.position).magnitude / projTemplate.GetSpeed());
-			
-			// How far to aim ahead given how long it would take to reach predicted position
-			// current target position + target velocity * time for projectile to reach predicted target position
-			Vector3 offsetTargetAdj = target.transform.position + target.GetVelocity() * ((offsetTarget - transform.position).magnitude / projTemplate.GetSpeed());
-			
-			difference = offsetTargetAdj - transform.position;
-
-			// Visuals
-			if (parentUnit.printInfo)
-			{
-				Debug.DrawLine(target.transform.position, transform.position, Color.red);
-				Debug.DrawLine(offsetTarget, transform.position, Color.green);
-				Debug.DrawLine(offsetTargetAdj, transform.position, Color.blue);
-			}
+		{
+			difference = FindAdjDifference();
 		}
 		else
 			difference = transform.forward;
@@ -523,26 +516,15 @@ public class Turret : MonoBehaviour
 		return angle;
 	}
 
-	void Fire()
+	protected void PlayShootSound()
 	{
-		curAmmo--;
-
-		Vector3 forward = baseRotatesOnY ? pivotX.forward : pivotY.forward;
-		// Projectile
-		for (int i = 0; i < pelletCount; i++)
-		{
-			Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
-			Vector3 errForward = (forward + ((baseRotatesOnY ? pivotX.right : pivotY.right) * error.x) + ((baseRotatesOnY ? pivotX.up : pivotY.up) * error.y)).normalized;
-
-			if (onHitStatus == null)
-				projs.SpawnProjectile(projTemplate, firePos.position, errForward, parentUnit, null); // TODO: Do we need to make a new status each time?
-			else
-				projs.SpawnProjectile(projTemplate, firePos.position, errForward, parentUnit, new Status(onHitStatus.from, onHitStatus.statusType)); // TODO: Do we need to make a new status each time?
-		}
-
-		// Sound
 		if (!audioSource.clip)
 			AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource);
+	}
+
+	protected virtual void Fire()
+	{
+		curAmmo--;
 	}
 
 	// Called by parentUnit to give this turret an idea of what to shoot at

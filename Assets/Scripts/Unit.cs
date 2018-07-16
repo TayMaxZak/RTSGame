@@ -10,7 +10,7 @@ public class Unit : Entity
 	[SerializeField]
 	private UI_HPBar hpBarPrefab;
 	[SerializeField]
-	private Effect_HP hpEffects; // TODO: Bugged, sometimes this property is not set?
+	private Effect_HP hpEffects;
 
 	private Unit target;
 	public int team = 0;
@@ -201,7 +201,10 @@ public class Unit : Entity
 	void UpdateHealth()
 	{
 		UpdateHPBarVal(false);
-		UpdateEffects();
+
+		// Updating health effects now would interfere with the End() method of effect objects
+		if (!dead)
+			UpdateEffects();
 	}
 
 	// Update HPBar position and enemy/ally state
@@ -542,7 +545,7 @@ public class Unit : Entity
 		if (dmg <= 0)
 			return false;
 
-		//Damage lost to range resist / damage falloff, incentivising shooting armor from up close
+		// Damage lost to range resist / damage falloff, incentivising shooting armor from up close
 		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / (gameRules.ARMrangeMax - gameRules.ARMrangeMin));
 
 		float rangeDamage = Mathf.Min(dmg * rangeRatio, dmg) * gameRules.ARMrangeMult;
@@ -575,7 +578,7 @@ public class Unit : Entity
 
 		if (curHealth <= 0)
 		{
-			Die();
+			Die(dmgType);
 		}
 
 		return true;
@@ -689,11 +692,11 @@ public class Unit : Entity
 
 		if (curHealth <= 0)
 		{
-			Die();
+			Die(DamageType.Normal);
 		}
 	}
 
-	public void Die()
+	public void Die(DamageType damageType)
 	{
 		if (dead)
 			return;
@@ -718,15 +721,24 @@ public class Unit : Entity
 
 		if (hpEffects)
 			hpEffects.End();
-		else
-			Debug.LogError("HP Effects not set");
 
 		if (deathClone)
 		{
-			GameObject go = Instantiate(deathClone, transform.position, transform.rotation);
-			Clone_Wreck wreck = go.GetComponent<Clone_Wreck>();
-			if (wreck)
-				wreck.SetMass(maxHealth, maxArmor);
+			if (damageType == DamageType.Superlaser)
+			{
+				// No wreck
+			}
+			else
+			{
+				// Spawn wreck
+				GameObject go = Instantiate(deathClone, transform.position, transform.rotation);
+				Clone_Wreck wreck = go.GetComponent<Clone_Wreck>();
+				if (wreck)
+				{
+					wreck.SetMass(maxHealth, maxArmor);
+					wreck.SetHVelocity(movement.GetVelocity());
+				}
+			}
 		}
 
 		Commander comm = gameManager.GetCommander(team);
