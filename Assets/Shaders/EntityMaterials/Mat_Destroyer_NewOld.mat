@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Unit_Flagship
+  m_Name: Mat_Destroyer_NewOld
   m_Shader: {fileID: 4800000, guid: 7e4e9538d759bee40984b10f8f8a21b9, type: 3}
   m_ShaderKeywords: _ALPHABLEND_ON
   m_LightmapFlags: 0
@@ -19,11 +19,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AOTex:
-        m_Texture: {fileID: 2800000, guid: e7c00e52dfcbc1b458756bef07e9e414, type: 3}
+        m_Texture: {fileID: 2800000, guid: 740dbc4acbd744641bdd030c94cdc3d4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ca366dfae29e64d4ca7bfabae688d69c, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SSSTex:
@@ -34,7 +34,12 @@ Material:
     - _AmbientFallD: 0
     - _AmbientFallL: 0.75
     - _AmbientMult: 1
+    - _LightSteps: 8
+    - _NoiseAmount: 1
+    - _NoiseSteps: 1000
+    - _NoiseStretch: 1
+    - _NoiseSubSteps: 50
     - _SSSStrength: 0.5
     m_Colors:
-    - _Color: {r: 0.9558824, g: 0.9558824, b: 0.9558824, a: 1}
+    - _Color: {r: 0.7352941, g: 0.7352941, b: 0.7352941, a: 1}
     - _SSSColor: {r: 1, g: 0.9696755, b: 0.9044118, a: 1}

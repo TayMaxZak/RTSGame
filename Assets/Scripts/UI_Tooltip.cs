@@ -28,15 +28,9 @@ public class UI_Tooltip : MonoBehaviour
 
 	private float timer = 0;
 
-	private Vector3 initialPosition;
-
-	
-
 	void Awake()
 	{
 		uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
-
-		initialPosition = tooltipRoot.position;
 	}
 
 	//void Start()

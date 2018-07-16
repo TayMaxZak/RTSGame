@@ -19,11 +19,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AOTex:
-        m_Texture: {fileID: 2800000, guid: 740dbc4acbd744641bdd030c94cdc3d4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2839d200592ee4f4bbe1e21d7dff6550, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: c2c710f4b6dd99142bf1a558ad4f180a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SSSTex:
@@ -32,7 +32,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AmbientFallD: 0
-    - _AmbientFallL: 1
+    - _AmbientFallL: 0.75
     - _AmbientMult: 1
     - _LightSteps: 8
     - _NoiseAmount: 1
@@ -41,5 +41,5 @@ Material:
     - _NoiseSubSteps: 50
     - _SSSStrength: 0.5
     m_Colors:
-    - _Color: {r: 0.7352941, g: 0.7352941, b: 0.7352941, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _SSSColor: {r: 1, g: 0.9696755, b: 0.9044118, a: 1}

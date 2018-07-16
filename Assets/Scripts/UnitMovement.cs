@@ -99,10 +99,12 @@ public class UnitMovement
 
 		bool useRotationGoal = rotationGoal != null;
 
+		Vector3 dir = useRotationGoal ? (rotationGoal.position - transform.position).normalized : dif.normalized;
+
 		// Rotate
-		float leftOrRight  = UpdateRotation(useRotationGoal ? (rotationGoal.position - transform.position).normalized : dif.normalized, useRotationGoal);
+		float leftOrRight  = UpdateRotation(dir, useRotationGoal);
 		// If we are facing the goal after rotating, "move" towards it, saving velocity for actual position change later
-		Vector3 hVel = UpdatePositionH(leftOrRight);
+		Vector3 hVel = UpdatePositionH(leftOrRight, dir);
 		// "Move" vertically, independent from all the other movement so far, saving velocity for actual position change later
 		Vector3 vVel = UpdatePositionV();
 		// Pass in current speed so CalcChainVel knows if unit's movement speed is less than or greater than the speed from Chain
@@ -150,6 +152,15 @@ public class UnitMovement
 		return dir;
 	}
 
+	bool FrontOrBack(Vector3 fwd, Vector3 targetDir)
+	{
+		//Vector3 perp = Vector3.Cross(fwd, targetDir);
+		float dir = Vector3.Dot(fwd, targetDir);
+
+		//dir = Mathf.Clamp(dir * deltaBias, -1, 1);
+		return dir > 0;
+	}
+
 	void CurRS(int targetRatio)
 	{
 		float deltaMult = 1 / RSAccel;
@@ -167,12 +178,14 @@ public class UnitMovement
 		}
 	}
 
-	Vector3 UpdatePositionH(float leftOrRight)
+	Vector3 UpdatePositionH(float leftOrRight, Vector3 dir)
 	{
 		if (Vector3.SqrMagnitude(transform.position - new Vector3(hGoal.x, transform.position.y, hGoal.z)) < reachGoalThresh * reachGoalThresh)
 			reachedHGoal = true;
 
-		if (!reachedHGoal && Mathf.Abs(leftOrRight) < allowMoveThresh)
+		bool inFront = FrontOrBack(transform.forward, dir);
+
+		if (!reachedHGoal && Mathf.Abs(leftOrRight) < allowMoveThresh && inFront)
 		{
 			CurHMS(1);
 		}

@@ -54,7 +54,7 @@ MonoBehaviour:
   type: 1
   previewObject: {fileID: 1030691592888378, guid: ed920f27b0ecd1a49b74c45bff86ff90,
     type: 2}
-  spawnObject: {fileID: 1327430980122510, guid: 4701c8cf188206642afc9eae95e16e8e,
+  spawnObject: {fileID: 1327430980122510, guid: 1350b707f0e5d954c94fed6d820cd57d,
     type: 2}
   cost: 12
   unitCap: 5
