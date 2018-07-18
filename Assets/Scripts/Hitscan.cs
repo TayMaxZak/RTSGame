@@ -2,47 +2,44 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum DamageType
-{
-	Normal,
-	Wreck,
-	Swarm,
-	Superlaser
-}
-
 [System.Serializable]
-public class Projectile
+public class Hitscan
 {
 	[SerializeField]
 	private DamageType dmgType = DamageType.Normal;
 	[SerializeField]
-	private float speed = 0;
+	private float range = 0;
 	[SerializeField]
 	private float damage = 0;
+	[SerializeField]
+	private float lifetime = 0;
 
-	private Vector3 startPosition = Vector3.zero;
 	private float timeAlive = 0;
 
+	//public ParticleSystem.Particle temp;
+
+	//[HideInInspector]
+	//[System.NonSerialized]
+	public int id;
+
 	[HideInInspector]
-	public Vector3 position = Vector3.zero;
+	public Vector3 startPosition = Vector3.zero;
+	[HideInInspector]
+	public Vector3 endPosition = Vector3.zero;
 	[HideInInspector]
 	public Vector3 direction = Vector3.forward;
 
 	private Unit from;
 	private Status status;
 
-	public Projectile(Projectile copy)
+	public Hitscan(Hitscan copy)
 	{
 		dmgType = copy.dmgType;
-		speed = copy.speed;
-		position = copy.position;
-		direction = copy.direction;
+		range = copy.range;
 		damage = copy.damage;
-	}
-
-	public void SetStartPosition(Vector3 startPos)
-	{
-		startPosition = startPos;
+		lifetime = copy.lifetime;
+		startPosition = copy.startPosition;
+		direction = copy.direction;
 	}
 
 	public DamageType GetDamageType()
@@ -50,9 +47,9 @@ public class Projectile
 		return dmgType;
 	}
 
-	public float GetSpeed()
+	public float GetRange()
 	{
-		return speed;
+		return range;
 	}
 
 	public float GetDamage()
@@ -65,6 +62,16 @@ public class Projectile
 		return timeAlive;
 	}
 
+	public void SetLifetime(float time)
+	{
+		lifetime = time;
+	}
+
+	public float GetLifetime()
+	{
+		return lifetime;
+	}
+
 	public void UpdateTimeAlive(float deltaTime)
 	{
 		timeAlive += deltaTime;
@@ -73,11 +80,6 @@ public class Projectile
 	public void SetTimeAlive(float time)
 	{
 		timeAlive = time;
-	}
-
-	public float CalcRange()
-	{
-		return (startPosition - position).magnitude;
 	}
 
 

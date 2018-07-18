@@ -10,8 +10,7 @@ public class Manager_Projectiles : MonoBehaviour
 	[SerializeField]
 	public List<Projectile> projectiles;
 	private List<Projectile> toDelete;
-	[SerializeField]
-	private LayerMask layerMask;
+	private LayerMask mask;
 	[SerializeField]
 	private ParticleSystem pS;
 	private Particle[] particles;
@@ -23,7 +22,7 @@ public class Manager_Projectiles : MonoBehaviour
 
 	private GameRules gameRules;
 
-	void Start()
+	void Awake()
 	{
 		particles = new Particle[pS.main.maxParticles];
 		if (particles == null || pS == null)
@@ -33,7 +32,9 @@ public class Manager_Projectiles : MonoBehaviour
 
 		projectiles = new List<Projectile>();
 		toDelete = new List<Projectile>();
+
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+		mask = gameRules.entityLayerMask;
 	}
 
 	public void Update()
@@ -50,7 +51,7 @@ public class Manager_Projectiles : MonoBehaviour
 			// TODO: Also do positional hit detection for situations where a projectile slips into a unit without raycast hitting the outer shell (ie rotation)
 			// Raycast according to movement path
 			RaycastHit hit;
-			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.GetSpeed() * Time.deltaTime, layerMask))
+			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.GetSpeed() * Time.deltaTime, mask))
 			{
 				bool hitSelf = false;
 				if (hit.collider.transform.parent) // Is this a unit?
@@ -62,18 +63,18 @@ public class Manager_Projectiles : MonoBehaviour
 						if (status != null)
 						{
 							if (status.statusType == StatusType.SuperlaserMark)
-								status.SetTimeLeft(proj.GetDamage()); // Store damage in timeLeft field of projectile
+								status.SetTimeLeft(proj.GetDamage()); // Store damage in timeLeft field of status
 
 							unit.AddStatus(status);
 						}
 
 						if (unit.team != proj.GetFrom().team) // If we hit an enemy, do full damage
 						{
-							unit.Damage(proj.GetDamage(), proj.CalcRange(), DamageType.Normal);
+							unit.Damage(proj.GetDamage(), proj.CalcRange(), proj.GetDamageType());
 						}
 						else // If we hit an ally, do reduced damage because it was an accidental hit
 						{
-							unit.Damage(proj.GetDamage() * gameRules.PRJfriendlyFireDamageMult, proj.CalcRange(), DamageType.Normal);
+							unit.Damage(proj.GetDamage() * gameRules.PRJfriendlyFireDamageMult, proj.CalcRange(), proj.GetDamageType());
 						}
 					}
 					else
@@ -89,8 +90,8 @@ public class Manager_Projectiles : MonoBehaviour
 					proj.position = hit.point - proj.direction * gameRules.PRJhitOffset; // Move to contact point
 					particles[i].position = proj.position;
 
-					particles[i].remainingLifetime = 0; // Destroy projectile
-					toDelete.Add(proj);
+					particles[i].remainingLifetime = 0; // Destroy particle
+					toDelete.Add(proj); // Destroy projectile
 					continue;
 				}
 			}//if Raycast
@@ -98,9 +99,8 @@ public class Manager_Projectiles : MonoBehaviour
 			proj.UpdateTimeAlive(Time.deltaTime);
 			if (proj.GetTimeAlive() > gameRules.PRJmaxTimeAlive)
 			{
-				particles[i].remainingLifetime = 0; // Destroy projectile
-				toDelete.Add(proj);
-				//continue;
+				particles[i].remainingLifetime = 0; // Destroy particle
+				toDelete.Add(proj); // Destroy projectile
 			}
 			
 			proj.position += proj.direction * proj.GetSpeed() * Time.deltaTime; // Update projectile position
