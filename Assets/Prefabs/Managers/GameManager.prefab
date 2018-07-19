@@ -306,6 +306,9 @@ MonoBehaviour:
     entityLayerMask:
       serializedVersion: 2
       m_Bits: 1
+    targetLayerMask:
+      serializedVersion: 2
+      m_Bits: 1025
     gridLayerMask:
       serializedVersion: 2
       m_Bits: 512
@@ -332,6 +335,7 @@ MonoBehaviour:
     ABLYswarmFirstUseSpeedMult: 0.75
     ABLYswarmDPS: 4
     ABLYswarmInteractRadius: 5
+    ABLYswarmFighterHealth: 20
     ABLYhealFieldRange: 25
     ABLYhealFieldAllyGPS: 2
     ABLYhealFieldAllyGPSBonusMult: 0.005

@@ -7,15 +7,10 @@ using EmitParams = UnityEngine.ParticleSystem.EmitParams;
 
 public class Manager_Hitscan : MonoBehaviour
 {
-	[SerializeField]
-	public List<Hitscan> hitscans;
-	private List<Hitscan> toDelete;
 	private LayerMask mask;
 	[SerializeField]
 	private ParticleSystem pS;
 	//private MainModule main;
-
-	private int numAlive = 0;
 
 	private float width = 0.1f;
 	private float directionMult = 0.01f;
@@ -24,50 +19,34 @@ public class Manager_Hitscan : MonoBehaviour
 
 	private GameRules gameRules;
 
-	private int id = 0;
-
-	private int counter = 0;
-
 	void Awake()
 	{
-		hitscans = new List<Hitscan>();
-		toDelete = new List<Hitscan>();
-
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 		mask = gameRules.entityLayerMask;
 
 		width = pS.main.startSizeX.constant;
 	}
 
-	void LogParticles()
+	public void SpawnHitscan(Hitscan temp, Vector3 position, Vector3 direction, Unit from, Status onHit)
 	{
-		if ((int)(Time.time * 100) % 100 == 0)
-		{
-			int count = pS.subEmitters.subEmittersCount;
-			int subTotal = 0;
-
-			for (int i = 1; i < count; i++)
-			{
-				subTotal += pS.subEmitters.GetSubEmitterSystem(i).particleCount;
-			}
-			Debug.Log("NUM ALIVE: " + (pS.particleCount) + " -> " + (pS.particleCount + subTotal));
-		}
+		SpawnHitscan(temp, position, direction, from, onHit, null);
 	}
 
-	public void SpawnHitscan(Hitscan temp, Vector3 position, Vector3 direction, Unit from, Status onHit)
+	public void SpawnHitscan(Hitscan temp, Vector3 position, Vector3 direction, Unit from, Status onHit, ITargetable goal)
 	{
 		Hitscan scan = new Hitscan(temp);
 		scan.startPosition = position;
 		scan.direction = direction;
 		scan.SetFrom(from);
 		scan.SetStatus(onHit);
-		scan.id = id;
-		id++;
 		//hitscans.Add(scan);
 
-		// Immediately raycast to do damage. Use actual distance / hit information to inform visuals
-		//int index = hitscans.IndexOf(scan);
-		float length = Raycast(scan);
+		bool noGoal = IsNull(goal);
+
+		// Raycast or do damage immediately. Use actual distance / hit information to inform visuals
+		float length = noGoal ? Raycast(scan) : (position - goal.GetPosition()).magnitude;
+		if (!noGoal) // Has goal, do damage manually
+			goal.Damage(temp.GetDamage(), length, temp.GetDamageType());
 
 		Vector3 size = new Vector3(width, length, 1);
 
@@ -124,10 +103,17 @@ public class Manager_Hitscan : MonoBehaviour
 			// Don't do anything if we are passing through the unit that fired us
 			if (!hitSelf)
 			{
-				scan.endPosition = hit.point - scan.direction * gameRules.PRJhitOffset; // Move end to contact point
-				return (scan.startPosition - scan.endPosition).magnitude; // Return actual length of hitscan
+				return (scan.startPosition - (hit.point - scan.direction * gameRules.PRJhitOffset)).magnitude; // Return actual length of hitscan
 			}
 		}//if Raycast
 		return scan.GetRange();
+	}
+
+	bool IsNull(ITargetable t)
+	{
+		if ((MonoBehaviour)t == null)
+			return true;
+		else
+			return false;
 	}
 }

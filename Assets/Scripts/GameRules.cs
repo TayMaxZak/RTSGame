@@ -45,6 +45,7 @@ public class GameRules
 	public float PRJfriendlyFireDamageMult = 0.5f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
 	[Header("Layer Masks")]
 	public LayerMask entityLayerMask;
+	public LayerMask targetLayerMask;
 	public LayerMask gridLayerMask;
 
 	[Header("Abilities")]
@@ -69,6 +70,7 @@ public class GameRules
 	public float ABLYswarmFirstUseSpeedMult = 0.75f;
 	public int ABLYswarmDPS = 4;
 	public int ABLYswarmInteractRadius = 5; // How close a swarm has to be to proc its damage reduction status / damage over time
+	public float ABLYswarmFighterHealth = 20;
 
 	public float ABLYhealFieldRange = 25;
 	public float ABLYhealFieldAllyGPS = 2; // Health gained per second by each ally

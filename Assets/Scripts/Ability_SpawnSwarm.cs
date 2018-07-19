@@ -10,8 +10,9 @@ public class Ability_SpawnSwarm : Ability
 	[SerializeField]
 	private ParticleSystem pS;
 	[SerializeField]
-	private GameObject swarmCenterPrefab; // Spawned for each swarm, handles gameplay
-	private List<GameObject> swarmCenters;
+	private FighterGroup swarmCenterPrefab; // Spawned for each swarm, handles gameplay
+	private List<FighterGroup> fighterGroups;
+	private int livingFighterGroups = 0;
 
 	[SerializeField]
 	private GameObject swarmsCenterPrefab; // Middle of all swarms, handles effects that don't need to be done for every single swarm i.e. sound
@@ -40,11 +41,20 @@ public class Ability_SpawnSwarm : Ability
 	private Particle[] particles;
 	private Vector4[] randomVectors;
 	private int livingParticles;
+	private List<int> fightersRemoved;
+	private List<int> fightersJustRemoved;
+
+	private Vector3 graveyardPosition = new Vector3(9999, 9999, 9999);
+
+	private float timeError = 0.05f;
 
 	void Awake()
 	{
 		abilityType = AbilityType.SpawnSwarm;
 		InitCooldown();
+
+		fightersRemoved = new List<int>();
+		fightersJustRemoved = new List<int>();
 	}
 
 	// Use this for initialization
@@ -60,12 +70,12 @@ public class Ability_SpawnSwarm : Ability
 		ParticleSystem.EmissionModule emission = pS.emission;
 		emission.rateOverTime = new ParticleSystem.MinMaxCurve(swarmSize / deployTime);
 		ParticleSystem.MainModule main = pS.main;
-		main.duration = deployTime + 0.05f;
+		main.duration = deployTime + timeError;
 
 		randomVectors = new Vector4[pS.main.maxParticles];
 		randomDistribution.Normalize();
 
-		swarmCenters = new List<GameObject>();
+		fighterGroups = new List<FighterGroup>();
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -95,7 +105,7 @@ public class Ability_SpawnSwarm : Ability
 		{
 			// Worst case scenario: we used ability once already but particle system did not have enough time to spawn sufficient number of particles
 			// This condition avoids messy situations like this
-			if (livingParticles < swarmCenters.Count * swarmSize)
+			if (livingParticles < fighterGroups.Count * swarmSize)
 				return false;
 
 			// Successful ability cast
@@ -127,7 +137,13 @@ public class Ability_SpawnSwarm : Ability
 			if (livingParticles == 0)
 				swarmsCenter = Instantiate(swarmsCenterPrefab, transform.position, Quaternion.identity);
 
-			swarmCenters.Add(Instantiate(swarmCenterPrefab, transform.position, Quaternion.identity));
+			GameObject go = Instantiate(swarmCenterPrefab.gameObject, transform.position, Quaternion.identity);
+			FighterGroup group = go.GetComponent<FighterGroup>();
+			group.SetTeam(team);
+			fighterGroups.Add(group);
+			livingFighterGroups++;
+			StartCoroutine(FinishSpawnCoroutine()); // Will finish setup for group
+
 			pS.Play();
 			return true;
 		}
@@ -135,10 +151,40 @@ public class Ability_SpawnSwarm : Ability
 			return false;
 	}
 
+	// Assign particle data to fighter group
+	IEnumerator FinishSpawnCoroutine()
+	{
+		yield return new WaitForSeconds(deployTime + timeError);
+		int first = (fighterGroups.Count - 1) * swarmSize;
+		List<int> list = new List<int>();
+		for (int i = 0; i < swarmSize; i++)
+		{
+			list.Add(first + i);
+		}
+
+		int lastIndex = fighterGroups.Count - 1;
+		fighterGroups[lastIndex].SetParticles(pS, list.ToArray()); // Indices based on how many particles have already been emitted and how many were just emitted
+		fighterGroups[lastIndex].SetTeam(team); // Make sure it belongs to the correct team so turrets know whether or not to shoot it
+		fighterGroups[lastIndex].SetParentAbility(this); // Establish connection back to us
+		fighterGroups[lastIndex].Activate(); // Now that it has particle data, it can begin to behave like a proper fighter group
+	}
+
+	public void RemoveFighter(int index)
+	{
+		fightersRemoved.Add(index);
+		fightersJustRemoved.Add(index);
+	}
+
+	public void RemoveFighterGroup()
+	{
+		livingFighterGroups--;
+	}
+
 	public override void End()
 	{
-		foreach (GameObject go in swarmCenters)
-			Destroy(go);
+		foreach (FighterGroup go in fighterGroups)
+			if (go)
+				Destroy(go.gameObject);
 		Destroy(swarmsCenter);
 	}
 	
@@ -170,18 +216,34 @@ public class Ability_SpawnSwarm : Ability
 
 		Vector3 overallAvgPos = Vector3.zero;
 
-		Vector3[] avgPositions = new Vector3[swarmCenters.Count];
+		Vector3[] avgPositions = new Vector3[fighterGroups.Count];
 		for (int i = 0; i < avgPositions.Length; i++)
 			avgPositions[i] = Vector3.zero;
 
 		// Do changes
 		for (int i = 0; i < numAlive; i++)
 		{
+			// TODO: Add variables for movement
+			// This fighter is dead, simulation is much simpler in this case
+			if (fightersRemoved.Contains(i))
+			{
+				// Just added
+				if (fightersJustRemoved.Contains(i))
+				{
+					particles[i].velocity = Vector3.zero;
+					particles[i].position = graveyardPosition; // Move offscreen
+					fightersJustRemoved.Remove(i);
+				}
+				// Accelerate it downwards
+				//particles[i].velocity = new Vector3(particles[i].velocity.x, Mathf.Clamp(particles[i].velocity.y + Time.deltaTime * Physics.gravity.y, -5, 5), particles[i].velocity.z);
+				//particles[i].velocity += Vector3.up * Time.deltaTime * Physics.gravity.y;
+				continue;
+			}
+
 			randomVectors[i].w += Time.deltaTime;
 			if (randomVectors[i].w >= 1.0f / randomFreq)
 			{
 				randomVectors[i] = new Vector3(RandomValue() * randomDistribution.x, RandomValue() * randomDistribution.y, RandomValue() * randomDistribution.z).normalized;
-				//randomVectors[i].w = 0;
 			}
 
 			float correctedAccel = -distanceAccel * Time.deltaTime;
@@ -196,31 +258,51 @@ public class Ability_SpawnSwarm : Ability
 
 			int avgPosIndex = Mathf.FloorToInt(i / swarmSize);
 			avgPositions[avgPosIndex] += distanceVel / correctedAccel;
-			overallAvgPos += distanceVel / correctedAccel;
+			//overallAvgPos += distanceVel / correctedAccel;
 		}
 
-		for (int i = 0; i < swarmCenters.Count; i++)
+		for (int i = 0; i < fighterGroups.Count; i++)
 		{
-			avgPositions[i] /= Mathf.Clamp(numAlive - i * swarmSize, 1, swarmSize); // Only divide by the number of most recently spawned ships or by a maximum of swarmSize
+			if (!fighterGroups[i]) // Only run this logic if this swarm center is still alive
+			{
+				continue;
+			}
+
+			int countPenalty = 0;
+
+			for (int j = 0; j < fightersRemoved.Count; j++)
+			{
+				// This removed fighter belongs to this fighter group
+				bool condition = fightersRemoved[j] >= i * swarmSize && fightersRemoved[j] < (i + 1) * swarmSize;
+				if (condition)
+					countPenalty++;
+			}
+			// Number alive (because fighters are emitted one at a time), minus the ones we already know have been emitted before, minus removed ones
+			int number = i == fighterGroups.Count - 1 ? numAlive - Mathf.Max(fighterGroups.Count - 1, 0) * swarmSize - countPenalty : swarmSize - countPenalty;
+			// Only divide by the number of most recently spawned ships or by a maximum of swarmSize, taking into account removed fighters
+			avgPositions[i] /= Mathf.Clamp(number, 1, swarmSize);
+
 			if (avgPositions[i] != Vector3.zero)
 				avgPositions[i] += targPos;
 			else
 				avgPositions[i] = transform.position;
-			swarmCenters[i].transform.position = avgPositions[i];
 
-			if (Vector3.SqrMagnitude(swarmCenters[i].transform.position - targPos) < gameRules.ABLYswarmInteractRadius * gameRules.ABLYswarmInteractRadius)
+			fighterGroups[i].transform.position = avgPositions[i];
+			overallAvgPos += avgPositions[i];
+
+			if (Vector3.SqrMagnitude(fighterGroups[i].transform.position - targPos) < gameRules.ABLYswarmInteractRadius * gameRules.ABLYswarmInteractRadius)
 			{
 				if (targetUnit.team != team) // If target is an enemy unit, damage it
 					targetUnit.Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
 				else
 				{
-					targetUnit.AddStatus(new Status(swarmCenters[i], StatusType.SwarmResist));
+					targetUnit.AddStatus(new Status(fighterGroups[i].gameObject, StatusType.SwarmResist));
 				}
 			}
 		}
 
-		overallAvgPos /= numAlive;
-		overallAvgPos += targPos;
+		overallAvgPos /= Mathf.Max(livingFighterGroups, 1);
+		//overallAvgPos += targPos;
 		swarmsCenter.transform.position = overallAvgPos;
 
 		// Reassign back to emitter

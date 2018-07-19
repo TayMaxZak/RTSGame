@@ -10,7 +10,7 @@ public class Turret : MonoBehaviour
 	protected Status onHitStatus;
 
 	[Header("Targeting")]
-	protected Unit target;
+	protected ITargetable target; // TODO: Accept non units
 	private Unit parentUnitTarget;
 	private bool checkIfDead = false;
 	[SerializeField]
@@ -107,7 +107,7 @@ public class Turret : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		if (!target) // No target
+		if (IsNull(target)) // No target
 		{
 			// No current target, try automatically finding a new one
 			if (FindNewTarget()) // Found one. Updates target in function
@@ -137,54 +137,66 @@ public class Turret : MonoBehaviour
 	bool FindNewTarget()
 	{
 		// Look for an enemy within range
-		Unit automaticTarget = ScanForTarget();
-		Unit prevTarget = target;
+		ITargetable automaticTarget = ScanForTarget();
+		ITargetable prevTarget = target;
 		target = automaticTarget;
 
 		if (target != prevTarget)
 			UpdateTarget();
 
-		if (automaticTarget)
+		if (!IsNull(automaticTarget))
 			return true;
 		return false;
 	}
 
 	// In a sphere with the radius of range, find all enemy units and pick one to target
-	Unit ScanForTarget()
+	ITargetable ScanForTarget()
 	{
-		Collider[] cols = Physics.OverlapSphere(transform.position, range, gameRules.entityLayerMask);
-		List<Unit> units = new List<Unit>();
+		Collider[] cols = Physics.OverlapSphere(transform.position, range, gameRules.targetLayerMask);
+		List<ITargetable> targs = new List<ITargetable>();
 
 		for (int i = 0; i < cols.Length; i++)
 		{
-			Unit unit = GetUnitFromCol(cols[i]);
+			ITargetable targ = GetITargetableFromCol(cols[i]);
+			if (parentUnit.printInfo)
+				Debug.Log(targ);
 
-			if (!unit) // Only works on units
+			if (IsNull(targ)) // No targetable found
 				continue;
-			if (units.Contains(unit)) // Ignore multiple colliders for one unit
+
+			if (targs.Contains(targ)) // Ignore multiple colliders for one targetable
 				continue;
-			if (unit.team == team) // Can't target allies
+
+			if (targ.GetTeam() == team) // Can't target allies
 				continue;
+
 			// The list of colliders is created by intersection with a range-radius sphere, but the center of this unit can still actually be out of range, leading to a target which cannot be shot at
-			if ((unit.transform.position - transform.position).sqrMagnitude >= range * range)
+			if ((targ.GetPosition() - transform.position).sqrMagnitude >= range * range)
 				continue;
 
-			units.Add(unit);
+			targs.Add(targ);
 		}
 
-		// TODO: Sort by distance or health or other property
+		// Sort by distance
+		targs.Sort(delegate (ITargetable a, ITargetable b)
+		{
+			return Vector2.Distance(this.transform.position, a.GetPosition())
+			.CompareTo(
+			  Vector2.Distance(this.transform.position, b.GetPosition()));
+		});
 
-		if (units.Count > 0)
-			return units[0];
+		// Pick closest enemy unit
+		if (targs.Count > 0)
+			return targs[0];
 		else
 			return null;
 	}
 
 	void CheckRangeAndAim()
 	{
-		Vector3 difference = target ? target.transform.position - transform.position : transform.forward; // To make sure its always in range
+		Vector3 difference = !IsNull(target) ? target.GetPosition() - transform.position : transform.forward; // To make sure its always in range
 
-		if (target && difference.sqrMagnitude <= range * range)
+		if (!IsNull(target) && difference.sqrMagnitude <= range * range)
 		{
 			targetInRange = true;
 		}
@@ -430,7 +442,7 @@ public class Turret : MonoBehaviour
 
 	protected virtual Vector3 FindAdjDifference()
 	{
-		return target.transform.position - transform.position;
+		return target.GetPosition() - transform.position;
 	}
 
 	void Rotate(Vector3 difference)
@@ -539,7 +551,7 @@ public class Turret : MonoBehaviour
 	{
 		resetRotFrame = Time.frameCount;
 
-		if (!target)
+		if (IsNull(target))
 		{
 			checkIfDead = false;
 		}
@@ -549,6 +561,28 @@ public class Turret : MonoBehaviour
 		//Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
 	}
 
+	ITargetable GetITargetableFromCol(Collider col)
+	{
+		Entity ent = col.GetComponentInParent<Entity>();
+		if (ent)
+		{
+			if (ent.GetType() == typeof(Unit) || ent.GetType().IsSubclassOf(typeof(Unit)))
+			{
+				return (Unit)ent;
+			}
+			else
+				return null;
+		}
+		else
+		{
+			ITargetable it = col.GetComponent<FighterGroup>(); // TODO: Generalize for all non-unit targetables
+			if (!IsNull(it))
+				return it;
+			else
+				return null;
+		}
+	}
+	/*
 	Unit GetUnitFromCol(Collider col)
 	{
 		Entity ent = col.GetComponentInParent<Entity>();
@@ -564,6 +598,14 @@ public class Turret : MonoBehaviour
 			return null;
 		}
 	}
+	*/
+	protected bool IsNull(ITargetable t)
+	{
+		if ((MonoBehaviour)t == null)
+			return true;
+		else
+			return false;
+	}
 
 	// Visualize range of turrets in editor
 	void OnDrawGizmosSelected()
@@ -571,4 +613,13 @@ public class Turret : MonoBehaviour
 		Gizmos.color = Color.white;
 		Gizmos.DrawWireSphere(transform.position, range);
 	}
+}
+
+
+public interface ITargetable
+{
+	Vector3 GetPosition(); // Where to aim turret at
+	int GetTeam(); // What team does this belong to
+	bool HasCollision(); // Is a proper raycast check required to hit this target?
+	bool Damage(float damageBase, float range, DamageType dmgType);
 }

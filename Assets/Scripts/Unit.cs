@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unit : Entity
+public class Unit : Entity, ITargetable
 {
 	public bool printInfo = false;
 
@@ -816,7 +816,6 @@ public class Unit : Entity
 	}
 
 
-
 	public void OrderMove(Vector3 newGoal, bool group)
 	{
 		movement.SetHGoal(newGoal, group);
@@ -849,5 +848,21 @@ public class Unit : Entity
 		if (i == 2) // 
 			foreach (Turret tur in turrets)
 				tur.SetManualTarget(null);
+	}
+
+
+	public Vector3 GetPosition()
+	{
+		return transform.position;
+	}
+
+	public int GetTeam()
+	{
+		return team;
+	}
+
+	public bool HasCollision()
+	{
+		return true;
 	}
 }

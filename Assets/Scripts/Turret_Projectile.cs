@@ -23,20 +23,26 @@ public class Turret_Projectile : Turret
 
 	protected override Vector3 FindAdjDifference()
 	{
+		Unit unit = target as Unit; // Only lead target against units
+
 		// How far to aim ahead given how long it would take to reach current position
 		// current target position + target velocity * time for projectile to reach current target position
-		Vector3 offsetTarget = target.transform.position + target.GetVelocity() * ((target.transform.position - transform.position).magnitude / projTemplate.GetSpeed());
+		Vector3 offsetTarget = target.GetPosition();
+		if (unit)
+			offsetTarget += unit.GetVelocity() * ((target.GetPosition() - transform.position).magnitude / projTemplate.GetSpeed());
 
 		// How far to aim ahead given how long it would take to reach predicted position
 		// current target position + target velocity * time for projectile to reach predicted target position
-		Vector3 offsetTargetAdj = target.transform.position + target.GetVelocity() * ((offsetTarget - transform.position).magnitude / projTemplate.GetSpeed());
+		Vector3 offsetTargetAdj = target.GetPosition();
+		if (unit)
+			offsetTargetAdj += unit.GetVelocity() * ((offsetTarget - transform.position).magnitude / projTemplate.GetSpeed());
 
 		Vector3 difference = offsetTargetAdj - transform.position;
 
 		// Visuals
 		if (parentUnit.printInfo)
 		{
-			Debug.DrawLine(target.transform.position, transform.position, Color.red);
+			Debug.DrawLine(target.GetPosition(), transform.position, Color.red);
 			Debug.DrawLine(offsetTarget, transform.position, Color.green);
 			Debug.DrawLine(offsetTargetAdj, transform.position, Color.blue);
 		}

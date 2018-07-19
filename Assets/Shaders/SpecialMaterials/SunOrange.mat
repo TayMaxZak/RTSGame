@@ -48,5 +48,5 @@ Material:
     - _NoiseSubSteps: 50
     - _SSSStrength: 1
     m_Colors:
-    - _Color: {r: 1, g: 0.6314424, b: 0.25, a: 1}
+    - _Color: {r: 1, g: 0.46588922, b: 0.31617647, a: 1}
     - _SSSColor: {r: 1, g: 1, b: 1, a: 1}

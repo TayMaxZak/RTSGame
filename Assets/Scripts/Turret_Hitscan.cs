@@ -32,10 +32,17 @@ public class Turret_Hitscan : Turret
 			Vector2 error = Random.insideUnitCircle * (accuracy / 10f);
 			Vector3 errForward = (forward + (GetRight() * error.x) + (GetUp() * error.y)).normalized;
 
-			if (onHitStatus == null)
-				hitscans.SpawnHitscan(scanTemplate, firePos.position, errForward, parentUnit, null); // TODO: Do we need to make a new status each time?
-			else
-				hitscans.SpawnHitscan(scanTemplate, firePos.position, errForward, parentUnit, new Status(onHitStatus.from, onHitStatus.statusType)); // TODO: Do we need to make a new status each time?
+			Status stat = onHitStatus == null ? null : new Status(onHitStatus.from, onHitStatus.statusType);
+
+			// Either the target requires a raycast to hit, or it became null during a coroutine delay. In this case, we want to shoot anyway
+			if (IsNull(target) || target.HasCollision())
+				hitscans.SpawnHitscan(scanTemplate, firePos.position, errForward, parentUnit, stat); // TODO: Do we need to make a new status each time?
+			else // Explicitly define visuals
+			{
+				float distance = (firePos.position - target.GetPosition()).magnitude;
+				// TODO: Should raycast anyway to check for cover. Currently, we will NOT shoot through allies bc we check for FF, but we CAN ignore enemies and terrain, shooting fighters through them
+				hitscans.SpawnHitscan(scanTemplate, firePos.position, errForward, parentUnit, stat, target); // TODO: Do we need to make a new status each time?
+			}
 		}
 
 		// Sound

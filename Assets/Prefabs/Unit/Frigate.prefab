@@ -3034,7 +3034,7 @@ MonoBehaviour:
   minV: 0
   maxV: 180
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 30
     damage: 1
     position: {x: 0, y: 0, z: 0}
@@ -3086,7 +3086,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   swarmMover: {fileID: 114437644942323818}
   pS: {fileID: 198678227653488430}
-  swarmCenterPrefab: {fileID: 1641218715249782, guid: 3922b0e4bd6c7c543a09734bba5ffcce,
+  swarmCenterPrefab: {fileID: 114639489671413788, guid: 3922b0e4bd6c7c543a09734bba5ffcce,
     type: 2}
   swarmsCenterPrefab: {fileID: 1641218715249782, guid: d5948f036b40dee419d01974f6e67462,
     type: 2}
@@ -3137,7 +3137,7 @@ MonoBehaviour:
   minV: 0
   maxV: 180
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 20
     damage: 15
     position: {x: 0, y: 0, z: 0}
@@ -3214,7 +3214,7 @@ MonoBehaviour:
   minV: 0
   maxV: 180
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 30
     damage: 1
     position: {x: 0, y: 0, z: 0}
@@ -3321,7 +3321,7 @@ MonoBehaviour:
   minV: 0
   maxV: 180
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 20
     damage: 15
     position: {x: 0, y: 0, z: 0}
@@ -22871,7 +22871,7 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1024176818260824}
   serializedVersion: 5
-  lengthInSec: 2.01
+  lengthInSec: 2.05
   simulationSpeed: 1
   looping: 0
   prewarm: 0
@@ -22923,7 +22923,7 @@ ParticleSystem:
   moveWithTransform: 2
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 871280583
+  randomSeed: -603222636
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -23483,7 +23483,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 30
+      scalar: 2.5
       minScalar: 10
       maxCurve:
         serializedVersion: 2

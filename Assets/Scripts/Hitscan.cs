@@ -14,18 +14,8 @@ public class Hitscan
 	[SerializeField]
 	private float lifetime = 0;
 
-	private float timeAlive = 0;
-
-	//public ParticleSystem.Particle temp;
-
-	//[HideInInspector]
-	//[System.NonSerialized]
-	public int id;
-
 	[HideInInspector]
 	public Vector3 startPosition = Vector3.zero;
-	[HideInInspector]
-	public Vector3 endPosition = Vector3.zero;
 	[HideInInspector]
 	public Vector3 direction = Vector3.forward;
 
@@ -57,11 +47,6 @@ public class Hitscan
 		return damage;
 	}
 
-	public float GetTimeAlive()
-	{
-		return timeAlive;
-	}
-
 	public void SetLifetime(float time)
 	{
 		lifetime = time;
@@ -71,17 +56,6 @@ public class Hitscan
 	{
 		return lifetime;
 	}
-
-	public void UpdateTimeAlive(float deltaTime)
-	{
-		timeAlive += deltaTime;
-	}
-
-	public void SetTimeAlive(float time)
-	{
-		timeAlive = time;
-	}
-
 
 	public Unit GetFrom()
 	{

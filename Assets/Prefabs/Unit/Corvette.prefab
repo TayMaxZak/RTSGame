@@ -1964,12 +1964,10 @@ MonoBehaviour:
     range: 40
     damage: 1
     lifetime: 0.25
-    id: 0
     startPosition: {x: 0, y: 0, z: 0}
-    endPosition: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
-  accuracy: 0.2
+  accuracy: 0
 --- !u!114 &114962401244220950
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2002,12 +2000,10 @@ MonoBehaviour:
     range: 40
     damage: 1
     lifetime: 0.25
-    id: 0
     startPosition: {x: 0, y: 0, z: 0}
-    endPosition: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
-  accuracy: 0.2
+  accuracy: 0
 --- !u!198 &198111168324779508
 ParticleSystem:
   m_ObjectHideFlags: 1
