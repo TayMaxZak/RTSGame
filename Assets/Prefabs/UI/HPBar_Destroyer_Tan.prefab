@@ -382,8 +382,8 @@ MonoBehaviour:
   healthWidth: 98
   healthAllyColor: {r: 1, g: 0.8864097, b: 0.74264705, a: 1}
   healthEnemyColor: {r: 0.9294118, g: 0.1254902, b: 0.14117648, a: 1}
-  healthBurnColor1: {r: 0.9294118, g: 0.1254902, b: 0.14117648, a: 1}
-  healthBurnColor2: {r: 1, g: 1, b: 1, a: 1}
+  healthBurnAllyColor: {r: 0.6691177, g: 0.57902306, b: 0.48215833, a: 1}
+  healthBurnEnemyColor: {r: 0.58823526, g: 0.12543254, b: 0.13459721, a: 1}
   healthBkgAllyColor: {r: 0.44852942, g: 0.3499985, b: 0.2605428, a: 1}
   healthBkgEnemyColor: {r: 0.39705884, g: 0, b: 0.007747482, a: 1}
   armorFill: {fileID: 114886238602238934}

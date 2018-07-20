@@ -3018,6 +3018,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 25
   soundShoot: {fileID: 8300000, guid: 248bbe23b4ba9e440a836b0726b8320b, type: 3}
   firePos: {fileID: 4761075872646922}
@@ -3121,6 +3122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 60
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4244107031580328}
@@ -3198,6 +3200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 25
   soundShoot: {fileID: 8300000, guid: 248bbe23b4ba9e440a836b0726b8320b, type: 3}
   firePos: {fileID: 4439424789102846}
@@ -3305,6 +3308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 60
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4567061863181758}

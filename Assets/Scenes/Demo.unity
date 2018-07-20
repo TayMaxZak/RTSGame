@@ -11368,7 +11368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 377703917}
   m_Layer: 0
-  m_Name: Temporary
+  m_Name: Testing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25489,6 +25489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 0
   range: 75
   soundShoot: {fileID: 8300000, guid: 40bfb129bf4d8f44d9c2328dda50fafd, type: 3}
   firePos: {fileID: 1658064624}
@@ -29036,70 +29037,6 @@ Transform:
   m_PrefabParentObject: {fileID: 4389175553718192, guid: 401a1d0f3d7c4a44cb2e099e7c32815b,
     type: 2}
   m_PrefabInternal: {fileID: 961910603}
---- !u!1001 &688655527
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 1.43
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 61.47
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0.70710576
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 0.70710784
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_RootOrder
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90.00001
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: printInfo
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: team
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_Name
-      value: Corvette (5)
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &717226847
 GameObject:
   m_ObjectHideFlags: 0
@@ -39663,70 +39600,6 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224388200671506734, guid: 5a4704297010912458182be94042c85e,
     type: 2}
   m_PrefabInternal: {fileID: 277686680}
---- !u!1001 &817963054
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 3.78
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 53.73
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0.70710576
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 0.70710784
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_RootOrder
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90.00001
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: printInfo
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: team
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_Name
-      value: Corvette (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &822882864
 GameObject:
   m_ObjectHideFlags: 0
@@ -86124,70 +85997,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1829020621
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: -6.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 53.79
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0.70710576
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 0.70710784
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_RootOrder
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90.00001
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: printInfo
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: team
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_Name
-      value: Corvette (4)
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &1834915434
 GameObject:
   m_ObjectHideFlags: 0
@@ -110054,70 +109863,6 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
---- !u!1001 &2036431781
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 3.53
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 57.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0.70710576
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 0.70710784
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_RootOrder
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90.00001
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: printInfo
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: team
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_Name
-      value: Corvette (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &2040003153
 GameObject:
   m_ObjectHideFlags: 0
@@ -120552,70 +120297,6 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
---- !u!1001 &2124210218
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: -2.95
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 57.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0.70710576
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 0.70710784
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_RootOrder
-      value: 11
-      objectReference: {fileID: 0}
-    - target: {fileID: 4974165406158294, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90.00001
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: printInfo
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114088720234087204, guid: d9751e6d6818dce4d8289c6fd112d098,
-        type: 2}
-      propertyPath: team
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_Name
-      value: Corvette (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: d9751e6d6818dce4d8289c6fd112d098, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &2146297186
 GameObject:
   m_ObjectHideFlags: 0

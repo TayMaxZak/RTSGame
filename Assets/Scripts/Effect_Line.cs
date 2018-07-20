@@ -57,5 +57,6 @@ public class Effect_Line : MonoBehaviour
 	{
 		Destroy(lineMain);
 		Destroy(lineSecondary);
+		Destroy(gameObject);
 	}
 }

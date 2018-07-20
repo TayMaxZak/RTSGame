@@ -24,6 +24,8 @@ public class Effect_HP : MonoBehaviour
 	private List<ParticleSystem> smokePSystems;
 	private List<ParticleSystem> firePSystems;
 
+	private bool ended = false;
+
 	void Awake()
 	{
 		//audioSource = GetComponent<AudioSource>();
@@ -101,6 +103,9 @@ public class Effect_HP : MonoBehaviour
 
 	void SetFireActive(bool isActive)
 	{
+		if (ended)
+			return;
+
 		if (firePSystems.Count == 0)
 		{
 			InitFire();
@@ -131,17 +136,15 @@ public class Effect_HP : MonoBehaviour
 		}
 	}
 
-	// TODO: Bugged, has chance to fail. Possibly bugged on Unit end rather than Effect_HP
 	public void End()
 	{
 		firePos.SetParent(null);
 		SetFireActive(false);
+		ended = true;
 
+		float duration = firePrefab.main.duration;
 
-		//float duration = Mathf.Max(smokePrefab.main.duration, firePrefab.main.duration);
-		//SetSmokeActive(false);
-
-		float duration = 5;
+		Destroy(firePos.gameObject, duration);
 		Destroy(gameObject, duration);
 	}
 }

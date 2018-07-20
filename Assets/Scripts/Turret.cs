@@ -10,7 +10,9 @@ public class Turret : MonoBehaviour
 	protected Status onHitStatus;
 
 	[Header("Targeting")]
-	protected ITargetable target; // TODO: Accept non units
+	[SerializeField]
+	protected TargetType preferredTargetType = TargetType.Default;
+	protected ITargetable target;
 	private Unit parentUnitTarget;
 	private bool checkIfDead = false;
 	[SerializeField]
@@ -180,9 +182,9 @@ public class Turret : MonoBehaviour
 		// Sort by distance
 		targs.Sort(delegate (ITargetable a, ITargetable b)
 		{
-			return Vector2.Distance(this.transform.position, a.GetPosition())
+			return ComparisonWeight(a)
 			.CompareTo(
-			  Vector2.Distance(this.transform.position, b.GetPosition()));
+			  ComparisonWeight(b));
 		});
 
 		// Pick closest enemy unit
@@ -190,6 +192,13 @@ public class Turret : MonoBehaviour
 			return targs[0];
 		else
 			return null;
+	}
+
+	float ComparisonWeight(ITargetable x)
+	{
+		float distanceWeight = Vector3.Distance(transform.position, x.GetPosition()) / range; // distanceWeight is always 0 to 1
+		int typeWeight = x.GetTargetType() == preferredTargetType ? 0 : 1; // Move weight out of 0 to 1 range if it is not our preferred type
+		return distanceWeight + typeWeight; // Always targets the closest preferred target. Only targets a non-preferred target if a preferred target is not present.
 	}
 
 	void CheckRangeAndAim()
@@ -621,5 +630,13 @@ public interface ITargetable
 	Vector3 GetPosition(); // Where to aim turret at
 	int GetTeam(); // What team does this belong to
 	bool HasCollision(); // Is a proper raycast check required to hit this target?
+	TargetType GetTargetType();
 	bool Damage(float damageBase, float range, DamageType dmgType);
+}
+
+public enum TargetType
+{
+	Default,
+	Fighter,
+	Unit // TODO: Unit categories?
 }

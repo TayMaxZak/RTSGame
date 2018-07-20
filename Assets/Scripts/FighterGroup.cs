@@ -80,6 +80,18 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		return (int)(Random.value * indices.Length - 1);
 	}
 
+	void Die()
+	{
+		parentAbility.RemoveFighterGroup();
+		Destroy(gameObject);
+	}
+
+	float RandomValue()
+	{
+		return Random.value * 2 - 1;
+		//return 1;
+	}
+
 
 	public Vector3 GetPosition()
 	{
@@ -104,6 +116,11 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		return false;
 	}
 
+	public TargetType GetTargetType()
+	{
+		return TargetType.Fighter;
+	}
+
 	public bool Damage(float damageBase, float range, DamageType dmgType)
 	{
 		bool die = false;
@@ -114,7 +131,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		// Get particles
 		//GetParticles();
 		//particles[indices[currentIndex]].position += new Vector3(RandomValue(), RandomValue(), RandomValue()).normalized * 0.33f;
-		
+
 
 		if (hp[currentIndex] <= 0)
 		{
@@ -133,17 +150,5 @@ public class FighterGroup : MonoBehaviour, ITargetable
 			Die();
 
 		return true;
-	}
-
-	void Die()
-	{
-		parentAbility.RemoveFighterGroup();
-		Destroy(gameObject);
-	}
-
-	float RandomValue()
-	{
-		return Random.value * 2 - 1;
-		//return 1;
 	}
 }

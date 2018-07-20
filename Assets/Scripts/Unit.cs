@@ -203,8 +203,7 @@ public class Unit : Entity, ITargetable
 		UpdateHPBarVal(false);
 
 		// Updating health effects now would interfere with the End() method of effect objects
-		if (!dead)
-			UpdateEffects();
+		UpdateEffects();
 	}
 
 	// Update HPBar position and enemy/ally state
@@ -750,7 +749,7 @@ public class Unit : Entity, ITargetable
 			// Refund resources if build index is initialized
 			if (buildIndex >= 0)
 			{
-				GameObject go2 = Instantiate(new GameObject());
+				GameObject go2 = new GameObject();
 				Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
 
 				resDelay.GiveRecAfterDelay(comm.GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
@@ -864,5 +863,10 @@ public class Unit : Entity, ITargetable
 	public bool HasCollision()
 	{
 		return true;
+	}
+
+	public TargetType GetTargetType()
+	{
+		return TargetType.Unit;
 	}
 }

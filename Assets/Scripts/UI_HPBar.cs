@@ -32,9 +32,9 @@ public class UI_HPBar : UI_Bar
 	[SerializeField]
 	private Color healthEnemyColor = Color.red;
 	[SerializeField]
-	private Color healthBurnColor1 = Color.red;
+	private Color healthBurnAllyColor = Color.black;
 	[SerializeField]
-	private Color healthBurnColor2 = Color.white;
+	private Color healthBurnEnemyColor = Color.black;
 	[SerializeField]
 	private Color healthBkgAllyColor = Color.black;
 	[SerializeField]
@@ -125,14 +125,14 @@ public class UI_HPBar : UI_Bar
 			if (burnUp)
 			{
 				burnT += Random.value * Time.deltaTime / uiRules.HPBblinkTime;
-				burnCur = Color.Lerp(burnCur, healthBurnColor1, burnT);
+				burnCur = Color.Lerp((enemy ? healthBurnEnemyColor : healthBurnAllyColor), (enemy ? healthEnemyColor : healthAllyColor), burnT);
 				if (burnT > 1)
 					burnUp = false;
 			}
 			else
 			{
 				burnT -= Random.value * Time.deltaTime / uiRules.HPBblinkTime;
-				burnCur = Color.Lerp(burnCur, healthBurnColor2, burnT);
+				burnCur = Color.Lerp((enemy ? healthBurnEnemyColor : healthBurnAllyColor), (enemy ? healthEnemyColor : healthAllyColor), burnT);
 				if (burnT < 0)
 					burnUp = true;
 			}

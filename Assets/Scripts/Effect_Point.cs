@@ -12,6 +12,8 @@ public class Effect_Point : MonoBehaviour
 	[SerializeField]
 	private ParticleSystem secondaryPS;
 
+	private bool ended = false;
+
 	void Awake()
 	{
 		audioSource = GetComponent<AudioSource>();
@@ -24,6 +26,9 @@ public class Effect_Point : MonoBehaviour
 
 	public void SetEffectActive(bool state, bool secondaryState)
 	{
+		if (ended)
+			return;
+
 		if (state)
 		{
 			if (audioSource)
@@ -82,8 +87,11 @@ public class Effect_Point : MonoBehaviour
 
 	public void End()
 	{
-		float duration = Mathf.Max(mainPS.main.duration, secondaryPS ? secondaryPS.main.duration : 0);;
 		SetEffectActive(false);
+		ended = true;
+
+		float duration = Mathf.Max(mainPS.main.duration, secondaryPS ? secondaryPS.main.duration : 0);;
+		
 		Destroy(gameObject, duration);
 	}
 }

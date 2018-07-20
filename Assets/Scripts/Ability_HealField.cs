@@ -41,9 +41,9 @@ public class Ability_HealField : Ability
 	{
 		if (isBorrowing)
 		{
-			GameObject go = Instantiate(new GameObject());
+			GameObject go = new GameObject();
 			Util_ResDelay resDelay = go.AddComponent<Util_ResDelay>();
-			resDelay.GiveResAfterDelay(gameRules.ABLYhealFieldResCost, gameRules.ABLYhealFieldResTime, team);
+			resDelay.GiveResAfterDelay(gameRules.ABLYhealFieldResCost, gameRules.WRCKlifetime, team);
 		}
 		pointEffect.End();
 	}
@@ -68,17 +68,19 @@ public class Ability_HealField : Ability
 				if (units.Contains(unit)) // Ignore multiple colliders for one unit
 					continue;
 
+				if (unit == parentUnit) // Don't add ourselves
+					continue;
+
 				if (unit.GetHP().x >= unit.GetHP().y) // If at full HP, don't attempt to heal
 					continue;
 
-				if (unit.GetType() == typeof(Unit_Flagship)) // Can't heal Flagships
+				if (unit.Type == EntityType.Flagship) // Can't heal Flagships
 					continue;
 
 				if (unit.team != team) // Must be on our team
 					continue;
 
-				if (unit != parentUnit) // Don't add ourselves
-					units.Add(unit);
+				units.Add(unit);
 			}
 
 			for (int i = 0; i < units.Count; i++) // For each ally unit, add health

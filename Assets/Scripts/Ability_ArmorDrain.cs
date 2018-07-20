@@ -68,18 +68,23 @@ public class Ability_ArmorDrain : Ability
 					if (units.Contains(unit)) // Ignore multiple colliders for one unit
 						continue;
 
-					if (unit.GetType() == typeof(Unit_Flagship)) // Can't drain Flagships
+					if (unit == parentUnit) // Don't add ourselves
+						continue;
+
+					if (unit.Type == EntityType.Flagship) // Can't drain Flagships
 						continue;
 
 					if (unit.GetHP().z <= 0) // They must have some armor
 						continue;
 
+					bool hasDrain = false; // Can't drain another drain-capable unit
 					foreach (Ability a in unit.abilities)
-						if (a.GetAbilityType() == AbilityType.ArmorDrain) // Can't drain another drain-capable unit
-							continue;
-
-					if (unit != parentUnit) // Don't add ourselves
-						units.Add(unit);
+						if (a.GetAbilityType() == AbilityType.ArmorDrain)
+							hasDrain = true;
+					if (hasDrain)
+						continue;
+					
+					units.Add(unit);
 				}
 
 				// TODO: Sort unit list to have allies first

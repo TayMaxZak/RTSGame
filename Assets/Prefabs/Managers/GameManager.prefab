@@ -299,7 +299,7 @@ MonoBehaviour:
     RESreclaimTime: 5
     SPWNflagshipRadius: 50
     AUDpitchVariance: 0.05
-    PRJmaxTimeAlive: 5
+    PRJmaxTimeAlive: 4
     PRJhitOffset: 0.05
     PRJfriendlyFireCheckRangeMult: 1
     PRJfriendlyFireDamageMult: 0.5

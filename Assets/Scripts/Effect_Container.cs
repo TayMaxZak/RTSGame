@@ -31,7 +31,7 @@ public class Effect_Container : MonoBehaviour
 		}
 	}
 
-	void SetFireActive(bool isActive)
+	void SetEffectActive(bool isActive)
 	{
 		foreach (ParticleSystem firePS in firePSystems)
 		{
@@ -56,13 +56,15 @@ public class Effect_Container : MonoBehaviour
 	public void End(Vector3 releaseVelocity)
 	{
 		effectPosRoot.SetParent(null);
+		SetEffectActive(false);
 
 		Util_Mover mover = effectPosRoot.GetComponent<Util_Mover>();
 		if (mover)
 			mover.SetVelocity(releaseVelocity);
 
-		SetFireActive(false);
+		float duration = effectPrefab.main.duration;
 
-		Destroy(gameObject, effectPrefab.main.duration);
+		Destroy(effectPosRoot.gameObject, duration);
+		Destroy(gameObject, duration);
 	}
 }

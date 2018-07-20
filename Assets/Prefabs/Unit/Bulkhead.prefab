@@ -3473,6 +3473,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 40
   soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4790768866316710}
@@ -3489,7 +3490,7 @@ MonoBehaviour:
   minV: 60
   maxV: 120
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 30
     damage: 2
     position: {x: 0, y: 0, z: 0}
@@ -3508,6 +3509,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 40
   soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4878535154471696}
@@ -3524,7 +3526,7 @@ MonoBehaviour:
   minV: 60
   maxV: 120
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 30
     damage: 2
     position: {x: 0, y: 0, z: 0}
@@ -3601,6 +3603,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 40
   soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4867935008702602}
@@ -3617,7 +3620,7 @@ MonoBehaviour:
   minV: 60
   maxV: 120
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 30
     damage: 2
     position: {x: 0, y: 0, z: 0}
@@ -3636,6 +3639,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 40
   soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4487736759716026}
@@ -3652,7 +3656,7 @@ MonoBehaviour:
   minV: 60
   maxV: 120
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 30
     damage: 2
     position: {x: 0, y: 0, z: 0}
@@ -3671,6 +3675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 40
   soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4817259448784356}
@@ -3687,7 +3692,7 @@ MonoBehaviour:
   minV: 60
   maxV: 120
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 30
     damage: 2
     position: {x: 0, y: 0, z: 0}
@@ -3762,6 +3767,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  preferredTargetType: 2
   range: 40
   soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
   firePos: {fileID: 4376580267898420}
@@ -3778,7 +3784,7 @@ MonoBehaviour:
   minV: 60
   maxV: 120
   projTemplate:
-    type: 0
+    dmgType: 0
     speed: 30
     damage: 2
     position: {x: 0, y: 0, z: 0}
