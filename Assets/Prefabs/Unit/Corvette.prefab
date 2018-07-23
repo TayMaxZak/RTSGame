@@ -1968,7 +1968,7 @@ MonoBehaviour:
     startPosition: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
-  accuracy: 0
+  accuracy: 0.3
 --- !u!114 &114962401244220950
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2005,7 +2005,7 @@ MonoBehaviour:
     startPosition: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
-  accuracy: 0
+  accuracy: 0.3
 --- !u!198 &198111168324779508
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -8,6 +8,7 @@ TagManager:
   - ProjsManager
   - UIManager
   - HitscanManager
+  - VFXManager
   layers:
   - Default
   - TransparentFX

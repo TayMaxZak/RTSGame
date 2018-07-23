@@ -17,6 +17,7 @@ public class Manager_Hitscan : MonoBehaviour
 
 	private int newProjectilesThisFrame;
 
+	private Manager_VFX vfx;
 	private GameRules gameRules;
 
 	void Awake()
@@ -25,6 +26,8 @@ public class Manager_Hitscan : MonoBehaviour
 		mask = gameRules.entityLayerMask;
 
 		width = pS.main.startSizeX.constant;
+
+		vfx = GameObject.FindGameObjectWithTag("VFXManager").GetComponent<Manager_VFX>();
 	}
 
 	public void SpawnHitscan(Hitscan temp, Vector3 position, Vector3 direction, Unit from, Status onHit)
@@ -44,9 +47,13 @@ public class Manager_Hitscan : MonoBehaviour
 		bool noGoal = IsNull(goal);
 
 		// Raycast or do damage immediately. Use actual distance / hit information to inform visuals
-		float length = noGoal ? Raycast(scan) : (position - goal.GetPosition()).magnitude;
+		Vector3 dif = noGoal ? Vector3.zero : (position - goal.GetPosition());
+		float length = noGoal ? Raycast(scan) : dif.magnitude;
 		if (!noGoal) // Has goal, do damage manually
-			goal.Damage(temp.GetDamage(), length, temp.GetDamageType());
+		{
+			goal.Damage(scan.GetDamage(), length, scan.GetDamageType());
+			vfx.SpawnEffect(VFXType.Hit_Near, position + direction * length, direction, scan.GetFrom().GetTeam());
+		}
 
 		Vector3 size = new Vector3(width, length, 1);
 
@@ -68,10 +75,12 @@ public class Manager_Hitscan : MonoBehaviour
 		RaycastHit hit;
 		if (Physics.Raycast(scan.startPosition, scan.direction, out hit, scan.GetRange(), mask))
 		{
+			int projTeam = scan.GetFrom().team;
+			Unit unit = null;
 			bool hitSelf = false;
 			if (hit.collider.transform.parent) // Is this a unit?
 			{
-				Unit unit = hit.collider.transform.parent.GetComponent<Unit>();
+				unit = hit.collider.transform.parent.GetComponent<Unit>();
 				if (unit != scan.GetFrom()) // If we hit a unit and its not us, damage it
 				{
 					Status status = scan.GetStatus();
@@ -100,10 +109,21 @@ public class Manager_Hitscan : MonoBehaviour
 				}
 			}
 
+			Vector3 endPosition = (hit.point - scan.direction * gameRules.PRJhitOffset);
+
 			// Don't do anything if we are passing through the unit that fired us
 			if (!hitSelf)
 			{
-				return (scan.startPosition - (hit.point - scan.direction * gameRules.PRJhitOffset)).magnitude; // Return actual length of hitscan
+				if (unit)
+				{
+					if (unit.GetShields().x > 0) // Shielded
+						vfx.SpawnEffect(VFXType.Hit_Absorbed, endPosition, -scan.direction, projTeam);
+					else // Normal hit
+						vfx.SpawnEffect(VFXType.Hit_Normal, endPosition, -scan.direction, projTeam);
+				}
+				else // Terrain
+					vfx.SpawnEffect(VFXType.Hit_Normal, endPosition, -scan.direction, projTeam);
+				return (scan.startPosition - endPosition).magnitude; // Return actual length of hitscan
 			}
 		}//if Raycast
 		return scan.GetRange();

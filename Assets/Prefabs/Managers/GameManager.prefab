@@ -300,7 +300,7 @@ MonoBehaviour:
     SPWNflagshipRadius: 50
     AUDpitchVariance: 0.05
     PRJmaxTimeAlive: 4
-    PRJhitOffset: 0.05
+    PRJhitOffset: 0.2
     PRJfriendlyFireCheckRangeMult: 1
     PRJfriendlyFireDamageMult: 0.5
     entityLayerMask:

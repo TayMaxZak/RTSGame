@@ -18,8 +18,9 @@ public class Manager_Projectiles : MonoBehaviour
 
 	private int numAlive = 0;
 
-	private int newProjectilesThisFrame;
+	private int lifetime = 99;
 
+	private Manager_VFX vfx;
 	private GameRules gameRules;
 
 	void Awake()
@@ -35,6 +36,8 @@ public class Manager_Projectiles : MonoBehaviour
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 		mask = gameRules.entityLayerMask;
+
+		vfx = GameObject.FindGameObjectWithTag("VFXManager").GetComponent<Manager_VFX>();
 	}
 
 	public void Update()
@@ -53,10 +56,12 @@ public class Manager_Projectiles : MonoBehaviour
 			RaycastHit hit;
 			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.GetSpeed() * Time.deltaTime, mask))
 			{
+				int projTeam = proj.GetFrom().team;
+				Unit unit = null;
 				bool hitSelf = false;
 				if (hit.collider.transform.parent) // Is this a unit?
 				{
-					Unit unit = hit.collider.transform.parent.GetComponent<Unit>();
+					unit = hit.collider.transform.parent.GetComponent<Unit>();
 					if (unit != proj.GetFrom()) // If we hit a unit and its not us, damage it
 					{
 						Status status = proj.GetStatus();
@@ -68,7 +73,7 @@ public class Manager_Projectiles : MonoBehaviour
 							unit.AddStatus(status);
 						}
 
-						if (unit.team != proj.GetFrom().team) // If we hit an enemy, do full damage
+						if (unit.team != projTeam) // If we hit an enemy, do full damage
 						{
 							unit.Damage(proj.GetDamage(), proj.CalcRange(), proj.GetDamageType());
 						}
@@ -92,6 +97,18 @@ public class Manager_Projectiles : MonoBehaviour
 
 					particles[i].remainingLifetime = 0; // Destroy particle
 					toDelete.Add(proj); // Destroy projectile
+
+					Vector3 direction = ((-proj.direction + hit.normal) / 2).normalized;
+
+					if (unit)
+					{
+						if (unit.GetShields().x > 0) // Shielded
+							vfx.SpawnEffect(VFXType.Hit_Absorbed, proj.position, direction, projTeam);
+						else // Normal hit
+							vfx.SpawnEffect(VFXType.Hit_Normal, proj.position, direction, projTeam);
+					}
+					else // Terrain
+						vfx.SpawnEffect(VFXType.Hit_Normal, proj.position, direction, projTeam);
 					continue;
 				}
 			}//if Raycast
@@ -158,7 +175,8 @@ public class Manager_Projectiles : MonoBehaviour
 		EmitParams param = new EmitParams()
 		{
 			position = position,
-			velocity = direction
+			velocity = direction,
+			startLifetime = lifetime
 		};
 		pS.Emit(param, 1);
 	}

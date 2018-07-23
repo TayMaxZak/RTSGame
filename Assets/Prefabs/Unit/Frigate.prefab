@@ -3022,8 +3022,8 @@ MonoBehaviour:
   range: 25
   soundShoot: {fileID: 8300000, guid: 248bbe23b4ba9e440a836b0726b8320b, type: 3}
   firePos: {fileID: 4761075872646922}
-  maxAmmo: 6
-  reloadCooldown: 1
+  maxAmmo: 4
+  reloadCooldown: 2
   rateOfFire: 308
   shootOffsetRatio: 0
   RS: 90
@@ -3037,7 +3037,7 @@ MonoBehaviour:
   projTemplate:
     dmgType: 0
     speed: 30
-    damage: 1
+    damage: 2
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
@@ -3204,8 +3204,8 @@ MonoBehaviour:
   range: 25
   soundShoot: {fileID: 8300000, guid: 248bbe23b4ba9e440a836b0726b8320b, type: 3}
   firePos: {fileID: 4439424789102846}
-  maxAmmo: 6
-  reloadCooldown: 1
+  maxAmmo: 4
+  reloadCooldown: 2
   rateOfFire: 308
   shootOffsetRatio: 0
   RS: 90
@@ -3219,7 +3219,7 @@ MonoBehaviour:
   projTemplate:
     dmgType: 0
     speed: 30
-    damage: 1
+    damage: 2
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
