@@ -116,7 +116,8 @@ public class Ability_ArmorDrain : Ability
 				}
 
 				// Add armor to us based on number of units
-				parentUnit.DamageSimple(0, -(gameRules.ABLYarmorDrainGPS + gameRules.ABLYarmorDrainGPSBonusMult * enemyCount) * (allyCount + enemyCount) * Time.deltaTime);
+				parentUnit.DamageSimple(0, -(gameRules.ABLYarmorDrainGPSEnemy + gameRules.ABLYarmorDrainGPSBonusMult * enemyCount) * (enemyCount) * Time.deltaTime);
+				parentUnit.DamageSimple(0, -gameRules.ABLYarmorDrainGPSAlly * (allyCount) * Time.deltaTime);
 
 				if ((allyCount + enemyCount) == 0)
 					pointEffect.SetEffectActive(true, false);

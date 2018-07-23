@@ -384,6 +384,7 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
   resPoints: 20
   reclaimPoints: 0
+  flagship: {fileID: 0}
 --- !u!114 &114578553437470668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -405,3 +406,4 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
   resPoints: 20
   reclaimPoints: 0
+  flagship: {fileID: 0}

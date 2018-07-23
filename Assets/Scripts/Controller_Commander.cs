@@ -832,7 +832,7 @@ public class Controller_Commander : MonoBehaviour
 		commander.TakeResources(commander.GetBuildUnit(buildUnitIndex).cost);
 
 		buildState = 1;
-		buildPreview = Instantiate(commander.GetBuildUnit(buildUnitIndex).previewObject, Vector3.zero, Quaternion.identity);
+		buildPreview = Instantiate(commander.GetBuildUnit(buildUnitIndex).previewObject, Vector3.zero, commander.flagship.transform.rotation);
 		buildPreview.SetActive(false);
 	}
 

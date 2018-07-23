@@ -138,7 +138,7 @@ public class UI_EntityStats : MonoBehaviour
 			text.text = StringFromFloat(armorCur) + "/" + StringFromFloat(armorMax);
 
 		string armorToolotipText = Mathf.RoundToInt(armorMax) == 0 ? "This unit has no armor." : 
-			Mathf.FloorToInt(armorCur) < gameRules.ABLYarmorDrainGPS * 2 ? "Armor has been destroyed." : 
+			Mathf.FloorToInt(armorCur) < gameRules.ABLYarmorDrainGPSEnemy * 2 ? "Armor has been destroyed." : 
 			string.Format("Absorption limit: {0:0.0}\nCan take up to {0:0.0} damage in one shot before letting excess damage through to health.", (armorCur / armorMax) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat);
 
 		//Tooltip

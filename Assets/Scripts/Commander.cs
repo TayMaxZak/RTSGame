@@ -24,6 +24,9 @@ public class Commander : MonoBehaviour
 	private int reclaimPoints; // Transferred over time into resPoints
 	private float reclaimTimer; // Progress turning a reclaimPoint into a resPoint
 
+	[Header("Win Conditions")]
+	public Unit flagship;
+
 	private List<Unit> selectableUnits;
 
 	private GameRules gameRules;

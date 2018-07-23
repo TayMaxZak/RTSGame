@@ -52,7 +52,8 @@ public class GameRules
 	public float ABLYarmorDrainRange = 20;
 	public float ABLYarmorDrainDPSEnemy = 9;
 	public float ABLYarmorDrainDPSAlly = 3;
-	public float ABLYarmorDrainGPS = 1; // How much armor is gained per second, per victim (total APS scales with number of victims)
+	public float ABLYarmorDrainGPSEnemy = 1; // How much armor is gained per second, per victim (total APS scales with number of victims)
+	public float ABLYarmorDrainGPSAlly = 2; // How much armor is gained per second, per victim (total APS scales with number of victims)
 	public float ABLYarmorDrainGPSBonusMult = 1; // How much armor is gained per second, per victim, per number of victims? (total APS scales with number of victims, squared)
 	public float ABLYarmorDrainMaxVictims = 5;
 
