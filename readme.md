@@ -3,4 +3,4 @@ A real-time strategy game with several unique traits, such as the ability to mov
 
 More information on itch.io page: https://thomaszakh.itch.io/fire-fleet
 
-<img src="./web/images/fighter.png" width="400" height="400"/>
+<img src="./web/images/fighter1.png" width="400" height="400"/>
