@@ -19,8 +19,10 @@ public class Ability_Chain : Ability
 	private Unit targetUnit;
 	private bool checkingForDead = false;
 
-	void Awake()
+	new void Awake()
 	{
+		base.Awake();
+
 		abilityType = AbilityType.Chain;
 		InitCooldown();
 	}

@@ -16,7 +16,6 @@ public class FighterGroup : MonoBehaviour, ITargetable
 	private float[] hp;
 
 	private Particle[] particles;
-	private int numAlive;
 
 	private int frameAccessed = -1; // Frame when particles were last accessed. They should not be accessed more than once per frame
 
@@ -69,7 +68,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 			return;
 
 		// Update particles
-		numAlive = pS.GetParticles(particles);
+		pS.GetParticles(particles);
 
 		frameAccessed = Time.frameCount;
 	}

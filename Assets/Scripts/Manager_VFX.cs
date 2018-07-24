@@ -14,13 +14,6 @@ public class Manager_VFX : MonoBehaviour
 
 	private int newProjectilesThisFrame;
 
-	private GameRules gameRules;
-
-	void Awake()
-	{
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
-	}
-
 	public void SpawnEffect(VFXType vfxType, Vector3 position)
 	{
 		SpawnEffect(vfxType, position, Vector3.up, -1);

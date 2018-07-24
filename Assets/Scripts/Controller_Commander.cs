@@ -29,6 +29,8 @@ public class Controller_Commander : MonoBehaviour
 	private int heightState; // 0 = standby, 1 = changing
 	private int buildState; // 0 = standby, 1 = moving preview, 2 = rotating preview
 
+	private float turnRadius = 0.5f;
+
 	[Header("Sound")]
 	[SerializeField]
 	private AudioClip soundMove;
@@ -485,11 +487,11 @@ public class Controller_Commander : MonoBehaviour
 				// Deactivate preview if not on a valid position
 				if (buildPreview.activeSelf)
 				{
-					//buildPreview.SetActive(false);
+					buildPreview.SetActive(false);
 				}
 			}
 		}
-		else if (buildState == 2)
+		else if (buildState == 2) // Rotating preview
 		{
 			buildPreview.SetActive(true);
 			RaycastHit hit = RaycastFromCursor(1);
@@ -497,7 +499,11 @@ public class Controller_Commander : MonoBehaviour
 			{
 				Vector3 point = hit.point;
 				point.y = buildPreview.transform.position.y;
-				buildPreview.transform.LookAt(point);
+				// Rotation target shouldn't be right next to the center of the preview
+				if (Vector3.SqrMagnitude(buildPreview.transform.position - point) > turnRadius * turnRadius)
+					buildPreview.transform.LookAt(point);
+				else
+					buildPreview.transform.rotation = commander.flagship.transform.rotation;
 			}
 		}
 

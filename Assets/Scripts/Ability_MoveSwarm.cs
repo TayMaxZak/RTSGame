@@ -9,19 +9,17 @@ public class Ability_MoveSwarm : Ability
 
 	private Unit targetUnit;
 
-	new void Start()
+	new void Awake()
 	{
-		base.Start();
+		base.Awake();
+
+		abilityType = AbilityType.MoveSwarm;
+		InitCooldown();
+
 		displayInfo.displayInactive = true;
 	}
 
-	void Awake()
-	{
-		abilityType = AbilityType.MoveSwarm;
-		InitCooldown();
-	}
-
-	public void DisplayInactive(bool state)
+	public void SetDisplayInactive(bool state)
 	{
 		if (displayInfo.displayInactive != state)
 		{

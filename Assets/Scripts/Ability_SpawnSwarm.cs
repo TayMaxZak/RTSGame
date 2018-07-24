@@ -19,6 +19,7 @@ public class Ability_SpawnSwarm : Ability
 	private GameObject swarmsCenter;
 
 	private int swarmSize;
+
 	[SerializeField]
 	private float deployTime = 2;
 	[SerializeField]
@@ -36,34 +37,36 @@ public class Ability_SpawnSwarm : Ability
 
 	private Unit targetUnit;
 	private bool checkIfDead = false;
-	//private UI_AbilBar_SpawnSwarm abilityBar;
+	private UI_AbilBar_SpawnSwarm abilityBar;
 
 	private Particle[] particles;
 	private Vector4[] randomVectors;
-	private int livingParticles;
-	private List<int> fightersRemoved;
-	private List<int> fightersJustRemoved;
+
+	private int numberOfLivingParticles;
+
+	private List<int> particlesRemoved;
+	private List<int> particlesJustRemoved;
+	private List<int> fighterCountPerGroup;
 
 	private Vector3 graveyardPosition = new Vector3(9999, 9999, 9999);
 
 	private float timeError = 0.05f;
 
-	void Awake()
+	private bool readyToSpawnNextSwarm = true;
+
+	new void Awake()
 	{
+		base.Awake();
+
 		abilityType = AbilityType.SpawnSwarm;
 		InitCooldown();
 
-		fightersRemoved = new List<int>();
-		fightersJustRemoved = new List<int>();
-	}
-
-	// Use this for initialization
-	new void Start ()
-	{
-		base.Start();
 		stacks = gameRules.ABLYswarmMaxUses;
-		displayInfo.stacks = stacks;
-		displayInfo.displayStacks = true;
+
+		fighterGroups = new List<FighterGroup>();
+		particlesRemoved = new List<int>();
+		particlesJustRemoved = new List<int>();
+		fighterCountPerGroup = new List<int>();
 
 		swarmSize = pS.main.maxParticles / gameRules.ABLYswarmMaxUses; // Calculate swarm size
 		particles = new Particle[pS.main.maxParticles];
@@ -75,7 +78,33 @@ public class Ability_SpawnSwarm : Ability
 		randomVectors = new Vector4[pS.main.maxParticles];
 		randomDistribution.Normalize();
 
-		fighterGroups = new List<FighterGroup>();
+		displayInfo.stacks = stacks;
+		displayInfo.displayStacks = true;
+	}
+
+	// Use this for initialization
+	new void Start ()
+	{
+		base.Start();
+
+		abilityBar = parentUnit.hpBar.GetComponent<UI_AbilBar_SpawnSwarm>();
+		Display();
+	}
+
+	void Display()
+	{
+		displayInfo.stacks = stacks;
+		if (stacks <= 0)
+			displayInfo.displayInactive = true;
+		else
+			displayInfo.displayInactive = false;
+		UpdateDisplay(abilityIndex, true);
+		UpdateAbilityBar();
+	}
+
+	protected override void UpdateAbilityBar()
+	{
+		abilityBar.SetFighterCounts(fighterCountPerGroup);
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -104,8 +133,9 @@ public class Ability_SpawnSwarm : Ability
 		if (stacks > 0)
 		{
 			// Worst case scenario: we used ability once already but particle system did not have enough time to spawn sufficient number of particles
-			// This condition avoids messy situations like this
-			if (livingParticles < fighterGroups.Count * swarmSize)
+			// This also makes sure that the FinishSpawnCoroutine always activates the correct fighterGroup and does not leave behind unactivated ones
+			// This condition avoids messy situations like these
+			if (!readyToSpawnNextSwarm)
 				return false;
 
 			// Successful ability cast
@@ -118,23 +148,16 @@ public class Ability_SpawnSwarm : Ability
 					// nerf parent unit's movement speed
 					parentUnit.AddStatus(new Status(gameObject, StatusType.SpawnSwarmSpeedNerf));
 					// and notify swarm mover to display as active
-					swarmMover.DisplayInactive(false);
+					swarmMover.SetDisplayInactive(false);
 				}
-
-				displayInfo.stacks = stacks;
-				UpdateDisplay(abilityIndex, true);
 			}
 			else // Otherwise, cannot be used in the future
 			{
 				// Restore parent unit's movement speed
 				parentUnit.RemoveStatus(new Status(gameObject, StatusType.SpawnSwarmSpeedNerf));
-
-				displayInfo.stacks = stacks;
-				displayInfo.displayInactive = true;
-				UpdateDisplay(abilityIndex, true);
 			}
 
-			if (livingParticles == 0)
+			if (numberOfLivingParticles == 0)
 				swarmsCenter = Instantiate(swarmsCenterPrefab, transform.position, Quaternion.identity);
 
 			GameObject go = Instantiate(swarmCenterPrefab.gameObject, transform.position, Quaternion.identity);
@@ -142,9 +165,16 @@ public class Ability_SpawnSwarm : Ability
 			group.SetTeam(team);
 			fighterGroups.Add(group);
 			livingFighterGroups++;
+			// Initialize fighter count for this group
+			// Since it isn't targetable anyway, it might as well be considered as 5 fighters
+			fighterCountPerGroup.Add(swarmSize);
+
+			readyToSpawnNextSwarm = false;
 			StartCoroutine(FinishSpawnCoroutine()); // Will finish setup for group
 
 			pS.Play();
+
+			Display();
 			return true;
 		}
 		else
@@ -167,17 +197,29 @@ public class Ability_SpawnSwarm : Ability
 		fighterGroups[lastIndex].SetTeam(team); // Make sure it belongs to the correct team so turrets know whether or not to shoot it
 		fighterGroups[lastIndex].SetParentAbility(this); // Establish connection back to us
 		fighterGroups[lastIndex].Activate(); // Now that it has particle data, it can begin to behave like a proper fighter group
+
+		readyToSpawnNextSwarm = true;
 	}
 
 	public void RemoveFighter(int index)
 	{
-		fightersRemoved.Add(index);
-		fightersJustRemoved.Add(index);
+		// Stop simulating these particles
+		particlesRemoved.Add(index);
+		particlesJustRemoved.Add(index);
+
+		// Subtract 1 from apropriate group fighter count
+		int groupIndex = index / swarmSize;
+		
+		fighterCountPerGroup[groupIndex]--;
+
+		Display();
 	}
 
 	public void RemoveFighterGroup()
 	{
 		livingFighterGroups--;
+		if (livingFighterGroups == 0)
+			swarmMover.SetDisplayInactive(true);
 	}
 
 	public override void End()
@@ -209,7 +251,7 @@ public class Ability_SpawnSwarm : Ability
 		Vector3 targPos = targetUnit.GetSwarmTarget().position;
 
 		int numAlive = pS.GetParticles(particles);
-		livingParticles = numAlive;
+		numberOfLivingParticles = numAlive;
 
 		if (numAlive == 0)
 			return;
@@ -223,18 +265,18 @@ public class Ability_SpawnSwarm : Ability
 		// Do changes
 		for (int i = 0; i < numAlive; i++)
 		{
-			// TODO: Add variables for movement
 			// This fighter is dead, simulation is much simpler in this case
-			if (fightersRemoved.Contains(i))
+			if (particlesRemoved.Contains(i))
 			{
 				// Just added
-				if (fightersJustRemoved.Contains(i))
+				if (particlesJustRemoved.Contains(i))
 				{
 					particles[i].velocity = Vector3.zero;
 					particles[i].position = graveyardPosition; // Move offscreen
-					fightersJustRemoved.Remove(i);
+					particlesJustRemoved.Remove(i);
 				}
 				// Accelerate it downwards
+				// TODO: Add this behaviour to a managed VFX
 				//particles[i].velocity = new Vector3(particles[i].velocity.x, Mathf.Clamp(particles[i].velocity.y + Time.deltaTime * Physics.gravity.y, -5, 5), particles[i].velocity.z);
 				//particles[i].velocity += Vector3.up * Time.deltaTime * Physics.gravity.y;
 				continue;
@@ -263,24 +305,18 @@ public class Ability_SpawnSwarm : Ability
 
 		for (int i = 0; i < fighterGroups.Count; i++)
 		{
-			if (!fighterGroups[i]) // Only run this logic if this swarm center is still alive
+			if (!fighterGroups[i]) // Only run this logic if this fighter group is still alive
 			{
 				continue;
 			}
 
-			int countPenalty = 0;
+			int maxNumber = fighterCountPerGroup[i];
 
-			for (int j = 0; j < fightersRemoved.Count; j++)
-			{
-				// This removed fighter belongs to this fighter group
-				bool condition = fightersRemoved[j] >= i * swarmSize && fightersRemoved[j] < (i + 1) * swarmSize;
-				if (condition)
-					countPenalty++;
-			}
 			// Number alive (because fighters are emitted one at a time), minus the ones we already know have been emitted before, minus removed ones
-			int number = i == fighterGroups.Count - 1 ? numAlive - Mathf.Max(fighterGroups.Count - 1, 0) * swarmSize - countPenalty : swarmSize - countPenalty;
-			// Only divide by the number of most recently spawned ships or by a maximum of swarmSize, taking into account removed fighters
-			avgPositions[i] /= Mathf.Clamp(number, 1, swarmSize);
+			int livingNumber = i == fighterGroups.Count - 1 ? numAlive - Mathf.Max(fighterGroups.Count - 1, 0) * swarmSize : swarmSize;
+
+			// Only divide by the number of most recently spawned particles, or by a maximum of swarmSize taking into account removed fighters
+			avgPositions[i] /= Mathf.Clamp(Mathf.Min(livingNumber, maxNumber), 1, swarmSize);
 
 			if (avgPositions[i] != Vector3.zero)
 				avgPositions[i] += targPos;
@@ -301,12 +337,25 @@ public class Ability_SpawnSwarm : Ability
 			}
 		}
 
-		overallAvgPos /= Mathf.Max(livingFighterGroups, 1);
-		//overallAvgPos += targPos;
-		swarmsCenter.transform.position = overallAvgPos;
+		if (livingFighterGroups > 0)
+		{
+			overallAvgPos /= livingFighterGroups;
+			swarmsCenter.transform.position = overallAvgPos;
+			SetSwarmsCenterActive(true);
+		}
+		else
+			SetSwarmsCenterActive(false);
 
 		// Reassign back to emitter
 		pS.SetParticles(particles, numAlive);
+	}
+
+	void SetSwarmsCenterActive(bool state)
+	{
+		if (state && !swarmsCenter.activeSelf)
+			swarmsCenter.SetActive(true);
+		else if (!state && swarmsCenter.activeSelf)
+			swarmsCenter.SetActive(false);
 	}
 
 	public bool HasUsed()

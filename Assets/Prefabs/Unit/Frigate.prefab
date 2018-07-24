@@ -3239,7 +3239,7 @@ MonoBehaviour:
   swarmTarget: {fileID: 4907543980749030}
   selCircleSize: 2.4
   printInfo: 0
-  hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
+  hpBarPrefab: {fileID: 114201364516099128, guid: dce4ddb18024fb646b84e484dbee8ed4,
     type: 2}
   hpEffects: {fileID: 114299271673986788}
   team: 0

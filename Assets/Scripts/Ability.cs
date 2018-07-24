@@ -23,15 +23,18 @@ public class Ability : MonoBehaviour {
 	protected Unit parentUnit;
 
 	// Use this for initialization
-	protected void Start ()
+	protected void Awake()
+	{
+		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+
+		displayInfo = new AbilityDisplayInfo();
+	}
+
+	protected void Start()
 	{
 		parentUnit = GetComponent<Unit>();
 		team = parentUnit.team;
 		abilityIndex = parentUnit.abilities.IndexOf(this);
-
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
-
-		displayInfo = new AbilityDisplayInfo();
 	}
 
 	protected void Update()

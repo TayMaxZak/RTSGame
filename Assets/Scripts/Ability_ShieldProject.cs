@@ -28,8 +28,10 @@ public class Ability_ShieldProject : Ability
 
 	private UI_AbilBar_ShieldProject abilityBar;
 
-	void Awake()
+	new void Awake()
 	{
+		base.Awake();
+
 		abilityType = AbilityType.ShieldProject;
 		InitCooldown();
 	}

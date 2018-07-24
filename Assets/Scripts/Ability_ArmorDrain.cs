@@ -14,20 +14,23 @@ public class Ability_ArmorDrain : Ability
 	private bool isActive = false;
 	private bool hasSuperlaser = false;
 
-	void Awake()
+	new void Awake()
 	{
+		base.Awake();
+
 		abilityType = AbilityType.ArmorDrain;
 		InitCooldown();
+
+		energy = 1;
+		deltaDurations = AbilityUtils.GetDeltaDurations(AbilityType.ArmorDrain);
+
+		displayInfo.displayFill = true;
 	}
 
 	// Use this for initialization
 	new void Start()
 	{
 		base.Start();
-		displayInfo.displayFill = true;
-
-		energy = 1;
-		deltaDurations = AbilityUtils.GetDeltaDurations(AbilityType.ArmorDrain);
 
 		foreach (Ability a in parentUnit.abilities)
 			if (a.GetAbilityType() == AbilityType.Superlaser)

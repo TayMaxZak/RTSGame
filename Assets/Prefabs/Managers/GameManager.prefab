@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRules:
-    useTestValues: 1
+    useTestValues: 0
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -315,7 +315,8 @@ MonoBehaviour:
     ABLYarmorDrainRange: 20
     ABLYarmorDrainDPSEnemy: 9
     ABLYarmorDrainDPSAlly: 3
-    ABLYarmorDrainGPS: 1
+    ABLYarmorDrainGPSEnemy: 1
+    ABLYarmorDrainGPSAlly: 2
     ABLYarmorDrainGPSBonusMult: 1
     ABLYarmorDrainMaxVictims: 5
     ABLYarmorRegenHPS:

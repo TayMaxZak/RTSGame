@@ -18,18 +18,20 @@ public class Ability_HealField : Ability
 
 	private Coroutine giveResourcesCoroutine;
 
-	void Awake()
+	new void Awake()
 	{
+		base.Awake();
+
 		abilityType = AbilityType.HealField;
 		InitCooldown();
+
+		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
 	}
 
 	// Use this for initialization
 	new void Start()
 	{
 		base.Start();
-
-		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
 
 		command = gameManager.GetCommander(team);
 

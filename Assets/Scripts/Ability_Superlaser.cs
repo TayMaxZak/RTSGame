@@ -36,10 +36,15 @@ public class Ability_Superlaser : Ability
 
 	private UI_AbilBar_Superlaser abilityBar;
 
-	void Awake()
+	new void Awake()
 	{
+		base.Awake();
 		abilityType = AbilityType.Superlaser;
 		InitCooldown();
+
+		stacks = gameRules.ABLYsuperlaserInitStacks;
+
+		displayInfo.displayStacks = true;
 	}
 
 	// Use this for initialization
@@ -47,8 +52,6 @@ public class Ability_Superlaser : Ability
 	{
 		base.Start();
 
-		stacks = gameRules.ABLYsuperlaserInitStacks;
-		displayInfo.displayStacks = true;
 		abilityBar = parentUnit.hpBar.GetComponent<UI_AbilBar_Superlaser>();
 		Display();
 
@@ -72,6 +75,11 @@ public class Ability_Superlaser : Ability
 			displayInfo.displayInactive = false;
 		UpdateDisplay(abilityIndex, true);
 		UpdateAbilityBar();
+	}
+
+	protected override void UpdateAbilityBar()
+	{
+		abilityBar.SetStacks(stacks, false);
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -201,11 +209,6 @@ public class Ability_Superlaser : Ability
 	{
 		stacks++;
 		Display();
-	}
-
-	protected override void UpdateAbilityBar()
-	{
-		abilityBar.SetStacks(stacks, false);
 	}
 
 	void ClearTarget(bool clearEffects)
