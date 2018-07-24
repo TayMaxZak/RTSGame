@@ -6,6 +6,7 @@ using Particle = UnityEngine.ParticleSystem.Particle;
 public class FighterGroup : MonoBehaviour, ITargetable
 {
 	private Ability_SpawnSwarm parentAbility;
+	private Unit targetUnit;
 
 	private int[] indices;
 	private ParticleSystem pS;
@@ -13,7 +14,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 	private int currentIndex = 0;
 	private int team = 0;
 
-	private float[] hp;
+	private float[] hp; // TODO: Add passive health repair over time
 
 	private Particle[] particles;
 
@@ -54,12 +55,35 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		parentAbility = swarmManager;
 	}
 
+	public void SetTarget(Unit targ)
+	{
+		targetUnit = targ;
+	}
+
 	public void Activate()
 	{
 		collision.enabled = true;
 		isActive = true;
 	}
 
+	void Update()
+	{
+		if (!isActive)
+			return;
+
+		if (targetUnit)
+		{
+			if (Vector3.SqrMagnitude(transform.position - targetUnit.transform.position) < gameRules.ABLYswarmInteractRadius * gameRules.ABLYswarmInteractRadius)
+			{
+				if (targetUnit.team != team) // If target is an enemy unit, damage it
+					targetUnit.Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
+				else
+				{
+					targetUnit.AddStatus(new Status(gameObject, StatusType.SwarmResist));
+				}
+			}
+		}
+	}
 
 	void GetParticles()
 	{

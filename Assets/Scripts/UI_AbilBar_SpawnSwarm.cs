@@ -7,18 +7,6 @@ public class UI_AbilBar_SpawnSwarm : UI_Bar
 {
 	[SerializeField]
 	private Image[] fighterGroupIcons;
-	private int stacks = -1;
-	private int maxStacks = -1;
-
-	private UIRules uiRules;
-	private GameRules gameRules;
-
-	void Awake()
-	{
-		uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
-		maxStacks = gameRules.ABLYswarmMaxUses;
-	}
 
 	void UpdateFighterGroup(int index, int number)
 	{

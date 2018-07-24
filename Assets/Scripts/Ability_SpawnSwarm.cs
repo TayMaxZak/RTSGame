@@ -123,6 +123,10 @@ public class Ability_SpawnSwarm : Ability
 	public void MoveSwarm(Unit unit)
 	{
 		targetUnit = unit;
+
+		for (int i = 0; i < fighterGroups.Count; i++)
+			fighterGroups[i].SetTarget(targetUnit);
+
 		swarmMover.SetTargetUnit(targetUnit);
 		if (unit != parentUnit)
 			checkIfDead = true;
@@ -140,6 +144,7 @@ public class Ability_SpawnSwarm : Ability
 
 			// Successful ability cast
 			stacks--;
+			swarmMover.SetDisplayInactive(false); // At least one swarm is controllable
 			if (stacks > 0) // If still over 0 stacks, can be used again
 			{
 				// If used for the first time,
@@ -147,8 +152,6 @@ public class Ability_SpawnSwarm : Ability
 				{
 					// nerf parent unit's movement speed
 					parentUnit.AddStatus(new Status(gameObject, StatusType.SpawnSwarmSpeedNerf));
-					// and notify swarm mover to display as active
-					swarmMover.SetDisplayInactive(false);
 				}
 			}
 			else // Otherwise, cannot be used in the future
@@ -196,6 +199,7 @@ public class Ability_SpawnSwarm : Ability
 		fighterGroups[lastIndex].SetParticles(pS, list.ToArray()); // Indices based on how many particles have already been emitted and how many were just emitted
 		fighterGroups[lastIndex].SetTeam(team); // Make sure it belongs to the correct team so turrets know whether or not to shoot it
 		fighterGroups[lastIndex].SetParentAbility(this); // Establish connection back to us
+		fighterGroups[lastIndex].SetTarget(targetUnit); // Set target to let it actually influence the game world
 		fighterGroups[lastIndex].Activate(); // Now that it has particle data, it can begin to behave like a proper fighter group
 
 		readyToSpawnNextSwarm = true;
@@ -218,7 +222,7 @@ public class Ability_SpawnSwarm : Ability
 	public void RemoveFighterGroup()
 	{
 		livingFighterGroups--;
-		if (livingFighterGroups == 0)
+		if (livingFighterGroups == 0) // No swarms left to control
 			swarmMover.SetDisplayInactive(true);
 	}
 
@@ -325,16 +329,6 @@ public class Ability_SpawnSwarm : Ability
 
 			fighterGroups[i].transform.position = avgPositions[i];
 			overallAvgPos += avgPositions[i];
-
-			if (Vector3.SqrMagnitude(fighterGroups[i].transform.position - targPos) < gameRules.ABLYswarmInteractRadius * gameRules.ABLYswarmInteractRadius)
-			{
-				if (targetUnit.team != team) // If target is an enemy unit, damage it
-					targetUnit.Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
-				else
-				{
-					targetUnit.AddStatus(new Status(fighterGroups[i].gameObject, StatusType.SwarmResist));
-				}
-			}
 		}
 
 		if (livingFighterGroups > 0)

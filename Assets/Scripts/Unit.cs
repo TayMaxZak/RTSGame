@@ -534,7 +534,7 @@ public class Unit : Entity, ITargetable
 
 		float dmg = damageBase;
 
-		dmg = StatusDamageMod(dmg); // Apply status modifiers to damage first
+		dmg = StatusDamageMod(dmg, dmgType); // Apply status modifiers to damage first
 
 		if (dmg <= 0)
 			return false;
@@ -562,18 +562,11 @@ public class Unit : Entity, ITargetable
 
 		float overflowDmg = Mathf.Max(0, dmg - absorbLim); // How much damage health takes (aka by how much damage exceeds absorbtion limit)
 
-
-		//float critflowDmg = Mathf.Max(0, overflowDmg - absorbLim); // By how much *overflow damage* exceeds absorbtion limit. 
-		float critflowDmg = 0; // Remove critflow to avoid confusing player
-		overflowDmg -= critflowDmg; // Don't count critflow twice
-
-		// Setting cur values
+		// Setting new values
 		curArmor += -dmgToArmor;
-		curHealth += Mathf.Min(curArmor /*ie armor is negative*/, 0) - overflowDmg - critflowDmg;
-		curArmor += -critflowDmg; // Don't want critflow damage to wrap around and damage health twice, so we put this step after health step
+		curHealth += Mathf.Min(curArmor /*ie armor is negative*/, 0) - overflowDmg;
 		curArmor = Mathf.Max(curArmor, 0);
 		UpdateHealth();
-		
 
 		if (curHealth <= 0)
 		{
@@ -667,20 +660,37 @@ public class Unit : Entity, ITargetable
 		return dmg; // Leftover damage, should be positive
 	}
 
-	private float StatusDamageMod(float dmgOrg)
+	private float StatusDamageMod(float dmgOrg, DamageType dmgType)
 	{
 		float dmg = dmgOrg;
-		int swarmShieldCounter = 0;
 
+		List<Status> allySwarms = new List<Status>();
+
+		// Count number of allied swarms
 		foreach (Status s in statuses)
 		{
 			if (s.statusType == StatusType.SwarmResist)
-				swarmShieldCounter++;
+				allySwarms.Add(s);
 		}
 
-		// Apply swarm Shield damage reduction, which can stack a limited number of times
-		dmg -= dmg * gameRules.STATswarmResistDmgReduce * Mathf.Clamp(swarmShieldCounter, 0, gameRules.STATswarmResistMaxStacks);
-		return dmg;
+		int stack = Mathf.Min(allySwarms.Count, gameRules.STATswarmResistMaxStacks);
+		// Apply swarm damage reduction, which can stack a limited number of times
+		float swarmAbsorbedDamage = dmgType == DamageType.Swarm ? Mathf.Min(dmg * gameRules.STATswarmResistMultSwarm * stack, dmgOrg)
+			 : Mathf.Min(dmg * gameRules.STATswarmResistMult * stack, dmgOrg);
+
+		if (stack > 0)
+		{
+			// Transfer absorbed damage to the swarms
+			int randomIndex = (int)(Random.value * stack);
+			if (allySwarms[randomIndex].from)
+			{
+				FighterGroup swarm = allySwarms[randomIndex].from.GetComponent<FighterGroup>();
+				swarm.Damage(swarmAbsorbedDamage * gameRules.STATswarmResistTransferMult, 0, dmgType);
+			}
+			
+			// TODO: Tell ALL allied swarms to attack enemy swarms
+		}
+		return dmg - swarmAbsorbedDamage;
 	}
 
 	public void DamageSimple(float healthDmg, float armorDmg) // Simple subtraction to armor and health

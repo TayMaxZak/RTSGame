@@ -93,6 +93,8 @@ public class GameRules
 	public float[] ABLYsuperlaserDmgByStacks = new float[] { -1, 100, 200, 300, 400}; // Based on stacks: 0 -> cannot be activated / 1 -> 100 / 2 -> 200 / 3 -> 300 / 4 -> 400
 
 	[Header("Statuses")]
-	public float STATswarmResistDmgReduce = 0.1f; // How much of all incoming damage does each swarm protecting an ally reduce
-	public float STATswarmResistMaxStacks = 2; // How many times can this damage reduction stack
+	public float STATswarmResistMult = 0.1f; // How much of all incoming damage does each swarm protecting an ally absorb
+	public float STATswarmResistMultSwarm = 1.0f; // (against enemy swarm damage)
+	public int STATswarmResistMaxStacks = 3; // How many times can this damage absorption stack
+	public float STATswarmResistTransferMult = 1.0f; // What ratio of absorbed damage is transferred to the absorbing ally swarms. The total damage is split between each of the absorbing swarms
 }

@@ -160,8 +160,6 @@ public class Turret : MonoBehaviour
 		for (int i = 0; i < cols.Length; i++)
 		{
 			ITargetable targ = GetITargetableFromCol(cols[i]);
-			if (parentUnit.printInfo)
-				Debug.Log(targ);
 
 			if (IsNull(targ)) // No targetable found
 				continue;
@@ -245,8 +243,9 @@ public class Turret : MonoBehaviour
 		// First, try to raycast and hope we don't hit ourselves
 		Vector3 forward = GetForward();
 		RaycastHit hit;
+		float checkDistance = target.HasCollision() ? range * gameRules.PRJfriendlyFireCheckRangeMult : Vector3.Distance(firePos.position, target.GetPosition());
 		float offset = 0.02f; // How much we move in towards our first raycast hit location to make sure the next raycast is technically inside the collider we hit the first time around
-		if (Physics.Raycast(firePos.position, forward, out hit, range * gameRules.PRJfriendlyFireCheckRangeMult, gameRules.entityLayerMask))
+		if (Physics.Raycast(firePos.position, forward, out hit, checkDistance, gameRules.entityLayerMask))
 		{
 			// Is it a unit? This could be either self-detection or hitting a different unit.
 			Transform parent = hit.collider.transform.parent;
