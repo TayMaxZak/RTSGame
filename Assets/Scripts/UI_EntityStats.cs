@@ -278,6 +278,7 @@ public class UI_EntityStats : MonoBehaviour
 			if (s.statusType == StatusType.SwarmResist)
 			{
 				swarmResistCount++;
+
 				if (swarmResistCount > gameRules.STATswarmResistMaxStacks)
 					continue;
 			}

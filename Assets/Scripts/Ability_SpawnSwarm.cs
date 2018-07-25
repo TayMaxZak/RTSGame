@@ -199,7 +199,7 @@ public class Ability_SpawnSwarm : Ability
 		fighterGroups[lastIndex].SetParticles(pS, list.ToArray()); // Indices based on how many particles have already been emitted and how many were just emitted
 		fighterGroups[lastIndex].SetTeam(team); // Make sure it belongs to the correct team so turrets know whether or not to shoot it
 		fighterGroups[lastIndex].SetParentAbility(this); // Establish connection back to us
-		fighterGroups[lastIndex].SetTarget(targetUnit); // Set target to let it actually influence the game world
+		//fighterGroups[lastIndex].SetTarget(targetUnit); // Set target to let it actually influence the game world
 		fighterGroups[lastIndex].Activate(); // Now that it has particle data, it can begin to behave like a proper fighter group
 
 		readyToSpawnNextSwarm = true;

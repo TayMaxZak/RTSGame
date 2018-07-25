@@ -17,6 +17,8 @@ public class Turret : MonoBehaviour
 	private bool checkIfDead = false;
 	[SerializeField]
 	private float range = 25;
+	[SerializeField]
+	private bool riskFFAgainstFighters = false;
 
 	[Header("Sound")]
 	[SerializeField]
@@ -236,6 +238,9 @@ public class Turret : MonoBehaviour
 
 	bool CheckFriendlyFire()
 	{
+		if (IsNull(target))
+			return false;
+
 		// We know how many potential collisions we can have with the parent unit's colliders, so we will cast multiple rays in succession to skip past the collisions that we want to ignore
 		// RaycastAll will not work in this case because it will pass through everything, rather than only passing through the parent unit's colliders and stopping on the first collision after them
 		Collider[] cols = parentUnit.GetComponentsInChildren<Collider>();
@@ -243,7 +248,8 @@ public class Turret : MonoBehaviour
 		// First, try to raycast and hope we don't hit ourselves
 		Vector3 forward = GetForward();
 		RaycastHit hit;
-		float checkDistance = target.HasCollision() ? range * gameRules.PRJfriendlyFireCheckRangeMult : Vector3.Distance(firePos.position, target.GetPosition());
+		// If we are targeting a fighter and willing to aim at an ally unit hoping to hit an enemy fighter, we will check for FF in a shorter distance
+		float checkDistance = (riskFFAgainstFighters && !target.HasCollision()) ? Vector3.Distance(firePos.position, target.GetPosition()) : range * gameRules.PRJfriendlyFireCheckRangeMult;
 		float offset = 0.02f; // How much we move in towards our first raycast hit location to make sure the next raycast is technically inside the collider we hit the first time around
 		if (Physics.Raycast(firePos.position, forward, out hit, checkDistance, gameRules.entityLayerMask))
 		{

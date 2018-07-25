@@ -1946,6 +1946,7 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 1
   range: 25
+  riskFFAgainstFighters: 1
   soundShoot: {fileID: 8300000, guid: 13c45b4f30054584681d50011b1d12f0, type: 3}
   firePos: {fileID: 4071539184535878}
   maxAmmo: 20
@@ -1983,6 +1984,7 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 1
   range: 25
+  riskFFAgainstFighters: 1
   soundShoot: {fileID: 8300000, guid: 13c45b4f30054584681d50011b1d12f0, type: 3}
   firePos: {fileID: 4702964862281888}
   maxAmmo: 20

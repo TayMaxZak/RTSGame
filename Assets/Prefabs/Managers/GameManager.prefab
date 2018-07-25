@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRules:
-    useTestValues: 0
+    useTestValues: 1
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -358,8 +358,10 @@ MonoBehaviour:
     - 200
     - 300
     - 400
-    STATswarmResistDmgReduce: 0.1
-    STATswarmResistMaxStacks: 2
+    STATswarmResistMult: 0.1
+    STATswarmResistMultSwarm: 1
+    STATswarmResistMaxStacks: 3
+    STATswarmResistTransferMult: 1
   commanders:
   - {fileID: 114578553437470668}
   - {fileID: 114476393172418668}

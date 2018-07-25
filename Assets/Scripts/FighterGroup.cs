@@ -57,6 +57,8 @@ public class FighterGroup : MonoBehaviour, ITargetable
 
 	public void SetTarget(Unit targ)
 	{
+		if (targetUnit)
+			targetUnit.RemoveEnemySwarm(this); // No longer attacking previous target
 		targetUnit = targ;
 	}
 
@@ -73,16 +75,29 @@ public class FighterGroup : MonoBehaviour, ITargetable
 
 		if (targetUnit)
 		{
-			if (Vector3.SqrMagnitude(transform.position - targetUnit.transform.position) < gameRules.ABLYswarmInteractRadius * gameRules.ABLYswarmInteractRadius)
+			if (Vector3.SqrMagnitude(transform.position - targetUnit.GetSwarmTarget().position) < gameRules.ABLYswarmInteractRadius * gameRules.ABLYswarmInteractRadius)
 			{
 				if (targetUnit.team != team) // If target is an enemy unit, damage it
-					targetUnit.Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
-				else
 				{
-					targetUnit.AddStatus(new Status(gameObject, StatusType.SwarmResist));
+					targetUnit.AddEnemySwarm(this);
+					targetUnit.Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
 				}
-			}
-		}
+				else // Ally unit
+				{
+					// Protect ally unit
+					targetUnit.AddStatus(new Status(gameObject, StatusType.SwarmResist));
+					// Engage enemy swarms
+					List<FighterGroup> enemySwarms = targetUnit.GetEnemySwarms();
+					if (enemySwarms.Count > 0)
+					{
+						if (!IsNull(enemySwarms[0]))
+						{
+							enemySwarms[0].Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm);
+						}
+					} // enemy swarms present
+				} // ally unit
+			} // distance
+		} // has target unit
 	}
 
 	void GetParticles()
@@ -96,17 +111,27 @@ public class FighterGroup : MonoBehaviour, ITargetable
 
 		frameAccessed = Time.frameCount;
 	}
+	
 
+	void Die()
+	{
+		if (targetUnit)
+			targetUnit.RemoveEnemySwarm(this); // No longer attacking previous target
+		parentAbility.RemoveFighterGroup();
+		Destroy(gameObject);
+	}
+
+	protected bool IsNull(ITargetable t)
+	{
+		if ((MonoBehaviour)t == null)
+			return true;
+		else
+			return false;
+	}
 
 	int RandomIndex()
 	{
 		return (int)(Random.value * indices.Length - 1);
-	}
-
-	void Die()
-	{
-		parentAbility.RemoveFighterGroup();
-		Destroy(gameObject);
 	}
 
 	float RandomValue()
@@ -151,11 +176,6 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		// Deal damage
 		hp[currentIndex] -= damageBase;
 
-		// Get particles
-		//GetParticles();
-		//particles[indices[currentIndex]].position += new Vector3(RandomValue(), RandomValue(), RandomValue()).normalized * 0.33f;
-
-
 		if (hp[currentIndex] <= 0)
 		{
 			// Kill fighter
@@ -167,8 +187,6 @@ public class FighterGroup : MonoBehaviour, ITargetable
 				die = true;
 		}
 
-		//pS.SetParticles(particles, numAlive);
-		// After setting particles, we can die
 		if (die)
 			Die();
 

@@ -58,13 +58,17 @@ public class Unit : Entity, ITargetable
 	private List<Status> statuses;
 	private List<VelocityMod> velocityMods;
 	private List<ShieldMod> shieldMods;
-	private List<Unit> damageTaken; // Units that assisted in this unit's death
+	//private List<Unit> damageTaken; // Units that assisted in this unit's death
+	private List<FighterGroup> enemySwarms;
 
 	void Awake()
 	{
 		hpBar = Instantiate(hpBarPrefab);
+		statuses = new List<Status>();
+		velocityMods = new List<VelocityMod>();
+		shieldMods = new List<ShieldMod>();
+		enemySwarms = new List<FighterGroup>();
 
-		
 	}
 
 	//public void SetHeightCurrent(int cur)
@@ -76,12 +80,8 @@ public class Unit : Entity, ITargetable
 	protected new void Start()
 	{
 		base.Start(); // Init Entity base class
-		statuses = new List<Status>();
-		velocityMods = new List<VelocityMod>();
-		shieldMods = new List<ShieldMod>();
 
 		selCircleSpeed = movement.GetRotationSpeed(); // Make the circle better reflect the unit's scale and mobility
-
 		movement.Init(this);
 
 		if (gameManager == null)
@@ -116,10 +116,6 @@ public class Unit : Entity, ITargetable
 				tur.SetOnHitStatus(new Status(gameObject, StatusType.SuperlaserMark));
 		}
 	}
-
-	// Banking
-	//float bank = bankAngle * -Vector3.Dot(transform.right, direction);
-	//banker.localRotation = Quaternion.AngleAxis(bankAngle, Vector3.forward);
 
 	// Update is called once per frame
 	protected new void Update ()
@@ -364,26 +360,9 @@ public class Unit : Entity, ITargetable
 			else // or add the new timer to the current timer
 			{
 				s.AddTimeLeft(status.GetTimeLeft());
-				/*
-				// Superlaser mark damage
-				if (s.statusType == StatusType.SuperlaserMark && status.statusType == StatusType.SuperlaserMark) // Don't count damage which wasn't necessary for the kill
-				{
-					s.AddTimeLeft(Mathf.Min(status.GetTimeLeft(), (curHealth + curArmor)));
-				}
-				else
-					s.AddTimeLeft(status.GetTimeLeft());
-				*/
 			}
 			return;
 		}
-
-		/*
-		// Superlaser mark damage
-		if (status.statusType == StatusType.SuperlaserMark) // Don't count damage which wasn't necessary for the kill
-		{
-			status.SetTimeLeft(Mathf.Min(status.GetTimeLeft(), (curHealth + curArmor)));
-		}
-		*/
 		statuses.Add(status);
 
 		// Number of statuses changed, update UI
@@ -394,7 +373,7 @@ public class Unit : Entity, ITargetable
 	public void RemoveStatus(Status status)
 	{
 		Status toRemove = null;
-		foreach (Status s in statuses) // Search all current velocity mods
+		foreach (Status s in statuses) // Search all current statuses
 		{
 			if (s.from != status.from)
 				continue;
@@ -418,6 +397,38 @@ public class Unit : Entity, ITargetable
 			return;
 
 		controller.UpdateStatsStatuses(statuses);
+	}
+
+	public void AddEnemySwarm(FighterGroup swarm)
+	{
+		foreach (FighterGroup f in enemySwarms) // Check all current swarms
+		{
+			if (f != swarm)
+				continue;
+			return;
+		}
+		enemySwarms.Add(swarm);
+	}
+
+	public void RemoveEnemySwarm(FighterGroup swarm)
+	{
+		FighterGroup toRemove = null;
+		foreach (FighterGroup f in enemySwarms) // Search all current swarms
+		{
+			if (f != swarm)
+				continue;
+			toRemove = f;
+		}
+
+		if (toRemove != null)
+		{
+			enemySwarms.Remove(toRemove);
+		}
+	}
+
+	public List<FighterGroup> GetEnemySwarms()
+	{
+		return enemySwarms;
 	}
 
 	float CalcShieldPoolCur()
@@ -681,10 +692,10 @@ public class Unit : Entity, ITargetable
 		if (stack > 0)
 		{
 			// Transfer absorbed damage to the swarms
-			int randomIndex = (int)(Random.value * stack);
-			if (allySwarms[randomIndex].from)
+			int index = dmgType == DamageType.Swarm ? 0 : (int)(Random.value * stack); 
+			if (allySwarms[index].from)
 			{
-				FighterGroup swarm = allySwarms[randomIndex].from.GetComponent<FighterGroup>();
+				FighterGroup swarm = allySwarms[index].from.GetComponent<FighterGroup>();
 				swarm.Damage(swarmAbsorbedDamage * gameRules.STATswarmResistTransferMult, 0, dmgType);
 			}
 			
