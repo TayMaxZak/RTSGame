@@ -1721,9 +1721,10 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
+  riskFFAgainstFighters: 0
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4398980666122288}
-  maxAmmo: 3
+  maxAmmo: 4
   reloadCooldown: 3
   rateOfFire: 150
   shootOffsetRatio: 0
@@ -1802,7 +1803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   swarmTarget: {fileID: 4415277090469646}
-  selCircleSize: 2.5
+  selCircleSize: 2.8
   printInfo: 0
   hpBarPrefab: {fileID: 114201364516099128, guid: f9ab5ed9c28f1bb43ac9ea3f17080b5b,
     type: 2}
@@ -1814,6 +1815,7 @@ MonoBehaviour:
   curHealth: 400
   maxHealth: 400
   alwaysBurnImmune: 0
+  curFragileHealth: 0
   deathClone: {fileID: 1796662562453436, guid: 60e7666e1b928184a82e6f22436ce2d9, type: 2}
   turrets:
   - {fileID: 114961553349981566}
@@ -1845,9 +1847,10 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
+  riskFFAgainstFighters: 0
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4261729019094134}
-  maxAmmo: 3
+  maxAmmo: 4
   reloadCooldown: 3
   rateOfFire: 150
   shootOffsetRatio: 0

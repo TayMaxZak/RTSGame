@@ -40,6 +40,14 @@ public class UI_HPBar : UI_Bar
 	[SerializeField]
 	private Color healthBkgEnemyColor = Color.black;
 
+	[SerializeField]
+	private Image fragileFill;
+	private float fragileCur = 0;
+	private float fragileTarg = 1;
+	private float fragileT = 0;
+	[SerializeField]
+	private Color fragileColor = Color.yellow;
+
 
 	[SerializeField]
 	private Image armorFill;
@@ -95,6 +103,7 @@ public class UI_HPBar : UI_Bar
 		healthT += Time.deltaTime / uiRules.HPBupdateTime;
 		armorT += Time.deltaTime / uiRules.HPBupdateTime;
 		shieldT += Time.deltaTime / uiRules.HPBupdateTime;
+		fragileT += Time.deltaTime / uiRules.HPBupdateTime;
 
 		UpdateDisplay();
 
@@ -108,14 +117,18 @@ public class UI_HPBar : UI_Bar
 		healthCur = Mathf.Lerp(healthCur, healthTarg, healthT);
 		armorCur = Mathf.Lerp(armorCur, armorTarg, armorT);
 		shieldCur = Mathf.Lerp(shieldCur, shieldTarg, shieldT);
+		fragileCur = Mathf.Lerp(fragileCur, fragileTarg, fragileT);
 
 		// Update sizes of bars
 		healthFill.rectTransform.sizeDelta = new Vector2(healthWidth * healthCur, healthFill.rectTransform.sizeDelta.y);
 		armorFill.rectTransform.sizeDelta = new Vector2(armorWidth * armorCur, armorFill.rectTransform.sizeDelta.y);
 		shieldFill.rectTransform.sizeDelta = new Vector2(shieldWidth * shieldCur, shieldFill.rectTransform.sizeDelta.y);
+		// Update sizes and positions of modifier bars
+		fragileFill.rectTransform.sizeDelta = new Vector2(Mathf.Min(fragileCur, 1 - healthCur) * healthWidth, fragileFill.rectTransform.sizeDelta.y);
+		if (gameObject.activeSelf) // Update rect transform only when active to stop Unity visual bug from happening
+			fragileFill.rectTransform.position = new Vector2(healthWidth * healthCur + healthFill.rectTransform.position.x, healthFill.rectTransform.position.y);
 
 		// What color should the border be?
-		
 		borderFill.color = armorTarg > uiRules.HPBbordColorThresh ? (enemy ? armorEnemyColor : armorAllyColor) : (enemy ? healthEnemyColor : healthAllyColor);
 
 		// If we are burning,
@@ -147,6 +160,7 @@ public class UI_HPBar : UI_Bar
 		healthT = 1;
 		armorT = 1;
 		shieldT = 1;
+		fragileT = 1;
 		UpdateDisplay();
 
 		foreach (UI_Bar bar in addons)
@@ -183,6 +197,17 @@ public class UI_HPBar : UI_Bar
 		return newValues;
 	}
 
+	public void SetFragileHealth(float frag)
+	{
+		float Tinitial = 0;
+
+		if (fragileTarg != frag)
+		{
+			fragileTarg = frag;
+			fragileT = Tinitial;
+		}
+	}
+
 	public void SetIsAlly(bool isAlly)
 	{
 		// Only update colors if a new value was assigned
@@ -197,4 +222,6 @@ public class UI_HPBar : UI_Bar
 		armorFill.color = (enemy ? armorEnemyColor : armorAllyColor);
 		armorBkg.color = (enemy ? armorBkgEnemyColor : armorBkgAllyColor);
 	}
+
+
 }

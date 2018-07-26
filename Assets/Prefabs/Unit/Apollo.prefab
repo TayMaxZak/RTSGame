@@ -1601,6 +1601,7 @@ MonoBehaviour:
   maxArmor: 150
   curHealth: 250
   maxHealth: 250
+  curFragileHealth: 0
   alwaysBurnImmune: 0
   deathClone: {fileID: 1796662562453436, guid: eb08eaf7d437cd649bb520668db77d96, type: 2}
   turrets:
@@ -1632,7 +1633,8 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
-  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4663811804393870}
   maxAmmo: 3
   reloadCooldown: 2
@@ -1682,7 +1684,8 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
-  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4221274989616668}
   maxAmmo: 2
   reloadCooldown: 5

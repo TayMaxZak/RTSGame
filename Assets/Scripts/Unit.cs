@@ -29,9 +29,14 @@ public class Unit : Entity, ITargetable
 	[SerializeField]
 	public bool alwaysBurnImmune = false;
 	private bool isBurning = false;
+	private float curBurnTimer;
+
+	[SerializeField]
+	private float curFragileHealth = 0;
+	private float curFragileTimer;
+
 	[SerializeField]
 	private GameObject deathClone; // Object to spawn on death
-	private float curBurnCounter;
 	private bool dead;
 
 	[Header("Combat")]
@@ -63,12 +68,11 @@ public class Unit : Entity, ITargetable
 
 	void Awake()
 	{
-		hpBar = Instantiate(hpBarPrefab);
+		hpBar = Instantiate(hpBarPrefab); // TODO: In awake?
 		statuses = new List<Status>();
 		velocityMods = new List<VelocityMod>();
 		shieldMods = new List<ShieldMod>();
 		enemySwarms = new List<FighterGroup>();
-
 	}
 
 	//public void SetHeightCurrent(int cur)
@@ -94,7 +98,9 @@ public class Unit : Entity, ITargetable
 		{
 			curHealth = curHealth * gameRules.TESTinitHPMult + gameRules.TESTinitHPAdd;
 			curArmor = curArmor * gameRules.TESTinitHPMult + gameRules.TESTinitHPAdd;
+			//curFragileHealth = (maxHealth - curHealth) * gameRules.TESTinitHPMult;
 		}
+		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
 
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
 		 //hpBar = Instantiate(hpBarPrefab);
@@ -138,12 +144,26 @@ public class Unit : Entity, ITargetable
 
 			if (isBurning)
 			{
-				curBurnCounter += Time.deltaTime;
-				if (curBurnCounter >= 1)
+				curBurnTimer += Time.deltaTime;
+				if (curBurnTimer >= 1)
 				{
-					curBurnCounter = 0;
+					curBurnTimer = 0;
 					DamageSimple(Mathf.RoundToInt(Random.Range(gameRules.HLTHburnMin, gameRules.HLTHburnMax)), 0);
 				}
+			}
+		}
+
+		if (curFragileHealth > 0)
+		{
+			curFragileTimer -= Time.deltaTime;
+			if (curFragileTimer <= 0)
+			{
+				float amount = gameRules.ABLYhealFieldConvertGPS + gameRules.ABLYhealFieldAllyGPSBonusMult * maxHealth;
+				AddFragileHealth(-amount * Time.deltaTime);
+				DamageSimple(-amount * Time.deltaTime, 0);
+
+				if (curFragileHealth <= 0)
+					curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
 			}
 		}
 
@@ -243,15 +263,21 @@ public class Unit : Entity, ITargetable
 		int armorMax = Mathf.RoundToInt(maxArmor);
 		int shieldMax = Mathf.RoundToInt(CalcShieldPoolMax());
 		bool newValues = hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / (armorMax == 0 ? 1 : armorMax), CalcShieldPoolCur() / (shieldMax == 0 ? 1 : shieldMax)), isBurning);
+		UpdateHPBarValFrag();
 		if (fastUpdate)
 			hpBar.FastUpdate();
 
-		// Update EntityStats only if there the new values differ from the current ones
+		// Update EntityStats only if the new values differ from the current ones
 		if (newValues && controller)
 		{
 			controller.UpdateStatsHP(this);
 			controller.UpdateStatsShields(this);
 		}
+	}
+
+	void UpdateHPBarValFrag()
+	{
+		hpBar.SetFragileHealth(curFragileHealth / maxHealth);
 	}
 
 	void UpdateHPBarAlly()
@@ -539,6 +565,25 @@ public class Unit : Entity, ITargetable
 			controller.UpdateStatsAbilityIconB(this, index);
 	}
 
+	public void AddFragileHealth(float frag)
+	{
+		curFragileHealth = curFragileHealth + frag;
+		ClampFragileHealth(); // Fragile health cannot exceed the room left in the health bar
+		UpdateHPBarVal(false);
+	}
+
+	void ClampFragileHealth()
+	{
+		curFragileHealth = Mathf.Clamp(curFragileHealth, 0, maxHealth - curHealth); // Fragile health cannot exceed the room left in the health bar
+	}
+
+	// Note: does not update HPbar values!
+	public void RemoveFragileHealth()
+	{
+		curFragileHealth = 0;
+		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
+	}
+
 	public bool Damage(float damageBase, float range, DamageType dmgType) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
 	{
 		OnDamage();
@@ -575,8 +620,14 @@ public class Unit : Entity, ITargetable
 
 		// Setting new values
 		curArmor += -dmgToArmor;
-		curHealth += Mathf.Min(curArmor /*ie armor is negative*/, 0) - overflowDmg;
+		float healthChange = Mathf.Min(curArmor /*ie armor is negative*/, 0) - overflowDmg;
+		curHealth += healthChange;
+		if (healthChange < 0) // If this damage tick penetrated armor, remove fragile health
+		{
+			RemoveFragileHealth();
+		}
 		curArmor = Mathf.Max(curArmor, 0);
+		
 		UpdateHealth();
 
 		if (curHealth <= 0)
@@ -588,7 +639,9 @@ public class Unit : Entity, ITargetable
 	}
 
 	protected virtual void OnDamage()
-	{ }
+	{
+		
+	}
 
 	// Apply damage to the highest priority shield types first
 	// If a shield's percent is brought below zero, remove it (depending on the shield type)
@@ -708,6 +761,7 @@ public class Unit : Entity, ITargetable
 	{
 		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
 		curHealth = Mathf.Min(curHealth - healthDmg, maxHealth);
+		ClampFragileHealth(); // Fragile health cannot exceed the room left in the health bar
 		UpdateHealth();
 
 		if (curHealth <= 0)

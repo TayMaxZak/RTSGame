@@ -2623,7 +2623,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 3d057d4e6f7b751499d8ac6a2ac81e2f, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.2
   m_Pitch: 1
@@ -2819,7 +2819,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 3d057d4e6f7b751499d8ac6a2ac81e2f, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.2
   m_Pitch: 1
@@ -3020,11 +3020,12 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 25
-  soundShoot: {fileID: 8300000, guid: 248bbe23b4ba9e440a836b0726b8320b, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4761075872646922}
-  maxAmmo: 4
+  maxAmmo: 0
   reloadCooldown: 2
-  rateOfFire: 308
+  rateOfFire: 70
   shootOffsetRatio: 0
   RS: 90
   baseRotatesOnY: 1
@@ -3037,11 +3038,11 @@ MonoBehaviour:
   projTemplate:
     dmgType: 0
     speed: 30
-    damage: 2
+    damage: 5
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
-  accuracy: 0.2
+  accuracy: 0.1
 --- !u!114 &114299271673986788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3124,6 +3125,7 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 60
+  riskFFAgainstFighters: 0
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4244107031580328}
   maxAmmo: 1
@@ -3202,11 +3204,12 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 25
-  soundShoot: {fileID: 8300000, guid: 248bbe23b4ba9e440a836b0726b8320b, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4439424789102846}
-  maxAmmo: 4
+  maxAmmo: 0
   reloadCooldown: 2
-  rateOfFire: 308
+  rateOfFire: 70
   shootOffsetRatio: 0
   RS: 90
   baseRotatesOnY: 1
@@ -3219,11 +3222,11 @@ MonoBehaviour:
   projTemplate:
     dmgType: 0
     speed: 30
-    damage: 2
+    damage: 5
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
-  accuracy: 0.2
+  accuracy: 0.1
 --- !u!114 &114793434201877688
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3248,6 +3251,7 @@ MonoBehaviour:
   maxArmor: 300
   curHealth: 250
   maxHealth: 250
+  curFragileHealth: 0
   alwaysBurnImmune: 0
   deathClone: {fileID: 1796662562453436, guid: bcfe7a37703b99244ad36433f72888c7, type: 2}
   turrets:
@@ -3310,6 +3314,7 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 60
+  riskFFAgainstFighters: 0
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4567061863181758}
   maxAmmo: 1

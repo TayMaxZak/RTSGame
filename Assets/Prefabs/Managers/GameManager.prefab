@@ -338,9 +338,11 @@ MonoBehaviour:
     ABLYswarmInteractRadius: 5
     ABLYswarmFighterHealth: 20
     ABLYhealFieldRange: 25
-    ABLYhealFieldAllyGPS: 2
-    ABLYhealFieldAllyGPSBonusMult: 0.005
-    ABLYhealFieldUserGPS: 5
+    ABLYhealFieldAllyGPS: 10
+    ABLYhealFieldGPSBonusMult: 0.02
+    ABLYhealFieldUserMult: 2
+    ABLYhealFieldConvertDelay: 5
+    ABLYhealFieldConvertGPS: 10
     ABLYhealFieldResCost: 4
     ABLYhealFieldResTime: 5
     ABLYchainRange: 25

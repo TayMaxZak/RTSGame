@@ -74,9 +74,12 @@ public class GameRules
 	public float ABLYswarmFighterHealth = 20;
 
 	public float ABLYhealFieldRange = 25;
-	public float ABLYhealFieldAllyGPS = 2; // Health gained per second by each ally
-	public float ABLYhealFieldAllyGPSBonusMult = 0.005f; // What percentage of missing health should contribute to health gained per second
-	public float ABLYhealFieldUserGPS = 5; // Health gained per second by user as long as one ally is being healed
+	public float ABLYhealFieldAllyGPS = 10; // Fragile health gained per second by each ally
+	public float ABLYhealFieldUserGPSMult = 2; // Multiplier of base GPS for user
+	public float ABLYhealFieldConvertGPS = 10; // Fragile health exchanged into health per second
+	public float ABLYhealFieldAllyGPSBonusMult = 0.02f; // plus this percent of max health
+	public float ABLYhealFieldConvertDelay = 5; // Time it takes for fragile health to start transforming into health
+
 	public int ABLYhealFieldResCost = 4; // Amount of resource points held by this ability while active
 	public float ABLYhealFieldResTime = 5; // Delay to return resource points when the ability ends
 

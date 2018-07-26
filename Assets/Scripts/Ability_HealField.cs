@@ -87,24 +87,12 @@ public class Ability_HealField : Ability
 
 			for (int i = 0; i < units.Count; i++) // For each ally unit, add health
 			{
-				Vector4 getHP = units[i].GetHP();
-				float missingHealth = getHP.y - getHP.x; // Bonus based on missing health
-				units[i].DamageSimple(-(gameRules.ABLYhealFieldAllyGPS + gameRules.ABLYhealFieldAllyGPSBonusMult * missingHealth) * Time.deltaTime, 0); // Add health
-
+				units[i].AddFragileHealth((gameRules.ABLYhealFieldAllyGPS + gameRules.ABLYhealFieldAllyGPSBonusMult * units[i].GetHP().y) * Time.deltaTime);
 				units[i].AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
-
-				if (units.Count > 0) // If at least one other unit is being healed, heal ourselves by a flat amount regardless of ally count
-				{
-					parentUnit.DamageSimple(-(gameRules.ABLYhealFieldUserGPS * Time.deltaTime) / units.Count, 0);
-					parentUnit.AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
-
-				}
 			}
 
-			if (units.Count == 0)
-				pointEffect.SetEffectActive(true, false);
-			else
-				pointEffect.SetEffectActive(true, true);
+			parentUnit.AddFragileHealth((gameRules.ABLYhealFieldAllyGPS * gameRules.ABLYhealFieldUserGPSMult + gameRules.ABLYhealFieldAllyGPSBonusMult * parentUnit.GetHP().y) * Time.deltaTime);
+			parentUnit.AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
 		}
 		else
 			CheckDisplayConditions();

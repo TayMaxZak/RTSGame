@@ -3475,7 +3475,8 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
-  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4790768866316710}
   maxAmmo: 2
   reloadCooldown: 1
@@ -3511,12 +3512,13 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
-  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4878535154471696}
   maxAmmo: 2
   reloadCooldown: 1
   rateOfFire: 180
-  shootOffsetRatio: 0
+  shootOffsetRatio: 0.33
   RS: 60
   baseRotatesOnY: 1
   pivotX: {fileID: 4878535154471696}
@@ -3555,9 +3557,10 @@ MonoBehaviour:
   buildIndex: -1
   curArmor: 0
   maxArmor: 0
-  curHealth: 900
-  maxHealth: 900
+  curHealth: 800
+  maxHealth: 800
   alwaysBurnImmune: 0
+  curFragileHealth: 0
   deathClone: {fileID: 1796662562453436, guid: 0ab5eb26f10e3a34fa89f2371c77dcd4, type: 2}
   turrets:
   - {fileID: 114095846976579942}
@@ -3574,7 +3577,7 @@ MonoBehaviour:
     MSAccel: 1
     MSDeccel: 1
     model: {fileID: 4935241332060562}
-    RS: 30
+    RS: 20
     RSAccel: 1
     allowMoveThresh: 0.5
     reachGoalThresh: 1.5
@@ -3605,12 +3608,13 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
-  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4867935008702602}
   maxAmmo: 2
   reloadCooldown: 1
   rateOfFire: 180
-  shootOffsetRatio: 0
+  shootOffsetRatio: 0.67
   RS: 60
   baseRotatesOnY: 1
   pivotX: {fileID: 4867935008702602}
@@ -3641,12 +3645,13 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
-  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4487736759716026}
   maxAmmo: 2
   reloadCooldown: 1
   rateOfFire: 180
-  shootOffsetRatio: 0
+  shootOffsetRatio: 0.67
   RS: 60
   baseRotatesOnY: 1
   pivotX: {fileID: 4487736759716026}
@@ -3677,7 +3682,8 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
-  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4817259448784356}
   maxAmmo: 2
   reloadCooldown: 1
@@ -3769,12 +3775,13 @@ MonoBehaviour:
   team: 0
   preferredTargetType: 2
   range: 40
-  soundShoot: {fileID: 8300000, guid: 6498a1ebee151ac429c5fcaa2dcb9906, type: 3}
+  riskFFAgainstFighters: 0
+  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4376580267898420}
   maxAmmo: 2
   reloadCooldown: 1
   rateOfFire: 180
-  shootOffsetRatio: 0
+  shootOffsetRatio: 0.33
   RS: 60
   baseRotatesOnY: 1
   pivotX: {fileID: 4376580267898420}

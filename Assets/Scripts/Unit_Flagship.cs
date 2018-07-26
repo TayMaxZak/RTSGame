@@ -42,6 +42,7 @@ public class Unit_Flagship : Unit
 
 	protected override void OnDamage()
 	{
+		base.OnDamage();
 		shieldRegenTimer = gameRules.FLAGshieldRegenDelay; // Reset shield regen out-of-combat timer
 	}
 }
