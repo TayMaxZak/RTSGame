@@ -51,7 +51,10 @@ public class UnitMovement
 
 	private float deltaBias = 99999;
 
-	private AbilityTarget rotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
+	//private AbilityTarget rotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
+	private AbilityTarget manualRotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
+	private AbilityTarget abilityGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
+	private float aimValue;
 	private bool reachedHGoal = false;
 	private bool reachedVGoal = false;
 
@@ -97,12 +100,20 @@ public class UnitMovement
 	{
 		Vector3 dif = hGoal - transform.position;
 
-		bool useRotationGoal = rotationGoal != null;
+		int useRotationGoal = 0;
+		if (abilityGoal != null)
+			useRotationGoal = 1;
+		else if (manualRotationGoal != null)
+			useRotationGoal = 2;
 
-		Vector3 dir = useRotationGoal ? (rotationGoal.position - transform.position).normalized : dif.normalized;
+		Vector3 dir = dif;
+		if (abilityGoal != null)
+			dir = abilityGoal.UnitOrPos() ? abilityGoal.unit.transform.position - transform.position : abilityGoal.position - transform.position;
+		else if (manualRotationGoal != null)
+			dir = manualRotationGoal.position - transform.position;
 
 		// Rotate
-		float leftOrRight  = UpdateRotation(dir, useRotationGoal);
+		float leftOrRight = UpdateRotation(dir.normalized, useRotationGoal > 0); // Point towards movement goal or a rotation goal
 		// If we are facing the goal after rotating, "move" towards it, saving velocity for actual position change later
 		Vector3 hVel = UpdatePositionH(leftOrRight, dir);
 		// "Move" vertically, independent from all the other movement so far, saving velocity for actual position change later
@@ -116,23 +127,31 @@ public class UnitMovement
 		transform.position += velocity * Time.deltaTime;
 	}
 
-	// TODO: Use Quaternion.Angle to measure angle differences
 	float UpdateRotation(Vector3 dir, bool ignoreHGoal)
 	{
 		float RdirectionOrg = AngleDir(transform.forward, dir, Vector3.up);
+		aimValue = RdirectionOrg; // Used by abilities to determine if this unit is pointed at its target
 		float Rdirection = Mathf.Clamp(RdirectionOrg * deltaBias, -1, 1);
 
 		if (ignoreHGoal || !reachedHGoal)
 		{
 			if (Rdirection > 0)
+			{
 				CurRS(1);
+			}
 			else if (Rdirection < 0)
+			{
 				CurRS(-1);
+			}
 			else
+			{
 				CurRS(0);
+			}
 		}
 		else
+		{
 			CurRS(0);
+		}
 
 		//Quaternion origRotate = transform.rotation;
 
@@ -306,24 +325,26 @@ public class UnitMovement
 
 	public void SetHGoal(Vector3 newHGoal, bool group)
 	{
+		if (abilityGoal != null) // Can't move while an ability is rotating us
+			return;
+
 		float selCircleRadius = parentUnit.GetSelCircleSize() * 1.85f; // Approximation of visual area inside selection circle graphic
 
 		if (Vector3.SqrMagnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) > selCircleRadius * selCircleRadius)
 		{
-			if (rotationGoal != null)
-				rotationGoal = null; // Clear any current rotation goal
 			hGoal = newHGoal;
 			reachedHGoal = false;
+
+			manualRotationGoal = null; // Clear any current rotation goal
 		}
 		else // Not grouped or clicked outside of selection circle
 		{
 			if (!reachedHGoal) // Only able to rotate while stationary
 			{
-				hGoal = transform.position;
-				reachedHGoal = true;
+				Stop();
 			}
 			if (!group)
-				rotationGoal = new AbilityTarget(newHGoal);
+				manualRotationGoal = new AbilityTarget(newHGoal);
 		}
 		// else to do if rotation order but grouped
 	}
@@ -344,18 +365,32 @@ public class UnitMovement
 		return vCurrent;
 	}
 
-	public void SetRotationGoal(AbilityTarget newGoal)
+	public void SetAbilityGoal(AbilityTarget newGoal)
 	{
-		rotationGoal = newGoal;
+		abilityGoal = newGoal;
+		Stop();
 	}
 
-	public void ClearRotationGoal()
+	public float AimValue()
 	{
-		rotationGoal = null;
+		return aimValue;
+	}
+
+	public void ClearAbilityGoal()
+	{
+		abilityGoal = null;
 	}
 
 	public float GetRotationSpeed()
 	{
 		return RS;
+	}
+
+	public void Stop()
+	{
+		hGoal = transform.position;
+		reachedHGoal = true;
+
+		manualRotationGoal = null;
 	}
 }

@@ -65,7 +65,7 @@ public class GameRules
 	public float ABLYshieldProjectOnGPS = 4; // How much shield pool is gained per second the shield is active
 	public float ABLYshieldProjectOnGPSDelay = 5; // Delay after taking damage before shield pool gain begins while the shield is active
 	public float ABLYshieldProjectOffGPS = 8; // How much shield pool is gained per second the shield is inactive
-	public float ABLYshieldProjectOffGPSNegMult = 2; // GPS multiplier if shield is negative
+	public float ABLYshieldProjectOffGPSNegMult = 1.5f; // GPS multiplier if shield is negative
 
 	public int ABLYswarmMaxUses = 3;
 	public float ABLYswarmFirstUseSpeedMult = 0.75f;
@@ -74,9 +74,9 @@ public class GameRules
 	public float ABLYswarmFighterHealth = 20;
 
 	public float ABLYhealFieldRange = 25;
-	public float ABLYhealFieldAllyGPS = 10; // Fragile health gained per second by each ally
+	public float ABLYhealFieldAllyGPS = 5; // Fragile health gained per second by each ally
 	public float ABLYhealFieldUserGPSMult = 2; // Multiplier of base GPS for user
-	public float ABLYhealFieldConvertGPS = 10; // Fragile health exchanged into health per second
+	public float ABLYhealFieldConvertGPS = 5; // Fragile health exchanged into health per second
 	public float ABLYhealFieldAllyGPSBonusMult = 0.02f; // plus this percent of max health
 	public float ABLYhealFieldConvertDelay = 5; // Time it takes for fragile health to start transforming into health
 
@@ -92,8 +92,9 @@ public class GameRules
 	public float ABLYsuperlaserRangeTolerance = 10; // If distance changes by this much or more post-cast, superlaser is put on a shorter cooldown without firing
 	public float ABLYsuperlaserDelay = 3.5f; // Delay before damage is dealt during ability can be interupted or range-cancelled
 	public int ABLYsuperlaserInitStacks = 0; // Stacks the ability starts with
-	public float ABLYsuperlaserDmgAmount = 0.6f; // How much damage (by percentage of max health + max armor) has to be done to a unit to earn a stack from its death
-	public float[] ABLYsuperlaserDmgByStacks = new float[] { -1, 100, 200, 300, 400}; // Based on stacks: 0 -> cannot be activated / 1 -> 100 / 2 -> 200 / 3 -> 300 / 4 -> 400
+	public float ABLYsuperlaserStackDmgReq = 0.6f; // How much damage (by percentage of max health + max armor) has to be done to a unit to earn a stack from its death
+	public float ABLYsuperlaserDmgBase = 200; // Base damage
+	public float[] ABLYsuperlaserDmgByStacks = new float[] { -1, 50, 100, 150, 200}; // Damage added based on stacks: 0 -> cannot be activated / 1 -> 100 / 2 -> 200 / 3 -> 300 / 4 -> 400
 
 	[Header("Statuses")]
 	public float STATswarmResistMult = 0.1f; // How much of all incoming damage does each swarm protecting an ally absorb

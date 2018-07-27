@@ -87,7 +87,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4060768190098444}
   m_Layer: 0
-  m_Name: Pos (2)
+  m_Name: PosBot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -434,7 +434,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4743784573991514}
   m_Layer: 0
-  m_Name: Pos
+  m_Name: PosTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -547,7 +547,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4405464731903738}
   m_Layer: 0
-  m_Name: Pos (1)
+  m_Name: PosCenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1773,13 +1773,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1072998e3713186468578ca9541735c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  laserPositions:
-  - {fileID: 4743784573991514}
+  shotTemplate:
+    dmgType: 3
+    range: 60
+    damage: 0
+    lifetime: 1
+    startPosition: {x: 0, y: 0, z: 0}
+    direction: {x: 0, y: 0, z: 0}
+  sourcePositions:
   - {fileID: 4405464731903738}
+  - {fileID: 4743784573991514}
   - {fileID: 4060768190098444}
   laserEffectPrefab: {fileID: 114738217270647106, guid: 11ba9ae43494961478e565f7e3b13f12,
     type: 2}
-  laserStartPrefab: {fileID: 114387442305719452, guid: b7f8474a713ea714491163a99587d313,
+  startEffectPrefab: {fileID: 114387442305719452, guid: b7f8474a713ea714491163a99587d313,
     type: 2}
   pointEffectBreakPrefab: {fileID: 1020491657332010, guid: b5976377b2a39b8459da76dcbd234c97,
     type: 2}
@@ -1805,6 +1812,7 @@ MonoBehaviour:
   swarmTarget: {fileID: 4415277090469646}
   selCircleSize: 2.8
   printInfo: 0
+  disableTurrets: 0
   hpBarPrefab: {fileID: 114201364516099128, guid: f9ab5ed9c28f1bb43ac9ea3f17080b5b,
     type: 2}
   hpEffects: {fileID: 114248553201379134}

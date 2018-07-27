@@ -23,11 +23,11 @@ public class AbilityTarget
 		return unit ? EntityUtils.GetDisplayName(unit.Type) : position.ToString();
 	}
 
-	//public bool UnitOrPos()
-	//{
-	//	if (unit)
-	//		return true;
-	//	else
-	//		return false;
-	//}
+	public bool UnitOrPos()
+	{
+		if (unit)
+			return true;
+		else
+			return false;
+	}
 }

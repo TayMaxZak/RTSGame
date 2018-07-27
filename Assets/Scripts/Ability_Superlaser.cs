@@ -5,13 +5,15 @@ using UnityEngine;
 public class Ability_Superlaser : Ability
 {
 	[SerializeField]
-	private Transform[] laserPositions;
+	private Hitscan shotTemplate;
+	[SerializeField]
+	private Transform[] sourcePositions;
 	[SerializeField]
 	private Effect_Line laserEffectPrefab;
 	private Effect_Line[] laserEffects;
 	[SerializeField]
-	private Effect_Point laserStartPrefab;
-	private Effect_Point[] laserStartEffects;
+	private Effect_Point startEffectPrefab;
+	private Effect_Point[] startEffects;
 	[SerializeField]
 	private GameObject pointEffectBreakPrefab;
 	private GameObject pointEffectBreak;
@@ -32,9 +34,15 @@ public class Ability_Superlaser : Ability
 	private float initDistance = 0;
 	private Vector3 initPosition;
 
+	private float aimThreshold = 0.001f;
+	private int attemptShotWhen;
+
+	private int state = 0; // 0 = standby, 1 = targeting (has a target, is turning towards it), 2 = countdown (will shoot after a fixed time delay)
 	private Coroutine countdownCoroutine;
 
 	private UI_AbilBar_Superlaser abilityBar;
+
+	private Manager_Hitscan hitscans;
 
 	new void Awake()
 	{
@@ -45,6 +53,8 @@ public class Ability_Superlaser : Ability
 		stacks = gameRules.ABLYsuperlaserInitStacks;
 
 		displayInfo.displayStacks = true;
+
+		hitscans = GameObject.FindGameObjectWithTag("HitscanManager").GetComponent<Manager_Hitscan>();
 	}
 
 	// Use this for initialization
@@ -55,14 +65,14 @@ public class Ability_Superlaser : Ability
 		abilityBar = parentUnit.hpBar.GetComponent<UI_AbilBar_Superlaser>();
 		Display();
 
-		laserEffects = new Effect_Line[laserPositions.Length];
-		laserStartEffects = new Effect_Point[laserPositions.Length];
-		for (int i = 0; i< laserPositions.Length; i++)
+		laserEffects = new Effect_Line[sourcePositions.Length];
+		startEffects = new Effect_Point[sourcePositions.Length];
+		for (int i = 0; i< sourcePositions.Length; i++)
 		{
-			laserEffects[i] = Instantiate(laserEffectPrefab, laserPositions[i].position, Quaternion.identity);
+			laserEffects[i] = Instantiate(laserEffectPrefab, sourcePositions[i].position, Quaternion.identity);
 			laserEffects[i].SetEffectActive(0);
-			laserStartEffects[i] = Instantiate(laserStartPrefab, laserPositions[i].position, Quaternion.identity);
-			laserStartEffects[i].SetEffectActive(false);
+			startEffects[i] = Instantiate(startEffectPrefab, sourcePositions[i].position, Quaternion.identity);
+			startEffects[i].SetEffectActive(false);
 		}
 	}
 
@@ -95,35 +105,43 @@ public class Ability_Superlaser : Ability
 
 	void BeginTargeting(Unit unit)
 	{
-		if (countdownCoroutine == null)
+		if (state != 0) // Must be on standby
+			return;
+
+		if (stacks <= 0) // At least one stack is required to activate this ability
+			return;
+
+		if (unit.team == team) // Cannot target allies
+			return;
+
+		if (InRange(unit.transform, gameRules.ABLYsuperlaserRangeUse)) // In range
 		{
-			if (stacks > 0) // At least one stack is required to activate this ability
+			targetUnit = unit; // Set new target
+			checkIfDead = true; // Our target may become null
+
+			parentUnit.SetAbilityGoal(new AbilityTarget(targetUnit)); // Turn towards it
+			attemptShotWhen = Time.frameCount + 3; // We should start aim checking in 1 frame from now
+			state = 1; // Targeting state
+
+			ResetCooldown(); // Don't use cooldown yet
+		}
+	}
+
+	void BeginCountdown()
+	{
+		if (countdownCoroutine == null) // Only run once
+		{
+			state = 2; // Countdown state
+
+			countdownStart = Instantiate(countdownStartPrefab, transform.position, Quaternion.identity);
+
+			countdownCoroutine = StartCoroutine(CountdownCoroutine()); // Fire after a delay
+
+			for (int i = 0; i < sourcePositions.Length; i++)
 			{
-				if (unit.team != team) // Cannot target allies
-				//if (true) // Cannot target allies
-				{
-					if (InRange(unit.transform, gameRules.ABLYsuperlaserRangeUse))
-					{
-						if (!targetUnit || unit != targetUnit)
-						{
-							if (targetUnit)
-								ClearTarget(false);
-							targetUnit = unit;
-							checkIfDead = true;
-							initDistance = Vector3.Magnitude(targetUnit.transform.position - transform.position);
-							initPosition = transform.position;
-
-							countdownCoroutine = StartCoroutine(CountdownCoroutine());
-
-							for (int i = 0; i < laserPositions.Length; i++)
-							{
-								laserStartEffects[i].SetEffectActive(true);
-							}
-						}
-					} // InRange
-				} // notally
-			} // stacks
-		} // coroutine not currently going
+				startEffects[i].SetEffectActive(true);
+			}
+		}
 	}
 
 	IEnumerator CountdownCoroutine()
@@ -136,30 +154,38 @@ public class Ability_Superlaser : Ability
 	{
 		// Make sure this shot counts for damage
 		Status markStatus = new Status(gameObject, StatusType.SuperlaserMark);
-		markStatus.SetTimeLeft(GetDamage() * 2);
-		targetUnit.AddStatus(markStatus);
+		markStatus.SetTimeLeft(CalcDamage() * 2);
+		//targetUnit.AddStatus(markStatus); // Apply mark
+		//targetUnit.Damage(GetDamage(), 0, DamageType.Superlaser); // Deal damage to target
 
-		targetUnit.Damage(GetDamage(), 0, DamageType.Superlaser);
+		Hitscan shot = new Hitscan(shotTemplate);
+		shot.SetDamage(0);
+		for (int i = 1; i < sourcePositions.Length; i++)
+		{
+			hitscans.SpawnHitscan(shot, sourcePositions[i].position, sourcePositions[0].forward, parentUnit, markStatus);
+		}
+		shot.SetDamage(CalcDamage());
+		hitscans.SpawnHitscan(shot, sourcePositions[0].position, sourcePositions[0].forward, parentUnit, markStatus);
 
-		Instantiate(countdownFinishExplosion, targetUnit.transform.position, Quaternion.identity);
-		Instantiate(countdownFinishPrefab, transform.position, Quaternion.identity);
+		//Instantiate(countdownFinishExplosion, targetUnit.transform.position, Quaternion.identity); // Explosion
+		Instantiate(countdownFinishPrefab, transform.position, Quaternion.identity); // Sound TODO: ???
 
-		Destroy(countdownStart);
-		ClearTarget(true);
-		StartCooldown(); // Now start cooldown
+		Destroy(countdownStart); // TODO: ???
+		Reset();
+		StartCooldown(); // Now start ability cooldown
 	}
 
-	float GetDamage()
+	float CalcDamage()
 	{
-		return gameRules.ABLYsuperlaserDmgByStacks[Mathf.Clamp(stacks, 0, gameRules.ABLYsuperlaserDmgByStacks.Length - 1)];
+		return gameRules.ABLYsuperlaserDmgBase + gameRules.ABLYsuperlaserDmgByStacks[Mathf.Clamp(stacks, 0, gameRules.ABLYsuperlaserDmgByStacks.Length - 1)];
 	}
 
 	public override void End()
 	{
-		for (int i = 0; i < laserPositions.Length; i++)
+		for (int i = 0; i < sourcePositions.Length; i++)
 		{
 			laserEffects[i].End();
-			laserStartEffects[i].End();
+			startEffects[i].End();
 		}
 	}
 
@@ -167,40 +193,50 @@ public class Ability_Superlaser : Ability
 	{
 		base.Update();
 
-		if (targetUnit)
+		if (Time.frameCount > attemptShotWhen && state == 1) // In targeting state
 		{
-			if (InRangeTolerance(targetUnit.transform))
+			if (targetUnit) // We have something to aim at
 			{
-				if (!countdownStart)
+				if (InRange(targetUnit.transform, gameRules.ABLYsuperlaserRangeUse)) // In range
 				{
-					countdownStart = Instantiate(countdownStartPrefab, transform.position, transform.rotation);
-					//countdownStartRange = Instantiate(countdownStartRangePrefab, transform.position, transform.rotation);
+					if (Mathf.Abs(parentUnit.AimValue()) < aimThreshold) // Aimed close enough
+					{
+						// Start countdown once we are properly aimed
+						BeginCountdown();
+					}
 				}
 				else
-					countdownStart.transform.position = transform.position;
-
-				for (int i = 0; i < laserPositions.Length; i++)
 				{
-					laserEffects[i].SetEffectActive(1, laserPositions[i].position, targetUnit.transform.position);
-					laserStartEffects[i].transform.position = laserPositions[i].position;
-					laserStartEffects[i].transform.rotation = Quaternion.LookRotation(targetUnit.transform.position - laserPositions[i].position);
+					Reset();
+					StartCooldown(); // Now start cooldown
+				} // in range
+			}
+			else // Target died
+			{
+				if (checkIfDead)
+				{
+					Reset();
 				}
-			}
-			else
-			{
-				//Instantiate(pointEffectBreakPrefab, (laserPositions[1].position + targetUnit.transform.position) * 0.5f, Quaternion.LookRotation(laserPositions[1].position - targetUnit.transform.position));
-
-				//countdownStart.SetEffectActive(false); // TODO: BUGGED
-				ClearTarget(true);
-				StartCooldown(); // Now start cooldown
-			}
-		}
-		else
+			} // target alive
+		} // state
+		
+		// Effects
+		if (state > 0)
 		{
-			if (checkIfDead)
+			for (int i = 0; i < sourcePositions.Length; i++)
 			{
-				//countdownStart.SetEffectActive(false); // TODO: BUGGED
-				ClearTarget(true);
+				laserEffects[i].SetEffectActive(1, sourcePositions[i].position, sourcePositions[i].position + sourcePositions[0].forward * gameRules.ABLYsuperlaserRangeUse);
+			}
+
+			if (state == 2)
+			{
+				countdownStart.transform.position = transform.position;
+
+				for (int i = 0; i < sourcePositions.Length; i++)
+				{
+					startEffects[i].transform.position = sourcePositions[i].position;
+					startEffects[i].transform.rotation = Quaternion.LookRotation(targetUnit.transform.position - sourcePositions[i].position);
+				}
 			}
 		}
 	}
@@ -211,28 +247,28 @@ public class Ability_Superlaser : Ability
 		Display();
 	}
 
-	void ClearTarget(bool clearEffects)
+	void Reset()
 	{
-		targetUnit.RemoveVelocityMod(new VelocityMod(parentUnit, parentUnit.GetVelocity(), VelocityModType.Chain));
 		targetUnit = null;
 		checkIfDead = false;
 
-		StopCoroutine(countdownCoroutine);
+		parentUnit.ClearAbilityGoal();
+
+		//StopCoroutine(countdownCoroutine); // Once countdown starts, it should not be stopped
 		countdownCoroutine = null;
 
-		if (clearEffects)
-		{
-			Destroy(countdownStart);
-			ClearEffects();
-		}
+		Destroy(countdownStart); // TODO: ???
+		ClearEffects();
+
+		state = 0; // Back to standby state
 	}
 
 	void ClearEffects()
 	{
-		for (int i = 0; i < laserPositions.Length; i++)
+		for (int i = 0; i < sourcePositions.Length; i++)
 		{
 			laserEffects[i].SetEffectActive(0);
-			laserStartEffects[i].SetEffectActive(false);
+			startEffects[i].SetEffectActive(false);
 		}
 	}
 
@@ -244,14 +280,10 @@ public class Ability_Superlaser : Ability
 			return false;
 	}
 
-	bool InRangeTolerance(Transform tran)
+	// Visualize range of turrets in editor
+	void OnDrawGizmosSelected()
 	{
-		float ourDistanceSqr = Vector3.SqrMagnitude(tran.position - initPosition);
-		
-		if (ourDistanceSqr <= Mathf.Max(0, initDistance - gameRules.ABLYsuperlaserRangeTolerance) * Mathf.Max(0, initDistance - gameRules.ABLYsuperlaserRangeTolerance)
-			|| ourDistanceSqr >= (initDistance + gameRules.ABLYsuperlaserRangeTolerance) * (initDistance + gameRules.ABLYsuperlaserRangeTolerance))
-			return false;
-		else
-			return true;
+		Gizmos.color = new Color(1.0f, 0.5f, 0.0f);
+		Gizmos.DrawWireSphere(transform.position, 60); // We dont have a reference to gameRules at editor time
 	}
 }

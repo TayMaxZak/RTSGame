@@ -5,6 +5,7 @@ using UnityEngine;
 public class Unit : Entity, ITargetable
 {
 	public bool printInfo = false;
+	public bool disableTurrets = false;
 
 	[Header("Feedback")]
 	[SerializeField]
@@ -120,7 +121,11 @@ public class Unit : Entity, ITargetable
 					hasSuperlaser = true;
 			if (hasSuperlaser)
 				tur.SetOnHitStatus(new Status(gameObject, StatusType.SuperlaserMark));
+
+			if (disableTurrets)
+				tur.gameObject.SetActive(false);
 		}
+
 	}
 
 	// Update is called once per frame
@@ -604,10 +609,13 @@ public class Unit : Entity, ITargetable
 		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / (gameRules.ARMrangeMax - gameRules.ARMrangeMin));
 
 		float rangeDamage = Mathf.Min(dmg * rangeRatio, dmg) * gameRules.ARMrangeMult;
-		if (curArmor > Mathf.Max(0, dmg - rangeDamage)) // Range resist condition: if this shot wont break the armor, it will be range resisted
-			dmg = Mathf.Max(0, dmg - rangeDamage);
-		else
-			dmg = Mathf.Max(0, dmg); // Not enough armor left, no longer grants range resist
+		if (dmgType != DamageType.Superlaser) // Range-resist-exempt damage types // TODO: make this decision a method in a separate class
+		{
+			if (curArmor > Mathf.Max(0, dmg - rangeDamage)) // Range resist condition: if this shot wont break the armor, it will be range resisted
+				dmg = Mathf.Max(0, dmg - rangeDamage);
+			else
+				dmg = Mathf.Max(0, dmg); // Not enough armor left, no longer grants range resist
+		}
 
 		if (dmg <= 0)
 			return false;
@@ -782,7 +790,7 @@ public class Unit : Entity, ITargetable
 			if (s.statusType == StatusType.SuperlaserMark)
 			{
 				float ratio = s.GetTimeLeft() / (maxHealth + maxArmor);
-				if (ratio >= gameRules.ABLYsuperlaserDmgAmount)
+				if (ratio >= gameRules.ABLYsuperlaserStackDmgReq)
 					if (s.from) // Potentially the recipient of the stack does not exist anymore
 						s.from.GetComponent<Ability_Superlaser>().GiveStack();
 			}
@@ -893,6 +901,21 @@ public class Unit : Entity, ITargetable
 	public void OrderMove(Vector3 newGoal, bool group)
 	{
 		movement.SetHGoal(newGoal, group);
+	}
+
+	public void SetAbilityGoal(AbilityTarget newGoal)
+	{
+		movement.SetAbilityGoal(newGoal);
+	}
+
+	public void ClearAbilityGoal()
+	{
+		movement.ClearAbilityGoal();
+	}
+
+	public float AimValue()
+	{
+		return movement.AimValue();
 	}
 
 	public void OrderChangeHeight(int heightChange)

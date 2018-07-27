@@ -45,8 +45,6 @@ public class UI_HPBar : UI_Bar
 	private float fragileCur = 0;
 	private float fragileTarg = 1;
 	private float fragileT = 0;
-	[SerializeField]
-	private Color fragileColor = Color.yellow;
 
 
 	[SerializeField]

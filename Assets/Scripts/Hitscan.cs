@@ -47,14 +47,19 @@ public class Hitscan
 		return damage;
 	}
 
-	public void SetLifetime(float time)
+	public void SetDamage(float dmg)
 	{
-		lifetime = time;
+		damage = dmg;
 	}
 
 	public float GetLifetime()
 	{
 		return lifetime;
+	}
+
+	public void SetLifetime(float time)
+	{
+		lifetime = time;
 	}
 
 	public Unit GetFrom()

@@ -331,18 +331,18 @@ MonoBehaviour:
     ABLYshieldProjectOnGPS: 4
     ABLYshieldProjectOnGPSDelay: 5
     ABLYshieldProjectOffGPS: 8
-    ABLYshieldProjectOffGPSNegMult: 2
+    ABLYshieldProjectOffGPSNegMult: 1.5
     ABLYswarmMaxUses: 3
     ABLYswarmFirstUseSpeedMult: 0.75
     ABLYswarmDPS: 4
     ABLYswarmInteractRadius: 5
     ABLYswarmFighterHealth: 20
     ABLYhealFieldRange: 25
-    ABLYhealFieldAllyGPS: 10
-    ABLYhealFieldGPSBonusMult: 0.02
-    ABLYhealFieldUserMult: 2
+    ABLYhealFieldAllyGPS: 5
+    ABLYhealFieldUserGPSMult: 2
+    ABLYhealFieldConvertGPS: 5
+    ABLYhealFieldAllyGPSBonusMult: 0.02
     ABLYhealFieldConvertDelay: 5
-    ABLYhealFieldConvertGPS: 10
     ABLYhealFieldResCost: 4
     ABLYhealFieldResTime: 5
     ABLYchainRange: 25
@@ -353,13 +353,14 @@ MonoBehaviour:
     ABLYsuperlaserRangeTolerance: 10
     ABLYsuperlaserDelay: 3.5
     ABLYsuperlaserInitStacks: 0
-    ABLYsuperlaserDmgAmount: 0.6
+    ABLYsuperlaserStackDmgReq: 0.6
+    ABLYsuperlaserDmgBase: 200
     ABLYsuperlaserDmgByStacks:
     - -1
+    - 50
     - 100
+    - 150
     - 200
-    - 300
-    - 400
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3
