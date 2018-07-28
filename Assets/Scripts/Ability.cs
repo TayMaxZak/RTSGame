@@ -76,6 +76,14 @@ public class Ability : MonoBehaviour {
 	}
 
 	// For abilities that want customized ability cast logic
+	protected void SetCooldown(float amount)
+	{
+		cooldownTimer = amount;
+		Display();
+		offCooldown = false;
+	}
+
+	// For abilities that want customized ability cast logic
 	protected void ResetCooldown()
 	{
 		cooldownTimer = 0;

@@ -44,6 +44,16 @@ public class Ability_Superlaser : Ability
 
 	private Manager_Hitscan hitscans;
 
+	[SerializeField]
+	private GameObject cannon;
+	private Quaternion rotation;
+	[SerializeField]
+	private float rotSpeed = 15;
+	[SerializeField]
+	private float minV = 50;
+	[SerializeField]
+	private float maxV = 170;
+
 	new void Awake()
 	{
 		base.Awake();
@@ -78,7 +88,7 @@ public class Ability_Superlaser : Ability
 
 	void Display()
 	{
-		displayInfo.stacks = stacks;
+		displayInfo.stacks = Mathf.Min(stacks, gameRules.ABLYsuperlaserDmgByStacks.Length - 1);
 		if (stacks <= 0)
 			displayInfo.displayInactive = true;
 		else
@@ -99,28 +109,33 @@ public class Ability_Superlaser : Ability
 
 		base.UseAbility(target);
 
-		BeginTargeting(target.unit);
-		ResetCooldown(); // Cooldown is applied later
+		if (state == 0)
+		{
+			BeginTargeting(target.unit);
+			ResetCooldown(); // Cooldown is applied later
+		}
+		else if (state == 1)
+		{
+			Reset();
+			SetCooldown(gameRules.ABLYsuperlaserCancelCDMult); // Reduced cooldown
+		}
 	}
 
 	void BeginTargeting(Unit unit)
 	{
-		if (state != 0) // Must be on standby
-			return;
-
 		if (stacks <= 0) // At least one stack is required to activate this ability
 			return;
 
 		if (unit.team == team) // Cannot target allies
 			return;
 
-		if (InRange(unit.transform, gameRules.ABLYsuperlaserRangeUse)) // In range
+		if (InRange(unit.transform, gameRules.ABLYsuperlaserRangeTargeting)) // In range
 		{
 			targetUnit = unit; // Set new target
 			checkIfDead = true; // Our target may become null
 
 			parentUnit.SetAbilityGoal(new AbilityTarget(targetUnit)); // Turn towards it
-			attemptShotWhen = Time.frameCount + 3; // We should start aim checking in 1 frame from now
+			attemptShotWhen = Time.frameCount + 1; // We should start aim checking in 1 frame from now
 			state = 1; // Targeting state
 
 			ResetCooldown(); // Don't use cooldown yet
@@ -197,9 +212,9 @@ public class Ability_Superlaser : Ability
 		{
 			if (targetUnit) // We have something to aim at
 			{
-				if (InRange(targetUnit.transform, gameRules.ABLYsuperlaserRangeUse)) // In range
+				if (InRange(targetUnit.transform, gameRules.ABLYsuperlaserRangeTargeting)) // In range
 				{
-					if (Mathf.Abs(parentUnit.AimValue()) < aimThreshold) // Aimed close enough
+					if (Mathf.Abs(Vector3.Dot(cannon.transform.forward, (targetUnit.transform.position - cannon.transform.position).normalized)) > 1 - aimThreshold) // Aimed close enough
 					{
 						// Start countdown once we are properly aimed
 						BeginCountdown();
@@ -208,7 +223,7 @@ public class Ability_Superlaser : Ability
 				else
 				{
 					Reset();
-					StartCooldown(); // Now start cooldown
+					SetCooldown(gameRules.ABLYsuperlaserCancelCDMult);  // Reduced cooldown
 				} // in range
 			}
 			else // Target died
@@ -219,13 +234,25 @@ public class Ability_Superlaser : Ability
 				}
 			} // target alive
 		} // state
-		
+
+		if (state > 0 && targetUnit)
+		{
+			// Construct an imaginary target that only differs from the cannon's current orientation by the Y-axis
+			float dist = new Vector3(cannon.transform.position.x - targetUnit.transform.position.x, cannon.transform.position.z - targetUnit.transform.position.z).magnitude;
+			Vector3 pos = cannon.transform.position + transform.forward * dist;
+			pos.y = targetUnit.transform.position.y;
+			// Rotate superlaser vertically
+			Rotate(pos - cannon.transform.position);
+		}
+		else
+			Rotate(transform.forward);
+
 		// Effects
 		if (state > 0)
 		{
 			for (int i = 0; i < sourcePositions.Length; i++)
 			{
-				laserEffects[i].SetEffectActive(1, sourcePositions[i].position, sourcePositions[i].position + sourcePositions[0].forward * gameRules.ABLYsuperlaserRangeUse);
+				laserEffects[i].SetEffectActive(1, sourcePositions[i].position, sourcePositions[i].position + sourcePositions[0].forward * gameRules.ABLYsuperlaserRangeTargeting);
 			}
 
 			if (state == 2)
@@ -235,10 +262,55 @@ public class Ability_Superlaser : Ability
 				for (int i = 0; i < sourcePositions.Length; i++)
 				{
 					startEffects[i].transform.position = sourcePositions[i].position;
-					startEffects[i].transform.rotation = Quaternion.LookRotation(targetUnit.transform.position - sourcePositions[i].position);
+					startEffects[i].transform.rotation = Quaternion.LookRotation(sourcePositions[0].forward);
 				}
 			}
 		}
+	}
+
+	void Rotate(Vector3 difference)
+	{
+		// Fixes strange RotateTowards bug
+		Quaternion resetRot = Quaternion.identity;
+
+		// Rotate towards our target
+		Vector3 direction = difference.normalized;
+		Quaternion lookRotation = Quaternion.LookRotation(direction, Vector3.up);
+
+		Quaternion newRotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * rotSpeed);
+
+		// Fixes strange RotateTowards bug
+		if (Time.frameCount == attemptShotWhen + 1) // TODO: CHECK
+			newRotation = resetRot;
+
+		newRotation = LimitRotation(newRotation, rotation);
+
+		// Limit
+		rotation = newRotation;
+
+		cannon.transform.localRotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
+	}
+
+	Quaternion LimitRotation(Quaternion rot, Quaternion oldRot)
+	{
+		Vector3 components = rot.eulerAngles;
+		Vector3 componentsOld = oldRot.eulerAngles;
+		Vector3 vComponentFwd = Quaternion.LookRotation(transform.up).eulerAngles;
+
+		float angleV = Vector3.Angle(transform.up, rot * Vector3.forward);
+
+		// Vertical extremes
+		// Don't have to do anything besides ignoring bad rotations because units will never rotate on their Z or X axes
+		if (angleV > maxV)
+		{
+			components.x = componentsOld.x;
+		}
+		else if (angleV < minV)
+		{
+			components.x = componentsOld.x;
+		}
+
+		return Quaternion.Euler(components);
 	}
 
 	public void GiveStack()

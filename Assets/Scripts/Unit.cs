@@ -13,7 +13,7 @@ public class Unit : Entity, ITargetable
 	[SerializeField]
 	private Effect_HP hpEffects;
 
-	private Unit target;
+	[Header("Identification")]
 	public int team = 0;
 	[HideInInspector]
 	public int buildIndex = -1;
@@ -43,6 +43,7 @@ public class Unit : Entity, ITargetable
 	[Header("Combat")]
 	[SerializeField]
 	private Turret[] turrets;
+	private Unit target;
 
 	[Header("Abilities")]
 	[SerializeField]
@@ -911,11 +912,6 @@ public class Unit : Entity, ITargetable
 	public void ClearAbilityGoal()
 	{
 		movement.ClearAbilityGoal();
-	}
-
-	public float AimValue()
-	{
-		return movement.AimValue();
 	}
 
 	public void OrderChangeHeight(int heightChange)

@@ -43,6 +43,8 @@ public class GameRules
 	public float PRJhitOffset = 0.05f; // When hitting an object, a projectile always detonates this back far from the hit point
 	public float PRJfriendlyFireCheckRangeMult = 1.0f; // When testing for the potential of friendly fire, how far ahead do we want to check? This is a multiplier on the turret's base range
 	public float PRJfriendlyFireDamageMult = 0.5f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
+	[Header("Movement")]
+	public float MOVabilityAimingRSMult = 0.33f;
 	[Header("Layer Masks")]
 	public LayerMask entityLayerMask;
 	public LayerMask targetLayerMask;
@@ -88,7 +90,8 @@ public class GameRules
 	public float ABLYchainEnemyMult = 0.667f;
 	public float ABLYchainFlagshipMult = 0.5f; // Stacks with prior 2 multipliers (0.667 * 0.5 = 0.333)
 
-	public float ABLYsuperlaserRangeUse = 60; // Max distance for cast
+	public float ABLYsuperlaserRangeTargeting = 60; // Max distance for cast and distance which the target must stay in during Superlaser targeting state
+	public float ABLYsuperlaserCancelCDMult = 0.5f; // What ratio of cooldown is refunded if the target leaves the targeting range or the ability is cancelled manually
 	public float ABLYsuperlaserRangeTolerance = 10; // If distance changes by this much or more post-cast, superlaser is put on a shorter cooldown without firing
 	public float ABLYsuperlaserDelay = 3.5f; // Delay before damage is dealt during ability can be interupted or range-cancelled
 	public int ABLYsuperlaserInitStacks = 0; // Stacks the ability starts with

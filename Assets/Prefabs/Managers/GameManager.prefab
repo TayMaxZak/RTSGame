@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRules:
-    useTestValues: 1
+    useTestValues: 0
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -303,6 +303,7 @@ MonoBehaviour:
     PRJhitOffset: 0.2
     PRJfriendlyFireCheckRangeMult: 1
     PRJfriendlyFireDamageMult: 0.5
+    MOVabilityAimingRSMult: 0.33
     entityLayerMask:
       serializedVersion: 2
       m_Bits: 1
@@ -349,7 +350,8 @@ MonoBehaviour:
     ABLYchainAllyMult: 0.667
     ABLYchainEnemyMult: 0.667
     ABLYchainFlagshipMult: 0.5
-    ABLYsuperlaserRangeUse: 60
+    ABLYsuperlaserRangeTargeting: 60
+    ABLYsuperlaserCancelCDMult: 0.5
     ABLYsuperlaserRangeTolerance: 10
     ABLYsuperlaserDelay: 3.5
     ABLYsuperlaserInitStacks: 0

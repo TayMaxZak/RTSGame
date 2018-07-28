@@ -54,7 +54,6 @@ public class UnitMovement
 	//private AbilityTarget rotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
 	private AbilityTarget manualRotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
 	private AbilityTarget abilityGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
-	private float aimValue;
 	private bool reachedHGoal = false;
 	private bool reachedVGoal = false;
 
@@ -115,7 +114,7 @@ public class UnitMovement
 		// Rotate
 		float leftOrRight = UpdateRotation(dir.normalized, useRotationGoal > 0); // Point towards movement goal or a rotation goal
 		// If we are facing the goal after rotating, "move" towards it, saving velocity for actual position change later
-		Vector3 hVel = UpdatePositionH(leftOrRight, dir);
+		Vector3 hVel = UpdatePositionH(leftOrRight, dir.normalized);
 		// "Move" vertically, independent from all the other movement so far, saving velocity for actual position change later
 		Vector3 vVel = UpdatePositionV();
 		// Pass in current speed so CalcChainVel knows if unit's movement speed is less than or greater than the speed from Chain
@@ -130,16 +129,18 @@ public class UnitMovement
 	float UpdateRotation(Vector3 dir, bool ignoreHGoal)
 	{
 		float RdirectionOrg = AngleDir(transform.forward, dir, Vector3.up);
-		aimValue = RdirectionOrg; // Used by abilities to determine if this unit is pointed at its target
+		
 		float Rdirection = Mathf.Clamp(RdirectionOrg * deltaBias, -1, 1);
+
+		float stopTurningThresh = 0.0001f;
 
 		if (ignoreHGoal || !reachedHGoal)
 		{
-			if (Rdirection > 0)
+			if (RdirectionOrg > stopTurningThresh)
 			{
 				CurRS(1);
 			}
-			else if (Rdirection < 0)
+			else if (RdirectionOrg < -stopTurningThresh)
 			{
 				CurRS(-1);
 			}
@@ -154,8 +155,9 @@ public class UnitMovement
 		}
 
 		//Quaternion origRotate = transform.rotation;
+		float speed = abilityGoal == null ? RS : RS * gameRules.MOVabilityAimingRSMult;
 
-		transform.Rotate(0, RS * curRSRatio * Time.deltaTime, 0);
+		transform.Rotate(0, speed * curRSRatio * Time.deltaTime, 0);
 
 		return RdirectionOrg;
 	}
@@ -182,7 +184,7 @@ public class UnitMovement
 
 	void CurRS(int targetRatio)
 	{
-		float deltaMult = 1 / RSAccel;
+		float deltaMult = abilityGoal == null ? 1 / RSAccel : 99;
 
 		if (targetRatio < 0)
 			curRSRatio = Mathf.Clamp(curRSRatio - Time.deltaTime * deltaMult, -1, 0);
@@ -369,11 +371,6 @@ public class UnitMovement
 	{
 		abilityGoal = newGoal;
 		Stop();
-	}
-
-	public float AimValue()
-	{
-		return aimValue;
 	}
 
 	public void ClearAbilityGoal()
