@@ -73,7 +73,7 @@ public class Manager_Projectiles : MonoBehaviour
 							unit.AddStatus(status);
 						}
 
-						if (unit.team != projTeam) // If we hit an enemy, do full damage
+						if (DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam) // If we hit an enemy, do full damage
 						{
 							unit.Damage(proj.GetDamage(), proj.CalcRange(), proj.GetDamageType());
 						}

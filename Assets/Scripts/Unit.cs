@@ -610,7 +610,7 @@ public class Unit : Entity, ITargetable
 		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / (gameRules.ARMrangeMax - gameRules.ARMrangeMin));
 
 		float rangeDamage = Mathf.Min(dmg * rangeRatio, dmg) * gameRules.ARMrangeMult;
-		if (dmgType != DamageType.Superlaser) // Range-resist-exempt damage types // TODO: make this decision a method in a separate class
+		if (!DamageUtils.IgnoresRangeResist(dmgType)) // Range-resist-exempt damage types
 		{
 			if (curArmor > Mathf.Max(0, dmg - rangeDamage)) // Range resist condition: if this shot wont break the armor, it will be range resisted
 				dmg = Mathf.Max(0, dmg - rangeDamage);

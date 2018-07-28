@@ -2,14 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum DamageType
-{
-	Normal,
-	Wreck,
-	Swarm,
-	Superlaser
-}
-
 [System.Serializable]
 public class Projectile
 {

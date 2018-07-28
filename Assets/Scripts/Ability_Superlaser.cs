@@ -8,6 +8,21 @@ public class Ability_Superlaser : Ability
 	private Hitscan shotTemplate;
 	[SerializeField]
 	private Transform[] sourcePositions;
+
+	[Header("Cannon")]
+	[SerializeField]
+	private GameObject cannon;
+	private Quaternion rotation;
+	[SerializeField]
+	private float verticalRS = 5;
+	[SerializeField]
+	private float minV = 50;
+	[SerializeField]
+	private float maxV = 170;
+	private float aimThreshold = 0.001f;
+	private int attemptShotWhen;
+
+	[Header("Effects")]
 	[SerializeField]
 	private Effect_Line laserEffectPrefab;
 	private Effect_Line[] laserEffects;
@@ -18,6 +33,7 @@ public class Ability_Superlaser : Ability
 	private GameObject pointEffectBreakPrefab;
 	private GameObject pointEffectBreak;
 
+	[Header("Sound")]
 	[SerializeField]
 	private Effect_Point countdownStartPrefab;
 	private Effect_Point countdownStart;
@@ -26,16 +42,6 @@ public class Ability_Superlaser : Ability
 	private Effect_Point countdownStartRange;
 	[SerializeField]
 	private GameObject countdownFinishPrefab;
-	[SerializeField]
-	private GameObject countdownFinishExplosion;
-
-	private Unit targetUnit;
-	private bool checkIfDead = false;
-	private float initDistance = 0;
-	private Vector3 initPosition;
-
-	private float aimThreshold = 0.001f;
-	private int attemptShotWhen;
 
 	private int state = 0; // 0 = standby, 1 = targeting (has a target, is turning towards it), 2 = countdown (will shoot after a fixed time delay)
 	private Coroutine countdownCoroutine;
@@ -44,15 +50,8 @@ public class Ability_Superlaser : Ability
 
 	private Manager_Hitscan hitscans;
 
-	[SerializeField]
-	private GameObject cannon;
-	private Quaternion rotation;
-	[SerializeField]
-	private float rotSpeed = 15;
-	[SerializeField]
-	private float minV = 50;
-	[SerializeField]
-	private float maxV = 170;
+	private Unit targetUnit;
+	private bool checkIfDead = false;
 
 	new void Awake()
 	{
@@ -114,7 +113,7 @@ public class Ability_Superlaser : Ability
 			BeginTargeting(target.unit);
 			ResetCooldown(); // Cooldown is applied later
 		}
-		else if (state == 1)
+		else if (state == 1) // TODO: Check if a few seconds have passed since the ability was first activated
 		{
 			Reset();
 			SetCooldown(gameRules.ABLYsuperlaserCancelCDMult); // Reduced cooldown
@@ -131,12 +130,13 @@ public class Ability_Superlaser : Ability
 
 		if (InRange(unit.transform, gameRules.ABLYsuperlaserRangeTargeting)) // In range
 		{
+			state = 1; // Targeting state
+
 			targetUnit = unit; // Set new target
 			checkIfDead = true; // Our target may become null
 
 			parentUnit.SetAbilityGoal(new AbilityTarget(targetUnit)); // Turn towards it
 			attemptShotWhen = Time.frameCount + 1; // We should start aim checking in 1 frame from now
-			state = 1; // Targeting state
 
 			ResetCooldown(); // Don't use cooldown yet
 		}
@@ -167,11 +167,9 @@ public class Ability_Superlaser : Ability
 
 	void Fire()
 	{
-		// Make sure this shot counts for damage
+		// Make sure this shot counts for getting a stack
 		Status markStatus = new Status(gameObject, StatusType.SuperlaserMark);
 		markStatus.SetTimeLeft(CalcDamage() * 2);
-		//targetUnit.AddStatus(markStatus); // Apply mark
-		//targetUnit.Damage(GetDamage(), 0, DamageType.Superlaser); // Deal damage to target
 
 		Hitscan shot = new Hitscan(shotTemplate);
 		shot.SetDamage(0);
@@ -182,10 +180,10 @@ public class Ability_Superlaser : Ability
 		shot.SetDamage(CalcDamage());
 		hitscans.SpawnHitscan(shot, sourcePositions[0].position, sourcePositions[0].forward, parentUnit, markStatus);
 
+		Destroy(countdownStart); // TODO: ???
 		//Instantiate(countdownFinishExplosion, targetUnit.transform.position, Quaternion.identity); // Explosion
 		Instantiate(countdownFinishPrefab, transform.position, Quaternion.identity); // Sound TODO: ???
-
-		Destroy(countdownStart); // TODO: ???
+		
 		Reset();
 		StartCooldown(); // Now start ability cooldown
 	}
@@ -226,11 +224,12 @@ public class Ability_Superlaser : Ability
 					SetCooldown(gameRules.ABLYsuperlaserCancelCDMult);  // Reduced cooldown
 				} // in range
 			}
-			else // Target died
+			else // Target died early
 			{
 				if (checkIfDead)
 				{
 					Reset();
+					// No cooldown
 				}
 			} // target alive
 		} // state
@@ -242,7 +241,7 @@ public class Ability_Superlaser : Ability
 			Vector3 pos = cannon.transform.position + transform.forward * dist;
 			pos.y = targetUnit.transform.position.y;
 			// Rotate superlaser vertically
-			Rotate(pos - cannon.transform.position);
+			Rotate((pos - cannon.transform.position).normalized);
 		}
 		else
 			Rotate(transform.forward);
@@ -268,26 +267,23 @@ public class Ability_Superlaser : Ability
 		}
 	}
 
-	void Rotate(Vector3 difference)
+	void Rotate(Vector3 direction)
 	{
 		// Fixes strange RotateTowards bug
 		Quaternion resetRot = Quaternion.identity;
 
-		// Rotate towards our target
-		Vector3 direction = difference.normalized;
-		Quaternion lookRotation = Quaternion.LookRotation(direction, Vector3.up);
+		// Rotate towards the desired look rotation
+		Quaternion newRotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
 
-		Quaternion newRotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * rotSpeed);
-
-		// Fixes strange RotateTowards bug
-		if (Time.frameCount == attemptShotWhen + 1) // TODO: CHECK
-			newRotation = resetRot;
-
+		// Limit rotation
 		newRotation = LimitRotation(newRotation, rotation);
-
-		// Limit
 		rotation = newRotation;
 
+		// Fixes strange RotateTowards bug
+		if (Time.frameCount == attemptShotWhen + 1)
+			newRotation = resetRot;
+
+		// Apply to cannon
 		cannon.transform.localRotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
 	}
 
@@ -321,18 +317,17 @@ public class Ability_Superlaser : Ability
 
 	void Reset()
 	{
+		state = 0; // Back to standby state
+
 		targetUnit = null;
 		checkIfDead = false;
 
 		parentUnit.ClearAbilityGoal();
 
-		//StopCoroutine(countdownCoroutine); // Once countdown starts, it should not be stopped
 		countdownCoroutine = null;
 
 		Destroy(countdownStart); // TODO: ???
 		ClearEffects();
-
-		state = 0; // Back to standby state
 	}
 
 	void ClearEffects()
@@ -350,12 +345,5 @@ public class Ability_Superlaser : Ability
 			return true;
 		else
 			return false;
-	}
-
-	// Visualize range of turrets in editor
-	void OnDrawGizmosSelected()
-	{
-		Gizmos.color = new Color(1.0f, 0.5f, 0.0f);
-		Gizmos.DrawWireSphere(transform.position, 60); // We dont have a reference to gameRules at editor time
 	}
 }

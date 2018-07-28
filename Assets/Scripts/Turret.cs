@@ -19,6 +19,7 @@ public class Turret : MonoBehaviour
 	private float range = 25;
 	[SerializeField]
 	private bool riskFFAgainstFighters = false;
+	private bool targetInRange;
 
 	[Header("Sound")]
 	[SerializeField]
@@ -31,7 +32,6 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private int maxAmmo = 4;
 	private float allowShootThressh = 0.0001f; // 0.001f
-
 	[SerializeField]
 	private float reloadCooldown = 4;
 	// If we manually clear target, this should immediately trigger an early reload
@@ -39,7 +39,6 @@ public class Turret : MonoBehaviour
 	// This coroutine references the specific reload we want to cancel
 	private Coroutine reloadCoroutine;
 	private bool isReloadCancellable;
-
 	[SerializeField]
 	[Tooltip("Rate of fire measured in rounds per minute")]
 	private float rateOfFire = 120; // In RPM
@@ -47,6 +46,8 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private float shootOffsetRatio = 0.0f;
 	private float shootOffset;
+	private bool isReloading;
+	private bool isShooting;
 
 	[Header("Rotating")]
 	[SerializeField]
@@ -58,7 +59,10 @@ public class Turret : MonoBehaviour
 	private Transform pivotX;
 	[SerializeField]
 	private Transform pivotY;
-
+	private int resetRotFrame;
+	private Quaternion lookRotation;
+	//private Quaternion forwardRotation;
+	private Vector3 direction;
 
 	[Header("Rotation Limits")]
 	[SerializeField]
@@ -70,18 +74,8 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private float maxV = 180;
 
-	private bool targetInRange;
-	private bool isReloading;
-	private bool isShooting;
-
-	private Quaternion lookRotation;
-	//private Quaternion forwardRotation;
-	private Vector3 direction;
-
-	private int resetRotFrame;
-
-	private GameRules gameRules;
 	private AudioSource audioSource;
+	private GameRules gameRules;
 
 	// Use this for initialization
 	protected void Awake()

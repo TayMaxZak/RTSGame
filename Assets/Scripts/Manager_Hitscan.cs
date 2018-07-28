@@ -75,7 +75,7 @@ public class Manager_Hitscan : MonoBehaviour
 		RaycastHit hit;
 		if (Physics.Raycast(scan.startPosition, scan.direction, out hit, scan.GetRange(), mask))
 		{
-			int projTeam = scan.GetFrom().team;
+			int scanTeam = scan.GetFrom().team;
 			Unit unit = null;
 			bool hitSelf = false;
 			if (hit.collider.transform.parent) // Is this a unit?
@@ -93,7 +93,7 @@ public class Manager_Hitscan : MonoBehaviour
 					}
 
 					float actualRange = (hit.point - scan.startPosition).magnitude;
-					if (unit.team != scan.GetFrom().team) // If we hit an enemy, do full damage
+					if (DamageUtils.IgnoresFriendlyFire(scan.GetDamageType()) || unit.team != scanTeam) // If we hit an enemy, do full damage
 					{
 						unit.Damage(scan.GetDamage(), actualRange, scan.GetDamageType());
 					}
@@ -117,12 +117,12 @@ public class Manager_Hitscan : MonoBehaviour
 				if (unit)
 				{
 					if (unit.GetShields().x > 0) // Shielded
-						vfx.SpawnEffect(VFXType.Hit_Absorbed, endPosition, -scan.direction, projTeam);
+						vfx.SpawnEffect(VFXType.Hit_Absorbed, endPosition, -scan.direction, scanTeam);
 					else // Normal hit
-						vfx.SpawnEffect(VFXType.Hit_Normal, endPosition, -scan.direction, projTeam);
+						vfx.SpawnEffect(VFXType.Hit_Normal, endPosition, -scan.direction, scanTeam);
 				}
 				else // Terrain
-					vfx.SpawnEffect(VFXType.Hit_Normal, endPosition, -scan.direction, projTeam);
+					vfx.SpawnEffect(VFXType.Hit_Normal, endPosition, -scan.direction, scanTeam);
 				return (scan.startPosition - endPosition).magnitude; // Return actual length of hitscan
 			}
 		}//if Raycast
