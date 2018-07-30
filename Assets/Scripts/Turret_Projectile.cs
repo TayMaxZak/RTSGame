@@ -21,7 +21,7 @@ public class Turret_Projectile : Turret
 		projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab reference to Projectiles Manager);
 	}
 
-	protected override Vector3 FindAdjDifference()
+	protected override Vector3 FindAdjDirection()
 	{
 		Unit unit = target as Unit; // Only lead target against units
 
@@ -47,7 +47,7 @@ public class Turret_Projectile : Turret
 			Debug.DrawLine(offsetTargetAdj, transform.position, Color.blue);
 		}
 
-		return difference;
+		return difference.normalized;
 	}
 
 	protected override void Fire()

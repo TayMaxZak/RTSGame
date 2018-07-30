@@ -276,7 +276,7 @@ public class Ability_Superlaser : Ability
 		Quaternion newRotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
 
 		// Limit rotation
-		newRotation = LimitRotation(newRotation, rotation);
+		newRotation = LimitVerticalRotation(newRotation, rotation);
 		rotation = newRotation;
 
 		// Fixes strange RotateTowards bug
@@ -287,7 +287,7 @@ public class Ability_Superlaser : Ability
 		cannon.transform.localRotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
 	}
 
-	Quaternion LimitRotation(Quaternion rot, Quaternion oldRot)
+	Quaternion LimitVerticalRotation(Quaternion rot, Quaternion oldRot)
 	{
 		Vector3 components = rot.eulerAngles;
 		Vector3 componentsOld = oldRot.eulerAngles;

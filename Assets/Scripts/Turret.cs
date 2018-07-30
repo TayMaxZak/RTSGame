@@ -111,8 +111,8 @@ public class Turret : MonoBehaviour
 			if (FindNewTarget()) // Found one. Updates target in function
 			{
 				// Only gets called once
-				CheckRangeAndAim(); // Rotate towards target if possible
-				AttemptStartShooting(); // Start shooting if possible
+				if (CheckValidityAndAim()) // Rotate towards target if possible
+					AttemptStartShooting(); // Start shooting if possible
 			}
 			else // Unsuccessful
 			{
@@ -122,13 +122,15 @@ public class Turret : MonoBehaviour
 
 				targetInRange = false;
 				AttemptEarlyReload();
-				Rotate(transform.forward); // Default aim
+				direction = transform.forward;
+				lookRotation = CalculateLookRotation();
+				Rotate(); // Default aim
 			}
 		}
 		else // Has target
 		{
-			CheckRangeAndAim(); // Rotate towards target if possible
-			AttemptStartShooting(); // Start shooting if possible
+			if (CheckValidityAndAim()) // Rotate towards target if possible
+				AttemptStartShooting(); // Start shooting if possible
 		}
 	}
 
@@ -195,39 +197,127 @@ public class Turret : MonoBehaviour
 		return distanceWeight + typeWeight; // Always targets the closest preferred target. Only targets a non-preferred target if a preferred target is not present.
 	}
 
-	void CheckRangeAndAim()
+	bool CheckValidityAndAim()
 	{
-		Vector3 difference = !IsNull(target) ? target.GetPosition() - transform.position : transform.forward; // To make sure its always in range
+		// Direction 
+		float sqrDistance = !IsNull(target) ? (target.GetPosition() - transform.position).sqrMagnitude : 0; // Check distance between us and the target // TODO: Maybe check from the parent unit's position?
+		direction = !IsNull(target) ? FindAdjDirection() : transform.forward; // direction used elsewhere to check if aimed at target or not
+		lookRotation = CalculateLookRotation(); // Constructs rotation from direction
 
-		if (!IsNull(target) && difference.sqrMagnitude <= range * range)
+		bool valid = false;
+		if (!IsNull(target) && sqrDistance <= range * range && ValidRotationHorizontal(lookRotation)) // Have target, its in range, and the look rotation is within limits
 		{
 			targetInRange = true;
+
+			valid = true;
 		}
 		else
 		{
-			if (!FindNewTarget()) // Target is not viable so we look for a new one
-			{ // Unsuccessful
+			// TODO: Check rotation and distance conditions on this new target, recursively check for all potential targets? Store all viable targets, check next one in situations like this?
+			//if (!FindNewTarget()) // Target is not viable so we look for a new one
+			//{ // Unsuccessful
 				targetInRange = false;
 				AttemptEarlyReload();
-			}
+
+				direction = transform.forward; // No valid target to look at
+				lookRotation = CalculateLookRotation(); // Constructs rotation from direction
+
+				valid = false;
+			//}
+			//targetInRange = true;
+			//
+			//valid = true;
 		}
 
-		Rotate(difference);
+		Rotate();
+		return valid;
 	}
 
-	protected Vector3 GetForward()
+	Quaternion CalculateLookRotation()
 	{
-		return baseRotatesOnY ? pivotX.forward : pivotY.forward;
+		return Quaternion.LookRotation(direction, Vector3.up);
 	}
 
-	protected Vector3 GetRight()
+	bool ValidRotationHorizontal(Quaternion rot)
 	{
-		return baseRotatesOnY ? pivotX.right : pivotY.right;
+		Vector3 components = rot.eulerAngles;
+		Vector3 hComponentFwd = Quaternion.LookRotation(transform.forward).eulerAngles;
+		Vector3 vComponentFwd = Quaternion.LookRotation(transform.up).eulerAngles;
+
+		float angleH = Vector3.SignedAngle(transform.forward, rot * Vector3.forward, Vector3.up);
+		float angleV = Vector3.Angle(transform.up, rot * Vector3.forward);
+
+		// Horizontal extremes
+		if (angleH > maxH)
+		{
+			if (parentUnit.printInfo)
+				Debug.Log("Yikes1!");
+			return false;
+			//components.y = hComponentFwd.y + maxH;
+		}
+		else if (angleH < -minH)
+		{
+			if (parentUnit.printInfo)
+				Debug.Log("Yikes2!");
+			return false;
+			//components.y = hComponentFwd.y - minH;
+		}
+
+		return true;
 	}
 
-	protected Vector3 GetUp()
+	void Rotate()
 	{
-		return baseRotatesOnY ? pivotX.up : pivotY.up;
+		// Fixes strange RotateTowards bug
+		Quaternion resetRot = rotation;
+
+		// Rotate towards our target
+		Quaternion newRotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * RS);
+
+		// Fixes strange RotateTowards bug
+		if (Time.frameCount == resetRotFrame)
+			newRotation = resetRot;
+
+		Quaternion limitRot = LimitVerticalRotation(newRotation, rotation);
+
+		rotation = limitRot;
+
+		if (baseRotatesOnY)
+		{
+			if (pivotY)
+				pivotY.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
+			if (pivotX)
+				pivotX.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
+		}
+		else
+		{
+			if (pivotY)
+				pivotY.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
+			if (pivotX)
+				pivotX.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
+		}
+	}
+
+	Quaternion LimitVerticalRotation(Quaternion rot, Quaternion oldRot)
+	{
+		Vector3 components = rot.eulerAngles;
+		Vector3 componentsOld = oldRot.eulerAngles;
+		Vector3 vComponentFwd = Quaternion.LookRotation(transform.up).eulerAngles;
+
+		float angleV = Vector3.Angle(transform.up, rot * Vector3.forward);
+
+		// Vertical extremes
+		// Don't have to do anything besides ignoring bad rotations because units will never rotate on their Z or X axes
+		if (angleV > maxV)
+		{
+			components.x = componentsOld.x;
+		}
+		else if (angleV < minV)
+		{
+			components.x = componentsOld.x;
+		}
+
+		return Quaternion.Euler(components);
 	}
 
 	bool CheckFriendlyFire()
@@ -448,98 +538,34 @@ public class Turret : MonoBehaviour
 		curAmmo = maxAmmo;
 	}
 
-	protected virtual Vector3 FindAdjDifference()
+	/// <summary>
+	/// Takes into account how this turret type deals damage to optimize aiming.
+	/// </summary>
+	/// <returns></returns>
+	protected virtual Vector3 FindAdjDirection()
 	{
-		return target.GetPosition() - transform.position;
-	}
-
-	void Rotate(Vector3 difference)
-	{
-		// What do we rotate towards?
-		if (targetInRange)
-		{
-			difference = FindAdjDifference();
-		}
-		else
-			difference = transform.forward;
-
-		// Fixes strange RotateTowards bug
-		Quaternion resetRot = rotation;
-
-		// Rotate towards our target
-		direction = difference.normalized;
-		lookRotation = Quaternion.LookRotation(direction, Vector3.up);
-
-		Quaternion newRotation = Quaternion.RotateTowards(rotation, lookRotation, Time.deltaTime * RS);
-
-		// Fixes strange RotateTowards bug
-		if (Time.frameCount == resetRotFrame)
-			newRotation = resetRot;
-
-		Quaternion limitRot = LimitRotation(newRotation, rotation);
-
-		// Limit
-		rotation = limitRot;
-
-		if (baseRotatesOnY)
-		{
-			if (pivotY)
-				pivotY.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
-			if (pivotX)
-				pivotX.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
-		}
-		else
-		{
-			if (pivotY)
-				pivotY.rotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, 0));
-			if (pivotX)
-				pivotX.rotation = Quaternion.Euler(new Vector3(0, rotation.eulerAngles.y, 0));
-		}
-	}
-
-	Quaternion LimitRotation(Quaternion rot, Quaternion oldRot)
-	{
-		Vector3 components = rot.eulerAngles;
-		Vector3 componentsOld = oldRot.eulerAngles;
-		Vector3 hComponentFwd = Quaternion.LookRotation(transform.forward).eulerAngles;
-		Vector3 vComponentFwd = Quaternion.LookRotation(transform.up).eulerAngles;
-
-		float angleH = Vector3.SignedAngle(transform.forward, rot * Vector3.forward, Vector3.up);
-		float angleV = Vector3.Angle(transform.up, rot * Vector3.forward);
-
-		// Horizontal extremes
-		if (angleH > maxH)
-		{
-			components.y = hComponentFwd.y + maxH;
-		}
-		else if (angleH < -minH)
-		{
-			components.y = hComponentFwd.y - minH;
-		}
-	
-		// Vertical extremes
-		// Don't have to do anything besides ignoring bad rotations because units will never rotate on their Z or X axes
-		if (angleV > maxV)
-		{
-			components.x = componentsOld.x;
-		}
-		else if (angleV < minV)
-		{
-			components.x = componentsOld.x;
-		}
-
-		return Quaternion.Euler(components);
-	}
-
-	float ClampAngle(float angle, float min, float max)
-	{
-		return angle;
+		return (target.GetPosition() - transform.position).normalized;
 	}
 
 	protected void PlayShootSound()
 	{
 		if (!audioSource.clip)
 			AudioUtils.PlayClipAt(soundShoot, transform.position, audioSource);
+	}
+
+	protected Vector3 GetForward()
+	{
+		return baseRotatesOnY ? pivotX.forward : pivotY.forward;
+	}
+
+	protected Vector3 GetRight()
+	{
+		return baseRotatesOnY ? pivotX.right : pivotY.right;
+	}
+
+	protected Vector3 GetUp()
+	{
+		return baseRotatesOnY ? pivotX.up : pivotY.up;
 	}
 
 	protected virtual void Fire()

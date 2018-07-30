@@ -3132,7 +3132,7 @@ MonoBehaviour:
   reloadCooldown: 5
   rateOfFire: 60
   shootOffsetRatio: 0
-  RS: 60
+  RS: 30
   baseRotatesOnY: 1
   pivotX: {fileID: 4073697168354998}
   pivotY: {fileID: 4244107031580328}
@@ -3210,7 +3210,7 @@ MonoBehaviour:
   maxAmmo: 0
   reloadCooldown: 2
   rateOfFire: 70
-  shootOffsetRatio: 0
+  shootOffsetRatio: 0.5
   RS: 90
   baseRotatesOnY: 1
   pivotX: {fileID: 4439424789102846}
@@ -3242,6 +3242,7 @@ MonoBehaviour:
   swarmTarget: {fileID: 4907543980749030}
   selCircleSize: 2.4
   printInfo: 0
+  disableTurrets: 0
   hpBarPrefab: {fileID: 114201364516099128, guid: dce4ddb18024fb646b84e484dbee8ed4,
     type: 2}
   hpEffects: {fileID: 114299271673986788}
@@ -3251,8 +3252,8 @@ MonoBehaviour:
   maxArmor: 300
   curHealth: 250
   maxHealth: 250
-  curFragileHealth: 0
   alwaysBurnImmune: 0
+  curFragileHealth: 0
   deathClone: {fileID: 1796662562453436, guid: bcfe7a37703b99244ad36433f72888c7, type: 2}
   turrets:
   - {fileID: 114191388739497802}
@@ -3321,7 +3322,7 @@ MonoBehaviour:
   reloadCooldown: 5
   rateOfFire: 60
   shootOffsetRatio: 0
-  RS: 60
+  RS: 30
   baseRotatesOnY: 1
   pivotX: {fileID: 4365003288196042}
   pivotY: {fileID: 4567061863181758}
