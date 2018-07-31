@@ -250,15 +250,11 @@ public class Turret : MonoBehaviour
 		// Horizontal extremes
 		if (angleH > maxH)
 		{
-			if (parentUnit.printInfo)
-				Debug.Log("Yikes1!");
 			return false;
 			//components.y = hComponentFwd.y + maxH;
 		}
 		else if (angleH < -minH)
 		{
-			if (parentUnit.printInfo)
-				Debug.Log("Yikes2!");
 			return false;
 			//components.y = hComponentFwd.y - minH;
 		}

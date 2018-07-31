@@ -279,7 +279,7 @@ MonoBehaviour:
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
     ARMabsorbFlat: 5
-    ARMabsorbMax: 15
+    ARMabsorbScaling: 15
     ARMrangeMin: 30
     ARMrangeMax: 60
     ARMrangeMult: 0.8
@@ -302,7 +302,8 @@ MonoBehaviour:
     PRJmaxTimeAlive: 4
     PRJhitOffset: 0.2
     PRJfriendlyFireCheckRangeMult: 1
-    PRJfriendlyFireDamageMult: 0.5
+    DMG_ffDamageMult: 0.5
+    DMG_ffDamageMultSplash: 0.25
     MOVabilityAimingRSMult: 0.33
     entityLayerMask:
       serializedVersion: 2
@@ -363,10 +364,20 @@ MonoBehaviour:
     - 100
     - 150
     - 200
+    ABLY_statusMissileRangeUse: 40
+    ABLY_statusMissileRangeMissile: 60
+    ABLY_statusMissileMaxLifetime: 10
+    ABLY_statusMissileVerticalOffset: 2
+    ABLY_statusMissileExplodeDist: 1.5
+    ABLY_statusMissileDamage: 10
+    ABLY_statusMissileDamageBonusMult: 0.05
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3
     STATswarmResistTransferMult: 1
+    STAT_armorMeltDPS: 3
+    STAT_armorMeltAbsorbFlat: 1
+    STAT_armorMeltAbsorbScalingMult: 0.5
   commanders:
   - {fileID: 114578553437470668}
   - {fileID: 114476393172418668}

@@ -7,7 +7,8 @@ public enum DamageType
 	Normal,
 	Wreck,
 	Swarm,
-	Superlaser
+	Superlaser,
+	Chemical
 }
 
 public static class DamageUtils
@@ -28,6 +29,19 @@ public static class DamageUtils
 		switch (dmgType)
 		{
 			case DamageType.Superlaser:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	public static bool CannotOverflowArmor(DamageType dmgType)
+	{
+		switch (dmgType)
+		{
+			case DamageType.Wreck:
+				return true;
+			case DamageType.Chemical:
 				return true;
 			default:
 				return false;

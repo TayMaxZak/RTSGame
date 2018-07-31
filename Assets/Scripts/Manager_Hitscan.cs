@@ -99,7 +99,7 @@ public class Manager_Hitscan : MonoBehaviour
 					}
 					else // If we hit an ally, do reduced damage because it was an accidental hit
 					{
-						unit.Damage(scan.GetDamage() * gameRules.PRJfriendlyFireDamageMult, actualRange, scan.GetDamageType());
+						unit.Damage(scan.GetDamage() * gameRules.DMG_ffDamageMult, actualRange, scan.GetDamageType());
 					}
 				}
 				else

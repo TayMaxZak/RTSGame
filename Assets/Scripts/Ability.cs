@@ -157,7 +157,8 @@ public enum AbilityType
 	ShieldProject,
 	HealField,
 	Chain,
-	Superlaser
+	Superlaser,
+	StatusMissile
 }
 
 public static class AbilityUtils
@@ -184,6 +185,8 @@ public static class AbilityUtils
 				return GetDeltaOf(new Vector3(20, 0, 0));
 			case AbilityType.Superlaser:
 				return GetDeltaOf(new Vector3(40, 0, 0));
+			case AbilityType.StatusMissile:
+				return GetDeltaOf(new Vector3(5, 0, 0));
 			default:
 				return GetDeltaOf(new Vector3());
 		}
@@ -217,6 +220,8 @@ public static class AbilityUtils
 			case AbilityType.Chain:
 				return 1;
 			case AbilityType.Superlaser:
+				return 1;
+			case AbilityType.StatusMissile:
 				return 1;
 			default:
 				return 0;

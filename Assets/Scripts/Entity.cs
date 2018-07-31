@@ -135,27 +135,27 @@ public static class EntityUtils
 				}
 			case EntityType.Destroyer:
 				{
-					return "The pinnacle of modern warship design, this unit is equipped with experimental superlaser weaponry and regenerating armor.";
+					return "A warship with armor-draining technology and a powerful long-range superlaser.";
 				}
 			case EntityType.Corvette:
 				{
-					return "A small towing unit which has been outfitted with rapid-fire energy cannons for shooting down enemy fighters.";
+					return "A small towing unit which can pull ships and shoot down enemy fighters.";
 				}
 			case EntityType.Flagship:
 				{
-					return "The most advanced starship ever assembled by humanity, it has its own FTL anchor for long distance exploration.";
+					return "The hub of operations for any fleet.";
 				}
 			case EntityType.Frigate:
 				{
-					return "A compact combat frigate which carries fighters into battle. Armed with a variety of long- and close-range weapons systems.";
+					return "A frigate which carries fighters into battle. Good at close- and long-range combat.";
 				}
 			case EntityType.Apollo:
 				{
-					return "A bodyguard unit designed to protect valuable cargo with its energy-absorbing shield projector and ship-disabling ion missiles.";
+					return "A bodyguard unit with a damage-absorbing-shield projector and ship-disabling ion missiles.";
 				}
 			case EntityType.Bulkhead:
 				{
-					return "Creative fleet commanders have found that this massive chemical transport is useful for delivering metasteel to damaged ships.";
+					return "A large chemical transport which can melt enemy armor and use resources to repair ships .";
 				}
 		}
 	}

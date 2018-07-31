@@ -200,6 +200,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1178941624202488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4109453914034104}
+  m_Layer: 0
+  m_Name: SwarmTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1201304646779474
 GameObject:
   m_ObjectHideFlags: 1
@@ -278,6 +293,7 @@ GameObject:
   - component: {fileID: 4254661421833070}
   - component: {fileID: 114133806779069504}
   - component: {fileID: 114177749130366244}
+  - component: {fileID: 114011204531075516}
   - component: {fileID: 114908002695254704}
   - component: {fileID: 82436381900669564}
   m_Layer: 0
@@ -402,7 +418,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4751010177498942}
   m_Layer: 0
-  m_Name: SwarmTarget
+  m_Name: MissileStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -868,7 +884,7 @@ Transform:
   - {fileID: 4817259448784356}
   - {fileID: 4151316824343390}
   m_Father: {fileID: 4254661421833070}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
 --- !u!4 &4014121885513206
 Transform:
@@ -909,7 +925,7 @@ Transform:
   - {fileID: 4376580267898420}
   - {fileID: 4430534571108302}
   m_Father: {fileID: 4254661421833070}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
 --- !u!4 &4066694528768112
 Transform:
@@ -938,6 +954,19 @@ Transform:
   m_Father: {fileID: 4935241332060562}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 180.00002, z: 0}
+--- !u!4 &4109453914034104
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1178941624202488}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.25, z: -0.77}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4254661421833070}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4113277241111354
 Transform:
   m_ObjectHideFlags: 1
@@ -1079,11 +1108,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1302791793192360}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.38268304, z: -0, w: 0.92387974}
+  m_LocalPosition: {x: 7.51, y: 0, z: 3.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4935241332060562}
+  - {fileID: 4109453914034104}
   - {fileID: 4751010177498942}
   - {fileID: 4473258930459854}
   - {fileID: 4628530638699314}
@@ -1093,7 +1123,7 @@ Transform:
   - {fileID: 4322309455574546}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -45.000004, z: 0}
 --- !u!4 &4322309455574546
 Transform:
   m_ObjectHideFlags: 1
@@ -1107,7 +1137,7 @@ Transform:
   - {fileID: 4867935008702602}
   - {fileID: 4653166935051740}
   m_Father: {fileID: 4254661421833070}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
 --- !u!4 &4337810840714310
 Transform:
@@ -1189,7 +1219,7 @@ Transform:
   - {fileID: 4790768866316710}
   - {fileID: 4138427814607874}
   m_Father: {fileID: 4254661421833070}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: 0}
 --- !u!4 &4484967154664348
 Transform:
@@ -1273,7 +1303,7 @@ Transform:
   - {fileID: 4487736759716026}
   - {fileID: 4855810849291786}
   m_Father: {fileID: 4254661421833070}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: 0}
 --- !u!4 &4586914130798566
 Transform:
@@ -1301,7 +1331,7 @@ Transform:
   - {fileID: 4878535154471696}
   - {fileID: 4337810840714310}
   m_Father: {fileID: 4254661421833070}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: 0}
 --- !u!4 &4634917548733840
 Transform:
@@ -1362,13 +1392,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1413435187858574}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.25, z: -0.77}
+  m_LocalRotation: {x: -0.5, y: 0, z: 0, w: 0.8660254}
+  m_LocalPosition: {x: 0, y: 0.6, z: 1.77}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4254661421833070}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: -60, y: 0, z: 0}
 --- !u!4 &4790768866316710
 Transform:
   m_ObjectHideFlags: 1
@@ -3447,6 +3477,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &114011204531075516
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1302791793192360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6cd508bc60b4c74eb627903ce84be26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startPosition: {fileID: 4751010177498942}
+  initAngle: 45
+  maxRS: 90
+  MS: 12
+  missilePrefab: {fileID: 114970927305717156, guid: 136a96f7c22eef747ba5d8255a8632c4,
+    type: 2}
+  explosionPrefab: {fileID: 114423401209435934, guid: 8a139371b9f171d49bb4a849ce03b231,
+    type: 2}
+  damageCloud: {fileID: 114184608043896614, guid: 3576cc53f58e4b2499c5f726f170a31a,
+    type: 2}
 --- !u!114 &114057757728850594
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3547,9 +3598,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 6
-  swarmTarget: {fileID: 4751010177498942}
+  swarmTarget: {fileID: 4109453914034104}
   selCircleSize: 2.3
   printInfo: 0
+  disableTurrets: 0
   hpBarPrefab: {fileID: 114328092779895440, guid: df3b2f9d043548149bbea5ce4cc27206,
     type: 2}
   hpEffects: {fileID: 114908002695254704}
@@ -3571,6 +3623,7 @@ MonoBehaviour:
   - {fileID: 114219898966474452}
   abilities:
   - {fileID: 114177749130366244}
+  - {fileID: 114011204531075516}
   movement:
     MS: 3
     MSVMult: 0.4

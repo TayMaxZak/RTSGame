@@ -139,7 +139,7 @@ public class UI_EntityStats : MonoBehaviour
 
 		string armorToolotipText = Mathf.RoundToInt(armorMax) == 0 ? "This unit has no armor." : 
 			Mathf.FloorToInt(armorCur) < gameRules.ABLYarmorDrainGPSEnemy * 2 ? "Armor has been destroyed." : 
-			string.Format("Absorption limit: {0:0.0}\nCan take up to {0:0.0} damage in one shot before letting excess damage through to health.", (armorCur / armorMax) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat);
+			string.Format("Absorption limit: {0:0.0}\nCan take up to {0:0.0} damage in one shot before letting excess damage through to health.", (armorCur / armorMax) * gameRules.ARMabsorbScaling + gameRules.ARMabsorbFlat);
 
 		//Tooltip
 		armorTooltip.SetText(armorToolotipText);
@@ -164,7 +164,7 @@ public class UI_EntityStats : MonoBehaviour
 	// Set name to be displayed as the title of the EntityStats panel
 	public void SetDisplayEntity(EntityType type)
 	{
-		nameText.text = EntityUtils.GetDisplayName(type).ToUpper();
+		nameText.text = EntityUtils.GetDisplayName(type);
 		nameTooltip.SetText(EntityUtils.GetDisplayDesc(type));
 	}
 

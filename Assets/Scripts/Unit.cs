@@ -352,6 +352,12 @@ public class Unit : Entity, ITargetable
 
 		foreach (Status s in statuses)
 		{
+			// Damage over time
+			if (s.statusType == StatusType.ArmorMelt)
+			{
+				Damage(gameRules.STAT_armorMeltDPS * Time.deltaTime, 0, DamageType.Chemical);
+			}
+
 			if (StatusUtils.ShouldCountDownDuration(s.statusType))
 				if (!s.UpdateTimeLeft(Time.deltaTime))
 					toRemove.Add(s);
@@ -621,11 +627,30 @@ public class Unit : Entity, ITargetable
 		if (dmg <= 0)
 			return false;
 
-		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : (curArmor / maxArmor) * gameRules.ARMabsorbMax + gameRules.ARMabsorbFlat); // Absorbtion limit formula
+		int armorMeltCount = 0;
+		// Taking non-chemical damage refreshes the duration of ArmorMelt
+		if (dmgType != DamageType.Chemical)
+		{
+			foreach (Status s in statuses)
+			{
+				if (s.statusType == StatusType.ArmorMelt)
+				{
+					s.RefreshTimeLeft();
+					armorMeltCount++;
+				}
+			}
+		}
 
-		float dmgToArmor = Mathf.Min(absorbLim, dmg); // How much damage armor takes
+		// Some damage types handle armor as if it cannot be overflowed
+		bool canOverflow = !DamageUtils.CannotOverflowArmor(dmgType);
 
-		float overflowDmg = Mathf.Max(0, dmg - absorbLim); // How much damage health takes (aka by how much damage exceeds absorbtion limit)
+		// ArmorMelt status affects armor absorption limit (unless this is a Flagship)
+		float flat = armorMeltCount == 0 || Type == EntityType.Flagship ? gameRules.ARMabsorbFlat : gameRules.STAT_armorMeltAbsorbFlat;
+		float scalingMult = armorMeltCount == 0 || Type == EntityType.Flagship ? 1 : gameRules.STAT_armorMeltAbsorbScalingMult;
+
+		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : flat + (curArmor / maxArmor) * gameRules.ARMabsorbScaling * scalingMult); // Absorbtion limit formula
+		float dmgToArmor = canOverflow ? Mathf.Min(absorbLim, dmg) : dmg; // How much damage armor takes
+		float overflowDmg = canOverflow ? Mathf.Max(0, dmg - absorbLim) : 0; // How much damage health takes (aka by how much damage exceeds absorbtion limit)
 
 		// Setting new values
 		curArmor += -dmgToArmor;

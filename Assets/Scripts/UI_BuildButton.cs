@@ -34,7 +34,7 @@ public class UI_BuildButton : MonoBehaviour
 	//private Image borderFill;
 
 	//private UIRules uiRules;
-	//private Manager_Game gameManager;
+	private GameRules gameRules;
 
 	private Controller_Commander controller;
 	private Commander commander;
@@ -42,7 +42,7 @@ public class UI_BuildButton : MonoBehaviour
 	void Start()
 	{
 		//uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
-		//gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
+		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 
 		interactable = new bool[2];
 
@@ -93,7 +93,11 @@ public class UI_BuildButton : MonoBehaviour
 	public void SetCost()
 	{
 		costCur = commander.GetBuildUnit(index).cost;
-		costText.text = costCur.ToString();
+		bool hasHealField = commander.GetBuildUnit(index).type == EntityType.Bulkhead; // TODO: More elegant solution
+		if (!hasHealField)
+			costText.text = costCur.ToString();
+		else
+			costText.text = costCur.ToString() + " (+" + gameRules.ABLYhealFieldResCost + ") ";
 		UpdateInteractable();
 	}
 

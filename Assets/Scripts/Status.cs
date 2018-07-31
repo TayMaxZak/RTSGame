@@ -7,7 +7,8 @@ public enum StatusType
 	SwarmResist,
 	CriticalBurnImmune,
 	SpawnSwarmSpeedNerf,
-	SuperlaserMark
+	SuperlaserMark,
+	ArmorMelt
 }
 
 [System.Serializable]
@@ -61,6 +62,8 @@ public static class StatusUtils
 	{
 		switch (statType)
 		{
+			case StatusType.ArmorMelt:
+				return 5;
 			default:
 				return 1;
 		}
@@ -102,6 +105,8 @@ public static class StatusUtils
 				return "Hangars Open";
 			case StatusType.SuperlaserMark:
 				return "Hellrazor Mark";
+			case StatusType.ArmorMelt:
+				return "Disintegration";
 			default:
 				return "default";
 		}
@@ -119,6 +124,8 @@ public static class StatusUtils
 				return "Once all fighters have been deployed, hangars will close and engines will return to full power.";
 			case StatusType.SuperlaserMark:
 				return "Marked for reactor radiation collection by an enemy Hellrazor cannon.";
+			case StatusType.ArmorMelt:
+				return "Armor is weakened by corrosive chemicals.";
 			default:
 				return "default";
 		}
@@ -131,6 +138,8 @@ public static class StatusUtils
 			case StatusType.SwarmResist:
 				return true;
 			case StatusType.SpawnSwarmSpeedNerf:
+				return true;
+			case StatusType.ArmorMelt:
 				return true;
 			default:
 				return false;
@@ -150,6 +159,8 @@ public static class StatusUtils
 				return new Color[] { new Color32(0x90, 0x11, 0x11, 0xFF), new Color32(0xFF, 0x70, 0x88, 0xFF) };
 			case StatusType.SpawnSwarmSpeedNerf:
 				return new Color[] { new Color32(0x90, 0x11, 0x11, 0xFF), new Color32(0xFF, 0x70, 0x88, 0xFF) };
+			case StatusType.ArmorMelt:
+				return new Color[] { new Color32(0x61, 0x61, 0x61, 0xFF), new Color32(0xFF, 0xFF, 0xFF, 0xFF) };
 			default:
 				return new Color[0];
 		}

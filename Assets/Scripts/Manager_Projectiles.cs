@@ -79,7 +79,7 @@ public class Manager_Projectiles : MonoBehaviour
 						}
 						else // If we hit an ally, do reduced damage because it was an accidental hit
 						{
-							unit.Damage(proj.GetDamage() * gameRules.PRJfriendlyFireDamageMult, proj.CalcRange(), proj.GetDamageType());
+							unit.Damage(proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
 						}
 					}
 					else

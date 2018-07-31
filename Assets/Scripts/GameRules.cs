@@ -12,7 +12,7 @@ public class GameRules
 	public float TESTinitHPMult = 0.2f;
 	[Header("Armor")]
 	public float ARMabsorbFlat = 5; // How much armor absorb is guaranteed
-	public float ARMabsorbMax = 15; // How much armor absorb is added based on current percentage of armor
+	public float ARMabsorbScaling = 15; // How much armor absorb is added based on current percentage of armor
 	public float ARMrangeMin = 30f; // Range past which armor range resist begins
 	public float ARMrangeMax = 60f; // Range past which armor range resist is at full effect
 	public float ARMrangeMult = 0.8f; // Overall range resist multiplier
@@ -42,7 +42,9 @@ public class GameRules
 	public float PRJmaxTimeAlive = 5f; // How long each projectile lives
 	public float PRJhitOffset = 0.05f; // When hitting an object, a projectile always detonates this back far from the hit point
 	public float PRJfriendlyFireCheckRangeMult = 1.0f; // When testing for the potential of friendly fire, how far ahead do we want to check? This is a multiplier on the turret's base range
-	public float PRJfriendlyFireDamageMult = 0.5f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
+	[Header("Damage")]
+	public float DMG_ffDamageMult = 0.5f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
+	public float DMG_ffDamageMultSplash = 0.25f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
 	[Header("Movement")]
 	public float MOVabilityAimingRSMult = 0.33f;
 	[Header("Layer Masks")]
@@ -99,9 +101,22 @@ public class GameRules
 	public float ABLYsuperlaserDmgBase = 200; // Base damage
 	public float[] ABLYsuperlaserDmgByStacks = new float[] { -1, 50, 100, 150, 200}; // Damage added based on stacks: 0 -> cannot be activated / 1 -> 100 / 2 -> 200 / 3 -> 300 / 4 -> 400
 
+	public float ABLY_statusMissileRangeUse = 40; // Max distance for cast
+	public float ABLY_statusMissileRangeMissile = 60; // Max distance for before missile detonates
+	public float ABLY_statusMissileMaxLifetime = 10; // How long the missile can exist before detonating
+	public float ABLY_statusMissileVerticalOffset = 2; // How far above the unit should the missile try to detonate
+	public float ABLY_statusMissileExplodeDist = 1.5f; // Distance from detonation point when missile should detonate
+	public float ABLY_statusMissileDamage = 10; // Flat damage dealt once to targets caught in cloud
+	public float ABLY_statusMissileDamageBonusMult = 0.05f; // Ratio of target's max health + max armor
+
+
 	[Header("Statuses")]
 	public float STATswarmResistMult = 0.1f; // How much of all incoming damage does each swarm protecting an ally absorb
 	public float STATswarmResistMultSwarm = 1.0f; // (against enemy swarm damage)
 	public int STATswarmResistMaxStacks = 3; // How many times can this damage absorption stack
 	public float STATswarmResistTransferMult = 1.0f; // What ratio of absorbed damage is transferred to the absorbing ally swarms. The total damage is split between each of the absorbing swarms
+
+	public float STAT_armorMeltDPS = 3; // Damage per second
+	public float STAT_armorMeltAbsorbFlat = 1; // This replaces the constant part of the armor absorption limit formula
+	public float STAT_armorMeltAbsorbScalingMult = 0.5f; // Multiplier on the scaling part of the armor absorption limit formula
 }
