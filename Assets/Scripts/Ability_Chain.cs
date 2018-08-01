@@ -149,6 +149,4 @@ public class Ability_Chain : Ability
 		else
 			return false;
 	}
-
-
 }

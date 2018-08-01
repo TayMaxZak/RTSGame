@@ -200,7 +200,7 @@ public class Turret : MonoBehaviour
 	bool CheckValidityAndAim()
 	{
 		// Direction 
-		float sqrDistance = !IsNull(target) ? (target.GetPosition() - transform.position).sqrMagnitude : 0; // Check distance between us and the target // TODO: Maybe check from the parent unit's position?
+		float sqrDistance = !IsNull(target) ? (target.GetPosition() - parentUnit.transform.position).sqrMagnitude : 0; // Check distance between us and the target // TODO: Maybe check from the parent unit's position?
 		direction = !IsNull(target) ? FindAdjDirection() : transform.forward; // direction used elsewhere to check if aimed at target or not
 		lookRotation = CalculateLookRotation(); // Constructs rotation from direction
 
