@@ -84,7 +84,9 @@ public class Ability_StatusMissile_Cloud : MonoBehaviour
 				else // Reduced damage to allies
 					u.Damage(dmg * gameRules.DMG_ffDamageMultSplash, 0, DamageType.Chemical);
 
-				u.AddStatus(new Status(parentUnit.gameObject, StatusType.ArmorMelt));
+				// Has no shields, apply status
+				if (u.GetShields().x <= 0) // Status source is parentUnit so multiple missiles from the same unit don't stack statuses
+					u.AddStatus(new Status(gameObject, StatusType.ArmorMelt));
 			}
 		}
 		else

@@ -683,6 +683,7 @@ public class Unit : Entity, ITargetable
 	// At the end, return how much damage was left after filtering through all shields
 	public float DamageShield(float dmg)
 	{
+		// TODO: Make shields not affect damage coming from the unit itself (like damage over time)
 		if (dmg <= 0)
 			return -1;
 
@@ -760,6 +761,8 @@ public class Unit : Entity, ITargetable
 
 	private float StatusDamageMod(float dmgOrg, DamageType dmgType)
 	{
+		// TODO: Make swarm resistance not affect damage coming from the unit itself (like damage over time)
+		// TODO: Make swarm resistance not affect area of effect damage
 		float dmg = dmgOrg;
 
 		List<Status> allySwarms = new List<Status>();

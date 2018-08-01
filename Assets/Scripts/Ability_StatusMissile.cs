@@ -70,8 +70,6 @@ public class Ability_StatusMissile : Ability
 		// While a missile is already active, a new target for the current missile can be selected
 		if (missileActive)
 		{
-			base.UseAbility(target);
-
 			if (InRange(target.unit.transform))
 			{
 				targetUnit = target.unit;
@@ -169,6 +167,8 @@ public class Ability_StatusMissile : Ability
 
 	public override void End()
 	{
+		if (missileActive)
+			Explode(false); // TODO: Should missile continue flying after its parent unit dies?
 		missile.End();
 	}
 

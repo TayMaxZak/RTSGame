@@ -269,7 +269,7 @@ public class UI_EntityStats : MonoBehaviour
 	public void SetStatuses(List<Status> statuses)
 	{
 		// Loop through all statuses
-		List<StatusType> displayedStatuses = new List<StatusType>();
+		List<Status> displayedStatuses = new List<Status>();
 
 		int swarmResistCount = 0;
 		foreach (Status s in statuses)
@@ -284,7 +284,7 @@ public class UI_EntityStats : MonoBehaviour
 			}
 
 			if (StatusUtils.ShouldDisplay(s.statusType))
-				displayedStatuses.Add(s.statusType);
+				displayedStatuses.Add(s);
 		}
 
 		// For each status icon, enable or disable, apply colors, and set inner icon
@@ -294,13 +294,17 @@ public class UI_EntityStats : MonoBehaviour
 			{
 				statusBkgs[i].gameObject.SetActive(true);
 
-				Color[] colors = StatusUtils.GetDisplayColors(displayedStatuses[i]);
+				StatusType type = displayedStatuses[i].statusType;
+				Color[] colors = StatusUtils.GetDisplayColors(type);
 				statusBkgs[i].color = colors[0];
-				statusBkgs[i].GetComponent<UI_TooltipSource>().SetText(StatusUtils.GetDisplayName(displayedStatuses[i]) + "\n" + StatusUtils.GetDisplayDesc(displayedStatuses[i]));
+				
+				// TODO: 
+				//string timeLeft = StatusUtils.ShouldCountDownDuration(type) ? string.Format(" ({0:0.0}s)", displayedStatuses[i].GetTimeLeft()) : "";
+				statusBkgs[i].GetComponent<UI_TooltipSource>().SetText(StatusUtils.GetDisplayName(type) + "\n" + StatusUtils.GetDisplayDesc(type));
 
 				Image icon = statusBkgs[i].GetComponentsInChildren<Image>()[1];
 				icon.color = colors[1];
-				icon.sprite = StatusUtils.GetDisplayIcon(displayedStatuses[i]);
+				icon.sprite = StatusUtils.GetDisplayIcon(type);
 			}
 			else
 				statusBkgs[i].gameObject.SetActive(false);

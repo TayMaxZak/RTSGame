@@ -186,7 +186,7 @@ public static class AbilityUtils
 			case AbilityType.Superlaser:
 				return GetDeltaOf(new Vector3(40, 0, 0));
 			case AbilityType.StatusMissile:
-				return GetDeltaOf(new Vector3(5, 0, 0));
+				return GetDeltaOf(new Vector3(40, 0, 0));
 			default:
 				return GetDeltaOf(new Vector3());
 		}
