@@ -110,6 +110,23 @@ public class Turret : MonoBehaviour
 		// Have target and it's valid
 		if (!IsNull(target) && IsValid(target))
 		{
+			// If we are targeting a non-preferred target type, we want to constantly search for a better target
+			if (target.GetTargetType() != preferredTargetType)
+			{
+				// Collect a list of all valid targets, ignoring non-preferred targets
+				List<ITargetable> autoTargets = ScanForTargets(true);
+
+				// Pick best one (if any were found)
+				if (autoTargets.Count > 0)
+				{
+					// This new target will ALWAYS be different from the previous target because it was filtered differently
+					target = autoTargets[0];
+
+					// Update resetRotFrame.
+					UpdateTarget();
+				}
+			}
+
 			// Rotate towards the target
 			CalcTargetLookRotation();
 			Rotate();
@@ -131,7 +148,7 @@ public class Turret : MonoBehaviour
 			}
 			else // Failed to find a valid target
 			{
-				// Rotate towards the default orientation
+				// Rotate to standby position
 				direction = transform.forward;
 				lookRotation = CalcLookRotation(direction);
 				Rotate();
@@ -139,8 +156,13 @@ public class Turret : MonoBehaviour
 		}
 	}
 
-	// In a sphere with the radius of range, find all enemy units and pick one to target
 	List<ITargetable> ScanForTargets()
+	{
+		return ScanForTargets(false);
+	}
+
+	// In a sphere with the radius of range, find all enemy units and pick one to target
+	List<ITargetable> ScanForTargets(bool ignoreNonPreferred)
 	{
 		Collider[] cols = Physics.OverlapSphere(transform.position, range, gameRules.targetLayerMask);
 		List<ITargetable> targs = new List<ITargetable>();
@@ -158,6 +180,10 @@ public class Turret : MonoBehaviour
 			if (targ.GetTeam() == team) // Can't target allies
 				continue;
 
+			// Can ignore non-preferred targets altogether (used when searching for a better target)
+			if (ignoreNonPreferred && targ.GetTargetType() != preferredTargetType)
+				continue;
+
 			// The list of colliders is created by intersection with a range-radius sphere, but the center of this unit can still actually be out of range, leading to a target which cannot be shot at
 			if (!IsValid(targ))
 				continue;
@@ -165,7 +191,7 @@ public class Turret : MonoBehaviour
 			targs.Add(targ);
 		}
 
-		// Sort by distance
+		// Sort by distance and target type
 		targs.Sort(delegate (ITargetable a, ITargetable b)
 		{
 			return ComparisonWeight(a)
