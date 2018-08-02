@@ -21,19 +21,19 @@ public class Turret_Projectile : Turret
 		projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab reference to Projectiles Manager);
 	}
 
-	protected override Vector3 FindAdjDirection()
+	protected override Vector3 CalcAdjDirection(ITargetable targ)
 	{
-		Unit unit = target as Unit; // Only lead target against units
+		Unit unit = targ as Unit; // Only lead target against units
 
 		// How far to aim ahead given how long it would take to reach current position
 		// current target position + target velocity * time for projectile to reach current target position
-		Vector3 offsetTarget = target.GetPosition();
+		Vector3 offsetTarget = targ.GetPosition();
 		if (unit)
-			offsetTarget += unit.GetVelocity() * ((target.GetPosition() - transform.position).magnitude / projTemplate.GetSpeed());
+			offsetTarget += unit.GetVelocity() * ((targ.GetPosition() - transform.position).magnitude / projTemplate.GetSpeed());
 
 		// How far to aim ahead given how long it would take to reach predicted position
 		// current target position + target velocity * time for projectile to reach predicted target position
-		Vector3 offsetTargetAdj = target.GetPosition();
+		Vector3 offsetTargetAdj = targ.GetPosition();
 		if (unit)
 			offsetTargetAdj += unit.GetVelocity() * ((offsetTarget - transform.position).magnitude / projTemplate.GetSpeed());
 
@@ -42,7 +42,7 @@ public class Turret_Projectile : Turret
 		// Visuals
 		if (parentUnit.printInfo)
 		{
-			Debug.DrawLine(target.GetPosition(), transform.position, Color.red);
+			Debug.DrawLine(targ.GetPosition(), transform.position, Color.red);
 			Debug.DrawLine(offsetTarget, transform.position, Color.green);
 			Debug.DrawLine(offsetTargetAdj, transform.position, Color.blue);
 		}

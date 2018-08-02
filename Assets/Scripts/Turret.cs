@@ -13,13 +13,10 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	protected TargetType preferredTargetType = TargetType.Default;
 	protected ITargetable target;
-	private Unit parentUnitTarget;
-	private bool checkIfDead = false;
 	[SerializeField]
 	private float range = 25;
 	[SerializeField]
 	private bool riskFFAgainstFighters = false;
-	private bool targetInRange;
 
 	[Header("Sound")]
 	[SerializeField]
@@ -80,10 +77,10 @@ public class Turret : MonoBehaviour
 	// Use this for initialization
 	protected void Awake()
 	{
-		curAmmo = maxAmmo;
-
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 		audioSource = GetComponent<AudioSource>();
+
+		curAmmo = maxAmmo;
 
 		shootCooldown = 1f / (rateOfFire / 60f);
 		shootOffset = shootCooldown * shootOffsetRatio;
@@ -105,52 +102,45 @@ public class Turret : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		if (IsNull(target)) // No target
-		{
-			// No current target, try automatically finding a new one
-			if (FindNewTarget()) // Found one. Updates target in function
-			{
-				// Only gets called once
-				if (CheckValidityAndAim()) // Rotate towards target if possible
-					AttemptStartShooting(); // Start shooting if possible
-			}
-			else // Unsuccessful
-			{
-				// If we should have a target right now but we don't
-				if (checkIfDead)
-					UpdateTarget();
-
-				targetInRange = false;
-				AttemptEarlyReload();
-				direction = transform.forward;
-				lookRotation = CalculateLookRotation();
-				Rotate(); // Default aim
-			}
-		}
-		else // Has target
-		{
-			if (CheckValidityAndAim()) // Rotate towards target if possible
-				AttemptStartShooting(); // Start shooting if possible
-		}
+		UpdateTargeting();
 	}
 
-	bool FindNewTarget()
+	void UpdateTargeting()
 	{
-		// Look for an enemy within range
-		ITargetable automaticTarget = ScanForTarget();
-		ITargetable prevTarget = target;
-		target = automaticTarget;
+		// Have target and it's valid
+		if (!IsNull(target) && IsValid(target))
+		{
+			// Rotate towards the target
+			CalcTargetLookRotation();
+			Rotate();
+			// Shoot if possible
+			AttemptStartShooting();
+		}
+		else // We haven't assigned one yet, it died, or it's become invalid
+		{
+			// Collect a list of all valid targets
+			List<ITargetable> autoTargets = ScanForTargets();
+			// Pick best one
+			target = autoTargets.Count > 0 ? autoTargets[0] : null;
 
-		if (target != prevTarget)
-			UpdateTarget();
-
-		if (!IsNull(automaticTarget))
-			return true;
-		return false;
+			// Found a valid target
+			if (!IsNull(target))
+			{
+				// Update resetRotFrame
+				UpdateTarget();
+			}
+			else // Failed to find a valid target
+			{
+				// Rotate towards the default orientation
+				direction = transform.forward;
+				lookRotation = CalcLookRotation(direction);
+				Rotate();
+			}
+		}
 	}
 
 	// In a sphere with the radius of range, find all enemy units and pick one to target
-	ITargetable ScanForTarget()
+	List<ITargetable> ScanForTargets()
 	{
 		Collider[] cols = Physics.OverlapSphere(transform.position, range, gameRules.targetLayerMask);
 		List<ITargetable> targs = new List<ITargetable>();
@@ -169,7 +159,7 @@ public class Turret : MonoBehaviour
 				continue;
 
 			// The list of colliders is created by intersection with a range-radius sphere, but the center of this unit can still actually be out of range, leading to a target which cannot be shot at
-			if ((targ.GetPosition() - transform.position).sqrMagnitude >= range * range)
+			if (!IsValid(targ))
 				continue;
 
 			targs.Add(targ);
@@ -183,11 +173,7 @@ public class Turret : MonoBehaviour
 			  ComparisonWeight(b));
 		});
 
-		// Pick closest enemy unit
-		if (targs.Count > 0)
-			return targs[0];
-		else
-			return null;
+		return targs;
 	}
 
 	float ComparisonWeight(ITargetable x)
@@ -197,45 +183,24 @@ public class Turret : MonoBehaviour
 		return distanceWeight + typeWeight; // Always targets the closest preferred target. Only targets a non-preferred target if a preferred target is not present.
 	}
 
-	bool CheckValidityAndAim()
+	bool IsValid(ITargetable potentialTarget)
 	{
-		// Direction 
-		float sqrDistance = !IsNull(target) ? (target.GetPosition() - parentUnit.transform.position).sqrMagnitude : 0; // Check distance between us and the target // TODO: Maybe check from the parent unit's position?
-		direction = !IsNull(target) ? FindAdjDirection() : transform.forward; // direction used elsewhere to check if aimed at target or not
-		lookRotation = CalculateLookRotation(); // Constructs rotation from direction
+		// Valid distance
+		float sqrDistance = !IsNull(potentialTarget) ? (potentialTarget.GetPosition() - parentUnit.transform.position).sqrMagnitude : 0; // Check distance between us and the target // TODO: Maybe check from the parent unit's position?
+		// Valid direction
+		Vector3 dir = !IsNull(potentialTarget) ? CalcAdjDirection(potentialTarget) : transform.forward; // direction used elsewhere to check if aimed at target or not
 
 		bool valid = false;
-		if (!IsNull(target) && sqrDistance <= range * range && ValidRotationHorizontal(lookRotation)) // Have target, its in range, and the look rotation is within limits
+		if (!IsNull(potentialTarget) && sqrDistance <= range * range && ValidRotationHorizontal(CalcLookRotation(dir))) // Have target, its in range, and the look rotation is within limits
 		{
-			targetInRange = true;
-
 			valid = true;
 		}
 		else
 		{
-			// TODO: Check rotation and distance conditions on this new target, recursively check for all potential targets? Store all viable targets, check next one in situations like this?
-			//if (!FindNewTarget()) // Target is not viable so we look for a new one
-			//{ // Unsuccessful
-				targetInRange = false;
-				AttemptEarlyReload();
-
-				direction = transform.forward; // No valid target to look at
-				lookRotation = CalculateLookRotation(); // Constructs rotation from direction
-
-				valid = false;
-			//}
-			//targetInRange = true;
-			//
-			//valid = true;
+			valid = false;
 		}
 
-		Rotate();
 		return valid;
-	}
-
-	Quaternion CalculateLookRotation()
-	{
-		return Quaternion.LookRotation(direction, Vector3.up);
 	}
 
 	bool ValidRotationHorizontal(Quaternion rot)
@@ -259,6 +224,17 @@ public class Turret : MonoBehaviour
 		}
 
 		return true;
+	}
+
+	void CalcTargetLookRotation()
+	{
+		direction = !IsNull(target) ? CalcAdjDirection(target) : transform.forward; // direction used elsewhere to check if aimed at target or not
+		lookRotation = CalcLookRotation(direction);
+	}
+
+	Quaternion CalcLookRotation(Vector3 dir)
+	{
+		return Quaternion.LookRotation(dir, Vector3.up);
 	}
 
 	void Rotate()
@@ -332,6 +308,8 @@ public class Turret : MonoBehaviour
 		float offset = 0.02f; // How much we move in towards our first raycast hit location to make sure the next raycast is technically inside the collider we hit the first time around
 		if (Physics.Raycast(firePos.position, forward, out hit, checkDistance, gameRules.entityLayerMask))
 		{
+			if (parentUnit.printInfo)
+				Debug.DrawLine(firePos.position, firePos.position + forward * checkDistance, Color.magenta, 2);
 			// Is it a unit? This could be either self-detection or hitting a different unit.
 			Transform parent = hit.collider.transform.parent;
 			Unit unit = parent ? parent.GetComponent<Unit>() : null;
@@ -352,6 +330,9 @@ public class Turret : MonoBehaviour
 							// Start where the last raycast left off, plus moved in a little bit to make sure we dont hit the same collider again
 							if (Physics.Raycast(hit.point + forward * offset, forward, out hit, range * gameRules.PRJfriendlyFireCheckRangeMult, gameRules.entityLayerMask))
 							{
+								if (parentUnit.printInfo)
+									Debug.DrawLine(firePos.position, firePos.position + forward * checkDistance, Color.magenta, 2);
+
 								parent = hit.collider.transform.parent;
 								unit = parent ? parent.GetComponent<Unit>() : null;
 								if (unit)
@@ -365,11 +346,19 @@ public class Turret : MonoBehaviour
 										}
 										// If we hit the parent unit, the hit.point from this raycast will be used by the next raycast as a starting point
 									} // teammate 2
+									else // enemy
+									{ // Hit an enemy before an ally unit, no reason to continue checking
+										return true;
+									}
 								} // unit 2
 							} // second raycast
 						}
 					} // parent
 				} // teammate
+				else // enemy
+				{ // Hit an enemy before an ally unit, no reason to continue checking
+					return true;
+				}
 			} // unit
 		} // first raycast
 		return true;
@@ -379,9 +368,6 @@ public class Turret : MonoBehaviour
 	void AttemptStartShooting()
 	{
 		if (isShooting) // Don't start shooting if we are already shooting
-			return;
-
-		if (!targetInRange) // Don't start shooting while out of range
 			return;
 
 		if (isReloading) // Don't start shooting if we are reloading
@@ -400,9 +386,11 @@ public class Turret : MonoBehaviour
 		// Are we pointed at the target?
 		Vector3 forward = GetForward();
 		float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
-
 		if (dot < 1 - allowShootThressh)
+		{
 			return;
+		}
+
 
 		// Is our line of fire blocked by an allied unit?
 		if (!CheckFriendlyFire())
@@ -451,13 +439,6 @@ public class Turret : MonoBehaviour
 
 			if (!isReloading) // Reload
 				Reload();
-			return;
-		}
-
-		if (!targetInRange) // If we end up out of range mid-shooting, stop
-		{
-			isShooting = false;
-			ToggleFiringAudio(false); // Stop firing audio loop
 			return;
 		}
 
@@ -537,9 +518,9 @@ public class Turret : MonoBehaviour
 	/// Takes into account how this turret type deals damage to optimize aiming.
 	/// </summary>
 	/// <returns></returns>
-	protected virtual Vector3 FindAdjDirection()
+	protected virtual Vector3 CalcAdjDirection(ITargetable targ)
 	{
-		return (target.GetPosition() - transform.position).normalized;
+		return (targ.GetPosition() - transform.position).normalized;
 	}
 
 	protected void PlayShootSound()
@@ -571,22 +552,13 @@ public class Turret : MonoBehaviour
 	// Called by parentUnit to give this turret an idea of what to shoot at
 	public void SetManualTarget(Unit newTarg)
 	{
-		parentUnitTarget = newTarg;
-		target = parentUnitTarget;
+		target = newTarg;
 		UpdateTarget();
 	}
 
 	private void UpdateTarget()
 	{
 		resetRotFrame = Time.frameCount;
-
-		if (IsNull(target))
-		{
-			checkIfDead = false;
-		}
-		else
-			checkIfDead = true;
-
 		//Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
 	}
 
