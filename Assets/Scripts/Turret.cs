@@ -245,7 +245,6 @@ public class Turret : MonoBehaviour
 		Vector3 vComponentFwd = Quaternion.LookRotation(transform.up).eulerAngles;
 
 		float angleH = Vector3.SignedAngle(transform.forward, rot * Vector3.forward, Vector3.up);
-		float angleV = Vector3.Angle(transform.up, rot * Vector3.forward);
 
 		// Horizontal extremes
 		if (angleH > maxH)

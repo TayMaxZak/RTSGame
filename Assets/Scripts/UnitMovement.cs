@@ -49,7 +49,6 @@ public class UnitMovement
 	private int vGoal;
 	private int vCurrent;
 
-	private float deltaBias = 99999;
 
 	//private AbilityTarget rotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
 	private AbilityTarget manualRotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
@@ -130,8 +129,6 @@ public class UnitMovement
 	{
 		float RdirectionOrg = AngleDir(transform.forward, dir, Vector3.up);
 		
-		float Rdirection = Mathf.Clamp(RdirectionOrg * deltaBias, -1, 1);
-
 		float stopTurningThresh = 0.0001f;
 
 		if (ignoreHGoal || !reachedHGoal)
