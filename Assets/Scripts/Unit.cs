@@ -7,6 +7,10 @@ public class Unit : Entity, ITargetable
 	public bool printInfo = false;
 	public bool disableTurrets = false;
 
+	[Header("Objectives")]
+	[SerializeField]
+	private int objectiveWeight = 1; // How much this unit counts towards objective capture
+
 	[Header("Feedback")]
 	[SerializeField]
 	private UI_HPBar hpBarPrefab;
@@ -90,6 +94,7 @@ public class Unit : Entity, ITargetable
 		selCircleSpeed = movement.GetRotationSpeed(); // Make the circle better reflect the unit's scale and mobility
 		movement.Init(this);
 
+		// Check for null because a subclass may have already set these fields
 		if (gameManager == null)
 			gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
 		if (gameRules == null) // Subclass may have already set this field
@@ -871,6 +876,11 @@ public class Unit : Entity, ITargetable
 		Destroy(hpBar.gameObject);
 		Destroy(selCircle);
 		Destroy(gameObject);
+	}
+
+	public int GetObjectiveWeight()
+	{
+		return objectiveWeight;
 	}
 
 	public Vector3 GetVelocity()

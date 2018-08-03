@@ -86,6 +86,11 @@ public class Entity : MonoBehaviour
 	{
 		return selCircleSize;
 	}
+
+	public void SetSelCircleSize(float size)
+	{
+		selCircleSize = size;
+	}
 }
 
 public static class EntityUtils

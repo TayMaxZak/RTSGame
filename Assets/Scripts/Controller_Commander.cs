@@ -803,7 +803,7 @@ public class Controller_Commander : MonoBehaviour
 		// If we updated our selection and only one Entity is left selected,
 		if (selection.Count == 1)
 		{
-			Unit unit = (Unit)selection[0];
+			Unit unit = selection[0] as Unit;
 
 			if (unit)
 			{
@@ -815,6 +815,11 @@ public class Controller_Commander : MonoBehaviour
 					buildButtonsRoot.SetActive(true);
 				else
 					buildButtonsRoot.SetActive(false);
+			}
+			else
+			{
+				HideStats(); // TODO: No support for Entity yet
+				buildButtonsRoot.SetActive(false);
 			}
 		}
 		else

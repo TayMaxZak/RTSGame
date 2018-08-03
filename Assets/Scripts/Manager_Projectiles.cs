@@ -62,30 +62,33 @@ public class Manager_Projectiles : MonoBehaviour
 				if (hit.collider.transform.parent) // Is this a unit?
 				{
 					unit = hit.collider.transform.parent.GetComponent<Unit>();
-					if (unit != proj.GetFrom()) // If we hit a unit and its not us, damage it
+					if (unit) // Is this a unit?
 					{
-						Status status = proj.GetStatus();
-						if (status != null)
+						if (unit != proj.GetFrom()) // If we hit a unit and its not us, damage it
 						{
-							if (status.statusType == StatusType.SuperlaserMark)
-								status.SetTimeLeft(proj.GetDamage()); // Store damage in timeLeft field of status
+							Status status = proj.GetStatus();
+							if (status != null)
+							{
+								if (status.statusType == StatusType.SuperlaserMark)
+									status.SetTimeLeft(proj.GetDamage()); // Store damage in timeLeft field of status
 
-							unit.AddStatus(status);
-						}
+								unit.AddStatus(status);
+							}
 
-						if (DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam) // If we hit an enemy, do full damage
-						{
-							unit.Damage(proj.GetDamage(), proj.CalcRange(), proj.GetDamageType());
+							if (DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam) // If we hit an enemy, do full damage
+							{
+								unit.Damage(proj.GetDamage(), proj.CalcRange(), proj.GetDamageType());
+							}
+							else // If we hit an ally, do reduced damage because it was an accidental hit
+							{
+								unit.Damage(proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
+							}
 						}
-						else // If we hit an ally, do reduced damage because it was an accidental hit
+						else
 						{
-							unit.Damage(proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
+							// Ignore this collision
+							hitSelf = true;
 						}
-					}
-					else
-					{
-						// Ignore this collision
-						hitSelf = true;
 					}
 				}
 

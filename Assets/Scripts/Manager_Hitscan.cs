@@ -81,31 +81,34 @@ public class Manager_Hitscan : MonoBehaviour
 			if (hit.collider.transform.parent) // Is this a unit?
 			{
 				unit = hit.collider.transform.parent.GetComponent<Unit>();
-				if (unit != scan.GetFrom()) // If we hit a unit and its not us, damage it
+				if (unit) // Is this a unit?
 				{
-					Status status = scan.GetStatus();
-					if (status != null)
+					if (unit != scan.GetFrom()) // If we hit a unit and its not us, damage it
 					{
-						if (status.statusType == StatusType.SuperlaserMark)
-							status.SetTimeLeft(scan.GetDamage()); // Store damage in timeLeft field of status
+						Status status = scan.GetStatus();
+						if (status != null)
+						{
+							if (status.statusType == StatusType.SuperlaserMark)
+								status.SetTimeLeft(scan.GetDamage()); // Store damage in timeLeft field of status
 
-						unit.AddStatus(status);
-					}
+							unit.AddStatus(status);
+						}
 
-					float actualRange = (hit.point - scan.startPosition).magnitude;
-					if (DamageUtils.IgnoresFriendlyFire(scan.GetDamageType()) || unit.team != scanTeam) // If we hit an enemy, do full damage
-					{
-						unit.Damage(scan.GetDamage(), actualRange, scan.GetDamageType());
+						float actualRange = (hit.point - scan.startPosition).magnitude;
+						if (DamageUtils.IgnoresFriendlyFire(scan.GetDamageType()) || unit.team != scanTeam) // If we hit an enemy, do full damage
+						{
+							unit.Damage(scan.GetDamage(), actualRange, scan.GetDamageType());
+						}
+						else // If we hit an ally, do reduced damage because it was an accidental hit
+						{
+							unit.Damage(scan.GetDamage() * gameRules.DMG_ffDamageMult, actualRange, scan.GetDamageType());
+						}
 					}
-					else // If we hit an ally, do reduced damage because it was an accidental hit
+					else
 					{
-						unit.Damage(scan.GetDamage() * gameRules.DMG_ffDamageMult, actualRange, scan.GetDamageType());
+						// Ignore this collision
+						hitSelf = true; // TODO: Adapt friendly fire code for raycasting here
 					}
-				}
-				else
-				{
-					// Ignore this collision
-					hitSelf = true; // TODO: Adapt friendly fire code for raycasting here
 				}
 			}
 

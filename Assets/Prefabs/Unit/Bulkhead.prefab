@@ -3602,6 +3602,7 @@ MonoBehaviour:
   selCircleSize: 2.3
   printInfo: 0
   disableTurrets: 0
+  objectiveWeight: 3
   hpBarPrefab: {fileID: 114328092779895440, guid: df3b2f9d043548149bbea5ce4cc27206,
     type: 2}
   hpEffects: {fileID: 114908002695254704}

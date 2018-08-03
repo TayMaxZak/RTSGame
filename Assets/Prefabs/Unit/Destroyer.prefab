@@ -1825,6 +1825,10 @@ MonoBehaviour:
   - {fileID: 4405464731903738}
   - {fileID: 4743784573991514}
   - {fileID: 4060768190098444}
+  cannon: {fileID: 1164726264179942}
+  verticalRS: 5
+  minV: 50
+  maxV: 170
   laserEffectPrefab: {fileID: 114738217270647106, guid: 11ba9ae43494961478e565f7e3b13f12,
     type: 2}
   startEffectPrefab: {fileID: 114387442305719452, guid: b7f8474a713ea714491163a99587d313,
@@ -1836,12 +1840,6 @@ MonoBehaviour:
   countdownStartRangePrefab: {fileID: 0}
   countdownFinishPrefab: {fileID: 1928473051249270, guid: 98fbf73a7ad22c54f91e8ae4eba97ae2,
     type: 2}
-  countdownFinishExplosion: {fileID: 1585526066841278, guid: 9f9a09fae4267d94eb96442b6c03262b,
-    type: 2}
-  cannon: {fileID: 1164726264179942}
-  rotSpeed: 5
-  minV: 50
-  maxV: 170
 --- !u!114 &114571357071856276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1858,6 +1856,7 @@ MonoBehaviour:
   selCircleSize: 2.8
   printInfo: 0
   disableTurrets: 0
+  objectiveWeight: 3
   hpBarPrefab: {fileID: 114201364516099128, guid: f9ab5ed9c28f1bb43ac9ea3f17080b5b,
     type: 2}
   hpEffects: {fileID: 114248553201379134}

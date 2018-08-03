@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRules:
-    useTestValues: 0
+    useTestValues: 1
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -296,6 +296,10 @@ MonoBehaviour:
     FLAGshieldMaxPool: 500
     FLAGshieldRegenGPS: 5
     FLAGshieldRegenDelay: 10
+    OBJV_captureRange: 25
+    OBJV_captureTime: 15
+    OBJV_captureAddPerUnitMult: 0.3333
+    OBJV_captureAddMax: 1
     RESreclaimTime: 5
     SPWNflagshipRadius: 50
     AUDpitchVariance: 0.05
@@ -401,7 +405,7 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
-  resPoints: 20
+  resPoints: 5
   reclaimPoints: 0
   flagship: {fileID: 0}
 --- !u!114 &114578553437470668
@@ -423,6 +427,6 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
-  resPoints: 20
+  resPoints: 5
   reclaimPoints: 0
   flagship: {fileID: 0}

@@ -10,16 +10,19 @@ public class GameRules
 	public float TESTtimeMult = 0.25f;
 	public float TESTinitHPAdd = 0;
 	public float TESTinitHPMult = 0.2f;
+
 	[Header("Armor")]
 	public float ARMabsorbFlat = 5; // How much armor absorb is guaranteed
 	public float ARMabsorbScaling = 15; // How much armor absorb is added based on current percentage of armor
 	public float ARMrangeMin = 30f; // Range past which armor range resist begins
 	public float ARMrangeMax = 60f; // Range past which armor range resist is at full effect
 	public float ARMrangeMult = 0.8f; // Overall range resist multiplier
+
 	[Header("Health")]
 	public float HLTHburnThresh = 0.2001f; // How low does health drop before it starts automatically burning away
 	public float HLTHburnMin = 2; // Burn damage per second
 	public float HLTHburnMax = 3; // Burn damage per second
+
 	[Header("Wrecks")]
 	public float WRCKfallSpeedMax = 10;
 	public float WRCKfallSpeedAccel = 3;
@@ -28,29 +31,44 @@ public class GameRules
 	public float WRCKmassArmorMult = 0.5f; // When calculating mass, how much should max armor count for
 	public float WRCKinitialVelMult = 0.5f; // When a unit dies, this ratio of its current horizontal velocity is transferred to its wreck
 	public float WRCKcollisionSpeedPenalty = 0.8f; // If it hits something, how much speed should it lose
+
 	[Header("Flagship")]
 	public float FLAGshieldMaxPool = 500;
 	public float FLAGshieldRegenGPS = 5;
 	public float FLAGshieldRegenDelay = 10;
+
+	[Header("Objectives")]
+	public float OBJV_captureRange = 25; // Range around objective which counts toward capture
+	public float OBJV_captureTime = 20; // Time to go from neutral state to fully controlled state, given a contribution of 1
+	public float OBJV_captureAddPerUnitMult = 1; // How much each unit contributes
+	public float OBJV_captureAddMax = 3; // capped by this amount
+
 	[Header("Resources")]
 	public float RESreclaimTime = 5;
+
 	[Header("Spawning")]
 	public float SPWNflagshipRadius = 50; // Radius around flagship where units can be spawned
+
 	[Header("Audio")]
 	public float AUDpitchVariance = 0.05f; // Audio pitch variation for each clip instance
+
 	[Header("Projectiles")]
 	public float PRJmaxTimeAlive = 5f; // How long each projectile lives
 	public float PRJhitOffset = 0.05f; // When hitting an object, a projectile always detonates this back far from the hit point
 	public float PRJfriendlyFireCheckRangeMult = 1.0f; // When testing for the potential of friendly fire, how far ahead do we want to check? This is a multiplier on the turret's base range
+
 	[Header("Damage")]
 	public float DMG_ffDamageMult = 0.5f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
 	public float DMG_ffDamageMultSplash = 0.25f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
+
 	[Header("Movement")]
 	public float MOVabilityAimingRSMult = 0.33f;
+
 	[Header("Layer Masks")]
 	public LayerMask entityLayerMask;
 	public LayerMask targetLayerMask;
 	public LayerMask gridLayerMask;
+
 
 	[Header("Abilities")]
 	public float ABLYarmorDrainRange = 20;

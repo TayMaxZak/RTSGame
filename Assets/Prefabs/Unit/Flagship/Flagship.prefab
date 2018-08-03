@@ -443,6 +443,8 @@ MonoBehaviour:
   swarmTarget: {fileID: 4472865978280284}
   selCircleSize: 5.5
   printInfo: 0
+  disableTurrets: 0
+  objectiveWeight: 20
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
   hpEffects: {fileID: 114924701086557700}
@@ -453,6 +455,7 @@ MonoBehaviour:
   curHealth: 2000
   maxHealth: 2000
   alwaysBurnImmune: 1
+  curFragileHealth: 0
   deathClone: {fileID: 0}
   turrets: []
   abilities: []

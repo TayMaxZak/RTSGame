@@ -141,8 +141,13 @@ public class Commander : MonoBehaviour
 
 	public bool TakeResources(int amount)
 	{
+		return SubtractResPoints(amount, false);
+	}
+
+	public bool TakeResources(int amount, bool goNegative)
+	{
 		// Return whether or not the subtraction was successful
-		return SubtractResPoints(amount);
+		return SubtractResPoints(amount, goNegative);
 	}
 
 	// This code will always run on unit death
@@ -181,7 +186,7 @@ public class Commander : MonoBehaviour
 		Controller_UpdateResourceAmounts();
 	}
 
-	private bool SubtractResPoints(int amount)
+	private bool SubtractResPoints(int amount, bool goNegative)
 	{
 		int newResPoints = resPoints - amount;
 
@@ -193,6 +198,8 @@ public class Commander : MonoBehaviour
 		}
 		else
 		{
+			if (goNegative)
+				resPoints = newResPoints; // change resPoints to a negative number
 			return false;
 		}
 	}

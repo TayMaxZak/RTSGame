@@ -78,6 +78,7 @@ public class Turret : MonoBehaviour
 	protected void Awake()
 	{
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
+
 		audioSource = GetComponent<AudioSource>();
 
 		curAmmo = maxAmmo;
