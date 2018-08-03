@@ -247,6 +247,8 @@ public static class AbilityUtils
 				return "Gravity Chain";
 			case AbilityType.Superlaser:
 				return "Hellrazor Superlaser";
+			case AbilityType.StatusMissile:
+				return "Disintegrate";
 			default:
 				return "default";
 		}
@@ -271,6 +273,8 @@ public static class AbilityUtils
 				return "Attaches to the target, pulling it wherever this unit goes.";
 			case AbilityType.Superlaser:
 				return "Collects charges for every kill. Firing requires at least 1 charge, dealing massive damage to the target.";
+			case AbilityType.StatusMissile:
+				return "Launches a chemical missile at the target which weakens armor and deals damage over time.";
 			default:
 				return "default";
 		}
