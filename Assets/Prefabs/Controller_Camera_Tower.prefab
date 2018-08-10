@@ -224,8 +224,8 @@ MonoBehaviour:
   speed: 21
   screenBorderSize: 30
   levelCenter: {x: 0, y: 0, z: 0}
-  cam: {fileID: 0}
-  camRoot: {fileID: 0}
+  cam: {fileID: 20419622742573534}
+  camRoot: {fileID: 1460495576590522}
 --- !u!114 &114596483669193908
 MonoBehaviour:
   m_ObjectHideFlags: 1

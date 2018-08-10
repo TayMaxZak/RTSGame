@@ -333,6 +333,19 @@ public class Controller_Commander : MonoBehaviour
 		UpdateInput();
 	}
 
+	List<Unit> UpdateCurrentHeight()
+	{
+		List<Unit> units = new List<Unit>();
+		foreach (Entity e in selection)
+		{
+			if (IsUnit(e))
+				units.Add((Unit)e);
+		}
+
+		currentHeight = HeightSnap(units[0].transform.position.y);
+		return units;
+	}
+
 	void UpdateInput()
 	{
 		// Modifier keys
@@ -346,22 +359,16 @@ public class Controller_Commander : MonoBehaviour
 		// Any checks can be done here, selection will not change during height change unless a unit dies
 		if (heightState == 0 && Input.GetButtonDown("ChangeHeight"))
 		{
-			List<Unit> units = new List<Unit>();
-			foreach (Entity e in selection)
-			{
-				if (IsUnit(e))
-					units.Add((Unit)e);
-			}
+			List<Unit> units = UpdateCurrentHeight();
 
 			if (units.Count > 0)
 			{
-				currentHeight = units[0].GetCurrentHeight();
 				bool sameHeights = true;
 
 				// TODO: Maybe still allow height change functionality if the different-height units are in the minority?
 				for (int i = 1; i < units.Count; i++) // Skip first unit
 				{
-					if (units[i].GetCurrentHeight() != currentHeight)
+					if (HeightSnap(units[i].transform.position.y) != currentHeight)
 						sameHeights = false;
 				}
 
@@ -435,15 +442,16 @@ public class Controller_Commander : MonoBehaviour
 
 					unitPos /= units.Count;
 
-					float selPos = Camera.main.WorldToScreenPoint(unitPos).y;
-					int upOrDown = 0;
-					if (selPos < mousePos.y) // Greater Y is lower on screen
-						upOrDown = 1;
-					else
-						upOrDown = -1;
+					//float selPos = Camera.main.WorldToScreenPoint(unitPos).y;
 
-					int curGrid = currentHeight / heightSpacing;
-					int newGridHeight = (curGrid + upOrDown) * heightSpacing;
+					mousePos.z = (Camera.main.transform.position - unitPos).magnitude; // TODO: Correct distance?
+					Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+					float delta = worldPos.y - unitPos.y;
+
+					UpdateCurrentHeight(); // TODO: Optimize?
+					int cur = currentHeight / heightSpacing;
+					int change = Mathf.RoundToInt(delta / heightSpacing);
+					int newGridHeight = (cur + change) * heightSpacing;
 
 					Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 20));
 					lineMouse.SetEffectActive(1, unitPos, worldPoint);
@@ -678,7 +686,7 @@ public class Controller_Commander : MonoBehaviour
 		// Switch teams when a key is pressed
 		if (allowTeamSwaps)
 		{
-			if (Input.GetKeyDown("1"))
+			if (Input.GetKeyDown("tab"))
 			{
 				if (team == 0)
 					SetTeam(1);
