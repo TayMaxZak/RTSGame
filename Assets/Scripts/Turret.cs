@@ -312,6 +312,7 @@ public class Turret : MonoBehaviour
 		}
 		else if (angleV < minV)
 		{
+			
 			components.x = componentsOld.x;
 		}
 
