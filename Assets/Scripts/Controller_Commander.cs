@@ -109,7 +109,7 @@ public class Controller_Commander : MonoBehaviour
 		SetCommander(gameManager.GetCommander(team)); // Set commander
 	}
 
-	public void Select(Entity newSel, bool add, bool multiSelectRemoveExisting)
+	public void Select(Entity newSel, bool add, bool invert)
 	{
 		bool newSelIsUnit = IsUnit(newSel);
 
@@ -135,7 +135,7 @@ public class Controller_Commander : MonoBehaviour
 				// If we already have this Entity, remove it
 				if (e == newSel)
 				{
-					if (multiSelectRemoveExisting)
+					if (invert)
 					{
 						e.OnSelect(false);
 						selection.RemoveAt(i);
@@ -181,7 +181,7 @@ public class Controller_Commander : MonoBehaviour
 
 	public void Select(Entity newSel, bool add)
 	{
-		Select(newSel, add, true);
+		Select(newSel, add, false);
 	}
 
 	void SelectionChanged()
@@ -536,7 +536,7 @@ public class Controller_Commander : MonoBehaviour
 						{
 							if (ent)
 							{
-								Select(ent, true);
+								Select(ent, true, true);
 								startSelectedEntity = ent;
 							}
 							//else
@@ -592,7 +592,7 @@ public class Controller_Commander : MonoBehaviour
 					Entity ent = GetEntityFromHit(hit);
 					boxSelectEnd = Input.mousePosition; // Remember where we let go of the mouse
 					if (ent && ent != startSelectedEntity) // Add second entity to selection
-						Select(ent, true, false);
+						Select(ent, true);
 					startSelectedEntity = null; // Forget our initial selection for next time
 
 					// Construct a rect for checking screen positions
@@ -605,7 +605,7 @@ public class Controller_Commander : MonoBehaviour
 						Vector3 screenPoint = Camera.main.WorldToScreenPoint(selectable[i].unit.transform.position);
 						if (boxSelect.Contains(screenPoint, true))
 						{
-							Select(selectable[i].unit, true, false);
+							Select(selectable[i].unit, true);
 						}
 					}
 
@@ -683,7 +683,7 @@ public class Controller_Commander : MonoBehaviour
 				for (int i = 0; i < selectable.Count; i++)
 				{
 					if (selectable[i].unit.Type != EntityType.Flagship)
-						Select(selectable[i].unit, true, false);
+						Select(selectable[i].unit, true);
 				}
 			}
 		}
