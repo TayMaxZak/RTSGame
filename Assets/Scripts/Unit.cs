@@ -21,6 +21,7 @@ public class Unit : Entity, ITargetable
 	public int team = 0;
 	[HideInInspector]
 	public int buildIndex = -1;
+	private UnitSelectable selectable;
 
 	[Header("Health Pool")]
 	[SerializeField]
@@ -99,7 +100,9 @@ public class Unit : Entity, ITargetable
 			gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
 		if (gameRules == null) // Subclass may have already set this field
 			gameRules = gameManager.GameRules; // Grab copy of Game Rules
-		gameManager.GetCommander(team).AddSelectableUnit(this); // Make sure commander knows what units can be selected
+
+		selectable = new UnitSelectable(this, 0);
+		gameManager.GetCommander(team).AddSelectableUnit(selectable); // Make sure commander knows what units can be selected
 
 		if (gameRules.useTestValues)
 		{
@@ -860,7 +863,7 @@ public class Unit : Entity, ITargetable
 		Commander comm = gameManager.GetCommander(team);
 		if (comm)
 		{
-			comm.RemoveSelectableUnit(this);
+			comm.RemoveSelectableUnit(selectable);
 			comm.RefundUnitCounter(buildIndex);
 
 			// Refund resources if build index is initialized
@@ -976,7 +979,11 @@ public class Unit : Entity, ITargetable
 
 	public void OrderCommandWheel(int i, AbilityTarget targ)
 	{
-		if (i == 2) // 
+		if (i == 0) // Set Squadron
+		{
+			selectable.squadronId = 1;
+		}
+		else if (i == 1) // Clear Manual Target
 			foreach (Turret tur in turrets)
 				tur.SetManualTarget(null);
 	}

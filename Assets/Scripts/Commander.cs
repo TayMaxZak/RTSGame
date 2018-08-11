@@ -27,14 +27,14 @@ public class Commander : MonoBehaviour
 	[Header("Win Conditions")]
 	public Unit flagship;
 
-	private List<Unit> selectableUnits;
+	private List<UnitSelectable> selectableUnits;
 
 	private GameRules gameRules;
 
 	// Use this for initialization
 	void Awake()
 	{
-		selectableUnits = new List<Unit>();
+		selectableUnits = new List<UnitSelectable>();
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
@@ -231,18 +231,18 @@ public class Commander : MonoBehaviour
 
 
 	// Add unit to the list of selectable units for this commander
-	public void AddSelectableUnit(Unit selUnit)
+	public void AddSelectableUnit(UnitSelectable selUnit)
 	{
 		selectableUnits.Add(selUnit);
 	}
 
-	public void RemoveSelectableUnit(Unit selUnit)
+	public void RemoveSelectableUnit(UnitSelectable selUnit)
 	{
 		selectableUnits.Remove(selUnit);
 	}
 
 
-	public List<Unit> GetSelectableUnits()
+	public List<UnitSelectable> GetSelectableUnits()
 	{
 		return selectableUnits;
 	}

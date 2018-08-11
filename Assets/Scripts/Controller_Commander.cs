@@ -598,14 +598,14 @@ public class Controller_Commander : MonoBehaviour
 					// Construct a rect for checking screen positions
 					Rect boxSelect = new Rect(boxSelectStart.x, boxSelectStart.y, boxSelectEnd.x - boxSelectStart.x, boxSelectEnd.y - boxSelectStart.y);
 
-					List<Unit> selectable = commander.GetSelectableUnits();
+					List<UnitSelectable> selectable = commander.GetSelectableUnits();
 					for (int i = 0; i < selectable.Count; i++)
 					{
 						// For each selectable unit, if its visual center lies in the rect, we add it to our current selection
-						Vector3 screenPoint = Camera.main.WorldToScreenPoint(selectable[i].transform.position);
+						Vector3 screenPoint = Camera.main.WorldToScreenPoint(selectable[i].unit.transform.position);
 						if (boxSelect.Contains(screenPoint, true))
 						{
-							Select(selectable[i], true, false);
+							Select(selectable[i].unit, true, false);
 						}
 					}
 
@@ -649,6 +649,11 @@ public class Controller_Commander : MonoBehaviour
 			}
 		} //rmb
 
+		if (Input.GetKeyDown("1"))
+		{
+			SelectSquadron(1, control);
+		}
+
 		// Abilities
 		if (Input.GetButtonDown("Ability1"))
 		{
@@ -674,11 +679,11 @@ public class Controller_Commander : MonoBehaviour
 		{
 			if (Input.GetButtonDown("SelectAll"))
 			{
-				List<Unit> selectable = commander.GetSelectableUnits();
+				List<UnitSelectable> selectable = commander.GetSelectableUnits();
 				for (int i = 0; i < selectable.Count; i++)
 				{
-					if (selectable[i].Type != EntityType.Flagship)
-						Select(selectable[i], true, false);
+					if (selectable[i].unit.Type != EntityType.Flagship)
+						Select(selectable[i].unit, true, false);
 				}
 			}
 		}
@@ -692,6 +697,21 @@ public class Controller_Commander : MonoBehaviour
 					SetTeam(1);
 				else
 					SetTeam(0);
+			}
+		}
+	}
+
+	void SelectSquadron(int index, bool additive)
+	{
+		List<UnitSelectable> selectable = commander.GetSelectableUnits();
+		if (!additive)
+			Select(null, false);
+		for (int i = 0; i < selectable.Count; i++)
+		{
+			// For each selectable unit, check if its index matched our target index
+			if (selectable[i].squadronId == index)
+			{
+				Select(selectable[i].unit, true);
 			}
 		}
 	}
@@ -798,10 +818,10 @@ public class Controller_Commander : MonoBehaviour
 				if (hit.collider)
 				{
 					AbilityTarget targ = new AbilityTarget(hit.point);
-					unit.OrderCommandWheel(2, targ);
+					unit.OrderCommandWheel(0, targ);
 				}
 				else
-					unit.OrderCommandWheel(2, null);
+					unit.OrderCommandWheel(0, null);
 			}
 		}
 	}
