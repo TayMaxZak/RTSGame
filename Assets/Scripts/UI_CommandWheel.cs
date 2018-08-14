@@ -99,7 +99,7 @@ public class UI_CommandWheel : MonoBehaviour
 			root.gameObject.SetActive(true); // Show UI
 			root.transform.position = Input.mousePosition; // Set position of UI. NOTE: This MUST be after the root is set active
 
-			//uiManager.SetCursorState(1); // Hide cursor
+			uiManager.SetCursorState(1); // Hide cursor
 		}
 		else if (!isActive && root.gameObject.activeSelf)
 		{
@@ -110,7 +110,7 @@ public class UI_CommandWheel : MonoBehaviour
 			control.UseCommandWheel(toUse); // Do appropriate action
 			toUse = 0; // Reset toUse to default value
 
-			//uiManager.SetCursorState(0); // Show cursor
+			uiManager.SetCursorState(0); // Show cursor
 		}
 	}
 }
