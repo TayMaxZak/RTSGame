@@ -45,9 +45,9 @@ public class UnitMovement
 	[Header("Pathing")]
 	[SerializeField]
 	private float reachGoalThresh = 1; // How close to the goal position is close enough?
-	private Vector3 hGoal;
-	private int vGoal;
-	private int vCurrent;
+	private List<Vector3> hGoals;
+	private Vector3 hGoalCur;
+	private int vGoalCur;
 
 
 	//private AbilityTarget rotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
@@ -62,15 +62,16 @@ public class UnitMovement
 	// Use this for initialization
 	public void Init(Unit parent)
 	{
+		hGoals = new List<Vector3>();
+
 		parentUnit = parent;
 		transform = parentUnit.transform;
 
 		reachedHGoal = true;
 		reachedVGoal = true;
-		vCurrent = Mathf.RoundToInt(transform.position.y);
 
-		hGoal = transform.position; // Path towards current location (i.e. nowhere)
-		vGoal = vCurrent;
+		hGoalCur = transform.position; // Path towards current location (i.e. nowhere)
+		vGoalCur = Mathf.RoundToInt(transform.position.y);
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
@@ -96,7 +97,7 @@ public class UnitMovement
 
 	void UpdateMovement()
 	{
-		Vector3 dif = hGoal - transform.position;
+		Vector3 dif = hGoalCur - transform.position;
 
 		int useRotationGoal = 0;
 		if (abilityGoal != null)
@@ -198,8 +199,8 @@ public class UnitMovement
 
 	Vector3 UpdatePositionH(float leftOrRight, Vector3 dir)
 	{
-		if (Vector3.SqrMagnitude(transform.position - new Vector3(hGoal.x, transform.position.y, hGoal.z)) < reachGoalThresh * reachGoalThresh)
-			reachedHGoal = true;
+		if (Vector3.SqrMagnitude(transform.position - new Vector3(hGoalCur.x, transform.position.y, hGoalCur.z)) < reachGoalThresh * reachGoalThresh)
+			ReachHGoal();
 
 		bool inFront = FrontOrBack(transform.forward, dir);
 
@@ -225,13 +226,12 @@ public class UnitMovement
 
 	Vector3 UpdatePositionV()
 	{
-		if (Mathf.Abs(vGoal - transform.position.y) < reachGoalThresh * MSVMult)
+		if (Mathf.Abs(vGoalCur - transform.position.y) < reachGoalThresh * MSVMult)
 		{
 			reachedVGoal = true;
-			vCurrent = vGoal; // vCurrent used for calculating next relative height
 		}
 
-		float aboveOrBelow = vGoal - transform.position.y; // > 0 if goal is above, < 0 if goal is below
+		float aboveOrBelow = vGoalCur - transform.position.y; // > 0 if goal is above, < 0 if goal is below
 
 		if (!reachedVGoal)
 		{
@@ -331,8 +331,10 @@ public class UnitMovement
 
 		if (Vector3.SqrMagnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) > selCircleRadius * selCircleRadius)
 		{
-			hGoal = newHGoal;
-			reachedHGoal = false;
+			hGoals.Clear(); // Replace current waypoints
+			hGoals.Add(newHGoal);
+			if (hGoals.Count == 1)
+				NewHGoal();
 
 			manualRotationGoal = null; // Clear any current rotation goal
 		}
@@ -348,20 +350,36 @@ public class UnitMovement
 		// else to do if rotation order but grouped
 	}
 
+	void ReachHGoal()
+	{
+		if (!reachedHGoal) // Not marked as "reached" yet
+		{
+			reachedHGoal = true;
+			hGoals.RemoveAt(0);
+			NewHGoal();
+		}
+	}
+
+	void NewHGoal()
+	{
+		if (hGoals.Count > 0)
+		{
+			reachedHGoal = false;
+			hGoalCur = hGoals[0];
+		}
+		else
+			reachedHGoal = true;
+	}
+
 	public void SetVGoal(int newVGoal)
 	{
-		vGoal = newVGoal;
+		vGoalCur = newVGoal;
 		reachedVGoal = false;
 	}
 
 	public Vector3 GetVelocity()
 	{
 		return velocity;
-	}
-
-	public int GetVCurrent()
-	{
-		return vCurrent;
 	}
 
 	public void SetAbilityGoal(AbilityTarget newGoal)
@@ -382,7 +400,7 @@ public class UnitMovement
 
 	public void Stop()
 	{
-		hGoal = transform.position;
+		hGoalCur = transform.position;
 		reachedHGoal = true;
 
 		manualRotationGoal = null;
