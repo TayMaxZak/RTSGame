@@ -979,13 +979,16 @@ public class Unit : Entity, ITargetable
 
 	public void OrderCommandWheel(int i, AbilityTarget targ)
 	{
-		if (i == 0) // Set Squadron
+		if (i == 1) // Set Squadron
 		{
-			selectable.squadronId = 1;
+			if (Type != EntityType.Flagship)
+				selectable.squadronId = 1;
 		}
-		else if (i == 1) // Clear Manual Target
+		else if (i == 3) // Clear Manual Target
+		{
 			foreach (Turret tur in turrets)
 				tur.SetManualTarget(null);
+		}
 	}
 
 

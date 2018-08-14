@@ -17,8 +17,19 @@ public class Manager_UI : MonoBehaviour
 	[SerializeField]
 	public GameObject UnitSelCircle;
 
+	private int cursorState = 0; // 0 = confined, 1 = middle of screen
+
 	void Update()
 	{
 		Cursor.lockState = CursorLockMode.Confined;
+		if (cursorState == 1)
+			Cursor.visible = false;
+		else
+			Cursor.visible = true;
+	}
+
+	public void SetCursorState(int newState)
+	{
+		cursorState = newState;
 	}
 }

@@ -12,9 +12,11 @@ public class Controller_Commander : MonoBehaviour
 
 	[Header("GUI")]
 	[SerializeField]
-	private UI_ResCounter resPointsCounter;
-	[SerializeField]
 	private UI_EntityStats entityStats;
+	[SerializeField]
+	private UI_CommandWheel commandWheel;
+	[SerializeField]
+	private UI_ResCounter resPointsCounter;
 	[SerializeField]
 	private GameObject buildButtonsRoot;
 	[SerializeField]
@@ -89,7 +91,11 @@ public class Controller_Commander : MonoBehaviour
 
 		lineMouse.SetEffectActive(0);
 		lineVert.SetEffectActive(0);
+
 		SetMarqueeActive(false);
+
+		commandWheel.SetController(this);
+		SetCommandWheelActive(false);
 	}
 
 	void SetCommander(Commander newCommander)
@@ -342,7 +348,8 @@ public class Controller_Commander : MonoBehaviour
 				units.Add((Unit)e);
 		}
 
-		currentHeight = HeightSnap(units[0].transform.position.y);
+		if (units.Count > 0)
+			currentHeight = HeightSnap(units[0].transform.position.y);
 		return units;
 	}
 
@@ -671,7 +678,21 @@ public class Controller_Commander : MonoBehaviour
 		// Command wheel
 		if (Input.GetButtonDown("CommandWheel"))
 		{
-			UseCommandWheel();
+			bool hasUnits = false;
+			foreach (Entity s in selection)
+			{
+				if (IsUnit(s))
+				{
+					hasUnits = true;
+					break;
+				}
+			}
+			if (hasUnits)
+				SetCommandWheelActive(true);
+		}
+		else if (Input.GetButtonUp("CommandWheel"))
+		{
+			SetCommandWheelActive(false);
 		}
 
 		// Control-enabled actions
@@ -714,6 +735,11 @@ public class Controller_Commander : MonoBehaviour
 				Select(selectable[i].unit, true);
 			}
 		}
+	}
+
+	void SetCommandWheelActive(bool isActive)
+	{
+		commandWheel.SetCommandWheelActive(isActive);
 	}
 
 	void SetMarqueeActive(bool isActive)
@@ -803,7 +829,7 @@ public class Controller_Commander : MonoBehaviour
 		} //foreach
 	} //UseAbility()
 
-	void UseCommandWheel()
+	public void UseCommandWheel(int index)
 	{
 		if (!HasSelection())
 			return;
@@ -818,10 +844,10 @@ public class Controller_Commander : MonoBehaviour
 				if (hit.collider)
 				{
 					AbilityTarget targ = new AbilityTarget(hit.point);
-					unit.OrderCommandWheel(0, targ);
+					unit.OrderCommandWheel(index, targ);
 				}
 				else
-					unit.OrderCommandWheel(0, null);
+					unit.OrderCommandWheel(index, null);
 			}
 		}
 	}
