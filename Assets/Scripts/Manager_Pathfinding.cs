@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Diagnostics;
+//using System.Diagnostics;
+using System;
 
 public class Manager_Pathfinding : MonoBehaviour
 {
+	[SerializeField]
+	private bool printInfo = false;
+
 	[SerializeField]
 	private LayerMask obstacleMask;
 	[SerializeField]
@@ -12,10 +16,10 @@ public class Manager_Pathfinding : MonoBehaviour
 	[SerializeField]
 	private float nodeRadius; // How much space each node covers
 	[SerializeField]
-	private PathfindingNode[,] grid;
+	private PathNode[,] grid;
 
-	[SerializeField]
-	private PathfindingSolver solver;
+	private PathSolver solver;
+	private PathRequestHandler requestHandler;
 
 	private int gridSizeX;
 	private int gridSizeY;
@@ -35,24 +39,26 @@ public class Manager_Pathfinding : MonoBehaviour
 		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 	//}
 
-	void Start()
+	void Awake()
 	{
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / (nodeRadius * 2));
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / (nodeRadius * 2));
 		CreateGrid();
 
-		solver.Init(this);
+		solver = new PathSolver();
+		requestHandler = new PathRequestHandler();
+		solver.Init(this, requestHandler);
+		requestHandler.Init(solver);
 	}
 
 	void Update()
 	{
 		// Update our solver
-		solver.Tick();
 	}
 
 	void CreateGrid()
 	{
-		grid = new PathfindingNode[gridSizeX, gridSizeY];
+		grid = new PathNode[gridSizeX, gridSizeY];
 		Vector3 worldBottomLeft = transform.position - new Vector3(gridWorldSize.x, 0, gridWorldSize.y) * 0.5f;
 
 		for (int x = 0; x < gridSizeX; x++)
@@ -61,13 +67,13 @@ public class Manager_Pathfinding : MonoBehaviour
 			{
 				Vector3 worldPoint = worldBottomLeft + new Vector3(nodeRadius + x * nodeRadius * 2, 0, nodeRadius + y * nodeRadius * 2);
 				bool clear = !(Physics.CheckSphere(worldPoint, nodeRadius, obstacleMask));
-				grid[x, y] = new PathfindingNode(clear, worldPoint, x, y);
+				grid[x, y] = new PathNode(clear, worldPoint, x, y);
 			}
 		}
 	}
 
 	// Finds a node that is located closest to the given world position
-	public PathfindingNode NodeFromWorldPoint(Vector3 worldPosition)
+	public PathNode NodeFromWorldPoint(Vector3 worldPosition)
 	{
 		float posX = ((worldPosition.x - transform.position.x) + gridWorldSize.x * 0.5f) / (nodeRadius * 2);
 		float posY = ((worldPosition.z - transform.position.z) + gridWorldSize.y * 0.5f) / (nodeRadius * 2);
@@ -81,9 +87,9 @@ public class Manager_Pathfinding : MonoBehaviour
 		return grid[x, y];
 	}
 
-	public List<PathfindingNode> FindNeighbors(PathfindingNode node)
+	public List<PathNode> FindNeighbors(PathNode node)
 	{
-		List<PathfindingNode> neighbors = new List<PathfindingNode>();
+		List<PathNode> neighbors = new List<PathNode>();
 
 		// Where is this node in our grid
 		for (int x = -1; x <= 1; x++)
@@ -107,129 +113,150 @@ public class Manager_Pathfinding : MonoBehaviour
 	}
 
 	// Debug visuals
-	public List<PathfindingNode> path;
-	//void OnDrawGizmos()
-	//{
-	//	Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+	void OnDrawGizmos()
+	{
+		if (!printInfo)
+			return;
 
-	//	if (grid != null)
-	//	{
-	//		foreach (PathfindingNode n in grid)
-	//		{
-	//			Gizmos.color = n.clear ? Color.white : Color.red;
-	//			if (path != null)
-	//			{
-	//				if (path.Contains(n))
-	//				{
-	//					Gizmos.color = Color.black;
-	//					Gizmos.DrawCube(n.position, new Vector3(1, 0.2f, 1) * nodeRadius * 1.8f);
-	//				}
-	//				else if (!n.clear)
-	//				{
-	//					Gizmos.DrawCube(n.position, new Vector3(1, 0.2f, 1) * nodeRadius * 1.8f);
-	//				}
-	//			}
-				
-	//		}
-	//	} // nodes
-	//}
+		Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+		
+		if (grid != null)
+		{
+			foreach (PathNode n in grid)
+			{
+				Gizmos.color = n.clear ? Color.white : Color.red;
+				if (!n.clear)
+				{
+					Gizmos.DrawCube(n.position, new Vector3(1, 0.2f, 1) * nodeRadius * 1.8f);
+				}
+			} // foreach node
+		} // has nodes
+	}
 }
 
-[System.Serializable]
-public class PathfindingSolver
+public class PathSolver
 {
-	[SerializeField]
-	private Transform seeker;
-	[SerializeField]
-	private Transform target;
-
+	private PathRequestHandler requestHandler;
 	private Manager_Pathfinding grid;
 
-	public void Init(Manager_Pathfinding pathfinding)
+	public void Init(Manager_Pathfinding pathfinding, PathRequestHandler handler)
 	{
 		grid = pathfinding;
+		requestHandler = handler;
 	}
 
-	// Update is called once per frame
-	public void Tick()
+	public void StartFindPath(Vector3 startPos, Vector3 endPos)
 	{
-		if (Input.GetButtonDown("Jump"))
-			FindPath(seeker.position, target.position);
+		grid.StartCoroutine(FindPath(startPos, endPos));
 	}
 
-	void FindPath(Vector3 startPos, Vector3 endPos)
+	IEnumerator FindPath(Vector3 startPos, Vector3 endPos)
 	{
-		Stopwatch sw = new Stopwatch();
-		sw.Start();
+		//Stopwatch sw = new Stopwatch();
+		//sw.Start();
 
-		PathfindingNode startNode = grid.NodeFromWorldPoint(startPos);
-		PathfindingNode endNode = grid.NodeFromWorldPoint(endPos);
+		Vector3[] waypoints = new Vector3[0];
+		bool pathFound = false;
 
-		Heap<PathfindingNode> openSet = new Heap<PathfindingNode>(grid.MaxSize);
-		HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
-		openSet.Add(startNode);
+		PathNode startNode = grid.NodeFromWorldPoint(startPos);
+		PathNode endNode = grid.NodeFromWorldPoint(endPos);
 
-		while (openSet.Count > 0)
+		if (endNode.clear)
 		{
-			PathfindingNode currentNode = openSet.RemoveFirst();
-			closedSet.Add(currentNode);
+			Heap<PathNode> openSet = new Heap<PathNode>(grid.MaxSize);
+			HashSet<PathNode> closedSet = new HashSet<PathNode>();
+			openSet.Add(startNode);
 
-			// Found path
-			if (currentNode == endNode)
+			while (openSet.Count > 0)
 			{
-				sw.Stop();
-				UnityEngine.Debug.Log(sw.ElapsedMilliseconds + " ms");
-				RetracePath(startNode, endNode);
-				return;
-			}
+				PathNode currentNode = openSet.RemoveFirst();
+				closedSet.Add(currentNode);
 
-			// Check neighbors
-			foreach (PathfindingNode neighbor in grid.FindNeighbors(currentNode))
-			{
-				// Obstacle or already in our set
-				if (!neighbor.clear || closedSet.Contains(neighbor))
+				// Found path
+				if (currentNode == endNode)
 				{
-					continue;
+					//sw.Stop();
+					//UnityEngine.Debug.Log(sw.ElapsedMilliseconds + " ms");
+					pathFound = true;
+					break; // Exit out of while
 				}
 
-				// Lower cost found or an unitialized node
-				int newMoveCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
-				if (newMoveCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+				// Check neighbors
+				foreach (PathNode neighbor in grid.FindNeighbors(currentNode))
 				{
-					// Initialize movement costs
-					neighbor.gCost = newMoveCostToNeighbor;
-					neighbor.hCost = GetDistance(neighbor, endNode);
-					neighbor.parent = currentNode;
-
-					// Add to open set
-					if (!openSet.Contains(neighbor))
+					// Obstacle or already in our set
+					if (!neighbor.clear || closedSet.Contains(neighbor))
 					{
-						openSet.Add(neighbor);
-						// Updates automatically
+						continue;
 					}
-					else // Must manually update because costs changed
-						openSet.UpdateItem(neighbor);
+
+					// Lower cost found or an unitialized node
+					int newMoveCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+					if (newMoveCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+					{
+						// Initialize movement costs
+						neighbor.gCost = newMoveCostToNeighbor;
+						neighbor.hCost = GetDistance(neighbor, endNode);
+						neighbor.parent = currentNode;
+
+						// Add to open set
+						if (!openSet.Contains(neighbor))
+						{
+							openSet.Add(neighbor);
+							// Updates automatically
+						}
+						else // Must manually update because costs changed
+							openSet.UpdateItem(neighbor);
+					}
 				}
-			}
-		} // while nodes in openset
+			} // while nodes in openset
+		} // endpoints clear
+
+		yield return null;
+
+		if (pathFound)
+		{
+			waypoints = RetracePath(startNode, endNode);
+		}
+		requestHandler.FinishedProcessingPath(waypoints, true);
+
 	} // FindPath()
 
-	void RetracePath(PathfindingNode startNode, PathfindingNode endNode)
+	Vector3[] RetracePath(PathNode startNode, PathNode endNode)
 	{
-		List<PathfindingNode> path = new List<PathfindingNode>();
-		PathfindingNode currentNode = endNode;
+		List<PathNode> path = new List<PathNode>();
+		PathNode currentNode = endNode;
 
 		while (currentNode != startNode)
 		{
 			path.Add(currentNode);
 			currentNode = currentNode.parent;
 		}
-		path.Reverse();
-
-		grid.path = path;
+		Vector3[] waypoints = SimplifyPath(path);
+		Array.Reverse(waypoints);
+		return waypoints;
 	}
 
-	int GetDistance(PathfindingNode nodeA, PathfindingNode nodeB)
+	// Remove superfluous nodes
+	Vector3[] SimplifyPath(List<PathNode> path)
+	{
+		List<Vector3> waypoints = new List<Vector3>();
+		Vector2 directionOld = Vector2.zero;
+
+		for (int i = 1; i < path.Count; i++)
+		{
+			// Calculated normalized direction
+			Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
+			if (directionNew != directionOld) // Turn in path
+			{
+				waypoints.Add(path[i].position); // Add relevant waypoint
+			}
+			directionOld = directionNew;
+		}
+		return waypoints.ToArray();
+	}
+
+	int GetDistance(PathNode nodeA, PathNode nodeB)
 	{
 		int distX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
 		int distY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
@@ -239,5 +266,63 @@ public class PathfindingSolver
 			return 14 * distY + 10 * (distX - distY);
 		else
 			return 14 * distX + 10 * (distY - distX);
+	}
+}
+
+public class PathRequestHandler
+{
+	private Queue<PathRequest> pathRequestQueue = new Queue<PathRequest>();
+	private PathRequest currentPathRequest;
+
+	static PathRequestHandler instance;
+	private PathSolver solver;
+
+	private bool isProcessingPath;
+
+	public void Init(PathSolver pathfinding)
+	{
+		solver = pathfinding;
+		instance = this;
+	}
+
+	public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> callback)
+	{
+		PathRequest newRequest = new PathRequest(pathStart, pathEnd, callback);
+		instance.pathRequestQueue.Enqueue(newRequest);
+		instance.TryProcessNext();
+	}
+
+	void TryProcessNext()
+	{
+		// If we are not processing a path, and if the queue isn't empty
+		if (!isProcessingPath && pathRequestQueue.Count > 0)
+		{
+			// Get first item from queue and remove it
+			currentPathRequest = pathRequestQueue.Dequeue();
+			isProcessingPath = true;
+			solver.StartFindPath(currentPathRequest.pathStart, currentPathRequest.pathEnd);
+		}
+	}
+
+	public void FinishedProcessingPath(Vector3[] path, bool success)
+	{
+		currentPathRequest.callback(path, success);
+		isProcessingPath = false;
+		TryProcessNext();
+	}
+
+	struct PathRequest
+	{
+
+		public Vector3 pathStart;
+		public Vector3 pathEnd;
+		public Action<Vector3[], bool> callback;
+
+		public PathRequest(Vector3 start, Vector3 end, Action<Vector3[], bool> call)
+		{
+			pathStart = start;
+			pathEnd = end;
+			callback = call;
+		}
 	}
 }

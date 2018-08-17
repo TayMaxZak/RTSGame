@@ -1006,4 +1006,10 @@ public class Unit : Entity, ITargetable
 	{
 		return TargetType.Unit;
 	}
+
+
+	public void OnDrawGizmos()
+	{
+		movement.OnDrawGizmos();
+	}
 }

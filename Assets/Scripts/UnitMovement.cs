@@ -58,6 +58,7 @@ public class UnitMovement
 
 	//protected Manager_Game gameManager;
 	protected GameRules gameRules;
+	private Manager_Pathfinding pathManager;
 
 	// Use this for initialization
 	public void Init(Unit parent)
@@ -322,6 +323,17 @@ public class UnitMovement
 		return statusSpeedMult;
 	}
 
+	public void OnPathFound(Vector3[] newPath, bool pathFound)
+	{
+		if (pathFound) // Only reset pathing if a path was found
+		{
+			hGoals.Clear(); // Replace current waypoints
+			foreach (Vector3 point in newPath) // Add new waypoints
+				hGoals.Add(point);
+			NewHGoal(); // Start pathing
+		}
+	}
+
 	public void SetHGoal(Vector3 newHGoal, bool group)
 	{
 		if (abilityGoal != null) // Can't move while an ability is rotating us
@@ -331,10 +343,7 @@ public class UnitMovement
 
 		if (Vector3.SqrMagnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) > selCircleRadius * selCircleRadius)
 		{
-			hGoals.Clear(); // Replace current waypoints
-			hGoals.Add(newHGoal);
-			if (hGoals.Count == 1)
-				NewHGoal();
+			PathRequestHandler.RequestPath(transform.position, newHGoal, OnPathFound);
 
 			manualRotationGoal = null; // Clear any current rotation goal
 		}
@@ -404,5 +413,22 @@ public class UnitMovement
 		reachedHGoal = true;
 
 		manualRotationGoal = null;
+	}
+
+	public void OnDrawGizmos()
+	{
+		if (hGoals != null && hGoals.Count > 0)
+		{
+			for (int i = 0; i < hGoals.Count; i++)
+			{
+				Gizmos.color = Color.white;
+				Gizmos.DrawCube(hGoals[i], Vector3.one);
+
+				if (i == 0)
+					Gizmos.DrawLine(transform.position, hGoals[i]);
+				else
+					Gizmos.DrawLine(hGoals[i-1], hGoals[i]);
+			}
+		}
 	}
 }
