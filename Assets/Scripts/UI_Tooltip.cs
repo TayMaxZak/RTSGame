@@ -55,40 +55,37 @@ public class UI_Tooltip : MonoBehaviour
 			SetActive(false);
 		}
 
-		if (true) // TODO: Remove condition
+		PointerEventData pointer = new PointerEventData(EventSystem.current);
+		pointer.position = Input.mousePosition;
+
+		List<RaycastResult> raycastResults = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(pointer, raycastResults);
+
+		if (raycastResults.Count > 0)
 		{
-			PointerEventData pointer = new PointerEventData(EventSystem.current);
-			pointer.position = Input.mousePosition;
-
-			List<RaycastResult> raycastResults = new List<RaycastResult>();
-			EventSystem.current.RaycastAll(pointer, raycastResults);
-
-			if (raycastResults.Count > 0)
+			foreach (RaycastResult go in raycastResults)
 			{
-				foreach (RaycastResult go in raycastResults)
+				UI_TooltipSource src = go.gameObject.GetComponent<UI_TooltipSource>();
+				if (src)
 				{
-					UI_TooltipSource src = go.gameObject.GetComponent<UI_TooltipSource>();
-					if (src)
+					if (src == current)
 					{
-						if (src == current)
-						{
-							timer += Time.deltaTime;
-						}
-						else
-						{
-							timer = 0;
-							tooltipAudio.pitch = 1 + RandomValue() * uiRules.TTaudioPitchVariance;
-							tooltipAudio.Play();
-							current = src;
-						}
+						timer += Time.deltaTime;
+					}
+					else
+					{
+						timer = 0;
+						tooltipAudio.pitch = 1 + RandomValue() * uiRules.TTaudioPitchVariance;
+						tooltipAudio.Play();
+						current = src;
 					}
 				}
-			} // raycastResults
-			else
-			{
-				timer = 0;
-				current = null;
 			}
+		} // raycastResults
+		else
+		{
+			timer = 0;
+			current = null;
 		}
 	}
 

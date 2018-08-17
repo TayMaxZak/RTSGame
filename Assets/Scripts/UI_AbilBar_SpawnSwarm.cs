@@ -8,12 +8,15 @@ public class UI_AbilBar_SpawnSwarm : UI_Bar
 	[SerializeField]
 	private Image[] fighterGroupIcons;
 
+	// Update visuals for a FighterGroup according to the index and number of living fighters
 	void UpdateFighterGroup(int index, int number)
 	{
 		Image currentIcon = fighterGroupIcons[index];
 
+		// Get all children, active and inactive
 		Transform[] fighterIcons = currentIcon.GetComponentsInChildren<Transform>(true);
 
+		// Go through each "dot" and set its visibility
 		int offset = 2;
 		for (int i = offset; i < fighterIcons.Length - 1; i++)
 		{
@@ -23,7 +26,7 @@ public class UI_AbilBar_SpawnSwarm : UI_Bar
 				fighterIcons[i].gameObject.SetActive(false);
 		}
 
-
+		// Display dead icon if a fighter group is dead
 		Transform deadIcon = fighterIcons[fighterIcons.Length - 1];
 		if (number <= 0)
 		{

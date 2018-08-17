@@ -35,7 +35,7 @@ public class Manager_Projectiles : MonoBehaviour
 		toDelete = new List<Projectile>();
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
-		mask = gameRules.entityLayerMask;
+		mask = gameRules.collisionLayerMask;
 
 		vfx = GameObject.FindGameObjectWithTag("VFXManager").GetComponent<Manager_VFX>();
 	}

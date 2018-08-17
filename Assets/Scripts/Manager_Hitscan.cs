@@ -23,7 +23,7 @@ public class Manager_Hitscan : MonoBehaviour
 	void Awake()
 	{
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
-		mask = gameRules.entityLayerMask;
+		mask = gameRules.collisionLayerMask;
 
 		width = pS.main.startSizeX.constant;
 

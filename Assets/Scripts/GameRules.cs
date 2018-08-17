@@ -11,6 +11,12 @@ public class GameRules
 	public float TESTinitHPAdd = 0;
 	public float TESTinitHPMult = 0.2f;
 
+	[Header("Layer Masks")]
+	public LayerMask entityLayerMask;
+	public LayerMask targetLayerMask;
+	public LayerMask collisionLayerMask;
+	public LayerMask gridLayerMask;
+
 	[Header("Armor")]
 	public float ARMabsorbFlat = 5; // How much armor absorb is guaranteed
 	public float ARMabsorbScaling = 15; // How much armor absorb is added based on current percentage of armor
@@ -63,11 +69,6 @@ public class GameRules
 
 	[Header("Movement")]
 	public float MOVabilityAimingRSMult = 0.33f;
-
-	[Header("Layer Masks")]
-	public LayerMask entityLayerMask;
-	public LayerMask targetLayerMask;
-	public LayerMask gridLayerMask;
 
 
 	[Header("Abilities")]

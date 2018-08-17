@@ -278,6 +278,18 @@ MonoBehaviour:
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
+    entityLayerMask:
+      serializedVersion: 2
+      m_Bits: 1
+    targetLayerMask:
+      serializedVersion: 2
+      m_Bits: 1025
+    collisionLayerMask:
+      serializedVersion: 2
+      m_Bits: 2049
+    gridLayerMask:
+      serializedVersion: 2
+      m_Bits: 512
     ARMabsorbFlat: 5
     ARMabsorbScaling: 15
     ARMrangeMin: 30
@@ -309,15 +321,6 @@ MonoBehaviour:
     DMG_ffDamageMult: 0.5
     DMG_ffDamageMultSplash: 0.25
     MOVabilityAimingRSMult: 0.33
-    entityLayerMask:
-      serializedVersion: 2
-      m_Bits: 1
-    targetLayerMask:
-      serializedVersion: 2
-      m_Bits: 1025
-    gridLayerMask:
-      serializedVersion: 2
-      m_Bits: 512
     ABLYarmorDrainRange: 20
     ABLYarmorDrainDPSEnemy: 9
     ABLYarmorDrainDPSAlly: 3
@@ -405,7 +408,7 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
-  resPoints: 20
+  resPoints: 30
   reclaimPoints: 0
   flagship: {fileID: 0}
 --- !u!114 &114578553437470668
@@ -427,6 +430,6 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
-  resPoints: 20
+  resPoints: 30
   reclaimPoints: 0
   flagship: {fileID: 0}
