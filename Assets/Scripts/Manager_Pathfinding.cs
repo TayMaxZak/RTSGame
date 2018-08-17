@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Diagnostics;
 
 public class Manager_Pathfinding : MonoBehaviour
 {
@@ -18,6 +19,21 @@ public class Manager_Pathfinding : MonoBehaviour
 
 	private int gridSizeX;
 	private int gridSizeY;
+
+	//private GameRules gameRules;
+
+	public int MaxSize
+	{
+		get
+		{
+			return gridSizeX * gridSizeY;
+		}
+	}
+
+	//void Awake()
+	//{
+		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
+	//}
 
 	void Start()
 	{
@@ -92,24 +108,31 @@ public class Manager_Pathfinding : MonoBehaviour
 
 	// Debug visuals
 	public List<PathfindingNode> path;
-	void OnDrawGizmos()
-	{
-		Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+	//void OnDrawGizmos()
+	//{
+	//	Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 
-		if (grid != null)
-		{
-			foreach (PathfindingNode n in grid)
-			{
-				Gizmos.color = n.clear ? Color.white : Color.red;
-				if (path != null)
-				{
-					if (path.Contains(n))
-						Gizmos.color = Color.black;
-				}
-				Gizmos.DrawCube(n.position, new Vector3(1, 0.2f, 1) * nodeRadius * 1.8f);
-			}
-		}
-	}
+	//	if (grid != null)
+	//	{
+	//		foreach (PathfindingNode n in grid)
+	//		{
+	//			Gizmos.color = n.clear ? Color.white : Color.red;
+	//			if (path != null)
+	//			{
+	//				if (path.Contains(n))
+	//				{
+	//					Gizmos.color = Color.black;
+	//					Gizmos.DrawCube(n.position, new Vector3(1, 0.2f, 1) * nodeRadius * 1.8f);
+	//				}
+	//				else if (!n.clear)
+	//				{
+	//					Gizmos.DrawCube(n.position, new Vector3(1, 0.2f, 1) * nodeRadius * 1.8f);
+	//				}
+	//			}
+				
+	//		}
+	//	} // nodes
+	//}
 }
 
 [System.Serializable]
@@ -120,54 +143,48 @@ public class PathfindingSolver
 	[SerializeField]
 	private Transform target;
 
-	private Manager_Pathfinding manager;
+	private Manager_Pathfinding grid;
 
 	public void Init(Manager_Pathfinding pathfinding)
 	{
-		manager = pathfinding;
+		grid = pathfinding;
 	}
 
 	// Update is called once per frame
 	public void Tick()
 	{
-		FindPath(seeker.position, target.position);
+		if (Input.GetButtonDown("Jump"))
+			FindPath(seeker.position, target.position);
 	}
 
 	void FindPath(Vector3 startPos, Vector3 endPos)
 	{
-		PathfindingNode startNode = manager.NodeFromWorldPoint(startPos);
-		PathfindingNode endNode = manager.NodeFromWorldPoint(endPos);
+		Stopwatch sw = new Stopwatch();
+		sw.Start();
 
-		List<PathfindingNode> openSet = new List<PathfindingNode>();
+		PathfindingNode startNode = grid.NodeFromWorldPoint(startPos);
+		PathfindingNode endNode = grid.NodeFromWorldPoint(endPos);
+
+		Heap<PathfindingNode> openSet = new Heap<PathfindingNode>(grid.MaxSize);
 		HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
 		openSet.Add(startNode);
 
 		while (openSet.Count > 0)
 		{
-			PathfindingNode currentNode = openSet[0];
-			for (int i = 1; i < openSet.Count; i++)
-			{
-				// Next node is either the most optimal one, or, if it is tied with another node, the closest to the end
-				if (openSet[i].FCost < currentNode.FCost || 
-					openSet[i].FCost == currentNode.FCost && openSet[i].hCost < currentNode.hCost)
-				{
-					currentNode = openSet[i];
-				}
-			} // for each node in openset
-
-			// Move from open set to closed set
-			openSet.Remove(currentNode);
+			PathfindingNode currentNode = openSet.RemoveFirst();
 			closedSet.Add(currentNode);
 
 			// Found path
 			if (currentNode == endNode)
 			{
+				sw.Stop();
+				UnityEngine.Debug.Log(sw.ElapsedMilliseconds + " ms");
 				RetracePath(startNode, endNode);
 				return;
 			}
 
 			// Check neighbors
-			foreach (PathfindingNode neighbor in manager.FindNeighbors(currentNode))
+			foreach (PathfindingNode neighbor in grid.FindNeighbors(currentNode))
 			{
 				// Obstacle or already in our set
 				if (!neighbor.clear || closedSet.Contains(neighbor))
@@ -184,10 +201,14 @@ public class PathfindingSolver
 					neighbor.hCost = GetDistance(neighbor, endNode);
 					neighbor.parent = currentNode;
 
+					// Add to open set
 					if (!openSet.Contains(neighbor))
 					{
 						openSet.Add(neighbor);
+						// Updates automatically
 					}
+					else // Must manually update because costs changed
+						openSet.UpdateItem(neighbor);
 				}
 			}
 		} // while nodes in openset
@@ -205,7 +226,7 @@ public class PathfindingSolver
 		}
 		path.Reverse();
 
-		manager.path = path;
+		grid.path = path;
 	}
 
 	int GetDistance(PathfindingNode nodeA, PathfindingNode nodeB)

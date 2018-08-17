@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class PathfindingNode
+public class PathfindingNode : IHeapItem<PathfindingNode>
 {
 	public bool clear;
 	public Vector3 position;
@@ -15,6 +15,8 @@ public class PathfindingNode
 	public int gridY;
 
 	public PathfindingNode parent;
+
+	int heapIndex;
 
 	public PathfindingNode(bool isClear, Vector3 pos, int x, int y)
 	{
@@ -29,5 +31,28 @@ public class PathfindingNode
 		get {
 			return gCost + hCost;
 		}
+	}
+
+
+	public int HeapIndex
+	{
+		get
+		{
+			return heapIndex;
+		}
+		set
+		{
+			heapIndex = value;
+		}
+	}
+
+	public int CompareTo(PathfindingNode nodeToCompare)
+	{
+		int compare = FCost.CompareTo(nodeToCompare.FCost);
+		if (compare == 0) // Distance to goal is tiebreaker
+		{
+			compare = hCost.CompareTo(nodeToCompare.hCost);
+		}
+		return -compare;
 	}
 }
