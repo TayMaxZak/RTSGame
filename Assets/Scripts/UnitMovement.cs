@@ -307,8 +307,8 @@ public class UnitMovement
 
 		if (velocityMods.Count > 0)
 		{
-			reachedHGoal = false;
-			reachedVGoal = false;
+			//reachedHGoal = false;
+			//reachedVGoal = false;
 		}
 
 		return new Vector4(total.x, total.y, total.z, maxMagnitude);
@@ -343,7 +343,7 @@ public class UnitMovement
 
 		if (Vector3.SqrMagnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) > selCircleRadius * selCircleRadius)
 		{
-			PathRequestHandler.RequestPath(transform.position, newHGoal, OnPathFound);
+			PathRequestHandler.RequestPath(new PathRequest(transform.position, newHGoal, OnPathFound));
 
 			manualRotationGoal = null; // Clear any current rotation goal
 		}

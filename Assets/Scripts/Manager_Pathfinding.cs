@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 //using System.Diagnostics;
 using System;
+using System.Threading;
 
 public class Manager_Pathfinding : MonoBehaviour
 {
@@ -47,13 +48,14 @@ public class Manager_Pathfinding : MonoBehaviour
 
 		solver = new PathSolver();
 		requestHandler = new PathRequestHandler();
-		solver.Init(this, requestHandler);
+		solver.Init(this);
 		requestHandler.Init(solver);
 	}
 
 	void Update()
 	{
-		// Update our solver
+		// Update our solver/handler
+		requestHandler.Tick();
 	}
 
 	void CreateGrid()
@@ -136,21 +138,19 @@ public class Manager_Pathfinding : MonoBehaviour
 
 public class PathSolver
 {
-	private PathRequestHandler requestHandler;
 	private Manager_Pathfinding grid;
 
-	public void Init(Manager_Pathfinding pathfinding, PathRequestHandler handler)
+	public void Init(Manager_Pathfinding pathfinding)
 	{
 		grid = pathfinding;
-		requestHandler = handler;
 	}
 
-	public void StartFindPath(Vector3 startPos, Vector3 endPos)
-	{
-		grid.StartCoroutine(FindPath(startPos, endPos));
-	}
+	//public void StartFindPath(Vector3 startPos, Vector3 endPos)
+	//{
+	//	grid.StartCoroutine(FindPath(startPos, endPos));
+	//}
 
-	IEnumerator FindPath(Vector3 startPos, Vector3 endPos)
+	public void FindPath(PathRequest request, Action<PathResult> callback)
 	{
 		//Stopwatch sw = new Stopwatch();
 		//sw.Start();
@@ -158,8 +158,8 @@ public class PathSolver
 		Vector3[] waypoints = new Vector3[0];
 		bool pathFound = false;
 
-		PathNode startNode = grid.NodeFromWorldPoint(startPos);
-		PathNode endNode = grid.NodeFromWorldPoint(endPos);
+		PathNode startNode = grid.NodeFromWorldPoint(request.pathStart);
+		PathNode endNode = grid.NodeFromWorldPoint(request.pathEnd);
 
 		if (endNode.clear)
 		{
@@ -212,13 +212,11 @@ public class PathSolver
 			} // while nodes in openset
 		} // endpoints clear
 
-		yield return null;
-
 		if (pathFound)
 		{
 			waypoints = RetracePath(startNode, endNode);
 		}
-		requestHandler.FinishedProcessingPath(waypoints, true);
+		callback(new PathResult(waypoints, pathFound, request.callback));
 
 	} // FindPath()
 
@@ -271,13 +269,10 @@ public class PathSolver
 
 public class PathRequestHandler
 {
-	private Queue<PathRequest> pathRequestQueue = new Queue<PathRequest>();
-	private PathRequest currentPathRequest;
+	Queue<PathResult> results = new Queue<PathResult>();
 
 	static PathRequestHandler instance;
 	private PathSolver solver;
-
-	private bool isProcessingPath;
 
 	public void Init(PathSolver pathfinding)
 	{
@@ -285,44 +280,66 @@ public class PathRequestHandler
 		instance = this;
 	}
 
-	public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> callback)
+	public void Tick()
 	{
-		PathRequest newRequest = new PathRequest(pathStart, pathEnd, callback);
-		instance.pathRequestQueue.Enqueue(newRequest);
-		instance.TryProcessNext();
-	}
-
-	void TryProcessNext()
-	{
-		// If we are not processing a path, and if the queue isn't empty
-		if (!isProcessingPath && pathRequestQueue.Count > 0)
+		// Items are in queue
+		if (results.Count > 0)
 		{
-			// Get first item from queue and remove it
-			currentPathRequest = pathRequestQueue.Dequeue();
-			isProcessingPath = true;
-			solver.StartFindPath(currentPathRequest.pathStart, currentPathRequest.pathEnd);
+			int itemsInQueue = results.Count;
+			lock (results)
+			{
+				for (int i = 0; i < itemsInQueue; i++)
+				{
+					PathResult result = results.Dequeue();
+					result.callback(result.path, result.success);
+				}
+			}
 		}
 	}
 
-	public void FinishedProcessingPath(Vector3[] path, bool success)
+	public static void RequestPath(PathRequest request)
 	{
-		currentPathRequest.callback(path, success);
-		isProcessingPath = false;
-		TryProcessNext();
+		ThreadStart threadStart = delegate
+		{
+			instance.solver.FindPath(request, instance.FinishedProcessingPath);
+		};
+		threadStart.Invoke();
 	}
 
-	struct PathRequest
+	public void FinishedProcessingPath(PathResult result)
 	{
-
-		public Vector3 pathStart;
-		public Vector3 pathEnd;
-		public Action<Vector3[], bool> callback;
-
-		public PathRequest(Vector3 start, Vector3 end, Action<Vector3[], bool> call)
+		// Prevent strange behaviour from multiple threads enqueueing simultaneously
+		lock (results)
 		{
-			pathStart = start;
-			pathEnd = end;
-			callback = call;
+			results.Enqueue(result);
 		}
+	}
+}
+
+public struct PathResult
+{
+	public Vector3[] path;
+	public bool success;
+	public Action<Vector3[], bool> callback;
+
+	public PathResult(Vector3[] path, bool success, Action<Vector3[], bool> callback)
+	{
+		this.path = path;
+		this.success = success;
+		this.callback = callback;
+	}
+}
+
+public struct PathRequest
+{
+	public Vector3 pathStart;
+	public Vector3 pathEnd;
+	public Action<Vector3[], bool> callback;
+
+	public PathRequest(Vector3 start, Vector3 end, Action<Vector3[], bool> call)
+	{
+		pathStart = start;
+		pathEnd = end;
+		callback = call;
 	}
 }

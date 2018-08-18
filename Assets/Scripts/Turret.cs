@@ -334,7 +334,7 @@ public class Turret : MonoBehaviour
 		// If we are targeting a fighter and willing to aim at an ally unit hoping to hit an enemy fighter, we will check for FF in a shorter distance
 		float checkDistance = (riskFFAgainstFighters && !target.HasCollision()) ? Vector3.Distance(firePos.position, target.GetPosition()) : range * gameRules.PRJfriendlyFireCheckRangeMult;
 		float offset = 0.02f; // How much we move in towards our first raycast hit location to make sure the next raycast is technically inside the collider we hit the first time around
-		if (Physics.Raycast(firePos.position, forward, out hit, checkDistance, gameRules.entityLayerMask))
+		if (Physics.Raycast(firePos.position, forward, out hit, checkDistance, gameRules.collisionLayerMask))
 		{
 			if (parentUnit.printInfo)
 				Debug.DrawLine(firePos.position, firePos.position + forward * checkDistance, Color.magenta, 2);
@@ -356,7 +356,7 @@ public class Turret : MonoBehaviour
 						for (int i = 0; i < cols.Length; i++)
 						{
 							// Start where the last raycast left off, plus moved in a little bit to make sure we dont hit the same collider again
-							if (Physics.Raycast(hit.point + forward * offset, forward, out hit, range * gameRules.PRJfriendlyFireCheckRangeMult, gameRules.entityLayerMask))
+							if (Physics.Raycast(hit.point + forward * offset, forward, out hit, checkDistance, gameRules.collisionLayerMask))
 							{
 								if (parentUnit.printInfo)
 									Debug.DrawLine(firePos.position, firePos.position + forward * checkDistance, Color.magenta, 2);
@@ -379,6 +379,10 @@ public class Turret : MonoBehaviour
 										return true;
 									}
 								} // unit 2
+								else
+								{
+									return false;
+								}
 							} // second raycast
 						}
 					} // parent
@@ -388,6 +392,10 @@ public class Turret : MonoBehaviour
 					return true;
 				}
 			} // unit
+			else
+			{
+				return false;
+			}
 		} // first raycast
 		return true;
 	}
