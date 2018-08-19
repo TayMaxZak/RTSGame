@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class PathNode : IHeapItem<PathNode>
 {
-	public bool clear;
+	public Passability clear;
 	public Vector3 position;
 
 	public int gCost;
@@ -18,7 +18,7 @@ public class PathNode : IHeapItem<PathNode>
 
 	int heapIndex;
 
-	public PathNode(bool isClear, Vector3 pos, int x, int y)
+	public PathNode(Passability isClear, Vector3 pos, int x, int y)
 	{
 		clear = isClear;
 		position = pos;
@@ -31,6 +31,13 @@ public class PathNode : IHeapItem<PathNode>
 		get {
 			return gCost + hCost;
 		}
+	}
+
+	public enum Passability
+	{
+		Clear,
+		NearObstacle,
+		Obstacle
 	}
 
 

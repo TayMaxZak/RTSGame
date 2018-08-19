@@ -13,19 +13,20 @@ public class Manager_Pathfinding : MonoBehaviour
 	[SerializeField]
 	private LayerMask obstacleMask;
 	[SerializeField]
-	private Vector2 gridWorldSize; // Area in world coordinates that the grid is going to cover
+	private int scaleFactor = 1;
 	[SerializeField]
-	private float nodeRadius; // How much space each node covers
+	private int gridSizeX = 40;
+	[SerializeField]
+	private int gridSizeY = 40;
+	[SerializeField]
+	private float nodeCheckRadius = 1; // How much space each node covers
 	[SerializeField]
 	private PathNode[,] grid;
 
+	private float radiusMod = 1.1284f;
+
 	private PathSolver solver;
 	private PathRequestHandler requestHandler;
-
-	private int gridSizeX;
-	private int gridSizeY;
-
-	//private GameRules gameRules;
 
 	public int MaxSize
 	{
@@ -35,15 +36,8 @@ public class Manager_Pathfinding : MonoBehaviour
 		}
 	}
 
-	//void Awake()
-	//{
-		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
-	//}
-
 	void Awake()
 	{
-		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / (nodeRadius * 2));
-		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / (nodeRadius * 2));
 		CreateGrid();
 
 		solver = new PathSolver();
@@ -61,15 +55,33 @@ public class Manager_Pathfinding : MonoBehaviour
 	void CreateGrid()
 	{
 		grid = new PathNode[gridSizeX, gridSizeY];
-		Vector3 worldBottomLeft = transform.position - new Vector3(gridWorldSize.x, 0, gridWorldSize.y) * 0.5f;
+		float nodeWidth = scaleFactor * 2;
+		Vector3 worldBottomLeft = transform.position - new Vector3(gridSizeX * nodeWidth / 2, 0, gridSizeY * nodeWidth / 2);
+		List<PathNode> obstacleNodes = new List<PathNode>();
 
 		for (int x = 0; x < gridSizeX; x++)
 		{
 			for (int y = 0; y < gridSizeY; y++)
 			{
-				Vector3 worldPoint = worldBottomLeft + new Vector3(nodeRadius + x * nodeRadius * 2, 0, nodeRadius + y * nodeRadius * 2);
-				bool clear = !(Physics.CheckSphere(worldPoint, nodeRadius, obstacleMask));
-				grid[x, y] = new PathNode(clear, worldPoint, x, y);
+				Vector3 worldPoint = worldBottomLeft + new Vector3(x * nodeWidth + nodeWidth / 2, 0, y * nodeWidth + nodeWidth / 2);
+				
+				bool obs = Physics.CheckSphere(worldPoint, nodeCheckRadius * scaleFactor * radiusMod, obstacleMask);
+				PathNode.Passability pass = obs ? PathNode.Passability.Obstacle : PathNode.Passability.Clear;
+
+				grid[x, y] = new PathNode(pass, worldPoint, x, y);
+
+				if (obs)
+					obstacleNodes.Add(grid[x, y]);
+			}
+		}
+
+		for (int i = 0; i < obstacleNodes.Count; i++)
+		{
+			List<PathNode> neighbors = FindNeighbors(obstacleNodes[i]);
+			for (int j = 0; j < neighbors.Count; j++)
+			{
+				if (neighbors[j].clear == PathNode.Passability.Clear)
+					neighbors[j].clear = PathNode.Passability.NearObstacle;
 			}
 		}
 	}
@@ -77,14 +89,15 @@ public class Manager_Pathfinding : MonoBehaviour
 	// Finds a node that is located closest to the given world position
 	public PathNode NodeFromWorldPoint(Vector3 worldPosition)
 	{
-		float posX = ((worldPosition.x - transform.position.x) + gridWorldSize.x * 0.5f) / (nodeRadius * 2);
-		float posY = ((worldPosition.z - transform.position.z) + gridWorldSize.y * 0.5f) / (nodeRadius * 2);
+		// Move to 0,0, shift over by 50% to have origin at 0,0, then divide position by node diamater
+		float posX = ((worldPosition.x - transform.position.x) + gridSizeX * scaleFactor) / (scaleFactor * 2);
+		float posY = ((worldPosition.z - transform.position.z) + gridSizeY * scaleFactor) / (scaleFactor * 2);
 
-		posX = Mathf.Clamp(posX, 0, (gridWorldSize.x / (nodeRadius * 2)) - 1);
-		posY = Mathf.Clamp(posY, 0, (gridWorldSize.y / (nodeRadius * 2)) - 1);
+		posX = Mathf.Clamp(posX, 0, gridSizeX - 1);
+		posY = Mathf.Clamp(posY, 0, gridSizeY - 1);
 
-		int x = Mathf.FloorToInt(posX);
-		int y = Mathf.FloorToInt(posY);
+		int x = Mathf.FloorToInt(posX * 2) / 2;
+		int y = Mathf.FloorToInt(posY * 2) / 2;
 
 		return grid[x, y];
 	}
@@ -120,16 +133,30 @@ public class Manager_Pathfinding : MonoBehaviour
 		if (!printInfo)
 			return;
 
-		Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+		Gizmos.DrawWireCube(transform.position, new Vector3(gridSizeX * scaleFactor * 2, 1, gridSizeY * scaleFactor * 2));
 		
 		if (grid != null)
 		{
 			foreach (PathNode n in grid)
 			{
-				Gizmos.color = n.clear ? Color.white : Color.red;
-				if (!n.clear)
+				bool clear = n.clear == PathNode.Passability.Clear;
+				if (n.clear == PathNode.Passability.Clear)
 				{
-					Gizmos.DrawCube(n.position, new Vector3(1, 0.2f, 1) * nodeRadius * 1.8f);
+					Gizmos.color = Color.white;
+					Gizmos.DrawWireCube(n.position, Vector3.one * scaleFactor * 2);
+					//Gizmos.DrawSphere(n.position, nodeCheckRadius * (nodeCheckRadius * scaleFactor * radiusMod + scaleFactor * outerRadiusMod));
+				}
+				else if (n.clear == PathNode.Passability.NearObstacle)
+				{
+					Gizmos.color = Color.yellow;
+					Gizmos.DrawWireCube(n.position, Vector3.one * scaleFactor * 2);
+					//Gizmos.DrawSphere(n.position, nodeCheckRadius * (nodeCheckRadius * scaleFactor * radiusMod + scaleFactor * outerRadiusMod));
+				}
+				else if (n.clear == PathNode.Passability.Obstacle)
+				{
+					Gizmos.color = Color.red;
+					Gizmos.DrawSphere(n.position, nodeCheckRadius * nodeCheckRadius * scaleFactor * radiusMod);
+
 				}
 			} // foreach node
 		} // has nodes
@@ -145,11 +172,6 @@ public class PathSolver
 		grid = pathfinding;
 	}
 
-	//public void StartFindPath(Vector3 startPos, Vector3 endPos)
-	//{
-	//	grid.StartCoroutine(FindPath(startPos, endPos));
-	//}
-
 	public void FindPath(PathRequest request, Action<PathResult> callback)
 	{
 		//Stopwatch sw = new Stopwatch();
@@ -161,7 +183,7 @@ public class PathSolver
 		PathNode startNode = grid.NodeFromWorldPoint(request.pathStart);
 		PathNode endNode = grid.NodeFromWorldPoint(request.pathEnd);
 
-		if (endNode.clear)
+		if (endNode.clear != PathNode.Passability.Obstacle)
 		{
 			Heap<PathNode> openSet = new Heap<PathNode>(grid.MaxSize);
 			HashSet<PathNode> closedSet = new HashSet<PathNode>();
@@ -176,7 +198,6 @@ public class PathSolver
 				if (currentNode == endNode)
 				{
 					//sw.Stop();
-					//UnityEngine.Debug.Log(sw.ElapsedMilliseconds + " ms");
 					pathFound = true;
 					break; // Exit out of while
 				}
@@ -185,7 +206,7 @@ public class PathSolver
 				foreach (PathNode neighbor in grid.FindNeighbors(currentNode))
 				{
 					// Obstacle or already in our set
-					if (!neighbor.clear || closedSet.Contains(neighbor))
+					if (neighbor.clear == PathNode.Passability.Obstacle || closedSet.Contains(neighbor))
 					{
 						continue;
 					}
@@ -239,15 +260,25 @@ public class PathSolver
 	Vector3[] SimplifyPath(List<PathNode> path)
 	{
 		List<Vector3> waypoints = new List<Vector3>();
+		List<int> setIndices = new List<int>();
 		Vector2 directionOld = Vector2.zero;
 
-		for (int i = 1; i < path.Count; i++)
+		waypoints.Add(path[0].position); // Add end point
+
+		for (int i = 0; i < path.Count - 1; i++)
 		{
 			// Calculated normalized direction
-			Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
-			if (directionNew != directionOld) // Turn in path
+			Vector2 directionNew = new Vector2(path[i].gridX - path[i + 1].gridX, path[i].gridY - path[i + 1].gridY);
+			if (directionNew != directionOld) // Is this a turn in the path?
 			{
-				waypoints.Add(path[i].position); // Add relevant waypoint
+				// "i" is for strict pathing, "i + 1" is for loose pathing 
+				int indexToSet = path[i + 1].clear == PathNode.Passability.NearObstacle ? i : i + 1;
+
+				if (!setIndices.Contains(indexToSet)) // Did we already add this point?
+				{
+					setIndices.Add(indexToSet); // Don't add the same point several times
+					waypoints.Add(path[indexToSet].position); // Add relevant waypoint
+				}
 			}
 			directionOld = directionNew;
 		}
