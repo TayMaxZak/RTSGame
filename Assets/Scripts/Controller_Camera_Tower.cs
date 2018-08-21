@@ -16,6 +16,10 @@ public class Controller_Camera_Tower : MonoBehaviour
 	//private float zoomSpeed = 1;
 	[SerializeField]
 	private int screenBorderSize = 50;
+	[SerializeField]
+	private float minZ = 10;
+	[SerializeField]
+	private float maxZ = 200;
 
 	[Header("Objects")]
 	[SerializeField]
@@ -37,6 +41,7 @@ public class Controller_Camera_Tower : MonoBehaviour
 		float alt = Input.GetAxis("Altitude");
 		camRoot.transform.Translate(new Vector3(0, alt * speed * Time.deltaTime, 0), Space.Self);
 
+		levelCenter.y = camRoot.transform.position.y;
 		cam.transform.position = camRoot.transform.position;
 
 		Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
@@ -59,22 +64,27 @@ public class Controller_Camera_Tower : MonoBehaviour
 
 			if (Input.mousePosition.y < screenBorderSize)
 			{
-				float mult = (screenBorderSize - Input.mousePosition.y) / screenBorderSize;
-				mult = Mathf.Clamp01(mult);
-				velocityVector.z = -Time.deltaTime * mult;
+				if ((levelCenter - camRoot.transform.position).sqrMagnitude < maxZ * maxZ)
+				{
+					float mult = (screenBorderSize - Input.mousePosition.y) / screenBorderSize;
+					mult = Mathf.Clamp01(mult);
+					velocityVector.z = -Time.deltaTime * mult;
+				}
 			}
 			else if (Input.mousePosition.y > Screen.height - screenBorderSize)
 			{
-				float mult = (Input.mousePosition.y - (Screen.height - screenBorderSize) + 1) / screenBorderSize;
-				mult = Mathf.Clamp01(mult);
-				velocityVector.z = Time.deltaTime * mult;
+				if ((levelCenter - camRoot.transform.position).sqrMagnitude > minZ * minZ)
+				{
+					float mult = (Input.mousePosition.y - (Screen.height - screenBorderSize) + 1) / screenBorderSize;
+					mult = Mathf.Clamp01(mult);
+					velocityVector.z = Time.deltaTime * mult;
+				}
 			}
 
 			velocityVector = Vector3.ClampMagnitude(velocityVector, 1) * speed;
 			camRoot.transform.Translate(velocityVector, Space.Self);
 		}
 
-		levelCenter.y = camRoot.transform.position.y;
 		camRoot.transform.LookAt(levelCenter);
 	}
 }

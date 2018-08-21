@@ -69,7 +69,8 @@ public class GameRules
 
 	[Header("Movement")]
 	public float MOVabilityAimingRSMult = 0.33f;
-
+	public int MOV_heightCount = 10;
+	public int MOV_heightSpacing = 5;
 
 	[Header("Abilities")]
 	public float ABLYarmorDrainRange = 20;

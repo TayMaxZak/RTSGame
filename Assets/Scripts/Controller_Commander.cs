@@ -282,6 +282,7 @@ public class Controller_Commander : MonoBehaviour
 			{
 				Vector3 newVec = u.transform.position + dif;
 				newVec.y = u.transform.position.y;
+				Debug.Log("relative y: " + newVec.y);
 				u.OrderMove(newVec, units.Count > 1);
 			}
 

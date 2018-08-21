@@ -13,17 +13,19 @@ public class PathNode : IHeapItem<PathNode>
 
 	public int gridX;
 	public int gridY;
+	public int gridH;
 
 	public PathNode parent;
 
 	int heapIndex;
 
-	public PathNode(Passability isClear, Vector3 pos, int x, int y)
+	public PathNode(Passability isClear, Vector3 pos, int x, int y, int h)
 	{
 		clear = isClear;
 		position = pos;
 		gridX = x;
 		gridY = y;
+		gridH = h;
 	}
 
 	public int FCost
