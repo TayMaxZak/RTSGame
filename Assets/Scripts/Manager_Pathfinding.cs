@@ -236,6 +236,7 @@ public class PathSolver
 		if (pathFound)
 		{
 			waypoints = RetracePath(startNode, endNode);
+			pathFound = waypoints.Length > 0; // Waypoints could be empty
 		}
 		callback(new PathResult(waypoints, pathFound, request.callback));
 
@@ -251,8 +252,13 @@ public class PathSolver
 			path.Add(currentNode);
 			currentNode = currentNode.parent;
 		}
-		Vector3[] waypoints = SimplifyPath(path);
-		Array.Reverse(waypoints);
+
+		Vector3[] waypoints = new Vector3[0];
+		if (path.Count > 0) // There must be waypoints there in order to simplify them
+		{
+			waypoints = SimplifyPath(path);
+			Array.Reverse(waypoints);
+		}
 		return waypoints;
 	}
 
@@ -264,6 +270,7 @@ public class PathSolver
 		Vector2 directionOld = Vector2.zero;
 
 		waypoints.Add(path[0].position); // Add end point
+		setIndices.Add(0);
 
 		for (int i = 0; i < path.Count - 1; i++)
 		{
@@ -282,6 +289,7 @@ public class PathSolver
 			}
 			directionOld = directionNew;
 		}
+
 		return waypoints.ToArray();
 	}
 
