@@ -71,6 +71,7 @@ public class Manager_Pathfinding : MonoBehaviour
 				{
 					Vector3 worldPoint = worldBottomLeft + new Vector3(x * nodeWidth + nodeWidth / 2, h * gameRules.MOV_heightSpacing, y * nodeWidth + nodeWidth / 2);
 
+					// TODO: Check the entire vertical span from this height to the two adjacent heights
 					bool obs = Physics.CheckSphere(worldPoint, nodeCheckRadius * scaleFactor * radiusMod, obstacleMask);
 					PathNode.Passability pass = obs ? PathNode.Passability.Obstacle : PathNode.Passability.Clear;
 
@@ -99,25 +100,30 @@ public class Manager_Pathfinding : MonoBehaviour
 		// Move to 0,0, shift over by 50% to have origin at 0,0, then divide position by node diamater
 		float posX = ((worldPosition.x - transform.position.x) + gridSizeX * scaleFactor) / (scaleFactor * 2);
 		float posY = ((worldPosition.z - transform.position.z) + gridSizeY * scaleFactor) / (scaleFactor * 2);
+		float posH = worldPosition.y - transform.position.y;
 
 		posX = Mathf.Clamp(posX, 0, gridSizeX - 1);
 		posY = Mathf.Clamp(posY, 0, gridSizeY - 1);
 
-		int x = Mathf.FloorToInt(posX * 2) / 2;
-		int y = Mathf.FloorToInt(posY * 2) / 2;
-
-		Debug.Log("(worldPosition.y - transform.position.y): " + (worldPosition.y - transform.position.y));
-		float posH = worldPosition.y - transform.position.y;
+		int x = Mathf.FloorToInt(posX);
+		int y = Mathf.FloorToInt(posY);
 		int h = HeightToIndex(posH);
 
 		return grid[h][x, y];
+
+		//int x = Mathf.FloorToInt(posX);
+		//int y = Mathf.FloorToInt(posY);
+		//int h = HeightToIndex(posH);
+
+		//// TODO: Use the raw input position instead of choosing a node!
+		//if (x < 0 || y < 0 || h < 0 || x > gridSizeX - 1 || y > gridSizeY - 1 || h > gameRules.MOV_heightCount - 1)
+		//	return null;
 	}
 
 	public int HeightToIndex(float org)
 	{
 		float newVal = org / gameRules.MOV_heightSpacing;
 		int newInt = Mathf.RoundToInt(newVal);
-		Debug.Log("original height float: " + org + " snapped height: " + newInt * gameRules.MOV_heightSpacing);
 		return newInt;
 	}
 
@@ -164,7 +170,7 @@ public class Manager_Pathfinding : MonoBehaviour
 					if (n.clear == PathNode.Passability.Clear)
 					{
 						Gizmos.color = Color.white;
-						//Gizmos.DrawWireCube(n.position, Vector3.one * scaleFactor * 2);
+						Gizmos.DrawWireCube(n.position, Vector3.one * scaleFactor * 2);
 						//Gizmos.DrawSphere(n.position, nodeCheckRadius * (nodeCheckRadius * scaleFactor * radiusMod + scaleFactor * outerRadiusMod));
 					}
 					else if (n.clear == PathNode.Passability.NearObstacle)
@@ -207,7 +213,7 @@ public class PathSolver
 		Vector3[] waypoints = new Vector3[0];
 		bool pathFound = false;
 
-		Debug.Log("startNode height: " + request.pathStart.y + " endNode height: " + request.pathEnd.y);
+		// TODO: Both of these positions can be off the grid!
 		PathNode startNode = grid.NodeFromWorldPoint(request.pathStart);
 		PathNode endNode = grid.NodeFromWorldPoint(request.pathEnd);
 

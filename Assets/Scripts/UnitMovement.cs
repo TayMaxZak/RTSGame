@@ -343,7 +343,6 @@ public class UnitMovement
 
 		if (Vector3.SqrMagnitude(new Vector3(newHGoal.x - transform.position.x, newHGoal.z - transform.position.z)) > selCircleRadius * selCircleRadius)
 		{
-			Debug.Log("hGoal height: " + newHGoal.y);
 			PathRequestHandler.RequestPath(new PathRequest(transform.position, newHGoal, OnPathFound));
 
 			manualRotationGoal = null; // Clear any current rotation goal

@@ -226,6 +226,7 @@ public class Controller_Commander : MonoBehaviour
 		}
 	}
 
+	// TODO: Maybe only remove a Entity that's passed in
 	public void CleanSelection()
 	{
 		List<Entity> toRemove = new List<Entity>();
@@ -282,7 +283,6 @@ public class Controller_Commander : MonoBehaviour
 			{
 				Vector3 newVec = u.transform.position + dif;
 				newVec.y = u.transform.position.y;
-				Debug.Log("relative y: " + newVec.y);
 				u.OrderMove(newVec, units.Count > 1);
 			}
 
@@ -460,6 +460,7 @@ public class Controller_Commander : MonoBehaviour
 					int cur = currentHeight / heightSpacing;
 					int change = Mathf.RoundToInt(delta / heightSpacing);
 					int newGridHeight = (cur + change) * heightSpacing;
+					newGridHeight = Mathf.Clamp(newGridHeight, -gameRules.MOV_heightCount * gameRules.MOV_heightSpacing / 2, gameRules.MOV_heightCount * gameRules.MOV_heightSpacing / 2 - gameRules.MOV_heightSpacing);
 
 					Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 20));
 					lineMouse.SetEffectActive(1, unitPos, worldPoint);

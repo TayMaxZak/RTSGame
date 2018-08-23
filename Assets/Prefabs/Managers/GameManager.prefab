@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRules:
-    useTestValues: 1
+    useTestValues: 0
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -321,6 +321,8 @@ MonoBehaviour:
     DMG_ffDamageMult: 0.5
     DMG_ffDamageMultSplash: 0.25
     MOVabilityAimingRSMult: 0.33
+    MOV_heightCount: 10
+    MOV_heightSpacing: 5
     ABLYarmorDrainRange: 20
     ABLYarmorDrainDPSEnemy: 9
     ABLYarmorDrainDPSAlly: 3
