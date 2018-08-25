@@ -41,6 +41,6 @@ Material:
     - _Speed: 10
     - _Transparency: 0.5
     m_Colors:
-    - _Color: {r: 0.062175613, g: 0.8455882, b: 0.5862517, a: 1}
+    - _Color: {r: 0, g: 1, b: 0.6689656, a: 1}
     - _Distort: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _TintColor: {r: 1, g: 1, b: 1, a: 1}

@@ -110,14 +110,44 @@ public class Manager_Pathfinding : MonoBehaviour
 		int h = HeightToIndex(posH);
 
 		return grid[h][x, y];
+	}
 
-		//int x = Mathf.FloorToInt(posX);
-		//int y = Mathf.FloorToInt(posY);
-		//int h = HeightToIndex(posH);
+	public bool PointOutsideGrid(Vector3 worldPosition)
+	{
+		// Move to 0,0, shift over by 50% to have origin at 0,0, then divide position by node diamater
+		float posX = ((worldPosition.x - transform.position.x) + gridSizeX * scaleFactor) / (scaleFactor * 2);
+		float posY = ((worldPosition.z - transform.position.z) + gridSizeY * scaleFactor) / (scaleFactor * 2);
+		float posH = worldPosition.y - transform.position.y;
 
-		//// TODO: Use the raw input position instead of choosing a node!
-		//if (x < 0 || y < 0 || h < 0 || x > gridSizeX - 1 || y > gridSizeY - 1 || h > gameRules.MOV_heightCount - 1)
-		//	return null;
+		int x = Mathf.FloorToInt(posX);
+		int y = Mathf.FloorToInt(posY);
+		int h = HeightToIndex(posH);
+
+		if (x < 0 || y < 0 || h < 0 || x > gridSizeX - 1 || y > gridSizeY - 1 || h > gameRules.MOV_heightCount - 1)
+			return true;
+		else
+			return false;
+	}
+
+	public bool LineOutsideOfGrid(Vector2 start, Vector2 end)
+	{
+		float nodeWidth = scaleFactor * 2;
+		Vector2 worldBottomLeft = new Vector2(transform.position.x - gridSizeX * nodeWidth / 2, transform.position.z - gridSizeY * nodeWidth / 2);
+		Vector2 worldSize = new Vector2(gridSizeX * nodeWidth, gridSizeY * nodeWidth);
+
+		bool intersects = false;
+		int count = 10;
+		for (int i = 1; i <= count; i++)
+		{
+			Rect gridRect = new Rect(worldBottomLeft, worldSize);
+			if (gridRect.Contains(start + i * (end - start) / count))
+			{
+				intersects = true;
+				break;
+			}
+		}
+
+		return !intersects;
 	}
 
 	public int HeightToIndex(float org)
@@ -269,15 +299,21 @@ public class PathSolver
 
 		if (pathFound)
 		{
-			waypoints = RetracePath(startNode, endNode);
+			waypoints = RetracePath(startNode, endNode, request.pathStart, request.pathEnd);
 			pathFound = waypoints.Length > 0; // Waypoints could be empty
 		}
 		callback(new PathResult(waypoints, pathFound, request.callback));
 
 	} // FindPath()
 
-	Vector3[] RetracePath(PathNode startNode, PathNode endNode)
+	Vector3[] RetracePath(PathNode startNode, PathNode endNode, Vector3 actualStart, Vector3 actualEnd)
 	{
+		// If no pathfinding is needed, we ignore the grid entirely
+		if (grid.LineOutsideOfGrid(new Vector2(actualStart.x, actualStart.z), new Vector2(actualEnd.x, actualEnd.z)))
+		{
+			return new Vector3[] { actualEnd };
+		}
+
 		List<PathNode> path = new List<PathNode>();
 		PathNode currentNode = endNode;
 
@@ -291,7 +327,12 @@ public class PathSolver
 		if (path.Count > 0) // There must be waypoints there in order to simplify them
 		{
 			waypoints = SimplifyPath(path);
-			Array.Reverse(waypoints);
+			Array.Reverse(waypoints); // Closest nodes first
+			if (grid.PointOutsideGrid(actualEnd))
+			{
+				Array.Resize(ref waypoints, waypoints.Length + 1);
+				waypoints[waypoints.Length - 1] = actualEnd;
+			}
 		}
 		return waypoints;
 	}

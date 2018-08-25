@@ -13,6 +13,7 @@
 		Tags { "RenderType"="Opaque" }
 		Cull Off
 		LOD 100
+		Offset -1,-1 // Make sure it does not overlap with things located at the same height
 
 		Pass
 		{
