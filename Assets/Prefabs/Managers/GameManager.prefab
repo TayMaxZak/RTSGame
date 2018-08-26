@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRules:
-    useTestValues: 0
+    useTestValues: 1
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -407,8 +407,9 @@ MonoBehaviour:
   buildUnits:
   - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
   - {fileID: 114214795380621988, guid: 8cc9506457f748847a9d34bd6755cddf, type: 2}
-  - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
+  - {fileID: 114214795380621988, guid: 54f4b3e7cb179aa4483ae56a3be785e3, type: 2}
+  - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
   resPoints: 30
   reclaimPoints: 0
@@ -429,8 +430,9 @@ MonoBehaviour:
   buildUnits:
   - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
   - {fileID: 114214795380621988, guid: 8cc9506457f748847a9d34bd6755cddf, type: 2}
-  - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
+  - {fileID: 114214795380621988, guid: 54f4b3e7cb179aa4483ae56a3be785e3, type: 2}
+  - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
   resPoints: 30
   reclaimPoints: 0

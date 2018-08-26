@@ -1,0 +1,149 @@
+fileFormatVersion: 2
+guid: e013c4591c643b54b9bc923024308049
+timeCreated: 1535240561
+licenseType: Free
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: Bottom Tower
+    100002: Bridge
+    100004: Bridge Structure
+    100006: Engines Hori
+    100008: Engines Vert
+    100010: Front Spire
+    100012: Gun1
+    100014: Gun2
+    100016: Gun3
+    100018: Gun4
+    100020: Gun5
+    100022: Landing Pad
+    100024: Main Hull
+    100026: //RootNode
+    400000: Bottom Tower
+    400002: Bridge
+    400004: Bridge Structure
+    400006: Engines Hori
+    400008: Engines Vert
+    400010: Front Spire
+    400012: Gun1
+    400014: Gun2
+    400016: Gun3
+    400018: Gun4
+    400020: Gun5
+    400022: Landing Pad
+    400024: Main Hull
+    400026: //RootNode
+    2300000: Bottom Tower
+    2300002: Bridge
+    2300004: Bridge Structure
+    2300006: Engines Hori
+    2300008: Engines Vert
+    2300010: Front Spire
+    2300012: Gun1
+    2300014: Gun2
+    2300016: Gun3
+    2300018: Gun4
+    2300020: Gun5
+    2300022: Landing Pad
+    2300024: Main Hull
+    3300000: Bottom Tower
+    3300002: Bridge
+    3300004: Bridge Structure
+    3300006: Engines Hori
+    3300008: Engines Vert
+    3300010: Front Spire
+    3300012: Gun1
+    3300014: Gun2
+    3300016: Gun3
+    3300018: Gun4
+    3300020: Gun5
+    3300022: Landing Pad
+    3300024: Main Hull
+    4300000: Landing Pad
+    4300002: Gun1
+    4300004: Gun2
+    4300006: Gun3
+    4300008: Gun4
+    4300010: Gun5
+    4300012: Front Spire
+    4300014: Engines Hori
+    4300016: Engines Vert
+    4300018: Bridge
+    4300020: Bridge Structure
+    4300022: Bottom Tower
+    4300024: Main Hull
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 39
+    normalImportMode: 1
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

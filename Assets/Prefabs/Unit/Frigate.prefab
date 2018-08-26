@@ -2400,8 +2400,8 @@ MonoBehaviour:
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4430866347287942}
   maxAmmo: 0
-  reloadCooldown: 2
-  rateOfFire: 70
+  reloadCooldown: 4
+  rateOfFire: 100
   shootOffsetRatio: 0
   RS: 90
   baseRotatesOnY: 1
@@ -2414,7 +2414,7 @@ MonoBehaviour:
   projTemplate:
     dmgType: 0
     speed: 30
-    damage: 5
+    damage: 2
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
@@ -2585,8 +2585,8 @@ MonoBehaviour:
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4756140426651930}
   maxAmmo: 0
-  reloadCooldown: 2
-  rateOfFire: 70
+  reloadCooldown: 4
+  rateOfFire: 100
   shootOffsetRatio: 0.5
   RS: 90
   baseRotatesOnY: 1
@@ -2599,7 +2599,7 @@ MonoBehaviour:
   projTemplate:
     dmgType: 0
     speed: 30
-    damage: 5
+    damage: 2
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
@@ -2666,8 +2666,8 @@ MonoBehaviour:
   buildIndex: -1
   curArmor: 300
   maxArmor: 300
-  curHealth: 250
-  maxHealth: 250
+  curHealth: 200
+  maxHealth: 200
   alwaysBurnImmune: 0
   curFragileHealth: 0
   deathClone: {fileID: 1796662562453436, guid: bcfe7a37703b99244ad36433f72888c7, type: 2}
