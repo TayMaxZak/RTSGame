@@ -8,7 +8,8 @@ public enum DamageType
 	Wreck,
 	Swarm,
 	Superlaser,
-	Chemical
+	Chemical,
+	Internal
 }
 
 public static class DamageUtils

@@ -62,6 +62,7 @@ public class Ability_SelfDestruct : Ability
 
 				// Deal damage over time
 				parentUnit.DamageSimple(gameRules.ABLY_selfDestructDPSSelf * Time.deltaTime, 0);
+				parentUnit.AddFragileHealth(gameRules.ABLY_selfDestructDPSSelf * Time.deltaTime);
 				parentUnit.AddStatus(new Status(gameObject, StatusType.SelfDestructSpeedBuff));
 
 				// Getting closer to detonation
@@ -114,6 +115,7 @@ public class Ability_SelfDestruct : Ability
 	{
 		Collider[] cols = Physics.OverlapSphere(transform.position, gameRules.ABLY_selfDestructRange, gameRules.entityLayerMask);
 		List<Unit> units = new List<Unit>();
+		
 		for (int i = 0; i < cols.Length; i++)
 		{
 			Unit unit = GetUnitFromCol(cols[i]);
@@ -147,7 +149,7 @@ public class Ability_SelfDestruct : Ability
 		Instantiate(blastEffectPrefab, transform.position, Quaternion.identity);
 		//Instantiate(damageCloudPrefab, transform.position, Quaternion.identity);
 		
-		parentUnit.Die(DamageType.Normal);
+		parentUnit.Die(DamageType.Internal);
 	}
 
 	Unit GetUnitFromCol(Collider col)

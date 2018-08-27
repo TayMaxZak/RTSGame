@@ -843,7 +843,7 @@ public class Unit : Entity, ITargetable
 
 		if (deathClone)
 		{
-			if (damageType == DamageType.Superlaser)
+			if (damageType == DamageType.Superlaser || damageType == DamageType.Internal)
 			{
 				// No wreck
 			}

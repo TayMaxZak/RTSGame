@@ -351,17 +351,21 @@ public class PathSolver
 		{
 			// Calculated normalized direction
 			Vector2 directionNew = new Vector2(path[i].gridX - path[i + 1].gridX, path[i].gridY - path[i + 1].gridY);
+			bool nearObstacle = path[i + 1].clear == PathNode.Passability.NearObstacle;
+			bool nearObstacle2 = path[i].clear == PathNode.Passability.NearObstacle;
+			int indexToSet = nearObstacle ? i : i + 1;
 			if (directionNew != directionOld) // Is this a turn in the path?
 			{
 				// "i" is for strict pathing, "i + 1" is for loose pathing 
-				int indexToSet = path[i + 1].clear == PathNode.Passability.NearObstacle ? i : i + 1;
 
-				if (!setIndices.Contains(indexToSet)) // Did we already add this point?
+
+				if (!setIndices.Contains(indexToSet) && nearObstacle) // Did we already add this point?
 				{
 					setIndices.Add(indexToSet); // Don't add the same point several times
 					waypoints.Add(path[indexToSet].position); // Add relevant waypoint
 				}
 			}
+
 			directionOld = directionNew;
 		}
 
