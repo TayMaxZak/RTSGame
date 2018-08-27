@@ -71,6 +71,10 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	private float maxV = 180;
 
+	//[Header("State")]
+	//[SerializeField]
+	private bool infiniteAmmo = false;
+
 	private AudioSource audioSource;
 	private GameRules gameRules;
 
@@ -413,9 +417,7 @@ public class Turret : MonoBehaviour
 			else
 			{
 				// Cancel reload
-				StopCoroutine(reloadCoroutine);
-				isReloadCancellable = false;
-				isReloading = false;
+				CancelReload();
 			}
 		}
 
@@ -468,7 +470,7 @@ public class Turret : MonoBehaviour
 
 	void AttemptShot(float delay)
 	{
-		if (curAmmo <= 0 && maxAmmo > 0) // If we run out of ammo mid-shooting, start reload
+		if (curAmmo <= 0 && maxAmmo > 0 && !infiniteAmmo) // If we run out of ammo mid-shooting, start reload
 		{
 			isShooting = false;
 			ToggleFiringAudio(false); // Stop firing audio loop
@@ -487,9 +489,7 @@ public class Turret : MonoBehaviour
 			}
 			else // Shot after manually clearing target
 			{
-				StopCoroutine(reloadCoroutine);
-				isReloadCancellable = false;
-				isReloading = false;
+				CancelReload();
 			}
 		}
 
@@ -636,12 +636,27 @@ public class Turret : MonoBehaviour
 		}
 	}
 	*/
+
+	void CancelReload()
+	{
+		StopCoroutine(reloadCoroutine);
+		isReloadCancellable = false;
+		isReloading = false;
+	}
+
 	protected bool IsNull(ITargetable t)
 	{
 		if ((MonoBehaviour)t == null)
 			return true;
 		else
 			return false;
+	}
+
+	public void SetInfiniteAmmo(bool state)
+	{
+		infiniteAmmo = state; // Don't need to reload
+		if (isReloading)
+			CancelReload(); // Cancel current reload
 	}
 
 	// Visualize range of turrets in editor

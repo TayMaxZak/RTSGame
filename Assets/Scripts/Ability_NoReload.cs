@@ -1,0 +1,119 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Ability_NoReload : Ability
+{
+	private float energy;
+	private Vector3 deltaDurations;
+
+	[SerializeField]
+	private Effect_Point pointEffectPrefab;
+	private Effect_Point pointEffect;
+
+	private Turret[] turrets;
+
+	private bool isActive = false;
+
+	new void Awake()
+	{
+		base.Awake();
+
+		abilityType = AbilityType.NoReload;
+		InitCooldown();
+
+		energy = 1;
+		deltaDurations = AbilityUtils.GetDeltaDurations(AbilityType.NoReload);
+
+		displayInfo.displayFill = true;
+	}
+
+	// Use this for initialization
+	new void Start()
+	{
+		base.Start();
+
+		turrets = parentUnit.GetTurrets();
+
+		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
+		pointEffect.SetEffectActive(isActive);
+	}
+
+	public override void End()
+	{
+		pointEffect.End();
+	}
+
+	new void Update()
+	{
+		base.Update();
+
+		pointEffect.transform.position = transform.position; // Move effect to center of user
+
+		if (isActive)
+		{
+			if (energy > 0) // Needs energy to run
+			{
+				// Consume energy according to active duration
+				energy -= deltaDurations.y * Time.deltaTime;
+				Display(1 - energy);
+			}
+			else
+			{
+				Toggle(); // Toggle to inactive and put on cooldown
+				StartCooldown();
+			}
+		}
+		else // Inactive
+		{
+			if (energy < 1)
+			{
+				// Restore energy according to reset duration
+				energy += deltaDurations.z * Time.deltaTime;
+				Display(1 - energy);
+			}
+		}
+	}
+
+	public override void UseAbility(AbilityTarget target)
+	{
+		if (!offCooldown)
+			return;
+
+		base.UseAbility(target);
+
+		Toggle();
+	}
+
+	void Toggle()
+	{
+		isActive = !isActive;
+
+		foreach (Turret t in turrets)
+			t.SetInfiniteAmmo(isActive);
+
+		pointEffect.SetEffectActive(isActive, isActive);
+	}
+
+	void Display(float fill)
+	{
+		displayInfo.fill = fill;
+		UpdateDisplay(abilityIndex, false);
+	}
+
+	Unit GetUnitFromCol(Collider col)
+	{
+		Entity ent = col.GetComponentInParent<Entity>();
+		if (ent)
+		{
+			if (ent.GetType() == typeof(Unit) || ent.GetType().IsSubclassOf(typeof(Unit)))
+				return (Unit)ent;
+			else
+				return null;
+		}
+		else
+		{
+			return null;
+		}
+	}
+}

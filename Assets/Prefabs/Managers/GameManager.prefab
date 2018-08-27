@@ -380,6 +380,9 @@ MonoBehaviour:
     ABLY_statusMissileExplodeDist: 1.5
     ABLY_statusMissileDamage: 10
     ABLY_statusMissileDamageBonusMult: 0.05
+    ABLY_selfDestructRange: 25
+    ABLY_selfDestructDamage: 500
+    ABLY_selfDestructDPSSelf: 10
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3

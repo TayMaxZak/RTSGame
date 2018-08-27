@@ -10,7 +10,8 @@ public enum EntityType
 	Flagship,
 	Frigate,
 	Apollo,
-	Bulkhead
+	Bulkhead,
+	OldEmpire
 }
 
 public class Entity : MonoBehaviour
@@ -117,7 +118,7 @@ public static class EntityUtils
 				}
 			case EntityType.Frigate:
 				{
-					return "Carrier";
+					return "Redcoat Carrier";
 				}
 			case EntityType.Apollo:
 				{
@@ -126,6 +127,10 @@ public static class EntityUtils
 			case EntityType.Bulkhead:
 				{
 					return "Bulkhead Cruiser";
+				}
+			case EntityType.OldEmpire:
+				{
+					return "Old Empire Frigate";
 				}
 		}
 	}
@@ -140,11 +145,11 @@ public static class EntityUtils
 				}
 			case EntityType.Destroyer:
 				{
-					return "A warship with armor-draining technology and a powerful long-range superlaser.";
+					return "A combat cruiser with armor-draining technology and a powerful long-range superlaser.";
 				}
 			case EntityType.Corvette:
 				{
-					return "A small towing unit which can pull ships and shoot down enemy fighters.";
+					return "A hybrid corvette which can pull ships around and shoot down enemy fighters.";
 				}
 			case EntityType.Flagship:
 				{
@@ -152,15 +157,19 @@ public static class EntityUtils
 				}
 			case EntityType.Frigate:
 				{
-					return "A frigate which carries fighters into battle. Good at close- and long-range combat.";
+					return "A hybrid frigate which carries fighters into battle. Excels at long-range combat.";
 				}
 			case EntityType.Apollo:
 				{
-					return "A bodyguard unit with a damage-absorbing-shield projector and ship-disabling ion missiles.";
+					return "A support frigate with a damage-absorbing-shield projector and ship-disabling ion cannons.";
 				}
 			case EntityType.Bulkhead:
 				{
-					return "A large chemical transport which can melt enemy armor and use resources to repair ships .";
+					return "A support cruiser which can melt enemy armor and use resources to repair ally ships.";
+				}
+			case EntityType.OldEmpire:
+				{
+					return "A combat frigate capable of dangerously overclocking its own systems.";
 				}
 		}
 	}

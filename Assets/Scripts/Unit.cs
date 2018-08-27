@@ -986,6 +986,11 @@ public class Unit : Entity, ITargetable
 		}
 	}
 
+	public Turret[] GetTurrets()
+	{
+		return turrets;
+	}
+
 
 	public Vector3 GetPosition()
 	{

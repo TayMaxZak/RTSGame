@@ -65,7 +65,7 @@ public class GameRules
 
 	[Header("Damage")]
 	public float DMG_ffDamageMult = 0.5f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
-	public float DMG_ffDamageMultSplash = 0.25f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
+	public float DMG_ffDamageMultSplash = 0.25f; // If we do hit an ally, do reduced damage because splash damage friendly fire is almost unavoidable
 
 	[Header("Movement")]
 	public float MOVabilityAimingRSMult = 0.33f;
@@ -128,6 +128,12 @@ public class GameRules
 	public float ABLY_statusMissileExplodeDist = 1.5f; // Distance from detonation point when missile should detonate
 	public float ABLY_statusMissileDamage = 10; // Flat damage dealt once to targets caught in cloud
 	public float ABLY_statusMissileDamageBonusMult = 0.05f; // Ratio of target's max health + max armor
+
+	public float ABLY_selfDestructRange = 25;
+	public float ABLY_selfDestructDamage = 500;
+	public float ABLY_selfDestructDamageFlagMult = 0.33f;
+	public float ABLY_selfDestructDPSSelf = 10;
+	public float ABLY_selfDestructSpeedMult = 1.25f;
 
 
 	[Header("Statuses")]

@@ -8,7 +8,8 @@ public enum StatusType
 	CriticalBurnImmune,
 	SpawnSwarmSpeedNerf,
 	SuperlaserMark,
-	ArmorMelt
+	ArmorMelt,
+	SelfDestructSpeedBuff
 }
 
 [System.Serializable]

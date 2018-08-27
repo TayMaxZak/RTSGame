@@ -248,7 +248,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1324135423468734
 GameObject:
   m_ObjectHideFlags: 1
@@ -566,7 +566,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1627490130701060
 GameObject:
   m_ObjectHideFlags: 1
@@ -2518,9 +2518,9 @@ MonoBehaviour:
   riskFFAgainstFighters: 1
   soundShoot: {fileID: 8300000, guid: 9b32f5287c500dd47beef62df7f1fd40, type: 3}
   firePos: {fileID: 4439424789102846}
-  maxAmmo: 3
+  maxAmmo: 5
   reloadCooldown: 4
-  rateOfFire: 180
+  rateOfFire: 240
   shootOffsetRatio: 0.5
   RS: 90
   baseRotatesOnY: 1
@@ -2621,9 +2621,9 @@ MonoBehaviour:
   riskFFAgainstFighters: 1
   soundShoot: {fileID: 8300000, guid: 9b32f5287c500dd47beef62df7f1fd40, type: 3}
   firePos: {fileID: 4761075872646922}
-  maxAmmo: 3
+  maxAmmo: 5
   reloadCooldown: 4
-  rateOfFire: 180
+  rateOfFire: 240
   shootOffsetRatio: 0
   RS: 90
   baseRotatesOnY: 1

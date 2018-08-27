@@ -158,7 +158,9 @@ public enum AbilityType
 	HealField,
 	Chain,
 	Superlaser,
-	StatusMissile
+	StatusMissile,
+	NoReload,
+	SelfDestruct
 }
 
 public static class AbilityUtils
@@ -187,6 +189,10 @@ public static class AbilityUtils
 				return GetDeltaOf(new Vector3(40, 0, 0));
 			case AbilityType.StatusMissile:
 				return GetDeltaOf(new Vector3(40, 0, 0));
+			case AbilityType.NoReload:
+				return GetDeltaOf(new Vector3(2, 10, 20));
+			case AbilityType.SelfDestruct:
+				return GetDeltaOf(new Vector3(2, 5, 20));
 			default:
 				return GetDeltaOf(new Vector3());
 		}
@@ -249,6 +255,10 @@ public static class AbilityUtils
 				return "Hellrazor Superlaser";
 			case AbilityType.StatusMissile:
 				return "Disintegrate";
+			case AbilityType.NoReload:
+				return "Rapid Refire";
+			case AbilityType.SelfDestruct:
+				return "Overload Reactor";
 			default:
 				return "default";
 		}
@@ -275,6 +285,10 @@ public static class AbilityUtils
 				return "Collects charges for every kill. Firing requires at least 1 charge, dealing massive damage to the target.";
 			case AbilityType.StatusMissile:
 				return "Launches a chemical missile at the target which weakens armor and deals damage over time.";
+			case AbilityType.NoReload:
+				return "Allows all turrets to fire continuously by temporarily suspending their cooling cycles.";
+			case AbilityType.SelfDestruct:
+				return "Disables reactor cooling, causing a massive explosion after several seconds.";
 			default:
 				return "default";
 		}

@@ -318,8 +318,12 @@ public class UnitMovement
 	{
 		float statusSpeedMult = 1;
 		foreach (Status s in parentUnit.GetStatuses()) // TODO: Optimize
+		{
 			if (s.statusType == StatusType.SpawnSwarmSpeedNerf)
 				statusSpeedMult = gameRules.ABLYswarmFirstUseSpeedMult;
+			else if (s.statusType == StatusType.SelfDestructSpeedBuff)
+				statusSpeedMult = gameRules.ABLY_selfDestructSpeedMult;
+		}
 		return statusSpeedMult;
 	}
 
