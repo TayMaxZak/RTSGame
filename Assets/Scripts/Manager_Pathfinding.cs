@@ -147,6 +147,7 @@ public class Manager_Pathfinding : MonoBehaviour
 			}
 		}
 
+		Debug.Log(intersects);
 		return !intersects;
 	}
 
@@ -243,7 +244,6 @@ public class PathSolver
 		Vector3[] waypoints = new Vector3[0];
 		bool pathFound = false;
 
-		// TODO: Both of these positions can be off the grid!
 		PathNode startNode = grid.NodeFromWorldPoint(request.pathStart);
 		PathNode endNode = grid.NodeFromWorldPoint(request.pathEnd);
 
@@ -309,6 +309,7 @@ public class PathSolver
 	Vector3[] RetracePath(PathNode startNode, PathNode endNode, Vector3 actualStart, Vector3 actualEnd)
 	{
 		// If no pathfinding is needed, we ignore the grid entirely
+		// TODO: Bug isn't here
 		if (grid.LineOutsideOfGrid(new Vector2(actualStart.x, actualStart.z), new Vector2(actualEnd.x, actualEnd.z)))
 		{
 			return new Vector3[] { actualEnd };
@@ -326,7 +327,9 @@ public class PathSolver
 		Vector3[] waypoints = new Vector3[0];
 		if (path.Count > 0) // There must be waypoints there in order to simplify them
 		{
+			Debug.Log("count = " + path.Count);
 			waypoints = SimplifyPath(path);
+			Debug.Log("length = " + waypoints.Length);
 			Array.Reverse(waypoints); // Closest nodes first
 			if (grid.PointOutsideGrid(actualEnd))
 			{
@@ -344,29 +347,36 @@ public class PathSolver
 		List<int> setIndices = new List<int>();
 		Vector2 directionOld = Vector2.zero;
 
-		waypoints.Add(path[0].position); // Add end point
-		setIndices.Add(0);
+		//waypoints.Add(path[0].position); // Add end point
+		//setIndices.Add(0);
 
 		for (int i = 0; i < path.Count - 1; i++)
 		{
 			// Calculated normalized direction
 			Vector2 directionNew = new Vector2(path[i].gridX - path[i + 1].gridX, path[i].gridY - path[i + 1].gridY);
-			bool nearObstacle = path[i + 1].clear == PathNode.Passability.NearObstacle;
-			bool nearObstacle2 = path[i].clear == PathNode.Passability.NearObstacle;
-			int indexToSet = nearObstacle ? i : i + 1;
-			if (directionNew != directionOld) // Is this a turn in the path?
+			bool nearObstacle = path[i].clear == PathNode.Passability.NearObstacle;
+			//bool nearObstacle2 = path[i].clear == PathNode.Passability.NearObstacle;
+			if (true/*nearObstacle*/)
 			{
 				// "i" is for strict pathing, "i + 1" is for loose pathing 
-
-
-				if (!setIndices.Contains(indexToSet) && nearObstacle) // Did we already add this point?
+				//int indexToSet = nearObstacle ? i : i + 1;
+				int indexToSet = i;
+				if (directionNew != directionOld) // Is this a turn in the path?
 				{
-					setIndices.Add(indexToSet); // Don't add the same point several times
-					waypoints.Add(path[indexToSet].position); // Add relevant waypoint
+					if (true/*!setIndices.Contains(indexToSet)*/) // Did we already add this point?
+					{
+						setIndices.Add(indexToSet); // Don't add the same point several times
+						waypoints.Add(path[indexToSet].position); // Add relevant waypoint
+					}
 				}
+				else
+					Debug.Log("ignored point " + i + " because its direction is redundant");
+				directionOld = directionNew;
 			}
+			else
+				Debug.Log("ignored point " + i + " because it is not near an obstacle");
 
-			directionOld = directionNew;
+			
 		}
 
 		return waypoints.ToArray();

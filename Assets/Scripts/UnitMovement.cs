@@ -48,7 +48,7 @@ public class UnitMovement
 	private List<Vector3> hGoals;
 	private Vector3 hGoalCur;
 	private int vGoalCur;
-
+	private int vCur;
 
 	//private AbilityTarget rotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
 	private AbilityTarget manualRotationGoal; // Set by movement inputs. If not null, forces the unit to face towards a different goal than the one it wants to path to
@@ -298,7 +298,6 @@ public class UnitMovement
 				curMult *= gameRules.ABLYchainEnemyMult;
 			}
 
-			// TODO: Apply this type of logic to all instances checking if something is a flagship
 			if (parentUnit.Type == EntityType.Flagship)
 				curMult *= gameRules.ABLYchainFlagshipMult;
 

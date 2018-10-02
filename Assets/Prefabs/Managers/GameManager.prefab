@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRules:
-    useTestValues: 1
+    useTestValues: 0
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -380,9 +380,11 @@ MonoBehaviour:
     ABLY_statusMissileExplodeDist: 1.5
     ABLY_statusMissileDamage: 10
     ABLY_statusMissileDamageBonusMult: 0.05
-    ABLY_selfDestructRange: 25
-    ABLY_selfDestructDamage: 500
-    ABLY_selfDestructDPSSelf: 10
+    ABLY_selfDestructRange: 20
+    ABLY_selfDestructDamage: 450
+    ABLY_selfDestructDamageFlagMult: 0.33
+    ABLY_selfDestructDPSSelf: 20
+    ABLY_selfDestructSpeedMult: 1.25
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3
