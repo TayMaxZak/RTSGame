@@ -53,6 +53,8 @@ public class Ability_Superlaser : Ability
 	private Unit targetUnit;
 	private bool checkIfDead = false;
 
+	private List<Unit> claimedBounties;
+
 	new void Awake()
 	{
 		base.Awake();
@@ -62,6 +64,8 @@ public class Ability_Superlaser : Ability
 		stacks = gameRules.ABLYsuperlaserInitStacks;
 
 		displayInfo.displayStacks = true;
+
+		claimedBounties = new List<Unit>();
 
 		hitscans = GameObject.FindGameObjectWithTag("HitscanManager").GetComponent<Manager_Hitscan>();
 	}
@@ -309,10 +313,14 @@ public class Ability_Superlaser : Ability
 		return Quaternion.Euler(components);
 	}
 
-	public void GiveStack()
+	public void GiveStack(Unit bounty)
 	{
-		stacks++;
-		Display();
+		if (!claimedBounties.Contains(bounty))
+		{
+			claimedBounties.Add(bounty);
+			stacks++;
+			Display();
+		}
 	}
 
 	void Reset()

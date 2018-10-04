@@ -75,14 +75,13 @@ public class Manager_Projectiles : MonoBehaviour
 								unit.AddStatus(status);
 							}
 
-							if (DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam) // If we hit an enemy, do full damage
-							{
-								unit.Damage(proj.GetDamage(), proj.CalcRange(), proj.GetDamageType());
-							}
-							else // If we hit an ally, do reduced damage because it was an accidental hit
-							{
-								unit.Damage(proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
-							}
+							// If we hit an ally, do reduced damage because it was an accidental hit
+							bool doFullDamage = DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam;
+
+							DamageResult result = unit.Damage(doFullDamage ? proj.GetDamage() : proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
+
+							if (result.lastHit)
+								proj.GetFrom().AddKill(unit);
 						}
 						else
 						{

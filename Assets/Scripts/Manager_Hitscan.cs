@@ -95,14 +95,13 @@ public class Manager_Hitscan : MonoBehaviour
 						}
 
 						float actualRange = (hit.point - scan.startPosition).magnitude;
-						if (DamageUtils.IgnoresFriendlyFire(scan.GetDamageType()) || unit.team != scanTeam) // If we hit an enemy, do full damage
-						{
-							unit.Damage(scan.GetDamage(), actualRange, scan.GetDamageType());
-						}
-						else // If we hit an ally, do reduced damage because it was an accidental hit
-						{
-							unit.Damage(scan.GetDamage() * gameRules.DMG_ffDamageMult, actualRange, scan.GetDamageType());
-						}
+						// If we hit an ally, do reduced damage because it was an accidental hit
+						bool doFullDamage = DamageUtils.IgnoresFriendlyFire(scan.GetDamageType()) || unit.team != scanTeam;
+
+						DamageResult result = unit.Damage(doFullDamage ? scan.GetDamage() : scan.GetDamage() * gameRules.DMG_ffDamageMult, actualRange, scan.GetDamageType());
+
+						if (result.lastHit)
+							scan.GetFrom().AddKill(unit);
 					}
 					else
 					{

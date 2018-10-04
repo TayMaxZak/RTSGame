@@ -585,6 +585,17 @@ public class Unit : Entity, ITargetable
 			controller.UpdateStatsAbilityIconB(this, index);
 	}
 
+	public void AddKill(Unit bounty)
+	{
+		for (int i = 0; i < abilities.Count; i++)
+		{
+			if (abilities[i].GetAbilityType() == AbilityType.Superlaser)
+			{
+				GetComponent<Ability_Superlaser>().GiveStack(bounty);
+			}
+		}
+	}
+
 	public void AddFragileHealth(float frag)
 	{
 		curFragileHealth = curFragileHealth + frag;
@@ -604,7 +615,9 @@ public class Unit : Entity, ITargetable
 		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
 	}
 
-	public DamageResult Damage(float damageBase, float range, DamageType dmgType) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
+	// TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
+	// TODO: Handle Superlaser mark damage stacking
+	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
 	{
 		OnDamage();
 
@@ -830,7 +843,7 @@ public class Unit : Entity, ITargetable
 				float ratio = s.GetTimeLeft() / (maxHealth + maxArmor);
 				if (ratio >= gameRules.ABLYsuperlaserStackDmgReq)
 					if (s.from) // Potentially the recipient of the stack does not exist anymore
-						s.from.GetComponent<Ability_Superlaser>().GiveStack();
+						s.from.GetComponent<Ability_Superlaser>().GiveStack(this);
 			}
 		}
 
