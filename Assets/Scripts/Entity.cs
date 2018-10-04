@@ -20,6 +20,8 @@ public class Entity : MonoBehaviour
 	[SerializeField]
 	private EntityType type;
 	[SerializeField]
+	protected GameObject model;
+	[SerializeField]
 	protected Transform swarmTarget;
 	[SerializeField]
 	private float selCircleSize = 1;

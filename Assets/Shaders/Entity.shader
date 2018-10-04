@@ -2,6 +2,7 @@
 	Properties{
 		_MainTex("Diffuse Map", 2D) = "white" {}
 		_Color("Color", Color) = (1,1,1,1)
+		_Opacity("Opacity", Range(0, 1)) = 1
 		//_NoiseSteps("Dissolve Resolution", Range(1, 1000)) = 200
 
 		_SSSTex("SSS Map", 2D) = "black" {}
@@ -21,6 +22,7 @@
 //#pragma debug
 	sampler2D _MainTex;
 	fixed4 _Color;
+	half _Opacity;
 
 	sampler2D _SSSTex;
 	fixed4 _SSSColor;
@@ -122,7 +124,7 @@
 		half dissolve = rand(s.screenUV); // Random noise
 		clip(1 - (missingAlpha * clamp(dissolve, 0, 1) + missingAlpha));
 		*/
-		half dissolveAlpha = (1 - s.Alpha);
+		half dissolveAlpha = (1 - _Opacity);
 		half dissolveNoise = rand(s.screenUV);
 		half dissolve = dissolveAlpha + ceil(clamp(dissolveNoise - (1 - dissolveAlpha), 0, 1)) + 0.0001;
 		dissolve = (1 - dissolve);
