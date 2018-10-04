@@ -17,7 +17,6 @@ public class Ability_SelfDestruct : Ability
 	private GameObject damageCloudPrefab;
 
 	private bool isActive = false;
-	private bool hasSuperlaser = false;
 
 	new void Awake()
 	{

@@ -12,6 +12,16 @@ public enum DamageType
 	Internal
 }
 
+public struct DamageResult
+{
+	public bool lastHit;
+
+	public DamageResult(bool lastHit)
+	{
+		this.lastHit = lastHit;
+	}
+}
+
 public static class DamageUtils
 {
 	public static bool IgnoresRangeResist(DamageType dmgType)

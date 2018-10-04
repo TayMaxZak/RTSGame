@@ -169,7 +169,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		return TargetType.Fighter;
 	}
 
-	public bool Damage(float damageBase, float range, DamageType dmgType)
+	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
 	{
 		bool die = false;
 
@@ -188,8 +188,11 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		}
 
 		if (die)
+		{
 			Die();
-
-		return true;
+			return new DamageResult(true);
+		}
+		else
+			return new DamageResult(false);
 	}
 }

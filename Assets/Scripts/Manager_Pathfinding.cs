@@ -147,7 +147,7 @@ public class Manager_Pathfinding : MonoBehaviour
 			}
 		}
 
-		Debug.Log(intersects);
+		//Debug.Log(intersects);
 		return !intersects;
 	}
 
@@ -197,7 +197,7 @@ public class Manager_Pathfinding : MonoBehaviour
 			{
 				foreach (PathNode n in grid[h])
 				{
-					bool clear = n.clear == PathNode.Passability.Clear;
+					//bool clear = n.clear == PathNode.Passability.Clear;
 					if (n.clear == PathNode.Passability.Clear)
 					{
 						Gizmos.color = Color.white;
@@ -327,9 +327,9 @@ public class PathSolver
 		Vector3[] waypoints = new Vector3[0];
 		if (path.Count > 0) // There must be waypoints there in order to simplify them
 		{
-			Debug.Log("count = " + path.Count);
+			//Debug.Log("count = " + path.Count);
 			waypoints = SimplifyPath(path);
-			Debug.Log("length = " + waypoints.Length);
+			//Debug.Log("length = " + waypoints.Length);
 			Array.Reverse(waypoints); // Closest nodes first
 			if (grid.PointOutsideGrid(actualEnd))
 			{
@@ -359,22 +359,22 @@ public class PathSolver
 			if (true/*nearObstacle*/)
 			{
 				// "i" is for strict pathing, "i + 1" is for loose pathing 
-				//int indexToSet = nearObstacle ? i : i + 1;
-				int indexToSet = i;
+				int indexToSet = nearObstacle ? i : i + 1;
+				//int indexToSet = i;
 				if (directionNew != directionOld) // Is this a turn in the path?
 				{
-					if (true/*!setIndices.Contains(indexToSet)*/) // Did we already add this point?
+					if (!setIndices.Contains(indexToSet)) // Did we already add this point?
 					{
 						setIndices.Add(indexToSet); // Don't add the same point several times
 						waypoints.Add(path[indexToSet].position); // Add relevant waypoint
 					}
 				}
-				else
-					Debug.Log("ignored point " + i + " because its direction is redundant");
+				//else
+					//Debug.Log("ignored point " + i + " because its direction is redundant");
 				directionOld = directionNew;
 			}
-			else
-				Debug.Log("ignored point " + i + " because it is not near an obstacle");
+			//else
+			//	Debug.Log("ignored point " + i + " because it is not near an obstacle");
 
 			
 		}

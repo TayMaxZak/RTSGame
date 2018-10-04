@@ -674,7 +674,7 @@ public interface ITargetable
 	int GetTeam(); // What team does this belong to
 	bool HasCollision(); // Is a proper raycast check required to hit this target?
 	TargetType GetTargetType();
-	bool Damage(float damageBase, float range, DamageType dmgType);
+	DamageResult Damage(float damageBase, float range, DamageType dmgType);
 }
 
 public enum TargetType

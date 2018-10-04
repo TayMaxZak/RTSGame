@@ -604,7 +604,7 @@ public class Unit : Entity, ITargetable
 		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
 	}
 
-	public bool Damage(float damageBase, float range, DamageType dmgType) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
+	public DamageResult Damage(float damageBase, float range, DamageType dmgType) // TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
 	{
 		OnDamage();
 
@@ -613,12 +613,12 @@ public class Unit : Entity, ITargetable
 		dmg = StatusDamageMod(dmg, dmgType); // Apply status modifiers to damage first
 
 		if (dmg <= 0)
-			return false;
+			return new DamageResult();
 
 		dmg = DamageShield(dmg); // Try to damage shield before damaging main health pool
 
 		if (dmg <= 0)
-			return false;
+			return new DamageResult(false);
 
 		// Damage lost to range resist / damage falloff, incentivising shooting armor from up close
 		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / (gameRules.ARMrangeMax - gameRules.ARMrangeMin));
@@ -633,7 +633,7 @@ public class Unit : Entity, ITargetable
 		}
 
 		if (dmg <= 0)
-			return false;
+			return new DamageResult(false);
 
 		int armorMeltCount = 0;
 		// Taking non-chemical damage refreshes the duration of ArmorMelt
@@ -675,9 +675,10 @@ public class Unit : Entity, ITargetable
 		if (curHealth <= 0)
 		{
 			Die(dmgType);
+			return new DamageResult(true);
 		}
-
-		return true;
+		else
+			return new DamageResult(false);
 	}
 
 	protected virtual void OnDamage()
