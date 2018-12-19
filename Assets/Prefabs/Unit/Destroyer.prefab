@@ -1852,8 +1852,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  model: {fileID: 1559691936681566}
   swarmTarget: {fileID: 4415277090469646}
   selCircleSize: 2.8
+  visionRange: 40
   printInfo: 0
   disableTurrets: 0
   objectiveWeight: 3

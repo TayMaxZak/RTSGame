@@ -72,6 +72,9 @@ public class GameRules
 	public int MOV_heightCount = 10;
 	public int MOV_heightSpacing = 5;
 
+	//[Header("Vision")]
+	//public float VIS_lol = 25;
+
 	[Header("Abilities")]
 	public float ABLYarmorDrainRange = 20;
 	public float ABLYarmorDrainDPSEnemy = 9;

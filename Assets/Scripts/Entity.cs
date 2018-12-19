@@ -21,10 +21,15 @@ public class Entity : MonoBehaviour
 	private EntityType type;
 	[SerializeField]
 	protected GameObject model;
+	private MeshRenderer meshRenderer;
 	[SerializeField]
 	protected Transform swarmTarget;
 	[SerializeField]
 	private float selCircleSize = 1;
+	
+	[Header("Vision")]
+	[SerializeField]
+	private float visionRange = 40;
 
 	protected GameObject selCircle;
 	protected float selCircleSpeed;
@@ -32,6 +37,13 @@ public class Entity : MonoBehaviour
 	protected bool isHovered;
 
 	protected Controller_Commander controller;
+
+	private bool visible = true;
+	private float opacity;
+	private float opacityT;
+
+	protected Manager_Game gameManager;
+	protected GameRules gameRules;
 
 	public EntityType Type
 	{
@@ -44,12 +56,21 @@ public class Entity : MonoBehaviour
 	// Use this for initialization
 	protected void Start ()
 	{
+		// Check for null because a subclass may have already set these fields
+		if (gameManager == null)
+			gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
+		if (gameRules == null) // Subclass may have already set this field
+			gameRules = gameManager.GameRules; // Grab copy of Game Rules
+
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>();
+
 		selCircle = Instantiate(uiManager.UnitSelCircle, transform.position, Quaternion.identity);
 		//selCircle.transform.SetParent(transform);
 		selCircle.SetActive(false);
 		selCircle.transform.localScale = new Vector3(selCircleSize, selCircleSize, selCircleSize);
 		selCircleSpeed = uiManager.UIRules.SELrotateSpeed;
+
+		meshRenderer = model.GetComponent<MeshRenderer>();
 	}
 	
 	// Update is called once per frame
@@ -64,6 +85,8 @@ public class Entity : MonoBehaviour
 		//	tran.eulerAngles = new Vector3(0, tran.eulerAngles.y + selCircleSpeed * Time.deltaTime * posOrNeg, 0);
 		//	tran.position = transform.position;
 		//}
+
+		opacity = Mathf.Lerp(0, 1, opacityT);
 	}
 
 	public virtual void OnHover(bool hovered)
@@ -93,6 +116,38 @@ public class Entity : MonoBehaviour
 	public void SetSelCircleSize(float size)
 	{
 		selCircleSize = size;
+	}
+
+
+	public void SetVisibility(bool newVis)
+	{
+		visible = newVis;
+		UpdateVisibility();
+	}
+
+	public void ToggleVisibility()
+	{
+		visible = !visible;
+		UpdateVisibility();
+	}
+
+	void UpdateVisibility()
+	{
+		//meshRenderer.enabled = visible;
+		model.SetActive(visible);
+	}
+
+	public void UseVision()
+	{
+
+		Collider[] cols = Physics.OverlapSphere(transform.position, visionRange, gameRules.entityLayerMask);
+		//List<Entity> ents = new List<Entity>();
+		for (int i = 0; i < cols.Length; i++)
+		{
+			Entity ent = cols[i].GetComponentInParent<Entity>();
+			if (ent)
+				ent.SetVisibility(true);
+		}
 	}
 }
 

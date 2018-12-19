@@ -273,8 +273,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b005ef7048fca7d418b812ae71fd4dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FOVtickRate: 1
   GameRules:
-    useTestValues: 0
+    useTestValues: 1
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -313,7 +314,7 @@ MonoBehaviour:
     OBJV_captureAddPerUnitMult: 1
     OBJV_captureAddMax: 1
     RESreclaimTime: 5
-    SPWNflagshipRadius: 50
+    SPWNflagshipRadius: 150
     AUDpitchVariance: 0.05
     PRJmaxTimeAlive: 4
     PRJhitOffset: 0.2
@@ -395,6 +396,7 @@ MonoBehaviour:
   commanders:
   - {fileID: 114578553437470668}
   - {fileID: 114476393172418668}
+  playerCommander: {fileID: 0}
   commanderController: {fileID: 0}
 --- !u!114 &114476393172418668
 MonoBehaviour:

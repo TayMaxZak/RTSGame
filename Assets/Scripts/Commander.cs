@@ -241,7 +241,6 @@ public class Commander : MonoBehaviour
 		selectableUnits.Remove(selUnit);
 	}
 
-
 	public List<UnitSelectable> GetSelectableUnits()
 	{
 		return selectableUnits;

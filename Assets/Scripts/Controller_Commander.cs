@@ -105,6 +105,8 @@ public class Controller_Commander : MonoBehaviour
 		commander = newCommander;
 		commander.SetController(this);
 		commander.InitUI();
+
+		gameManager.SetPlayerCommander(commander);
 	}
 
 	void SetTeam(int newTeam)

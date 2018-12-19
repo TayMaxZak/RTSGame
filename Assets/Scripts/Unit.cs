@@ -60,8 +60,6 @@ public class Unit : Entity, ITargetable
 
 	private bool selected;
 
-	protected Manager_Game gameManager;
-	protected GameRules gameRules;
 	[System.NonSerialized]
 	public UI_HPBar hpBar; // Should be accessible by ability scripts
 	private Vector2 hpBarOffset;
@@ -94,12 +92,6 @@ public class Unit : Entity, ITargetable
 
 		selCircleSpeed = movement.GetRotationSpeed(); // Make the circle better reflect the unit's scale and mobility
 		movement.Init(this);
-
-		// Check for null because a subclass may have already set these fields
-		if (gameManager == null)
-			gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>(); // Find Game Manager
-		if (gameRules == null) // Subclass may have already set this field
-			gameRules = gameManager.GameRules; // Grab copy of Game Rules
 
 		selectable = new UnitSelectable(this, 0);
 		gameManager.GetCommander(team).AddSelectableUnit(selectable); // Make sure commander knows what units can be selected

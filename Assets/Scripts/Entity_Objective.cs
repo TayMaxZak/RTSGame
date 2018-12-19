@@ -13,8 +13,8 @@ public class Entity_Objective : Entity
 
 	private Commander recipient;
 
-	private Manager_Game gameManager;
-	private GameRules gameRules;
+	//private Manager_Game gameManager;
+	//private GameRules gameRules;
 
 	// Use this for initialization
 	new void Start()
