@@ -14,8 +14,12 @@ public class Unit : Entity, ITargetable
 	[Header("Feedback")]
 	[SerializeField]
 	private UI_HPBar hpBarPrefab;
+
+	[Header("Effects")]
 	[SerializeField]
 	private Effect_HP hpEffects;
+	[SerializeField]
+	private Effect_Engine engineEffects;
 
 	[Header("Identification")]
 	public int team = 0;
@@ -127,6 +131,7 @@ public class Unit : Entity, ITargetable
 				tur.gameObject.SetActive(false);
 		}
 
+		engineEffects.SetEngineActive(true);
 	}
 
 	// Update is called once per frame
@@ -225,7 +230,7 @@ public class Unit : Entity, ITargetable
 		UpdateHPBarVal(false);
 
 		// Updating health effects now would interfere with the End() method of effect objects
-		UpdateEffects();
+		UpdateHPEffects();
 	}
 
 	// Update HPBar position and enemy/ally state
@@ -295,7 +300,7 @@ public class Unit : Entity, ITargetable
 			hpBar.SetIsAlly(false);
 	}
 
-	void UpdateEffects()
+	void UpdateHPEffects()
 	{
 		if (hpEffects)
 		{
@@ -618,7 +623,7 @@ public class Unit : Entity, ITargetable
 		dmg = StatusDamageMod(dmg, dmgType); // Apply status modifiers to damage first
 
 		if (dmg <= 0)
-			return new DamageResult();
+			return new DamageResult(false);
 
 		dmg = DamageShield(dmg); // Try to damage shield before damaging main health pool
 
@@ -658,10 +663,10 @@ public class Unit : Entity, ITargetable
 		bool canOverflow = !DamageUtils.CannotOverflowArmor(dmgType);
 
 		// ArmorMelt status affects armor absorption limit (unless this is a Flagship)
-		float flat = armorMeltCount == 0 || Type == EntityType.Flagship ? gameRules.ARMabsorbFlat : gameRules.STAT_armorMeltAbsorbFlat;
-		float scalingMult = armorMeltCount == 0 || Type == EntityType.Flagship ? 1 : gameRules.STAT_armorMeltAbsorbScalingMult;
+		float meltPenaltyFlat = armorMeltCount == 0 || Type == EntityType.Flagship ? gameRules.ARMabsorbFlat : gameRules.STAT_armorMeltAbsorbFlat;
+		float meltScalingMult = armorMeltCount == 0 || Type == EntityType.Flagship ? 1 : gameRules.STAT_armorMeltAbsorbScalingMult;
 
-		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : flat + (curArmor / maxArmor) * gameRules.ARMabsorbScaling * scalingMult); // Absorbtion limit formula
+		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : meltPenaltyFlat + (curArmor / maxArmor) * gameRules.ARMabsorbScaling * meltScalingMult); // Absorbtion limit formula
 		float dmgToArmor = canOverflow ? Mathf.Min(absorbLim, dmg) : dmg; // How much damage armor takes
 		float overflowDmg = canOverflow ? Mathf.Max(0, dmg - absorbLim) : 0; // How much damage health takes (aka by how much damage exceeds absorbtion limit)
 
