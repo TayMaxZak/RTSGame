@@ -16,6 +16,8 @@ public enum EntityType
 
 public class Entity : MonoBehaviour
 {
+	public bool printInfo = false;
+
 	[Header("Entity Properties")]
 	[SerializeField]
 	private EntityType type;
@@ -40,7 +42,7 @@ public class Entity : MonoBehaviour
 
 	private bool visible = true;
 	private float opacity;
-	private float opacityT;
+	private float opacityT = 1;
 
 	protected Manager_Game gameManager;
 	protected GameRules gameRules;
@@ -51,6 +53,11 @@ public class Entity : MonoBehaviour
 		{
 			return type;
 		}
+	}
+
+	void Awake()
+	{
+		
 	}
 
 	// Use this for initialization
@@ -71,6 +78,7 @@ public class Entity : MonoBehaviour
 		selCircleSpeed = uiManager.UIRules.SELrotateSpeed;
 
 		meshRenderer = model.GetComponent<MeshRenderer>();
+		
 	}
 	
 	// Update is called once per frame
@@ -87,6 +95,10 @@ public class Entity : MonoBehaviour
 		//}
 
 		opacity = Mathf.Lerp(0, 1, opacityT);
+		opacityT = Mathf.Clamp01(opacityT + (visible ? 1 : -1) * Time.deltaTime * 4);
+		if (printInfo)
+			Debug.Log(EntityUtils.GetDisplayName(type) + " " + opacity);
+		meshRenderer.material.SetFloat("_Opacity", opacity);
 	}
 
 	public virtual void OnHover(bool hovered)
@@ -134,12 +146,10 @@ public class Entity : MonoBehaviour
 	void UpdateVisibility()
 	{
 		//meshRenderer.enabled = visible;
-		model.SetActive(visible);
 	}
 
 	public void UseVision()
 	{
-
 		Collider[] cols = Physics.OverlapSphere(transform.position, visionRange, gameRules.entityLayerMask);
 		//List<Entity> ents = new List<Entity>();
 		for (int i = 0; i < cols.Length; i++)

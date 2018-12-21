@@ -5,7 +5,7 @@ using UnityEngine;
 public class Manager_Game : MonoBehaviour
 {
 	[SerializeField]
-	private float FOVtickRate = 1f;
+	private float FOWtickRate = 1f;
 
 	[SerializeField]
 	public GameRules GameRules;
@@ -41,26 +41,25 @@ public class Manager_Game : MonoBehaviour
 
 	void Start()
 	{
-		InvokeRepeating("FOWTick", 2f, 2f);
+		InvokeRepeating("FOWTick", FOWtickRate, FOWtickRate);
 	}
 
 	void FOWTick()
 	{
-
-
-		//for (int i = 0; i < commanders.Length; i++)
-		//{
-		//	List<UnitSelectable> unitSels = commanders[i].GetSelectableUnits();
-		//	for (int j = 0; j < unitSels.Count; j++)
-		//	{
-		//		unitSels[j].unit.ToggleVisibility();
-		//	}
-		//}
+		for (int i = 0; i < commanders.Length; i++)
+		{
+			List<UnitSelectable> allUnits = commanders[i].GetSelectableUnits();
+			for (int j = 0; j < allUnits.Count; j++)
+			{
+				allUnits[j].unit.SetVisibility(false);
+			}
+		}
 
 		// Every second check for nearby enemy entities around each of your selectable units
 		List<UnitSelectable> unitSels = playerCommander.GetSelectableUnits();
 		for (int j = 0; j < unitSels.Count; j++)
 		{
+			unitSels[j].unit.SetVisibility(true);
 			unitSels[j].unit.UseVision();
 		}
 	}

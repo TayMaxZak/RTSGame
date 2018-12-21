@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Unit : Entity, ITargetable
 {
-	public bool printInfo = false;
 	public bool disableTurrets = false;
 
 	[Header("Objectives")]
