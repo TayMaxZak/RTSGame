@@ -151,6 +151,11 @@ public class Ability_SelfDestruct : Ability
 		parentUnit.Die(DamageType.Internal);
 	}
 
+	public bool GetIsActive()
+	{
+		return isActive;
+	}
+
 	Unit GetUnitFromCol(Collider col)
 	{
 		Entity ent = col.GetComponentInParent<Entity>();

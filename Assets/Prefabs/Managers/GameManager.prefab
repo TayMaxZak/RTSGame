@@ -273,7 +273,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b005ef7048fca7d418b812ae71fd4dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FOVtickRate: 1
+  FOWtickRate: 1
   GameRules:
     useTestValues: 1
     TESTtimeMult: 0.2
@@ -351,7 +351,7 @@ MonoBehaviour:
     ABLYswarmFighterHealth: 20
     ABLYhealFieldRange: 25
     ABLYhealFieldAllyGPS: 5
-    ABLYhealFieldUserGPSMult: 2
+    ABLYhealFieldUserGPSMult: 1.75
     ABLYhealFieldConvertGPS: 5
     ABLYhealFieldAllyGPSBonusMult: 0.02
     ABLYhealFieldConvertDelay: 5

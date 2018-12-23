@@ -12,6 +12,7 @@ public class Ability_NoReload : Ability
 	private Effect_Point pointEffect;
 
 	private Turret[] turrets;
+	private Ability_SelfDestruct selfDestruct;
 
 	private bool isActive = false;
 
@@ -34,6 +35,7 @@ public class Ability_NoReload : Ability
 		base.Start();
 
 		turrets = parentUnit.GetTurrets();
+		selfDestruct = parentUnit.GetComponent<Ability_SelfDestruct>();
 
 		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
 		pointEffect.SetEffectActive(isActive);
@@ -54,8 +56,9 @@ public class Ability_NoReload : Ability
 		{
 			if (energy > 0) // Needs energy to run
 			{
-				// Consume energy according to active duration
-				energy -= deltaDurations.y * Time.deltaTime;
+				// Consume energy according to active duration (unless we are self destructing)
+				if (!selfDestruct.GetIsActive())
+					energy -= deltaDurations.y * Time.deltaTime;
 				Display(1 - energy);
 			}
 			else
