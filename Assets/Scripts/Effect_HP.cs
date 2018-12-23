@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Effect_HP : MonoBehaviour
+public class Effect_HP : MonoBehaviour, IHideable
 {
 	//private AudioSource audioSource;
 	[SerializeField]
@@ -25,6 +25,7 @@ public class Effect_HP : MonoBehaviour
 	private List<ParticleSystem> firePSystems;
 
 	private bool ended = false;
+	private bool fireOn = false;
 
 	void Awake()
 	{
@@ -103,6 +104,8 @@ public class Effect_HP : MonoBehaviour
 
 	void SetFireActive(bool isActive)
 	{
+		fireOn = isActive;
+
 		if (ended)
 			return;
 
@@ -147,4 +150,18 @@ public class Effect_HP : MonoBehaviour
 		Destroy(firePos.gameObject, duration);
 		Destroy(gameObject, duration);
 	}
+
+
+	public void SetVisible(bool visible)
+	{
+		firePos.gameObject.SetActive(visible);
+		if (visible && fireOn)
+		{
+			foreach (ParticleSystem firePS in firePSystems)
+			{
+				if (!firePS.isPlaying)
+					firePS.Play();
+			}
+		}
+	} // SetVisible()
 }

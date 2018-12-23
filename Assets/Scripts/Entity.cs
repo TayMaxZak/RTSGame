@@ -40,7 +40,7 @@ public class Entity : MonoBehaviour
 
 	protected Controller_Commander controller;
 
-	private bool visible = true;
+	protected bool visible = true;
 	private float opacity;
 	private float opacityT = 1;
 
@@ -103,6 +103,11 @@ public class Entity : MonoBehaviour
 
 	public virtual void OnHover(bool hovered)
 	{
+		if (!visible)
+		{
+			hovered = false;
+		}
+
 		isHovered = hovered;
 	}
 
@@ -133,6 +138,14 @@ public class Entity : MonoBehaviour
 
 	public void SetVisibility(bool newVis)
 	{
+		SetVisibility(newVis, true);
+	}
+
+	public void SetVisibility(bool newVis, bool update)
+	{
+		if (visible == newVis)
+			return;
+
 		visible = newVis;
 		UpdateVisibility();
 	}
@@ -143,7 +156,7 @@ public class Entity : MonoBehaviour
 		UpdateVisibility();
 	}
 
-	void UpdateVisibility()
+	protected virtual void UpdateVisibility()
 	{
 		//meshRenderer.enabled = visible;
 	}

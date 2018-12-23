@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Effect_Engine : MonoBehaviour
+public class Effect_Engine : MonoBehaviour, IHideable
 {
 	//private AudioSource audioSource;
 	private float fireThresh = 0.334f; // Overwritten by GameRules
@@ -93,4 +93,15 @@ public class Effect_Engine : MonoBehaviour
 		Destroy(enginePos.gameObject, duration);
 		Destroy(gameObject, duration);
 	}
+
+
+	public void SetVisible(bool visible)
+	{
+		enginePos.gameObject.SetActive(visible);
+	}
+}
+
+public interface IHideable
+{
+	void SetVisible(bool visible);
 }

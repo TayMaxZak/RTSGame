@@ -46,12 +46,23 @@ public class Manager_Game : MonoBehaviour
 
 	void FOWTick()
 	{
+		// Default enemy units as invisible and your units as visible
 		for (int i = 0; i < commanders.Length; i++)
 		{
 			List<UnitSelectable> allUnits = commanders[i].GetSelectableUnits();
-			for (int j = 0; j < allUnits.Count; j++)
+			if (commanders[i] != playerCommander)
 			{
-				allUnits[j].unit.SetVisibility(false);
+				for (int j = 0; j < allUnits.Count; j++)
+				{
+					allUnits[j].unit.SetVisibility(false);
+				}
+			}
+			else
+			{
+				for (int j = 0; j < allUnits.Count; j++)
+				{
+					allUnits[j].unit.SetVisibility(true);
+				}
 			}
 		}
 
@@ -59,7 +70,6 @@ public class Manager_Game : MonoBehaviour
 		List<UnitSelectable> unitSels = playerCommander.GetSelectableUnits();
 		for (int j = 0; j < unitSels.Count; j++)
 		{
-			unitSels[j].unit.SetVisibility(true);
 			unitSels[j].unit.UseVision();
 		}
 	}

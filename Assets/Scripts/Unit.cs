@@ -996,11 +996,18 @@ public class Unit : Entity, ITargetable
 		}
 	}
 
+	override protected void UpdateVisibility()
+	{
+		base.UpdateVisibility();
+		engineEffects.SetVisible(visible);
+		hpEffects.SetVisible(visible);
+	}
+
+
 	public Turret[] GetTurrets()
 	{
 		return turrets;
 	}
-
 
 	public Vector3 GetPosition()
 	{
