@@ -3745,9 +3745,9 @@ MonoBehaviour:
   firePos: {fileID: 4278976958987808}
   maxAmmo: 0
   reloadCooldown: 2
-  rateOfFire: 200
+  rateOfFire: 150
   shootOffsetRatio: 0
-  RS: 90
+  RS: 30
   baseRotatesOnY: 1
   pivotX: {fileID: 4278976958987808}
   pivotY: {fileID: 4541190231139758}
@@ -3782,9 +3782,9 @@ MonoBehaviour:
   firePos: {fileID: 4390999690557066}
   maxAmmo: 0
   reloadCooldown: 2
-  rateOfFire: 200
+  rateOfFire: 150
   shootOffsetRatio: 0
-  RS: 90
+  RS: 30
   baseRotatesOnY: 1
   pivotX: {fileID: 4390999690557066}
   pivotY: {fileID: 4579288717554934}
@@ -3819,9 +3819,9 @@ MonoBehaviour:
   firePos: {fileID: 4288816455629380}
   maxAmmo: 0
   reloadCooldown: 2
-  rateOfFire: 200
+  rateOfFire: 150
   shootOffsetRatio: 0
-  RS: 90
+  RS: 30
   baseRotatesOnY: 1
   pivotX: {fileID: 4288816455629380}
   pivotY: {fileID: 4841733033671590}
@@ -3870,9 +3870,9 @@ MonoBehaviour:
   firePos: {fileID: 4327116471365614}
   maxAmmo: 0
   reloadCooldown: 2
-  rateOfFire: 200
+  rateOfFire: 150
   shootOffsetRatio: 0
-  RS: 90
+  RS: 30
   baseRotatesOnY: 1
   pivotX: {fileID: 4327116471365614}
   pivotY: {fileID: 4302420561652690}
