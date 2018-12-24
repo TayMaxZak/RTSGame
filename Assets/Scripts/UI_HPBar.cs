@@ -46,6 +46,18 @@ public class UI_HPBar : UI_Bar
 	private float fragileTarg = 1;
 	private float fragileT = 0;
 
+	[SerializeField]
+	private Image ionFill;
+	private float ionCur = 0;
+	private float ionTarg = 1;
+	private float ionT = 0;
+	private Color ionFlashCur = Color.cyan;
+	private float ionFlashT = 0;
+	private bool ionFlashUp = true;
+	[SerializeField]
+	private Color ionColor1 = Color.cyan;
+	[SerializeField]
+	private Color ionColor2 = Color.white;
 
 	[SerializeField]
 	private Image armorFill;
@@ -101,6 +113,7 @@ public class UI_HPBar : UI_Bar
 		armorT += Time.deltaTime / uiRules.HPBupdateTime;
 		shieldT += Time.deltaTime / uiRules.HPBupdateTime;
 		fragileT += Time.deltaTime / uiRules.HPBupdateTime;
+		ionT += Time.deltaTime / uiRules.HPBupdateTime;
 
 		UpdateDisplay();
 
@@ -115,16 +128,24 @@ public class UI_HPBar : UI_Bar
 		armorCur = Mathf.Lerp(armorCur, armorTarg, armorT);
 		shieldCur = Mathf.Lerp(shieldCur, shieldTarg, shieldT);
 		fragileCur = Mathf.Lerp(fragileCur, fragileTarg, fragileT);
+		ionCur = Mathf.Lerp(ionCur, ionTarg, ionT);
 
 		// Update sizes of bars
 		healthFill.rectTransform.sizeDelta = new Vector2(healthWidth * healthCur, healthFill.rectTransform.sizeDelta.y);
 		armorFill.rectTransform.sizeDelta = new Vector2(armorWidth * armorCur, armorFill.rectTransform.sizeDelta.y);
 		shieldFill.rectTransform.sizeDelta = new Vector2(shieldWidth * shieldCur, shieldFill.rectTransform.sizeDelta.y);
+
 		// Update sizes and positions of modifier bars
 		fragileFill.rectTransform.sizeDelta = new Vector2(Mathf.Min(fragileCur, 1 - healthCur) * healthWidth, fragileFill.rectTransform.sizeDelta.y);
 		if (gameObject.activeSelf) // Update rect transform only when active to stop Unity visual bug from happening
-			fragileFill.rectTransform.position = new Vector2(healthWidth * healthCur + healthFill.rectTransform.position.x, healthFill.rectTransform.position.y);
+			fragileFill.rectTransform.position = new Vector2(healthWidth * healthCur + healthFill.rectTransform.position.x, fragileFill.rectTransform.position.y);
 
+		if (ionFill)
+		{
+			ionFill.rectTransform.sizeDelta = new Vector2(Mathf.Min(ionCur, healthCur) * healthWidth, ionFill.rectTransform.sizeDelta.y);
+			if (gameObject.activeSelf) // Update rect transform only when active to stop Unity visual bug from happening
+				ionFill.rectTransform.position = new Vector2(healthWidth * healthCur + healthFill.rectTransform.position.x, ionFill.rectTransform.position.y);
+		}
 		// What color should the border be?
 		borderFill.color = armorTarg > uiRules.HPBbordColorThresh ? (enemy ? armorEnemyColor : armorAllyColor) : (enemy ? healthEnemyColor : healthAllyColor);
 
@@ -150,6 +171,29 @@ public class UI_HPBar : UI_Bar
 		}
 		else
 			healthFill.color = (enemy ? healthEnemyColor : healthAllyColor);
+
+		// If we have ions,
+		if (ionCur > 0)
+		{
+			// animate ion color between 2 colors
+			if (ionFlashUp)
+			{
+				ionFlashT += Random.value * Time.deltaTime / uiRules.HPBblinkTime;
+				ionFlashCur = Color.Lerp(ionColor1, ionColor2, ionFlashT);
+				if (ionFlashT > 1)
+					ionFlashUp = false;
+			}
+			else
+			{
+				ionFlashT -= Random.value * Time.deltaTime / uiRules.HPBblinkTime;
+				ionFlashCur = Color.Lerp(ionColor1, ionColor2, ionFlashT);
+				if (ionFlashT < 0)
+					ionFlashUp = true;
+			}
+			ionFill.color = ionFlashCur;
+		}
+		//else
+			//ionFill.color = ionColor1;
 	}
 
 	public override void FastUpdate()
@@ -158,6 +202,7 @@ public class UI_HPBar : UI_Bar
 		armorT = 1;
 		shieldT = 1;
 		fragileT = 1;
+		ionT = 1;
 		UpdateDisplay();
 
 		foreach (UI_Bar bar in addons)
@@ -202,6 +247,17 @@ public class UI_HPBar : UI_Bar
 		{
 			fragileTarg = frag;
 			fragileT = Tinitial;
+		}
+	}
+
+	public void SetIonHealth(float ion)
+	{
+		float Tinitial = 0;
+
+		if (ionTarg != ion)
+		{
+			ionTarg = ion;
+			ionT = Tinitial;
 		}
 	}
 

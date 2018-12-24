@@ -147,14 +147,18 @@ public class Ability_IonMissile : Ability
 							}
 
 							float curShields = unit.GetShields().x;
-							DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage + gameRules.ABLY_ionMissileDamageBonusMult * curShields, (startPosition.position - hit.point).magnitude, DamageType.Ion);
+							float maxShields = unit.GetShields().y;
+							DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage + gameRules.ABLY_ionMissileDamageBonusMult * curShields + gameRules.ABLY_ionMissileDamageBonusMult * maxShields, (startPosition.position - hit.point).magnitude, DamageType.Ion);
 
 							if (!result.lastHit)
 							{
-								if (unit.GetIons() <= gameRules.ABLY_ionMissileDecayCutoff)
-									unit.AddIons(gameRules.ABLY_ionMissileIonsFirst, true);
-								else
-									unit.AddIons(gameRules.ABLY_ionMissileIonsNext, true);
+								if (curShields <= 0)
+								{
+									if (unit.GetIons() <= gameRules.ABLY_ionMissileDecayCutoff)
+										unit.AddIons(gameRules.ABLY_ionMissileIonsFirst, true);
+									else
+										unit.AddIons(gameRules.ABLY_ionMissileIonsNext, true);
+								}
 							}
 						}
 						else

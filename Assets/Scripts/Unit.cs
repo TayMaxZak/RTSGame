@@ -296,6 +296,7 @@ public class Unit : Entity, ITargetable
 		int shieldMax = Mathf.RoundToInt(CalcShieldPoolMax());
 		bool newValues = hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / (armorMax == 0 ? 1 : armorMax), CalcShieldPoolCur() / (shieldMax == 0 ? 1 : shieldMax)), isBurning);
 		UpdateHPBarValFrag();
+		UpdateHPBarValIon();
 		if (fastUpdate)
 			hpBar.FastUpdate();
 
@@ -310,6 +311,11 @@ public class Unit : Entity, ITargetable
 	void UpdateHPBarValFrag()
 	{
 		hpBar.SetFragileHealth(curFragileHealth / maxHealth);
+	}
+
+	void UpdateHPBarValIon()
+	{
+		hpBar.SetIonHealth(curIons / 100);
 	}
 
 	void UpdateHPBarAlly()
@@ -633,6 +639,8 @@ public class Unit : Entity, ITargetable
 	public void AddIons(float ions, bool refreshTimer)
 	{
 		curIons += ions;
+		UpdateHPBarValIon();
+
 		if (ions > 0)
 		{
 			if (refreshTimer)
@@ -659,11 +667,17 @@ public class Unit : Entity, ITargetable
 
 	void CheckIons()
 	{
-		if ((Mathf.Round(curIons) / 100) >= (curHealth / maxHealth))
+		// Ion stun condition and unit isn't already dead from other causes
+		if ((Mathf.Round(curIons) / 100) >= (curHealth / maxHealth) && curHealth > 0)
 		{
-			Debug.Log("STUNNED");
-			Die(DamageType.Ion);
+			IonStun();
 		}
+	}
+
+	void IonStun()
+	{
+		Debug.Log("STUNNED");
+		Die(DamageType.Ion);
 	}
 
 	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
@@ -876,6 +890,7 @@ public class Unit : Entity, ITargetable
 		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
 		curHealth = Mathf.Min(curHealth - healthDmg, maxHealth);
 		ClampFragileHealth(); // Fragile health cannot exceed the room left in the health bar
+		CheckIons();
 		UpdateHealth();
 
 		if (curHealth <= 0)
