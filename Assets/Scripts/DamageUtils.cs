@@ -31,6 +31,8 @@ public static class DamageUtils
 		{
 			case DamageType.Superlaser:
 				return true;
+			case DamageType.Ion:
+				return true;
 			default:
 				return false;
 		}

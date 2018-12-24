@@ -142,6 +142,13 @@ public class GameRules
 	public float ABLY_ionMissileRangeMissile = 60; // Max distance for before missile detonates
 	public float ABLY_ionMissileMaxLifetime = 10; // How long the missile can exist before detonating
 	public float ABLY_ionMissileDamage = 10; // Flat damage dealt on impact
+	public float ABLY_ionMissileDamageBonusMult = 0.1f; // Ratio of target's current shields dealt on impact
+	public float ABLY_ionMissileIonsFirst = 20f;
+	public float ABLY_ionMissileIonsNext = 20f;
+	public float ABLY_ionMissileArmorDmgToIons = 0.5f;
+	public float ABLY_ionMissileDecayDelay = 10f;
+	public float ABLY_ionMissileDecayDPS = 5;
+	public float ABLY_ionMissileDecayCutoff = 10;
 
 
 	[Header("Statuses")]

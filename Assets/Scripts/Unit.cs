@@ -45,6 +45,10 @@ public class Unit : Entity, ITargetable
 	private float curFragileTimer;
 
 	[SerializeField]
+	private float curIons = 0;
+	private float curIonTimer;
+
+	[SerializeField]
 	private GameObject deathClone; // Object to spawn on death
 	private bool dead;
 
@@ -106,6 +110,7 @@ public class Unit : Entity, ITargetable
 			//curFragileHealth = (maxHealth - curHealth) * gameRules.TESTinitHPMult;
 		}
 		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
+		curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
 
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
 		 //hpBar = Instantiate(hpBarPrefab);
@@ -175,6 +180,23 @@ public class Unit : Entity, ITargetable
 				if (curFragileHealth <= 0)
 					curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
 			}
+		}
+
+		if (curIons > gameRules.ABLY_ionMissileDecayCutoff)
+		{
+			curIonTimer -= Time.deltaTime;
+			if (curIonTimer <= 0)
+			{
+				float amount = gameRules.ABLY_ionMissileDecayDPS;
+				AddIons(-amount * Time.deltaTime, false);
+
+				if (curIons <= 0)
+					curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
+			}
+		}
+		if (printInfo)
+		{
+			Debug.Log("cur ions = " + curIons);
 		}
 
 		if (Time.frameCount == 2)
@@ -601,11 +623,47 @@ public class Unit : Entity, ITargetable
 		curFragileHealth = Mathf.Clamp(curFragileHealth, 0, maxHealth - curHealth); // Fragile health cannot exceed the room left in the health bar
 	}
 
-	// Note: does not update HPbar values!
-	public void RemoveFragileHealth()
+	// Note: does not update HPbar values! The only way you can remove fragile health is by dealing damage, in which you case you would update the HPBar anyway
+	void RemoveFragileHealth()
 	{
 		curFragileHealth = 0;
 		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
+	}
+
+	public void AddIons(float ions, bool refreshTimer)
+	{
+		curIons += ions;
+		if (ions > 0)
+		{
+			if (refreshTimer)
+				curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
+
+			//if (curIons >= 100)
+			//{
+			//	curIons = 100;
+			//	Debug.Log("MAXED OUT");
+			//	Die(DamageType.Ion);
+			//}
+
+			CheckIons();
+		}
+		//curIons = Mathf.Clamp(curIons, 0, 100);
+		else
+		{
+			if (curIons <= gameRules.ABLY_ionMissileDecayCutoff)
+				curIons = 0;
+		}
+
+		UpdateHPBarVal(false);
+	}
+
+	void CheckIons()
+	{
+		if ((Mathf.Round(curIons) / 100) >= (curHealth / maxHealth))
+		{
+			Debug.Log("STUNNED");
+			Die(DamageType.Ion);
+		}
 	}
 
 	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
@@ -671,6 +729,12 @@ public class Unit : Entity, ITargetable
 		if (healthChange < 0) // If this damage tick penetrated armor, remove fragile health
 		{
 			RemoveFragileHealth();
+			CheckIons();
+		}
+		else
+		{
+			if (curIons > gameRules.ABLY_ionMissileDecayCutoff)
+				AddIons((dmgToArmor / maxArmor) * 100 * gameRules.ABLY_ionMissileArmorDmgToIons, false);
 		}
 		curArmor = Mathf.Max(curArmor, 0);
 		
@@ -911,6 +975,11 @@ public class Unit : Entity, ITargetable
 	public Vector2 GetShields()
 	{
 		return new Vector2(CalcShieldPoolCur(), CalcShieldPoolMax());
+	}
+
+	public float GetIons()
+	{
+		return curIons;
 	}
 
 	public bool IsDead()
