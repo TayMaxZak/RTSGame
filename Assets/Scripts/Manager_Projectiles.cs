@@ -22,6 +22,8 @@ public class Manager_Projectiles : MonoBehaviour
 
 	private Manager_VFX vfx;
 	private GameRules gameRules;
+	private float SL_turretMult = 1.15f; // Empirical multiplier to make 20-damage shots count as expected for superlaser marks
+	private float SL_superlaserMult = 20f; // Guarentee a superlaser mark if you use a superlaser shot on a target
 
 	void Awake()
 	{
@@ -70,7 +72,7 @@ public class Manager_Projectiles : MonoBehaviour
 							if (status != null)
 							{
 								if (status.statusType == StatusType.SuperlaserMark)
-									status.SetTimeLeft(proj.GetDamage()); // Store damage in timeLeft field of status
+									status.SetTimeLeft(proj.GetDamage() < gameRules.ABLYsuperlaserDmgByStacks[1] ? proj.GetDamage() * SL_turretMult : proj.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
 
 								unit.AddStatus(status);
 							}

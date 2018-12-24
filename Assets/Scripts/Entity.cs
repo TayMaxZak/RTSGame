@@ -96,8 +96,6 @@ public class Entity : MonoBehaviour
 
 		opacity = Mathf.Lerp(0, 1, opacityT);
 		opacityT = Mathf.Clamp01(opacityT + (visible ? 1 : -1) * Time.deltaTime * 4);
-		if (printInfo)
-			Debug.Log(EntityUtils.GetDisplayName(type) + " " + opacity);
 		meshRenderer.material.SetFloat("_Opacity", opacity);
 	}
 

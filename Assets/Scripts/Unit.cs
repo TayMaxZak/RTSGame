@@ -76,7 +76,7 @@ public class Unit : Entity, ITargetable
 
 	void Awake()
 	{
-		hpBar = Instantiate(hpBarPrefab); // TODO: In awake?
+		hpBar = Instantiate(hpBarPrefab);
 		statuses = new List<Status>();
 		velocityMods = new List<VelocityMod>();
 		shieldMods = new List<ShieldMod>();
@@ -383,14 +383,12 @@ public class Unit : Entity, ITargetable
 	}
 
 	// TODO: Do a better job accounting for armor overflow when adding up SuperlaserMark damage, sometimes projectiles will do way more effective damage than is counted here
-	// TODO: Ensure a last hit counts for a Superlaser stack always
 	public void AddStatus(Status status)
 	{
 		int origCount = statuses.Count;
 
 		foreach (Status s in statuses) // Check all current statuses
 		{
-			
 			if (s.from != status.from)
 				continue;
 			if (s.statusType != status.statusType)
@@ -837,6 +835,7 @@ public class Unit : Entity, ITargetable
 			if (s.statusType == StatusType.SuperlaserMark)
 			{
 				float ratio = s.GetTimeLeft() / (maxHealth + maxArmor);
+
 				if (ratio >= gameRules.ABLYsuperlaserStackDmgReq)
 					if (s.from) // Potentially the recipient of the stack does not exist anymore
 						s.from.GetComponent<Ability_Superlaser>().GiveStack(this);

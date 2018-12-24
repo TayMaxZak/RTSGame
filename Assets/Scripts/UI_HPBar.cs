@@ -89,7 +89,6 @@ public class UI_HPBar : UI_Bar
 		//gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 	}
 
-	// TODO: Investigate why this code has to be in Start and not Awake
 	void Start()
 	{
 		transform.SetSiblingIndex(0); // Draw behind other UI elements

@@ -1749,12 +1749,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881f111063680d7498afcd5cd846dd8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  printInfo: 0
   type: 1
   model: {fileID: 1559691936681566}
   swarmTarget: {fileID: 4415277090469646}
   selCircleSize: 2.8
   visionRange: 40
-  printInfo: 0
   disableTurrets: 0
   objectiveWeight: 3
   hpBarPrefab: {fileID: 114201364516099128, guid: f9ab5ed9c28f1bb43ac9ea3f17080b5b,
