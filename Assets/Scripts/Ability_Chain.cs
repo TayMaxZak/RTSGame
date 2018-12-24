@@ -102,18 +102,20 @@ public class Ability_Chain : Ability
 			{
 				targetUnit.AddVelocityMod(new VelocityMod(parentUnit, parentUnit.GetVelocity(), VelocityModType.Chain));
 
+				// Position and enable line effect
 				lineEffect.SetEffectActive(1, chainStart.position, targetUnit.transform.position);
 
+				// Particle effects placed at each end of the chain
 				chainEndsEffect[0].transform.position = chainStart.position;
 				chainEndsEffect[0].transform.rotation = Quaternion.LookRotation(targetUnit.transform.position - chainStart.position);
 				chainEndsEffect[1].transform.position = targetUnit.transform.position;
 				chainEndsEffect[1].transform.rotation = Quaternion.LookRotation(chainStart.position - targetUnit.transform.position);
 			}
-			else
+			else // Chain breaks
 			{
 				Instantiate(pointEffectBreakPrefab, (chainStart.position + targetUnit.transform.position) * 0.5f, Quaternion.LookRotation(chainStart.position - targetUnit.transform.position));
 				ClearTarget(true);
-				//StartCooldown(); // TODO: Maybe not
+				StartCooldown(); // TODO: Maybe not
 			}
 		}
 		else
@@ -121,7 +123,7 @@ public class Ability_Chain : Ability
 			if (checkingForDead)
 			{
 				ClearTarget(true);
-				//StartCooldown(); // TODO: Maybe not
+				StartCooldown(); // TODO: Maybe not
 			}
 		}
 	}
