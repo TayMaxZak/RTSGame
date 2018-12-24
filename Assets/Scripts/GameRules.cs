@@ -130,13 +130,18 @@ public class GameRules
 	public float ABLY_statusMissileVerticalOffset = 2; // How far above the unit should the missile try to detonate
 	public float ABLY_statusMissileExplodeDist = 1.5f; // Distance from detonation point when missile should detonate
 	public float ABLY_statusMissileDamage = 10; // Flat damage dealt once to targets caught in cloud
-	public float ABLY_statusMissileDamageBonusMult = 0.05f; // Ratio of target's max health + max armor
+	public float ABLY_statusMissileDamageBonusMult = 0.05f; // Ratio of target's max health + max armor dealt once to targets caught in cloud
 
-	public float ABLY_selfDestructRange = 25;
-	public float ABLY_selfDestructDamage = 500;
-	public float ABLY_selfDestructDamageFlagMult = 0.33f;
-	public float ABLY_selfDestructDPSSelf = 10;
-	public float ABLY_selfDestructSpeedMult = 1.25f;
+	public float ABLY_selfDestructRange = 25; // Radius for dealing damage
+	public float ABLY_selfDestructDamage = 500; // Damage dealt
+	public float ABLY_selfDestructDamageFlagMult = 0.33f; // Damage multiplier against flagship units
+	public float ABLY_selfDestructDPSSelf = 10; // How much health per second is converted to fragile health while channeling
+	public float ABLY_selfDestructSpeedMult = 1.25f; // Speed mult while channeling
+
+	public float ABLY_ionMissileRangeUse = 40; // Max distance for cast
+	public float ABLY_ionMissileRangeMissile = 60; // Max distance for before missile detonates
+	public float ABLY_ionMissileMaxLifetime = 10; // How long the missile can exist before detonating
+	public float ABLY_ionMissileDamage = 10; // Flat damage dealt on impact
 
 
 	[Header("Statuses")]

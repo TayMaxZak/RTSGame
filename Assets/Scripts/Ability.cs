@@ -160,7 +160,8 @@ public enum AbilityType
 	Superlaser,
 	StatusMissile,
 	NoReload,
-	SelfDestruct
+	SelfDestruct,
+	IonMissile
 }
 
 public static class AbilityUtils
@@ -193,6 +194,8 @@ public static class AbilityUtils
 				return GetDeltaOf(new Vector3(2, 10, 20));
 			case AbilityType.SelfDestruct:
 				return GetDeltaOf(new Vector3(2, 5, 20));
+			case AbilityType.IonMissile:
+				return GetDeltaOf(new Vector3(40, 0, 0));
 			default:
 				return GetDeltaOf(new Vector3());
 		}
@@ -228,6 +231,8 @@ public static class AbilityUtils
 			case AbilityType.Superlaser:
 				return 1;
 			case AbilityType.StatusMissile:
+				return 1;
+			case AbilityType.IonMissile:
 				return 1;
 			default:
 				return 0;

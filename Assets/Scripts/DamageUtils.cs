@@ -9,7 +9,8 @@ public enum DamageType
 	Swarm,
 	Superlaser,
 	Chemical,
-	Internal
+	Internal,
+	Ion
 }
 
 public struct DamageResult

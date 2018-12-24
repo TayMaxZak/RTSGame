@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 4888680709255202}
   - component: {fileID: 114305229649543536}
   - component: {fileID: 114511447420377598}
+  - component: {fileID: 114939869380698900}
   - component: {fileID: 114613675032481870}
   - component: {fileID: 114740014082729160}
   - component: {fileID: 82663178150848212}
@@ -259,6 +260,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1528933622647274
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4246824938452180}
+  m_Layer: 0
+  m_Name: MissileStart
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1549225000216288
 GameObject:
   m_ObjectHideFlags: 1
@@ -417,7 +433,7 @@ Transform:
   - {fileID: 4663811804393870}
   - {fileID: 4468283744122512}
   m_Father: {fileID: 4888680709255202}
-  m_RootOrder: 1
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4141085179285842
 Transform:
@@ -488,6 +504,19 @@ Transform:
   m_Father: {fileID: 4888680709255202}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
+--- !u!4 &4246824938452180
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1528933622647274}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.81, z: 0.59000015}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4888680709255202}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4253723133574236
 Transform:
   m_ObjectHideFlags: 1
@@ -530,7 +559,7 @@ Transform:
   - {fileID: 4221274989616668}
   - {fileID: 4141085179285842}
   m_Father: {fileID: 4888680709255202}
-  m_RootOrder: 2
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4339318956398186
 Transform:
@@ -649,11 +678,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1233040279074812}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.345, z: 0.422}
+  m_LocalPosition: {x: 0, y: 1.55, z: 0.422}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4888680709255202}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4678671911462482
 Transform:
@@ -718,11 +747,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4229794805585362}
+  - {fileID: 4917791186809190}
+  - {fileID: 4671991824821066}
+  - {fileID: 4246824938452180}
+  - {fileID: 4573455083156152}
   - {fileID: 4120174962866306}
   - {fileID: 4310800480492666}
-  - {fileID: 4671991824821066}
-  - {fileID: 4573455083156152}
-  - {fileID: 4917791186809190}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -737,7 +767,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4888680709255202}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
 --- !u!23 &23062747314197848
 MeshRenderer:
@@ -1523,6 +1553,7 @@ MonoBehaviour:
   - {fileID: 114391197846157378}
   abilities:
   - {fileID: 114511447420377598}
+  - {fileID: 114939869380698900}
   movement:
     MS: 4
     MSVMult: 0.4
@@ -1661,3 +1692,21 @@ MonoBehaviour:
   enginePrefab: {fileID: 198105576961096138, guid: bde3e03dbab65da42940e87b539a0b2b,
     type: 2}
   enginePos: {fileID: 4462145206572886}
+--- !u!114 &114939869380698900
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1025386178585290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8bad9481aa29ca48b5bc89f72014310, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startPosition: {fileID: 4246824938452180}
+  maxRS: 10
+  MS: 16
+  missilePrefab: {fileID: 114970927305717156, guid: 268d474dea33e804d8623d0388e48bfb,
+    type: 2}
+  explosionPrefab: {fileID: 114423401209435934, guid: 8a139371b9f171d49bb4a849ce03b231,
+    type: 2}

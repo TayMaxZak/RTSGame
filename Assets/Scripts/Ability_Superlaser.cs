@@ -277,6 +277,7 @@ public class Ability_Superlaser : Ability
 		Quaternion resetRot = Quaternion.identity;
 
 		// Rotate towards the desired look rotation
+		// TODO: Sometimes super slow
 		Quaternion newRotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
 
 		// Limit rotation

@@ -382,7 +382,6 @@ public class Unit : Entity, ITargetable
 			UpdateStatusUI();
 	}
 
-	// TODO: Do a better job accounting for armor overflow when adding up SuperlaserMark damage, sometimes projectiles will do way more effective damage than is counted here
 	public void AddStatus(Status status)
 	{
 		int origCount = statuses.Count;
@@ -609,8 +608,6 @@ public class Unit : Entity, ITargetable
 		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
 	}
 
-	// TODO: How much additional information is necessary (i.e. team, source, projectile type, etc.)
-	// TODO: Handle Superlaser mark damage stacking
 	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
 	{
 		OnDamage();

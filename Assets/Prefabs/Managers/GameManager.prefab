@@ -365,7 +365,7 @@ MonoBehaviour:
     ABLYsuperlaserCancelCDMult: 0.5
     ABLYsuperlaserRangeTolerance: 10
     ABLYsuperlaserDelay: 3.5
-    ABLYsuperlaserInitStacks: 0
+    ABLYsuperlaserInitStacks: 1
     ABLYsuperlaserStackDmgReq: 0.6
     ABLYsuperlaserDmgBase: 200
     ABLYsuperlaserDmgByStacks:
@@ -386,6 +386,10 @@ MonoBehaviour:
     ABLY_selfDestructDamageFlagMult: 0.33
     ABLY_selfDestructDPSSelf: 20
     ABLY_selfDestructSpeedMult: 1.25
+    ABLY_ionMissileRangeUse: 40
+    ABLY_ionMissileRangeMissile: 60
+    ABLY_ionMissileMaxLifetime: 10
+    ABLY_ionMissileDamage: 10
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3
