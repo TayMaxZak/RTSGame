@@ -266,10 +266,10 @@ MonoBehaviour:
   healthBurnEnemyColor: {r: 0.58823526, g: 0.12543254, b: 0.13459721, a: 1}
   healthBkgAllyColor: {r: 0.44852942, g: 0.3499985, b: 0.2605428, a: 1}
   healthBkgEnemyColor: {r: 0.39705884, g: 0, b: 0.007747482, a: 1}
-  fragileFill: {fileID: 114625487211107254}
-  ionFill: {fileID: 114425095458771546}
   ionColor1: {r: 0.42874134, g: 0.8970586, b: 0.89705884, a: 1}
   ionColor2: {r: 0, g: 0.6573818, b: 1, a: 1}
+  fragileFill: {fileID: 114625487211107254}
+  ionFill: {fileID: 114425095458771546}
   armorFill: {fileID: 114408024421690934}
   armorBkg: {fileID: 114186634799753656}
   armorWidth: 98

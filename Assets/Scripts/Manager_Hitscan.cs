@@ -102,7 +102,7 @@ public class Manager_Hitscan : MonoBehaviour
 
 						DamageResult result = unit.Damage(doFullDamage ? scan.GetDamage() : scan.GetDamage() * gameRules.DMG_ffDamageMult, actualRange, scan.GetDamageType());
 
-						if (result.lastHit)
+						if (result.lastHit && scan.GetFrom())
 							scan.GetFrom().AddKill(unit);
 					}
 					else

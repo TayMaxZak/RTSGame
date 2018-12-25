@@ -1533,7 +1533,7 @@ MonoBehaviour:
   swarmTarget: {fileID: 4671991824821066}
   selCircleSize: 1.5
   visionRange: 40
-  disableTurrets: 1
+  disableTurrets: 0
   objectiveWeight: 2
   hpBarPrefab: {fileID: 114477666003345976, guid: c3b28b4f6a7a9fb4db418ee97ac67eb0,
     type: 2}

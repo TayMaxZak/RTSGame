@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Ability_IonMissile : Ability
 {
+	private float reloadTimer;
+	private Vector3 deltaDurations;
+
 	[SerializeField]
 	private Transform startPosition;
 	//[SerializeField]
@@ -38,7 +41,30 @@ public class Ability_IonMissile : Ability
 		abilityType = AbilityType.IonMissile;
 		InitCooldown();
 
+		stacks = gameRules.ABLY_ionMissileMaxAmmo;
+		deltaDurations = AbilityUtils.GetDeltaDurations(AbilityType.IonMissile);
+
 		mask = gameRules.collisionLayerMask;
+
+		displayInfo.stacks = stacks;
+		displayInfo.displayStacks = true;
+		displayInfo.displayFill = true;
+	}
+
+	void DisplayStacks()
+	{
+		displayInfo.stacks = stacks;
+		//if (stacks <= 0)
+		//	displayInfo.displayInactive = true;
+		//else
+		//	displayInfo.displayInactive = false;
+		UpdateDisplay(abilityIndex, true);
+	}
+
+	void DisplayFill(float fill)
+	{
+		displayInfo.fill = 1 - fill;
+		UpdateDisplay(abilityIndex, false);
 	}
 
 	// Use this for initialization
@@ -81,11 +107,18 @@ public class Ability_IonMissile : Ability
 			if (!offCooldown)
 				return;
 
+			if (stacks < 1)
+				return;
+
 			base.UseAbility(target);
 
 			if (InRange(target.unit.transform))
 			{
 				targetUnit = target.unit;
+
+				stacks--;
+				DisplayStacks();
+
 				SpawnMissile();
 			}
 			else
@@ -190,6 +223,20 @@ public class Ability_IonMissile : Ability
 				}
 			} // if failed raycast
 		} // if missileActive
+
+		if (stacks < gameRules.ABLY_ionMissileMaxAmmo)
+		{
+			reloadTimer += deltaDurations.y * Time.deltaTime;
+
+			DisplayFill(reloadTimer);
+
+			if (reloadTimer >= 1)
+			{
+				stacks++;
+				DisplayStacks();
+				reloadTimer = 0;
+			}
+		}
 	}
 
 	void ClearTarget()

@@ -10,6 +10,7 @@ public class UIRules
 	public float HPBbordColorThresh = 0.0001f; // How close to zero does armor have to get before health becomes the border color
 	public float HPBupdateTime = 0.2f;
 	public float HPBblinkTime = 0.05f;
+	public float HPBionBlinkTime = 0.1f;
 	[Header("Build Progress Bar")]
 	public Vector2 BPBoffset = new Vector2(0, 3);
 	[Header("Selection Indicator")]

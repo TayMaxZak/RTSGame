@@ -39,6 +39,10 @@ public class UI_HPBar : UI_Bar
 	private Color healthBkgAllyColor = Color.black;
 	[SerializeField]
 	private Color healthBkgEnemyColor = Color.black;
+	[SerializeField]
+	private Color ionColor1 = Color.cyan;
+	[SerializeField]
+	private Color ionColor2 = Color.white;
 
 	[SerializeField]
 	private Image fragileFill;
@@ -54,10 +58,6 @@ public class UI_HPBar : UI_Bar
 	private Color ionFlashCur = Color.cyan;
 	private float ionFlashT = 0;
 	private bool ionFlashUp = true;
-	[SerializeField]
-	private Color ionColor1 = Color.cyan;
-	[SerializeField]
-	private Color ionColor2 = Color.white;
 
 	[SerializeField]
 	private Image armorFill;
@@ -178,14 +178,14 @@ public class UI_HPBar : UI_Bar
 			// animate ion color between 2 colors
 			if (ionFlashUp)
 			{
-				ionFlashT += Random.value * Time.deltaTime / uiRules.HPBblinkTime;
+				ionFlashT += Random.value * Time.deltaTime / uiRules.HPBionBlinkTime;
 				ionFlashCur = Color.Lerp(ionColor1, ionColor2, ionFlashT);
 				if (ionFlashT > 1)
 					ionFlashUp = false;
 			}
 			else
 			{
-				ionFlashT -= Random.value * Time.deltaTime / uiRules.HPBblinkTime;
+				ionFlashT -= Random.value * Time.deltaTime / uiRules.HPBionBlinkTime;
 				ionFlashCur = Color.Lerp(ionColor1, ionColor2, ionFlashT);
 				if (ionFlashT < 0)
 					ionFlashUp = true;

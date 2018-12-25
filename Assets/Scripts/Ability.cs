@@ -111,6 +111,7 @@ public class Ability : MonoBehaviour {
 		UpdateDisplay(index, updateStacks, false);
 	}
 
+
 	protected virtual void InitCooldown()
 	{
 		cooldownDelta = AbilityUtils.GetDeltaDurations(abilityType).x;
@@ -164,6 +165,13 @@ public enum AbilityType
 	IonMissile
 }
 
+public struct AbilityDisplayUpdateConfig
+{
+	public bool updateStacks;
+	public bool updateIconB;
+	public bool showZeroStacks;
+}
+
 public static class AbilityUtils
 {
 	// All default to 1 second
@@ -195,7 +203,7 @@ public static class AbilityUtils
 			case AbilityType.SelfDestruct:
 				return GetDeltaOf(new Vector3(2, 5, 20));
 			case AbilityType.IonMissile:
-				return GetDeltaOf(new Vector3(40, 0, 0));
+				return GetDeltaOf(new Vector3(5, 40, 0));
 			default:
 				return GetDeltaOf(new Vector3());
 		}

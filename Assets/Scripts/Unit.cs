@@ -639,12 +639,12 @@ public class Unit : Entity, ITargetable
 	public void AddIons(float ions, bool refreshTimer)
 	{
 		curIons += ions;
-		UpdateHPBarValIon();
+		
 
 		if (ions > 0)
 		{
-			if (refreshTimer)
-				curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
+			//if (refreshTimer)
+			RefreshIonDecay();
 
 			//if (curIons >= 100)
 			//{
@@ -662,7 +662,9 @@ public class Unit : Entity, ITargetable
 				curIons = 0;
 		}
 
-		UpdateHPBarVal(false);
+		UpdateHPBarValIon();
+
+		//UpdateHPBarVal(false);
 	}
 
 	void CheckIons()
@@ -674,10 +676,16 @@ public class Unit : Entity, ITargetable
 		}
 	}
 
+	void RefreshIonDecay()
+	{
+		curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
+	}
+
 	void IonStun()
 	{
 		Debug.Log("STUNNED");
 		Die(DamageType.Ion);
+		AddIons(-curIons, false);
 	}
 
 	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
@@ -743,6 +751,7 @@ public class Unit : Entity, ITargetable
 		if (healthChange < 0) // If this damage tick penetrated armor, remove fragile health
 		{
 			RemoveFragileHealth();
+			RefreshIonDecay();
 			CheckIons();
 		}
 		else

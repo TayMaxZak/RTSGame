@@ -82,7 +82,7 @@ public class Manager_Projectiles : MonoBehaviour
 
 							DamageResult result = unit.Damage(doFullDamage ? proj.GetDamage() : proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
 
-							if (result.lastHit)
+							if (result.lastHit && proj.GetFrom())
 								proj.GetFrom().AddKill(unit);
 						}
 						else

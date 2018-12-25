@@ -275,7 +275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FOWtickRate: 1
   GameRules:
-    useTestValues: 1
+    useTestValues: 0
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -390,6 +390,15 @@ MonoBehaviour:
     ABLY_ionMissileRangeMissile: 60
     ABLY_ionMissileMaxLifetime: 10
     ABLY_ionMissileDamage: 10
+    ABLY_ionMissileDamageBonusMult: 0.1
+    ABLY_ionMissileIonsFirst: 20
+    ABLY_ionMissileIonsNext: 20
+    ABLY_ionMissileArmorDmgToIons: 0.5
+    ABLY_ionMissileDecayDelay: 10
+    ABLY_ionMissileDecayDPS: 4
+    ABLY_ionMissileDecayCutoff: 10
+    ABLY_ionMissileMaxAmmo: 2
+    ABLY_ionMissileAmmoTick: 1
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3
