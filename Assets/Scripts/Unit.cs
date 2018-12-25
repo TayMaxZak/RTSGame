@@ -684,7 +684,7 @@ public class Unit : Entity, ITargetable
 	void IonStun()
 	{
 		Debug.Log("STUNNED");
-		Die(DamageType.Ion);
+		Die(DamageType.Ion); // TODO: Stunned status effect
 		AddIons(-curIons, false);
 	}
 

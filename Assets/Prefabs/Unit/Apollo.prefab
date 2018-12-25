@@ -1709,5 +1709,5 @@ MonoBehaviour:
   MS: 16
   missilePrefab: {fileID: 114970927305717156, guid: 268d474dea33e804d8623d0388e48bfb,
     type: 2}
-  explosionPrefab: {fileID: 114423401209435934, guid: 8a139371b9f171d49bb4a849ce03b231,
+  explosionPrefab: {fileID: 114423401209435934, guid: e2ccf874c6d3d294f93a1b2e3e565a54,
     type: 2}

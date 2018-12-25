@@ -173,7 +173,7 @@ public class Ability_IonMissile : Ability
 					{
 						if (unit != parentUnit) // If we hit a unit and its not us, damage it
 						{
-							Status status = new Status(parentUnit.gameObject, StatusType.CriticalBurnImmune);
+							Status status = new Status(parentUnit.gameObject, StatusType.IonSuppressed);
 							if (status != null)
 							{
 								unit.AddStatus(status);
@@ -202,11 +202,11 @@ public class Ability_IonMissile : Ability
 					}
 
 					if (!hitSelf)
-						Explode(true);
-				}
+						Explode(true, hit);
+				} // if unit
 				else
-					Explode(true);
-			}
+					Explode(true, hit);
+			} // if raycast
 
 			if (!hit.collider || hitSelf)
 			{
@@ -245,7 +245,14 @@ public class Ability_IonMissile : Ability
 		checkingForDead = false;
 	}
 
+
+
 	void Explode(bool intentional)
+	{
+		Explode(intentional, new RaycastHit());
+	}
+
+	void Explode(bool intentional, RaycastHit hit)
 	{
 		missile.SetEffectActive(false);
 		missileActive = false;
@@ -254,6 +261,7 @@ public class Ability_IonMissile : Ability
 		//cloud.SetParentUnit(parentUnit);
 
 		explosion.transform.position = missile.transform.position;
+		explosion.transform.rotation = hit.collider ? Quaternion.LookRotation((missile.transform.forward + hit.normal * -1) / 2) : missile.transform.rotation;
 		explosion.SetEffectActive(true);
 
 		ClearTarget();
