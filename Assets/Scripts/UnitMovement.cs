@@ -56,6 +56,8 @@ public class UnitMovement
 	private bool reachedHGoal = false;
 	private bool reachedVGoal = false;
 
+	private bool suspended = false;
+
 	//protected Manager_Game gameManager;
 	protected GameRules gameRules;
 	private Manager_Pathfinding pathManager;
@@ -339,6 +341,9 @@ public class UnitMovement
 
 	public void SetHGoal(Vector3 newHGoal, bool group)
 	{
+		if (suspended)
+			return;
+
 		if (abilityGoal != null) // Can't move while an ability is rotating us
 			return;
 
@@ -385,6 +390,9 @@ public class UnitMovement
 
 	public void SetVGoal(int newVGoal)
 	{
+		if (suspended)
+			return;
+
 		vGoalCur = newVGoal;
 		reachedVGoal = false;
 	}
@@ -416,6 +424,20 @@ public class UnitMovement
 		reachedHGoal = true;
 
 		manualRotationGoal = null;
+	}
+
+	public void Suspend()
+	{
+		Debug.Log("MOVEMENT SUSPENDED");
+		suspended = true;
+
+		Stop();
+	}
+
+	public void UnSuspend()
+	{
+		Debug.Log("MOVEMENT UNSUSPENDED");
+		suspended = false;
 	}
 
 	public void OnDrawGizmos()

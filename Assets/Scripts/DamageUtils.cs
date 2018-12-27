@@ -10,7 +10,7 @@ public enum DamageType
 	Superlaser,
 	Chemical,
 	Internal,
-	Ion
+	IonMissile
 }
 
 public struct DamageResult
@@ -31,7 +31,7 @@ public static class DamageUtils
 		{
 			case DamageType.Superlaser:
 				return true;
-			case DamageType.Ion:
+			case DamageType.IonMissile:
 				return true;
 			default:
 				return false;

@@ -6,6 +6,7 @@ using Particle = UnityEngine.ParticleSystem.Particle;
 public class Ability : MonoBehaviour {
 	protected AbilityType abilityType; // Used to determine how to interact with this Ability
 	protected int team; // Doesn't need to be public
+	protected bool suspended;
 
 	// Common primtive data
 	protected int abilityIndex = -1;
@@ -130,6 +131,18 @@ public class Ability : MonoBehaviour {
 	public AbilityDisplayInfo GetDisplayInfo()
 	{
 		return displayInfo;
+	}
+
+	public virtual void Suspend()
+	{
+		Debug.Log("ABILITY SUSPENDED");
+		suspended = true;
+	}
+
+	public virtual void UnSuspend()
+	{
+		Debug.Log("ABILITY UNSUSPENDED");
+		suspended = false;
 	}
 }
 

@@ -68,9 +68,9 @@ public static class StatusUtils
 			case StatusType.ArmorMelt:
 				return 5;
 			case StatusType.IonSuppressed:
-				return 3;
+				return 5;
 			case StatusType.IonStunned:
-				return 20;
+				return 10;
 			default:
 				return 1;
 		}
@@ -100,6 +100,30 @@ public static class StatusUtils
 		}
 	}
 
+	public static bool ShouldSuspendAbilities(StatusType statType)
+	{
+		switch (statType)
+		{
+			case StatusType.IonSuppressed:
+				return true;
+			case StatusType.IonStunned:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	public static bool ShouldStun(StatusType statType)
+	{
+		switch (statType)
+		{
+			case StatusType.IonStunned:
+				return true;
+			default:
+				return false;
+		}
+	}
+
 	public static string GetDisplayName(StatusType statType)
 	{
 		switch (statType)
@@ -114,6 +138,10 @@ public static class StatusUtils
 				return "Hellrazor Mark";
 			case StatusType.ArmorMelt:
 				return "Disintegration";
+			case StatusType.IonSuppressed:
+				return "Suppressed";
+			case StatusType.IonStunned:
+				return "Disabled";
 			default:
 				return "default";
 		}
@@ -133,6 +161,10 @@ public static class StatusUtils
 				return "Marked for reactor radiation collection by an enemy Hellrazor cannon.";
 			case StatusType.ArmorMelt:
 				return "Armor is weakened by corrosive chemicals.";
+			case StatusType.IonSuppressed:
+				return "Unit's special ability systems are offline.";
+			case StatusType.IonStunned:
+				return "Reactor offline, switching to reserve power: unable to move, fire turrets, or use special abilities.";
 			default:
 				return "default";
 		}
@@ -147,6 +179,10 @@ public static class StatusUtils
 			case StatusType.SpawnSwarmSpeedNerf:
 				return true;
 			case StatusType.ArmorMelt:
+				return true;
+			case StatusType.IonSuppressed:
+				return true;
+			case StatusType.IonStunned:
 				return true;
 			default:
 				return false;
@@ -168,6 +204,10 @@ public static class StatusUtils
 				return new Color[] { new Color32(0x90, 0x11, 0x11, 0xFF), new Color32(0xFF, 0x70, 0x88, 0xFF) };
 			case StatusType.ArmorMelt:
 				return new Color[] { new Color32(0x61, 0x61, 0x61, 0xFF), new Color32(0xFF, 0xFF, 0xFF, 0xFF) };
+			case StatusType.IonSuppressed:
+				return new Color[] { new Color32(0x6D, 0xE5, 0xE5, 0xFF), new Color32(0xFF, 0xFF, 0xFF, 0xFF) };
+			case StatusType.IonStunned:
+				return new Color[] { new Color32(0x6D, 0xE5, 0xE5, 0xFF), new Color32(0xFF, 0xFF, 0xFF, 0xFF) };
 			default:
 				return new Color[0];
 		}

@@ -74,6 +74,7 @@ public class Turret : MonoBehaviour
 	//[Header("State")]
 	//[SerializeField]
 	private bool infiniteAmmo = false;
+	private bool suspended = false;
 
 	private AudioSource audioSource;
 	private GameRules gameRules;
@@ -112,52 +113,67 @@ public class Turret : MonoBehaviour
 
 	void UpdateTargeting()
 	{
-		// Have target and it's valid
-		if (!IsNull(target) && IsValid(target))
+		if (!suspended)
 		{
-			// If we are targeting a non-preferred target type, we want to constantly search for a better target
-			if (target.GetTargetType() != preferredTargetType)
+			// Have target and it's valid
+			if (!IsNull(target) && IsValid(target))
 			{
-				// Collect a list of all valid targets, ignoring non-preferred targets
-				List<ITargetable> autoTargets = ScanForTargets(true);
-
-				// Pick best one (if any were found)
-				if (autoTargets.Count > 0)
+				// If we are targeting a non-preferred target type, we want to constantly search for a better target
+				if (target.GetTargetType() != preferredTargetType)
 				{
-					// This new target will ALWAYS be different from the previous target because it was filtered differently
-					target = autoTargets[0];
+					// Collect a list of all valid targets, ignoring non-preferred targets
+					List<ITargetable> autoTargets = ScanForTargets(true);
 
-					// Update resetRotFrame.
-					UpdateTarget();
+					// Pick best one (if any were found)
+					if (autoTargets.Count > 0)
+					{
+						// This new target will ALWAYS be different from the previous target because it was filtered differently
+						target = autoTargets[0];
+
+						// Update resetRotFrame
+						UpdateTarget();
+					}
 				}
-			}
 
-			// Rotate towards the target
-			CalcTargetLookRotation();
-			Rotate();
-			// Shoot if possible
-			AttemptStartShooting();
-		}
-		else // We haven't assigned one yet, it died, or it's become invalid
-		{
-			// Collect a list of all valid targets
-			List<ITargetable> autoTargets = ScanForTargets();
-			// Pick best one
-			target = autoTargets.Count > 0 ? autoTargets[0] : null;
-
-			// Found a valid target
-			if (!IsNull(target))
-			{
-				// Update resetRotFrame
-				UpdateTarget();
-			}
-			else // Failed to find a valid target
-			{
-				// Rotate to standby position
-				direction = transform.forward;
-				lookRotation = CalcLookRotation(direction);
+				// Rotate towards the target
+				CalcTargetLookRotation();
 				Rotate();
+				// Shoot if possible
+				AttemptStartShooting();
 			}
+			else // We haven't assigned one yet, it died, or it's become invalid
+			{
+				// Collect a list of all valid targets
+				List<ITargetable> autoTargets = ScanForTargets();
+				// Pick best one
+				target = autoTargets.Count > 0 ? autoTargets[0] : null;
+
+				// Found a valid target
+				if (!IsNull(target))
+				{
+					// Update resetRotFrame
+					UpdateTarget();
+
+					// Rotate towards the target
+					CalcTargetLookRotation();
+					Rotate();
+					// Shoot if possible
+					AttemptStartShooting();
+				}
+				else // Failed to find a valid target
+				{
+					// Rotate to standby position
+					direction = transform.forward;
+					lookRotation = CalcLookRotation(direction);
+					Rotate();
+				}
+			} // if have target and it's valid
+		} // if not suspended
+		else
+		{
+			direction = transform.forward;
+			lookRotation = CalcLookRotation(direction);
+			Rotate();
 		}
 	}
 
@@ -404,10 +420,13 @@ public class Turret : MonoBehaviour
 		return true;
 	}
 
-	// TODO: Consolidate conditions which appear in both attempt shot and start shooting
+	// TODO: Consolidate conditions which appear in both attempt shot and attempt start shooting
 	void AttemptStartShooting()
 	{
 		if (isShooting) // Don't start shooting if we are already shooting
+			return;
+
+		if (suspended)
 			return;
 
 		if (isReloading) // Don't start shooting if we are reloading
@@ -428,7 +447,6 @@ public class Turret : MonoBehaviour
 		{
 			return;
 		}
-
 
 		// Is our line of fire blocked by an allied unit?
 		if (!CheckFriendlyFire())
@@ -468,8 +486,16 @@ public class Turret : MonoBehaviour
 		}
 	}
 
+	// Whenever you return from this method, first make sure isShooting is set to false so that next Update() the process can restart
 	void AttemptShot(float delay)
 	{
+		if (suspended)
+		{
+			isShooting = false;
+			ToggleFiringAudio(false); // Stop firing audio loop
+			return;
+		}
+
 		if (curAmmo <= 0 && maxAmmo > 0 && !infiniteAmmo) // If we run out of ammo mid-shooting, start reload
 		{
 			isShooting = false;
@@ -484,6 +510,8 @@ public class Turret : MonoBehaviour
 		{
 			if (!isReloadCancellable)
 			{
+				// Don't need to set isShooting to false because we are reloading anyway
+				// TODO: Do we need to toggle firing audio off here?
 				ToggleFiringAudio(false); // Stop firing audio loop
 				return;
 			}
@@ -515,6 +543,7 @@ public class Turret : MonoBehaviour
 		StartCoroutine(CoroutineShoot(delay));
 	}
 
+	// TODO: Is this even a mechanic anymore?
 	void AttemptEarlyReload()
 	{
 		if (isReloading)
@@ -590,6 +619,19 @@ public class Turret : MonoBehaviour
 	{
 		target = newTarg;
 		UpdateTarget();
+	}
+
+	public void Suspend()
+	{
+		Debug.Log("TURRET SUSPENDED");
+		suspended = true;
+	}
+
+	// TODO: Verify that the delay you see after unsuspending before the turret starts shooting is a reload
+	public void UnSuspend()
+	{
+		Debug.Log("TURRET UNSUSPENDED");
+		suspended = false;
 	}
 
 	private void UpdateTarget()

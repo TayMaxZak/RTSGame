@@ -275,7 +275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FOWtickRate: 1
   GameRules:
-    useTestValues: 0
+    useTestValues: 1
     TESTtimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
@@ -365,7 +365,7 @@ MonoBehaviour:
     ABLYsuperlaserCancelCDMult: 0.5
     ABLYsuperlaserRangeTolerance: 10
     ABLYsuperlaserDelay: 3.5
-    ABLYsuperlaserInitStacks: 1
+    ABLYsuperlaserInitStacks: 0
     ABLYsuperlaserStackDmgReq: 0.6
     ABLYsuperlaserDmgBase: 200
     ABLYsuperlaserDmgByStacks:
@@ -390,12 +390,12 @@ MonoBehaviour:
     ABLY_ionMissileRangeMissile: 60
     ABLY_ionMissileMaxLifetime: 10
     ABLY_ionMissileDamage: 10
-    ABLY_ionMissileDamageBonusMult: 0.1
+    ABLY_ionMissileDamageBonusMult: 0.15
     ABLY_ionMissileIonsFirst: 20
     ABLY_ionMissileIonsNext: 20
     ABLY_ionMissileArmorDmgToIons: 0.5
     ABLY_ionMissileDecayDelay: 10
-    ABLY_ionMissileDecayDPS: 4
+    ABLY_ionMissileDecayLPS: 4
     ABLY_ionMissileDecayCutoff: 10
     ABLY_ionMissileMaxAmmo: 2
     ABLY_ionMissileAmmoTick: 1

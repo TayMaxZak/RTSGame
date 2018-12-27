@@ -146,6 +146,9 @@ public class Ability_ArmorDrain : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
+		if (suspended)
+			return;
+
 		if (!offCooldown)
 			return;
 
@@ -156,9 +159,27 @@ public class Ability_ArmorDrain : Ability
 
 	void Toggle()
 	{
-		isActive = !isActive;
+		SetActive(!isActive);
+	}
+
+	void SetActive(bool newActive)
+	{
+		isActive = newActive;
 
 		pointEffect.SetEffectActive(isActive);
+	}
+
+	public override void Suspend()
+	{
+		base.Suspend();
+
+		SetActive(false);
+		StartCooldown();
+	}
+
+	public override void UnSuspend()
+	{
+		base.UnSuspend();
 	}
 
 	void Display(float fill)

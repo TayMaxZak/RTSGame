@@ -184,10 +184,12 @@ public class Unit : Entity, ITargetable
 
 		if (curIons > gameRules.ABLY_ionMissileDecayCutoff)
 		{
+			// TODO: Also lose an ion every 2 seconds?
+
 			curIonTimer -= Time.deltaTime;
 			if (curIonTimer <= 0)
 			{
-				float amount = gameRules.ABLY_ionMissileDecayDPS;
+				float amount = gameRules.ABLY_ionMissileDecayLPS;
 				AddIons(-amount * Time.deltaTime, false);
 
 				if (curIons <= 0)
@@ -382,12 +384,30 @@ public class Unit : Entity, ITargetable
 		string output = "Current statuses are: ";
 		List<Status> toRemove = new List<Status>();
 
+		int suspendedInit = 0;
+		int suspendedRemoved = 0;
+
+		int stunnedInit = 0;
+		int stunnedRemoved = 0;
+
 		foreach (Status s in statuses)
 		{
 			// Damage over time
 			if (s.statusType == StatusType.ArmorMelt)
 			{
 				Damage(gameRules.STAT_armorMeltDPS * Time.deltaTime, 0, DamageType.Chemical);
+			}
+
+			// Keep track of how many suspending statuses we have
+			if (StatusUtils.ShouldSuspendAbilities(s.statusType))
+			{
+				suspendedInit++;
+			}
+
+			// Keep track of how many stunning statuses we have
+			if (StatusUtils.ShouldStun(s.statusType))
+			{
+				stunnedInit++;
 			}
 
 			if (StatusUtils.ShouldCountDownDuration(s.statusType))
@@ -402,12 +422,43 @@ public class Unit : Entity, ITargetable
 
 		foreach (Status s in toRemove)
 		{
+			if (StatusUtils.ShouldSuspendAbilities(s.statusType))
+			{
+				suspendedRemoved++;
+			}
+
+			if (StatusUtils.ShouldStun(s.statusType))
+			{
+				stunnedRemoved++;
+			}
+
 			statuses.Remove(s);
 		}
 
-		// Number of statuses changed, update UI
+		// Number of statuses changed, unsuspend things and update UI
 		if (toRemove.Count > 0)
+		{
+			// If removing all ability-interrupting status, uninterrupt all abilities
+			if (suspendedInit > 0 && suspendedRemoved >= suspendedInit)
+			{
+				for (int i = 0; i < abilities.Count; i++)
+				{
+					abilities[i].UnSuspend();
+				}
+			}
+
+			// If removing all ability-interrupting status, uninterrupt all abilities
+			if (stunnedInit > 0 && stunnedRemoved >= stunnedInit)
+			{
+				for (int i = 0; i < turrets.Length; i++)
+				{
+					turrets[i].UnSuspend();
+				}
+				movement.UnSuspend();
+			}
+
 			UpdateStatusUI();
+		}
 	}
 
 	public void AddStatus(Status status)
@@ -432,6 +483,25 @@ public class Unit : Entity, ITargetable
 		}
 		statuses.Add(status);
 
+		// If adding an ability-interrupting status, interrupt all abilities
+		if (StatusUtils.ShouldSuspendAbilities(status.statusType))
+		{
+			for (int i = 0; i < abilities.Count; i++)
+			{
+				abilities[i].Suspend();
+			}
+		}
+
+		// If adding an ability-interrupting status, interrupt all abilities
+		if (StatusUtils.ShouldStun(status.statusType))
+		{
+			for (int i = 0; i < turrets.Length; i++)
+			{
+				turrets[i].Suspend();
+			}
+			movement.Suspend();
+		}
+
 		// Number of statuses changed, update UI
 		if (statuses.Count != origCount)
 			UpdateStatusUI();
@@ -440,6 +510,10 @@ public class Unit : Entity, ITargetable
 	public void RemoveStatus(Status status)
 	{
 		Status toRemove = null;
+
+		int suspendedInit = 0;
+		int stunnedInit = 0;
+
 		foreach (Status s in statuses) // Search all current statuses
 		{
 			if (s.from != status.from)
@@ -447,10 +521,42 @@ public class Unit : Entity, ITargetable
 			if (s.statusType != status.statusType)
 				continue;
 			toRemove = s;
+
+			// Keep track of how many suspending statuses we have
+			if (StatusUtils.ShouldSuspendAbilities(s.statusType))
+			{
+				suspendedInit++;
+			}
+
+			// Keep track of how many suspending statuses we have
+			if (StatusUtils.ShouldStun(s.statusType))
+			{
+				stunnedInit++;
+			}
 		}
 
+		// Number of statuses changed, unsuspend things and update UI
 		if (toRemove != null)
 		{
+			// If removing an ability-interrupting status, uninterrupt all abilities
+			if (suspendedInit == 1 && StatusUtils.ShouldSuspendAbilities(toRemove.statusType))
+			{
+				for (int i = 0; i < abilities.Count; i++)
+				{
+					abilities[i].UnSuspend();
+				}
+			}
+
+			// If removing an ability-interrupting status, uninterrupt all abilities
+			if (stunnedInit == 1 && StatusUtils.ShouldStun(toRemove.statusType))
+			{
+				for (int i = 0; i < turrets.Length; i++)
+				{
+					turrets[i].UnSuspend();
+				}
+				movement.Suspend();
+			}
+
 			statuses.Remove(toRemove);
 			// Number of statuses changed, update UI
 			UpdateStatusUI();
@@ -636,34 +742,32 @@ public class Unit : Entity, ITargetable
 		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
 	}
 
-	public void AddIons(float ions, bool refreshTimer)
+	public void AddIons(float ions, bool ionSeed)
 	{
-		curIons += ions;
-		
-
 		if (ions > 0)
 		{
-			//if (refreshTimer)
-			RefreshIonDecay();
+			foreach (Status s in statuses)
+			{
+				// Cannot accrue ions while ion-stunned
+				if (s.statusType == StatusType.IonStunned)
+					return;
+			}
 
-			//if (curIons >= 100)
-			//{
-			//	curIons = 100;
-			//	Debug.Log("MAXED OUT");
-			//	Die(DamageType.Ion);
-			//}
+			curIons += ions;
+
+			RefreshIonDecay();
 
 			CheckIons();
 		}
-		//curIons = Mathf.Clamp(curIons, 0, 100);
 		else
 		{
+			curIons += ions;
+
 			if (curIons <= gameRules.ABLY_ionMissileDecayCutoff)
 				curIons = 0;
 		}
 
 		UpdateHPBarValIon();
-
 		//UpdateHPBarVal(false);
 	}
 
@@ -684,7 +788,16 @@ public class Unit : Entity, ITargetable
 	void IonStun()
 	{
 		Debug.Log("STUNNED");
-		Die(DamageType.Ion); // TODO: Stunned status effect
+		AddStatus(new Status(gameObject, StatusType.IonStunned));
+
+		// Since we cannot add more ions anyway, there's no need to remove all current ions
+		// Do this now OR when ion-stun is over
+		StartCoroutine(CoroutineRemoveIons());
+	}
+
+	IEnumerator CoroutineRemoveIons()
+	{
+		yield return new WaitForSeconds(StatusUtils.GetDuration(StatusType.IonStunned));
 		AddIons(-curIons, false);
 	}
 

@@ -147,7 +147,7 @@ public class GameRules
 	public float ABLY_ionMissileIonsNext = 20f;
 	public float ABLY_ionMissileArmorDmgToIons = 0.5f;
 	public float ABLY_ionMissileDecayDelay = 10f;
-	public float ABLY_ionMissileDecayDPS = 5;
+	public float ABLY_ionMissileDecayLPS = 4;
 	public float ABLY_ionMissileDecayCutoff = 10;
 	public int ABLY_ionMissileMaxAmmo = 2;
 	public int ABLY_ionMissileAmmoTick = 1;
