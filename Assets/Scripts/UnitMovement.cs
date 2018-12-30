@@ -428,7 +428,6 @@ public class UnitMovement
 
 	public void Suspend()
 	{
-		Debug.Log("MOVEMENT SUSPENDED");
 		suspended = true;
 
 		Stop();
@@ -436,7 +435,6 @@ public class UnitMovement
 
 	public void UnSuspend()
 	{
-		Debug.Log("MOVEMENT UNSUSPENDED");
 		suspended = false;
 	}
 

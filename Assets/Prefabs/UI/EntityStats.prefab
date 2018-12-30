@@ -972,7 +972,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: DISPLAY NAME
+  m_Text: Display Name
 --- !u!114 &114307361781651056
 MonoBehaviour:
   m_ObjectHideFlags: 1

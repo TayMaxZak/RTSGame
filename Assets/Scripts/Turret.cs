@@ -623,14 +623,12 @@ public class Turret : MonoBehaviour
 
 	public void Suspend()
 	{
-		Debug.Log("TURRET SUSPENDED");
 		suspended = true;
 	}
 
 	// TODO: Verify that the delay you see after unsuspending before the turret starts shooting is a reload
 	public void UnSuspend()
 	{
-		Debug.Log("TURRET UNSUSPENDED");
 		suspended = false;
 	}
 

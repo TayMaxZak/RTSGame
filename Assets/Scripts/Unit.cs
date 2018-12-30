@@ -118,6 +118,7 @@ public class Unit : Entity, ITargetable
 		hpBarOffset = uiManager.UIRules.HPBoffset;
 		UpdateHPBarPosAndVis(); // Make sure healthbar is hidden until the unit is first selected
 		UpdateHPBarVal(true);
+		UpdateHPBarValIon();
 
 		foreach (Turret tur in turrets) // Init turrets
 		{
@@ -195,10 +196,6 @@ public class Unit : Entity, ITargetable
 				if (curIons <= 0)
 					curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
 			}
-		}
-		if (printInfo)
-		{
-			Debug.Log("cur ions = " + curIons);
 		}
 
 		if (Time.frameCount == 2)
@@ -298,7 +295,7 @@ public class Unit : Entity, ITargetable
 		int shieldMax = Mathf.RoundToInt(CalcShieldPoolMax());
 		bool newValues = hpBar.SetHealthArmorShield(new Vector3(curHealth / maxHealth, curArmor / (armorMax == 0 ? 1 : armorMax), CalcShieldPoolCur() / (shieldMax == 0 ? 1 : shieldMax)), isBurning);
 		UpdateHPBarValFrag();
-		UpdateHPBarValIon();
+		//UpdateHPBarValIon(true);
 		if (fastUpdate)
 			hpBar.FastUpdate();
 
@@ -389,6 +386,7 @@ public class Unit : Entity, ITargetable
 
 		int stunnedInit = 0;
 		int stunnedRemoved = 0;
+		bool ionStunned = false;
 
 		foreach (Status s in statuses)
 		{
@@ -417,9 +415,10 @@ public class Unit : Entity, ITargetable
 			output += s.statusType + " " + s.GetTimeLeft() + " ";
 		}
 
-		if (printInfo && statuses.Count > 0)
-			Debug.Log(output);
+		//if (printInfo && statuses.Count > 0)
+		//	Debug.Log(output);
 
+		// What are we removing?
 		foreach (Status s in toRemove)
 		{
 			if (StatusUtils.ShouldSuspendAbilities(s.statusType))
@@ -430,6 +429,8 @@ public class Unit : Entity, ITargetable
 			if (StatusUtils.ShouldStun(s.statusType))
 			{
 				stunnedRemoved++;
+				if (s.statusType == StatusType.IonStunned)
+					ionStunned = true;
 			}
 
 			statuses.Remove(s);
@@ -455,6 +456,10 @@ public class Unit : Entity, ITargetable
 					turrets[i].UnSuspend();
 				}
 				movement.UnSuspend();
+
+				// Remove ions when removing ion-stun
+				if (ionStunned)
+					UpdateHPBarValIon();
 			}
 
 			UpdateStatusUI();
@@ -555,6 +560,9 @@ public class Unit : Entity, ITargetable
 					turrets[i].UnSuspend();
 				}
 				movement.Suspend();
+
+				if (toRemove.statusType == StatusType.IonStunned)
+					UpdateHPBarValIon();
 			}
 
 			statuses.Remove(toRemove);
@@ -742,39 +750,50 @@ public class Unit : Entity, ITargetable
 		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
 	}
 
-	public void AddIons(float ions, bool ionSeed)
+	public void AddIons(float ionsToAdd, bool ionSeed)
 	{
-		if (ions > 0)
+		if (ionsToAdd > 0)
 		{
 			foreach (Status s in statuses)
 			{
 				// Cannot accrue ions while ion-stunned
 				if (s.statusType == StatusType.IonStunned)
+				{
+					if (printInfo)
+						Debug.Log("returning");
 					return;
+				}
 			}
 
-			curIons += ions;
-
 			RefreshIonDecay();
+			curIons += ionsToAdd;
+			UpdateHPBarValIon();
 
+			// Stun might be called here
 			CheckIons();
 		}
 		else
 		{
-			curIons += ions;
+			curIons += ionsToAdd;
 
 			if (curIons <= gameRules.ABLY_ionMissileDecayCutoff)
 				curIons = 0;
-		}
 
-		UpdateHPBarValIon();
-		//UpdateHPBarVal(false);
+			UpdateHPBarValIon();
+		}
 	}
+
+	//void RemoveIons()
+	//{
+	//	curIons = 0;
+	//	UpdateHPBarValIon();
+	//}
 
 	void CheckIons()
 	{
 		// Ion stun condition and unit isn't already dead from other causes
-		if ((Mathf.Round(curIons) / 100) >= (curHealth / maxHealth) && curHealth > 0)
+		//if ((Mathf.Round(curIons) / 100) >= (curHealth / maxHealth) && curHealth > 0)
+		if ((curIons / 100) >= (curHealth / maxHealth) && curHealth > 0)
 		{
 			IonStun();
 		}
@@ -792,13 +811,8 @@ public class Unit : Entity, ITargetable
 
 		// Since we cannot add more ions anyway, there's no need to remove all current ions
 		// Do this now OR when ion-stun is over
-		StartCoroutine(CoroutineRemoveIons());
-	}
-
-	IEnumerator CoroutineRemoveIons()
-	{
-		yield return new WaitForSeconds(StatusUtils.GetDuration(StatusType.IonStunned));
-		AddIons(-curIons, false);
+		curIons = 0;
+		//hpBar.SetIonHealth(1);
 	}
 
 	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
@@ -861,9 +875,11 @@ public class Unit : Entity, ITargetable
 		curArmor += -dmgToArmor;
 		float healthChange = Mathf.Min(curArmor /*ie armor is negative*/, 0) - overflowDmg;
 		curHealth += healthChange;
-		if (healthChange < 0) // If this damage tick penetrated armor, remove fragile health
+		if (healthChange < 0) // If this damage tick penetrated armor,
 		{
+			// remove fragile health
 			RemoveFragileHealth();
+			// Refresh ion decay timer and check if the ratio is sufficient to stun
 			RefreshIonDecay();
 			CheckIons();
 		}

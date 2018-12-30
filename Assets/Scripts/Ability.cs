@@ -135,13 +135,11 @@ public class Ability : MonoBehaviour {
 
 	public virtual void Suspend()
 	{
-		Debug.Log("ABILITY SUSPENDED");
 		suspended = true;
 	}
 
 	public virtual void UnSuspend()
 	{
-		Debug.Log("ABILITY UNSUSPENDED");
 		suspended = false;
 	}
 }
