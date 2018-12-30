@@ -89,6 +89,9 @@ public class Ability_SelfDestruct : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
+		if (suspended)
+			return;
+
 		if (!offCooldown)
 			return;
 

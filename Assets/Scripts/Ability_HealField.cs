@@ -129,12 +129,25 @@ public class Ability_HealField : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
+		if (suspended)
+			return;
+
 		if (!offCooldown)
 			return;
 
 		base.UseAbility(target);
 
-		if (!isActive) // About to become active
+		ToggleActive();
+	}
+
+	void ToggleActive()
+	{
+		SetActive(!isActive);
+	}
+
+	void SetActive(bool newActive)
+	{
+		if (newActive) // About to become active
 		{
 			// If we are not already borrowing and there are no resources to borrow, don't activate this ability
 			if (!isBorrowing && !command.TakeResources(gameRules.ABLYhealFieldResCost))
@@ -151,10 +164,11 @@ public class Ability_HealField : Ability
 		}
 		else
 		{
-			giveResourcesCoroutine = StartCoroutine(GiveResourcesCoroutine(gameRules.ABLYhealFieldResTime));
+			if (isBorrowing)
+				giveResourcesCoroutine = StartCoroutine(GiveResourcesCoroutine(gameRules.ABLYhealFieldResTime));
 		}
 
-		isActive = !isActive;
+		isActive = newActive;
 
 		pointEffect.SetEffectActive(isActive);
 	}
@@ -167,6 +181,14 @@ public class Ability_HealField : Ability
 
 		isBorrowing = false;
 		DisplayBorrowing(isBorrowing);
+	}
+
+	public override void Suspend()
+	{
+		base.Suspend();
+
+		SetActive(false);
+		StartCooldown();
 	}
 
 	Unit GetUnitFromCol(Collider col)

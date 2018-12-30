@@ -177,11 +177,6 @@ public class Ability_ArmorDrain : Ability
 		StartCooldown();
 	}
 
-	public override void UnSuspend()
-	{
-		base.UnSuspend();
-	}
-
 	void Display(float fill)
 	{
 		displayInfo.fill = fill;

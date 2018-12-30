@@ -54,6 +54,9 @@ public class Ability_ShieldProject : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
+		if (suspended)
+			return;
+
 		if (!offCooldown)
 			return;
 
@@ -217,6 +220,21 @@ public class Ability_ShieldProject : Ability
 
 		lineEffect.SetEffectActive(0);
 		targetLoopEffect.SetEffectActive(false);
+	}
+
+	public override void Suspend()
+	{
+		base.Suspend();
+
+		// Force the shield to return
+		if (targetUnit)
+		{
+			Instantiate(returnEffectPrefab, shieldStart.position, shieldStart.rotation);
+
+			ClearTarget();
+
+			StartCooldown();
+		}
 	}
 
 	bool InRange(Transform tran, float range)

@@ -88,11 +88,11 @@ public class Ability_IonMissile : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
-		if (target.unit.team == team)
-		{
-			ResetCooldown();
+		if (suspended)
 			return;
-		}
+
+		if (target.unit.team == team)
+			return;
 
 		// While a missile is already active, a new target for the current missile can be selected
 		if (missileActive)
@@ -246,8 +246,6 @@ public class Ability_IonMissile : Ability
 		targetUnit = null;
 		checkingForDead = false;
 	}
-
-
 
 	void Explode(bool intentional)
 	{

@@ -117,7 +117,7 @@ public class GameRules
 
 	public float ABLYsuperlaserRangeTargeting = 60; // Max distance for cast and distance which the target must stay in during Superlaser targeting state
 	public float ABLYsuperlaserCancelCDMult = 0.5f; // What ratio of cooldown is refunded if the target leaves the targeting range or the ability is cancelled manually
-	public float ABLYsuperlaserRangeTolerance = 10; // If distance changes by this much or more post-cast, superlaser is put on a shorter cooldown without firing
+	public float ABLYsuperlaserCancelTime = 1f; // How long after initial cast do you have to wait before you can re-cast to cancel targeting
 	public float ABLYsuperlaserDelay = 3.5f; // Delay before damage is dealt during ability can be interupted or range-cancelled
 	public int ABLYsuperlaserInitStacks = 0; // Stacks the ability starts with
 	public float ABLYsuperlaserStackDmgReq = 0.6f; // How much damage (by percentage of max health + max armor) has to be done to a unit to earn a stack from its death

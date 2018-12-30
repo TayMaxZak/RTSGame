@@ -80,6 +80,9 @@ public class Ability_NoReload : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
+		if (suspended)
+			return;
+
 		if (!offCooldown)
 			return;
 
@@ -90,12 +93,25 @@ public class Ability_NoReload : Ability
 
 	void Toggle()
 	{
-		isActive = !isActive;
+		SetActive(!isActive);
+	}
+
+	void SetActive(bool newActive)
+	{
+		isActive = newActive;
 
 		foreach (Turret t in turrets)
 			t.SetInfiniteAmmo(isActive);
 
 		pointEffect.SetEffectActive(isActive, isActive);
+	}
+
+	public override void Suspend()
+	{
+		base.Suspend();
+
+		SetActive(false);
+		StartCooldown();
 	}
 
 	void Display(float fill)

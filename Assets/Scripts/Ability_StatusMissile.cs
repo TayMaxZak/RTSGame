@@ -61,11 +61,18 @@ public class Ability_StatusMissile : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
-		if (target.unit.team == team)
-		{
-			ResetCooldown();
+		if (suspended)
 			return;
-		}
+
+		if (target.unit.team == team)
+			return;
+
+		// TODO: TEST ALL POSSIBLE COOLDOWN RESETS
+		//if (target.unit.team == team)
+		//{
+		//	ResetCooldown();
+		//	return;
+		//}
 
 		// While a missile is already active, a new target for the current missile can be selected
 		if (missileActive)

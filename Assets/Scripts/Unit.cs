@@ -806,7 +806,6 @@ public class Unit : Entity, ITargetable
 
 	void IonStun()
 	{
-		Debug.Log("STUNNED");
 		AddStatus(new Status(gameObject, StatusType.IonStunned));
 
 		// Since we cannot add more ions anyway, there's no need to remove all current ions
@@ -1023,10 +1022,13 @@ public class Unit : Entity, ITargetable
 		return dmg - swarmAbsorbedDamage;
 	}
 
-	public void DamageSimple(float healthDmg, float armorDmg) // Simple subtraction to armor and health
+	// Treats health and armor seperately, and ignores shields, resitances, and statuses
+	public void DamageSimple(float healthDmg, float armorDmg, bool handleDamage)
 	{
 		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
 		curHealth = Mathf.Min(curHealth - healthDmg, maxHealth);
+		if (healthDmg > 0 && handleDamage)
+			RemoveFragileHealth();
 		ClampFragileHealth(); // Fragile health cannot exceed the room left in the health bar
 		CheckIons();
 		UpdateHealth();
@@ -1035,6 +1037,11 @@ public class Unit : Entity, ITargetable
 		{
 			Die(DamageType.Normal);
 		}
+	}
+
+	public void DamageSimple(float healthDmg, float armorDmg)
+	{
+		DamageSimple(healthDmg, armorDmg, false);
 	}
 
 	public void Die(DamageType damageType)

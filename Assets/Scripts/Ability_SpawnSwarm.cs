@@ -109,6 +109,9 @@ public class Ability_SpawnSwarm : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
+		if (suspended)
+			return;
+
 		if (!offCooldown)
 			return;
 

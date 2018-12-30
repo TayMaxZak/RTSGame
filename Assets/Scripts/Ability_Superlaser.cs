@@ -45,6 +45,7 @@ public class Ability_Superlaser : Ability
 
 	private int state = 0; // 0 = standby, 1 = targeting (has a target, is turning towards it), 2 = countdown (will shoot after a fixed time delay)
 	private Coroutine countdownCoroutine;
+	private float startTargetTime;
 
 	private UI_AbilBar_Superlaser abilityBar;
 
@@ -107,6 +108,9 @@ public class Ability_Superlaser : Ability
 
 	public override void UseAbility(AbilityTarget target)
 	{
+		if (suspended)
+			return;
+
 		if (!offCooldown)
 			return;
 
@@ -114,13 +118,17 @@ public class Ability_Superlaser : Ability
 
 		if (state == 0)
 		{
+			startTargetTime = Time.time;
 			BeginTargeting(target.unit);
 			ResetCooldown(); // Cooldown is applied later
 		}
 		else if (state == 1) // TODO: Check if a few seconds have passed since the ability was first activated
 		{
-			Reset();
-			SetCooldown(gameRules.ABLYsuperlaserCancelCDMult); // Reduced cooldown
+			if (Time.time > startTargetTime + gameRules.ABLYsuperlaserCancelTime)
+			{
+				Reset();
+				SetCooldown(gameRules.ABLYsuperlaserCancelCDMult); // Reduced cooldown
+			}
 		}
 	}
 
@@ -173,7 +181,7 @@ public class Ability_Superlaser : Ability
 	{
 		// Make sure this shot counts for getting a stack
 		Status markStatus = new Status(gameObject, StatusType.SuperlaserMark);
-		markStatus.SetTimeLeft(CalcDamage() * 2);
+		markStatus.SetTimeLeft(CalcDamage());
 
 		Hitscan shot = new Hitscan(shotTemplate);
 		shot.SetDamage(0);
@@ -188,6 +196,20 @@ public class Ability_Superlaser : Ability
 		//Instantiate(countdownFinishExplosion, targetUnit.transform.position, Quaternion.identity); // Explosion
 		Instantiate(countdownFinishPrefab, transform.position, Quaternion.identity); // Sound TODO: ???
 		
+		Reset();
+		StartCooldown(); // Now start ability cooldown
+	}
+
+	void SelfFire()
+	{
+		StopCoroutine(countdownCoroutine);
+
+		parentUnit.DamageSimple(CalcDamage(), 0, true);
+
+		Destroy(countdownStart); // TODO: ???
+		//Instantiate(selfFireExplosion, targetUnit.transform.position, Quaternion.identity); // Explosion
+		Instantiate(countdownFinishPrefab, transform.position, Quaternion.identity); // Sound TODO: ???
+
 		Reset();
 		StartCooldown(); // Now start ability cooldown
 	}
@@ -337,6 +359,21 @@ public class Ability_Superlaser : Ability
 
 		Destroy(countdownStart); // TODO: ???
 		ClearEffects();
+	}
+
+	public override void Suspend()
+	{
+		base.Suspend();
+
+		if (state == 1)
+		{
+			Reset();
+			SetCooldown(gameRules.ABLYsuperlaserCancelCDMult); // Reduced cooldown
+		}
+		else if (state == 2)
+		{
+			SelfFire();
+		}
 	}
 
 	void ClearEffects()

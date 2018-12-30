@@ -82,7 +82,6 @@ public class Ability_Chain : Ability
 			// If target is parentUnit, don't put ability on cooldown
 			ResetCooldown();
 		}
-
 	}
 
 	public override void End()
@@ -135,6 +134,17 @@ public class Ability_Chain : Ability
 		checkingForDead = false;
 		if (clearEffects)
 			ClearEffects();
+	}
+
+	public override void Suspend()
+	{
+		base.Suspend();
+
+		if (targetUnit)
+		{
+			ClearTarget(true);
+			StartCooldown();
+		}
 	}
 
 	void ClearEffects()
