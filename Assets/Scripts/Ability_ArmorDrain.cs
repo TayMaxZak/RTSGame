@@ -22,7 +22,7 @@ public class Ability_ArmorDrain : Ability
 		InitCooldown();
 
 		energy = 1;
-		deltaDurations = AbilityUtils.GetDeltaDurations(AbilityType.ArmorDrain);
+		deltaDurations = AbilityUtils.GetDeltaDurations(abilityType);
 
 		displayInfo.displayFill = true;
 	}

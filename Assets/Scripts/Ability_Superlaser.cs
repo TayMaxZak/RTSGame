@@ -59,12 +59,14 @@ public class Ability_Superlaser : Ability
 	new void Awake()
 	{
 		base.Awake();
+
 		abilityType = AbilityType.Superlaser;
 		InitCooldown();
 
 		stacks = gameRules.ABLYsuperlaserInitStacks;
 
 		displayInfo.displayStacks = true;
+		//displayInfo.displayFill = true;
 
 		claimedBounties = new List<Unit>();
 
@@ -114,18 +116,19 @@ public class Ability_Superlaser : Ability
 		if (!offCooldown)
 			return;
 
-		base.UseAbility(target);
-
 		if (state == 0)
 		{
+			base.UseAbility(target);
+			ResetCooldown(); // Cooldown is applied later
+
 			startTargetTime = Time.time;
 			BeginTargeting(target.unit);
-			ResetCooldown(); // Cooldown is applied later
 		}
-		else if (state == 1) // TODO: Check if a few seconds have passed since the ability was first activated
+		else if (state == 1)
 		{
 			if (Time.time > startTargetTime + gameRules.ABLYsuperlaserCancelTime)
 			{
+				base.UseAbility(target);
 				Reset();
 				SetCooldown(gameRules.ABLYsuperlaserCancelCDMult); // Reduced cooldown
 			}
@@ -238,7 +241,7 @@ public class Ability_Superlaser : Ability
 			{
 				if (InRange(targetUnit.transform, gameRules.ABLYsuperlaserRangeTargeting)) // In range
 				{
-					if (Mathf.Abs(Vector3.Dot(cannon.transform.forward, (targetUnit.transform.position - cannon.transform.position).normalized)) > 1 - aimThreshold) // Aimed close enough
+					if (Vector3.Dot(cannon.transform.forward, (targetUnit.transform.position - cannon.transform.position).normalized) > 1 - aimThreshold) // Aimed close enough
 					{
 						// Start countdown once we are properly aimed
 						BeginCountdown();

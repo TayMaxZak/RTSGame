@@ -139,6 +139,7 @@ public class GameRules
 	public float ABLY_selfDestructSpeedMult = 1.25f; // Speed mult while channeling
 
 	public float ABLY_ionMissileRangeUse = 40; // Max distance for cast
+	public float ABLY_ionMissileCancelTime = 1f; // How long after initial cast do you have to wait before you can re-cast to cancel targeting
 	public float ABLY_ionMissileRangeMissile = 60; // Max distance for before missile detonates
 	public float ABLY_ionMissileMaxLifetime = 10; // How long the missile can exist before detonating
 	public float ABLY_ionMissileDamage = 10; // Flat damage dealt on impact

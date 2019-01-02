@@ -17,6 +17,7 @@ public class Ability_IonMissile : Ability
 	private float RS;
 	[SerializeField]
 	private float MS = 8; // Movement speed of missile
+	private float aimThreshold = 0.001f;
 
 	[SerializeField]
 	private Effect_Point missilePrefab;
@@ -28,9 +29,15 @@ public class Ability_IonMissile : Ability
 	private Effect_Point explosionPrefab;
 	private Effect_Point explosion;
 
+	private int state = 0; // 0 = standby, 1 = targeting (has a target, is turning towards it), 2 = countdown (will shoot after a fixed time delay)
+	private float startTargetTime;
+	private int attemptShotWhen;
+	private bool checkIfDead = false;
+
 	private Vector3 targetPosition;
 	private Unit targetUnit;
 	private bool checkingForDead = false;
+
 
 	private LayerMask mask;
 
@@ -42,7 +49,7 @@ public class Ability_IonMissile : Ability
 		InitCooldown();
 
 		stacks = gameRules.ABLY_ionMissileMaxAmmo;
-		deltaDurations = AbilityUtils.GetDeltaDurations(AbilityType.IonMissile);
+		deltaDurations = AbilityUtils.GetDeltaDurations(abilityType);
 
 		mask = gameRules.collisionLayerMask;
 
@@ -81,6 +88,7 @@ public class Ability_IonMissile : Ability
 		explosion.SetEffectActive(false);
 	}
 
+	// Aim for one second ahead of the target
 	void CalculateTargetPosition()
 	{
 		targetPosition = targetUnit.transform.position + targetUnit.GetVelocity();
@@ -91,18 +99,7 @@ public class Ability_IonMissile : Ability
 		if (suspended)
 			return;
 
-		if (target.unit.team == team)
-			return;
-
-		// While a missile is already active, a new target for the current missile can be selected
-		if (missileActive)
-		{
-			//if (InRange(target.unit.transform))
-			//{
-				//targetUnit = target.unit;
-			//}
-		}
-		else // New missile
+		if (state == 0) // Standby
 		{
 			if (!offCooldown)
 				return;
@@ -110,24 +107,63 @@ public class Ability_IonMissile : Ability
 			if (stacks < 1)
 				return;
 
-			base.UseAbility(target);
-
 			if (InRange(target.unit.transform))
 			{
-				targetUnit = target.unit;
+				base.UseAbility(target);
+				ResetCooldown(); // Cooldown is applied later
 
-				stacks--;
-				DisplayStacks();
-
-				SpawnMissile();
+				startTargetTime = Time.time;
+				BeginTargeting(target.unit);
+				attemptShotWhen = Time.frameCount + 1; // We should start aim checking in 1 frame from now
 			}
-			else
-				ResetCooldown();
 		}
+		else if (state == 1) // Targeting
+		{
+			if (Time.time + gameRules.ABLY_ionMissileCancelTime > startTargetTime)
+			{
+				base.UseAbility(target);
+				ResetCooldown();
+				Reset();
+			}
+		}
+		else if (state == 2)
+		{
+			if (InRange(target.unit.transform))
+			{
+				SwitchTargets(target.unit);
+			}
+		}
+
+		// While a missile is already active, a new target for the current missile can be selected
+	}
+
+	void BeginTargeting(Unit unit)
+	{
+		if (unit.team == team) // Cannot target allies
+			return;
+
+		state = 1; // Targeting state
+
+		targetUnit = unit; // Set new target
+		checkIfDead = true; // Our target may become null
+
+		parentUnit.SetAbilityGoal(new AbilityTarget(targetUnit)); // Turn towards it
+		
+	}
+
+	void SwitchTargets(Unit unit)
+	{
+		if (unit.team == team) // Cannot target allies
+			return;
+
+		targetUnit = unit; // Set new target
+		checkIfDead = true; // Our target may become null
 	}
 
 	void SpawnMissile()
 	{
+		state = 2; // Missile in the air state
+
 		missile.transform.position = startPosition.position;
 		missile.transform.rotation = startPosition.rotation;
 
@@ -146,15 +182,58 @@ public class Ability_IonMissile : Ability
 	{
 		base.Update();
 
-		if (targetUnit)
+		// Targeting
+		if (state == 1)
 		{
-			CalculateTargetPosition();
-		}
-		else
-		{
-			if (checkingForDead)
+			if (Time.frameCount > attemptShotWhen) // Should be checking for aim
 			{
-				ClearTarget();
+				if (targetUnit) // We have something to aim at
+				{
+					CalculateTargetPosition();
+					if (InRange(targetUnit.transform)) // In range
+					{
+						if (Vector3.Dot(transform.forward, (targetPosition - transform.position).normalized) > 1 - aimThreshold) // Aimed close enoughs
+						{
+							stacks--;
+							DisplayStacks();
+
+							// Start countdown once we are properly aimed
+							SpawnMissile();
+							StartCoroutine(ClearAbilityGoalCoroutine());
+
+							StartCooldown();
+						}
+					}
+					else
+					{
+						Reset();
+						// No cooldown
+					} // in range
+				}
+				else // Target died early
+				{
+					if (checkIfDead)
+					{
+						Reset();
+						// No cooldown
+					}
+				} // target alive
+			} // state
+		} // if state 1
+		else if (state == 2) // missile in the air
+		{
+			if (targetUnit)
+			{
+				CalculateTargetPosition();
+			}
+			else
+			{
+				if (checkingForDead)
+				{
+					// Clear target but don't reset
+					targetUnit = null;
+					checkingForDead = false;
+				}
 			}
 		}
 
@@ -241,12 +320,6 @@ public class Ability_IonMissile : Ability
 		}
 	}
 
-	void ClearTarget()
-	{
-		targetUnit = null;
-		checkingForDead = false;
-	}
-
 	void Explode(bool intentional)
 	{
 		Explode(intentional, new RaycastHit());
@@ -264,7 +337,23 @@ public class Ability_IonMissile : Ability
 		explosion.transform.rotation = hit.collider ? Quaternion.LookRotation((missile.transform.forward + hit.normal * -1) / 2) : missile.transform.rotation;
 		explosion.SetEffectActive(true);
 
-		ClearTarget();
+		Reset();
+	}
+
+	void Reset()
+	{
+		state = 0; // Back to standby state
+
+		targetUnit = null;
+		checkingForDead = false;
+
+		parentUnit.ClearAbilityGoal();
+	}
+
+	IEnumerator ClearAbilityGoalCoroutine()
+	{
+		yield return new WaitForSeconds(0.2f);
+		parentUnit.ClearAbilityGoal();
 	}
 
 	public override void End()
