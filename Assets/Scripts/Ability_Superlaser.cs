@@ -266,10 +266,12 @@ public class Ability_Superlaser : Ability
 		if (state > 0 && targetUnit)
 		{
 			// Construct an imaginary target that only differs from the cannon's current orientation by the Y-axis
-			float dist = new Vector3(cannon.transform.position.x - targetUnit.transform.position.x, cannon.transform.position.z - targetUnit.transform.position.z).magnitude;
+			float dist = new Vector2(cannon.transform.position.x - targetUnit.transform.position.x, cannon.transform.position.z - targetUnit.transform.position.z).magnitude;
+			Debug.Log(dist);
 			Vector3 pos = cannon.transform.position + transform.forward * dist;
 			pos.y = targetUnit.transform.position.y;
 			// Rotate superlaser vertically
+			Debug.DrawLine(cannon.transform.position, pos, Color.blue);
 			Rotate((pos - cannon.transform.position).normalized);
 		}
 		else
@@ -303,10 +305,11 @@ public class Ability_Superlaser : Ability
 
 		// Rotate towards the desired look rotation
 		// TODO: Sometimes super slow
-		Quaternion newRotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
+		Debug.DrawRay(cannon.transform.position, direction, Color.red);
+		Quaternion newRotation = Quaternion.RotateTowards(cannon.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
 
 		// Limit rotation
-		newRotation = LimitVerticalRotation(newRotation, rotation);
+		//newRotation = LimitVerticalRotation(newRotation, rotation);
 		rotation = newRotation;
 
 		// Fixes strange RotateTowards bug
@@ -314,7 +317,8 @@ public class Ability_Superlaser : Ability
 			newRotation = resetRot;
 
 		// Apply to cannon
-		cannon.transform.localRotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
+		//cannon.transform.localRotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
+		cannon.transform.rotation = rotation;
 	}
 
 	Quaternion LimitVerticalRotation(Quaternion rot, Quaternion oldRot)
