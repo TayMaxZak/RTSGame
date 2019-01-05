@@ -8,7 +8,10 @@ public class Ability_IonMissile : Ability
 	private Vector3 deltaDurations;
 
 	[SerializeField]
-	private Transform startPosition;
+	private Transform[] startPosition;
+	private int startIndexCur = 0;
+	[SerializeField]
+	private int startIndexMax = 1;
 	//[SerializeField]
 	//private float initAngle = 45;
 
@@ -17,6 +20,17 @@ public class Ability_IonMissile : Ability
 	private float RS;
 	[SerializeField]
 	private float MS = 8; // Movement speed of missile
+
+	[Header("Launcher")]
+	[SerializeField]
+	private GameObject launcher;
+	private Quaternion rotation;
+	[SerializeField]
+	private float verticalRS = 5;
+	[SerializeField]
+	private float minV = 50;
+	[SerializeField]
+	private float maxV = 170;
 	private float aimThreshold = 0.001f;
 
 	[SerializeField]
@@ -79,7 +93,7 @@ public class Ability_IonMissile : Ability
 	{
 		base.Start();
 
-		startPosition.localRotation = Quaternion.Euler(0, 0, 0);
+		//startPosition.localRotation = Quaternion.Euler(0, 0, 0);
 
 		missile = Instantiate(missilePrefab);
 		missile.SetEffectActive(false);
@@ -164,8 +178,8 @@ public class Ability_IonMissile : Ability
 	{
 		state = 2; // Missile in the air state
 
-		missile.transform.position = startPosition.position;
-		missile.transform.rotation = startPosition.rotation;
+		missile.transform.position = startPosition[startIndexCur].position;
+		missile.transform.rotation = startPosition[startIndexCur].rotation;
 
 		// Lifetime cannot exceed cooldown time or time to cross ability cast range
 		missileLifetime = Mathf.Min(gameRules.ABLY_ionMissileMaxLifetime, 1 / cooldownDelta);
@@ -176,6 +190,11 @@ public class Ability_IonMissile : Ability
 		// Rotate at a speed to just barely reach the correct orientation above the target position
 		//RS = Mathf.Min(2 * (90 - initAngle) / ((targetPosition - targetUnit.transform.position).magnitude / MS), maxRS);
 		RS = maxRS;
+
+		// Change firing position
+		startIndexCur++;
+		if (startIndexCur > startIndexMax)
+			startIndexCur = 0;
 	}
 
 	new void Update()
@@ -185,14 +204,14 @@ public class Ability_IonMissile : Ability
 		// Targeting
 		if (state == 1)
 		{
-			if (Time.frameCount > attemptShotWhen) // Should be checking for aim
+			if (targetUnit) // We have something to aim at
 			{
-				if (targetUnit) // We have something to aim at
+				CalculateTargetPosition();
+				if (InRange(targetUnit.transform)) // In range
 				{
-					CalculateTargetPosition();
-					if (InRange(targetUnit.transform)) // In range
+					if (Time.frameCount > attemptShotWhen) // Should be checking for aim
 					{
-						if (Vector3.Dot(transform.forward, (targetPosition - transform.position).normalized) > 1 - aimThreshold) // Aimed close enoughs
+						if (Vector3.Dot(launcher.transform.forward, (targetPosition - launcher.transform.position).normalized) > 1 - aimThreshold) // Aimed close enoughs
 						{
 							stacks--;
 							DisplayStacks();
@@ -204,21 +223,22 @@ public class Ability_IonMissile : Ability
 							StartCooldown();
 						}
 					}
-					else
-					{
-						Reset();
-						// No cooldown
-					} // in range
 				}
-				else // Target died early
+				else
 				{
-					if (checkIfDead)
-					{
-						Reset();
-						// No cooldown
-					}
-				} // target alive
-			} // state
+					Reset();
+					// No cooldown
+				} // in range
+			}
+			else // Target died early
+			{
+				if (checkIfDead)
+				{
+					Reset();
+					// No cooldown
+				}
+			} // target alive
+
 		} // if state 1
 		else if (state == 2) // missile in the air
 		{
@@ -237,6 +257,23 @@ public class Ability_IonMissile : Ability
 			}
 		}
 
+		if (state == 1 && targetUnit)
+		{
+			// Do rotation stuff
+			// Construct an imaginary target that only differs from the launcher's current orientation by the Y-axis
+			float dist = new Vector2(launcher.transform.position.x - targetUnit.transform.position.x, launcher.transform.position.z - targetUnit.transform.position.z).magnitude;
+			Vector3 pos = launcher.transform.position + transform.forward * dist;
+			pos.y = targetUnit.transform.position.y;
+			// Rotate launcher vertically
+			Debug.DrawLine(launcher.transform.position, pos, Color.blue);
+			Rotate((pos - launcher.transform.position).normalized);
+		}
+		else
+		{
+			Rotate(transform.forward);
+		}
+
+		// Missile behavior
 		if (missileActive)
 		{
 			// Raycast connects, too far from parent unit, or out of lifetime
@@ -256,7 +293,7 @@ public class Ability_IonMissile : Ability
 
 							float curShields = unit.GetShields().x;
 							float maxShields = unit.GetShields().y;
-							DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage + gameRules.ABLY_ionMissileDamageBonusMult * curShields + gameRules.ABLY_ionMissileDamageBonusMult * maxShields, (startPosition.position - hit.point).magnitude, DamageType.IonMissile);
+							DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage + gameRules.ABLY_ionMissileDamageBonusMult * curShields + gameRules.ABLY_ionMissileDamageBonusMult * maxShields, (startPosition[startIndexCur].position - hit.point).magnitude, DamageType.IonMissile);
 
 							// Is the unit still alive?
 							if (!result.lastHit)
@@ -291,7 +328,7 @@ public class Ability_IonMissile : Ability
 
 			if (!hit.collider || hitSelf)
 			{
-				if ((startPosition.position - missile.transform.position).sqrMagnitude > gameRules.ABLY_ionMissileRangeMissile * gameRules.ABLY_ionMissileRangeMissile || missileLifetime <= 0)
+				if ((startPosition[startIndexCur].position - missile.transform.position).sqrMagnitude > gameRules.ABLY_ionMissileRangeMissile * gameRules.ABLY_ionMissileRangeMissile || missileLifetime <= 0)
 				{
 					Explode(false);
 				}
@@ -305,6 +342,7 @@ public class Ability_IonMissile : Ability
 			} // if failed raycast
 		} // if missileActive
 
+		// Reload
 		if (stacks < gameRules.ABLY_ionMissileMaxAmmo)
 		{
 			reloadTimer += deltaDurations.y * Time.deltaTime;
@@ -318,6 +356,51 @@ public class Ability_IonMissile : Ability
 				reloadTimer = 0;
 			}
 		}
+	}
+
+	void Rotate(Vector3 direction)
+	{
+		// Fixes strange RotateTowards bug
+		Quaternion resetRot = Quaternion.identity;
+
+		// Rotate towards the desired look rotation
+		// TODO: Sometimes super slow
+		Debug.DrawRay(launcher.transform.position, direction, Color.red);
+		Quaternion newRotation = Quaternion.RotateTowards(launcher.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
+
+		// Limit rotation
+		newRotation = LimitVerticalRotation(newRotation, rotation);
+		rotation = newRotation;
+
+		// Fixes strange RotateTowards bug
+		if (Time.frameCount == attemptShotWhen + 1)
+			newRotation = resetRot;
+
+		// Apply to cannon
+		//cannon.transform.localRotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
+		launcher.transform.rotation = rotation;
+	}
+
+	Quaternion LimitVerticalRotation(Quaternion rot, Quaternion oldRot)
+	{
+		Vector3 components = rot.eulerAngles;
+		Vector3 componentsOld = oldRot.eulerAngles;
+		Vector3 vComponentFwd = Quaternion.LookRotation(transform.up).eulerAngles;
+
+		float angleV = Vector3.Angle(transform.up, rot * Vector3.forward);
+
+		// Vertical extremes
+		// Don't have to do anything besides ignoring bad rotations because units will never rotate on their Z or X axes
+		if (angleV > maxV)
+		{
+			components.x = componentsOld.x;
+		}
+		else if (angleV < minV)
+		{
+			components.x = componentsOld.x;
+		}
+
+		return Quaternion.Euler(components);
 	}
 
 	void Explode(bool intentional)

@@ -267,7 +267,6 @@ public class Ability_Superlaser : Ability
 		{
 			// Construct an imaginary target that only differs from the cannon's current orientation by the Y-axis
 			float dist = new Vector2(cannon.transform.position.x - targetUnit.transform.position.x, cannon.transform.position.z - targetUnit.transform.position.z).magnitude;
-			Debug.Log(dist);
 			Vector3 pos = cannon.transform.position + transform.forward * dist;
 			pos.y = targetUnit.transform.position.y;
 			// Rotate superlaser vertically
@@ -309,7 +308,7 @@ public class Ability_Superlaser : Ability
 		Quaternion newRotation = Quaternion.RotateTowards(cannon.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
 
 		// Limit rotation
-		//newRotation = LimitVerticalRotation(newRotation, rotation);
+		newRotation = LimitVerticalRotation(newRotation, rotation);
 		rotation = newRotation;
 
 		// Fixes strange RotateTowards bug
