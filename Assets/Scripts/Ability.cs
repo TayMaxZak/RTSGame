@@ -270,7 +270,7 @@ public static class AbilityUtils
 			case AbilityType.MoveSwarm:
 				return "Move Fighters";
 			case AbilityType.ShieldProject:
-				return "Project Shield";
+				return "Surguard Shield";
 			case AbilityType.HealField:
 				return "Metasteel Pool";
 			case AbilityType.Chain:
@@ -283,6 +283,8 @@ public static class AbilityUtils
 				return "Rapid Refire";
 			case AbilityType.SelfDestruct:
 				return "Overload Reactor";
+			case AbilityType.IonMissile:
+				return "Storm Rockets";
 			default:
 				return "default";
 		}
@@ -313,6 +315,8 @@ public static class AbilityUtils
 				return "Allows all turrets to fire continuously by temporarily suspending their cooling cycles.";
 			case AbilityType.SelfDestruct:
 				return "Disables reactor cooling, causing a massive explosion after several seconds.";
+			case AbilityType.IonMissile:
+				return "Fires an ion rocket at the target unit, suppressing it. Units are also disabled when they are fully ionized.";
 			default:
 				return "default";
 		}

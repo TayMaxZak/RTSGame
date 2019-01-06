@@ -164,7 +164,7 @@ public static class StatusUtils
 			case StatusType.IonSuppressed:
 				return "Unit's special ability systems are offline.";
 			case StatusType.IonStunned:
-				return "Reactor offline, switching to reserve power: unable to move, fire turrets, or use special abilities.";
+				return "Unable to move, fire turrets, or use special abilities.";
 			default:
 				return "default";
 		}
