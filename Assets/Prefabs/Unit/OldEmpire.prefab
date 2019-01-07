@@ -3552,7 +3552,7 @@ MonoBehaviour:
   projTemplate:
     dmgType: 0
     speed: 30
-    damage: 5
+    damage: 10
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
@@ -3626,7 +3626,7 @@ MonoBehaviour:
   projTemplate:
     dmgType: 0
     speed: 30
-    damage: 5
+    damage: 10
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
@@ -3748,10 +3748,10 @@ MonoBehaviour:
   engineEffects: {fileID: 114260064164963448}
   team: 0
   buildIndex: -1
-  curArmor: 300
-  maxArmor: 300
-  curHealth: 300
-  maxHealth: 300
+  curArmor: 250
+  maxArmor: 250
+  curHealth: 250
+  maxHealth: 250
   alwaysBurnImmune: 0
   curFragileHealth: 0
   curIons: 0

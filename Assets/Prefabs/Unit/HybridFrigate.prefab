@@ -83,6 +83,7 @@ GameObject:
   - component: {fileID: 4892030997991394}
   - component: {fileID: 114429622153127406}
   - component: {fileID: 114640070245601930}
+  - component: {fileID: 114153668136258048}
   - component: {fileID: 114846295635110128}
   - component: {fileID: 114520814338689830}
   - component: {fileID: 82340276203249022}
@@ -846,7 +847,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1406503039944232}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.55, z: 0.422}
+  m_LocalPosition: {x: 0, y: 1.24, z: 0.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4892030997991394}
@@ -2146,6 +2147,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &114153668136258048
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1217006800066398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a39a37045d22d2498449e86c4481f9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shieldStart: {fileID: 0}
+  targetLoopEffectPrefab: {fileID: 0}
+  returnEffectPrefab: {fileID: 0}
+  breakEffectPrefab: {fileID: 0}
 --- !u!114 &114196155616915878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2232,7 +2248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   printInfo: 0
-  type: 5
+  type: 8
   model: {fileID: 1695198488138928}
   swarmTarget: {fileID: 4742189688223970}
   selCircleSize: 1.4
@@ -2259,6 +2275,7 @@ MonoBehaviour:
   - {fileID: 114875230107597894}
   abilities:
   - {fileID: 114640070245601930}
+  - {fileID: 114153668136258048}
   movement:
     MS: 4
     MSVMult: 0.6

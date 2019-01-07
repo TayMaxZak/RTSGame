@@ -11,7 +11,8 @@ public enum EntityType
 	Frigate,
 	Apollo,
 	Bulkhead,
-	OldEmpire
+	OldEmpire,
+	HybridFrigate
 }
 
 public class Entity : MonoBehaviour
@@ -196,7 +197,7 @@ public static class EntityUtils
 				}
 			case EntityType.Frigate:
 				{
-					return "Redcoat Carrier";
+					return "Redcoat";
 				}
 			case EntityType.Apollo:
 				{
@@ -209,6 +210,10 @@ public static class EntityUtils
 			case EntityType.OldEmpire:
 				{
 					return "Old Empire Frigate";
+				}
+			case EntityType.HybridFrigate:
+				{
+					return "Boxcar";
 				}
 		}
 	}
@@ -235,7 +240,7 @@ public static class EntityUtils
 				}
 			case EntityType.Frigate:
 				{
-					return "A hybrid frigate which carries fighters into battle. Excels at long-range combat.";
+					return "A hybrid cruiser which carries fighters into battle. Excels at long-range combat.";
 				}
 			case EntityType.Apollo:
 				{
@@ -248,6 +253,10 @@ public static class EntityUtils
 			case EntityType.OldEmpire:
 				{
 					return "A combat frigate capable of dangerously overclocking its own systems.";
+				}
+			case EntityType.HybridFrigate:
+				{
+					return "A hybrid frigate which fills many roles. Has a low-power defensive shield and variable weapons.";
 				}
 		}
 	}

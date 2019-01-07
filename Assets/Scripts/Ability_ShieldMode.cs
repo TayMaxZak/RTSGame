@@ -177,7 +177,7 @@ public class Ability_ShieldMode : Ability
 		base.Suspend();
 
 		// Force the shield to return
-		//RemoveShield();
+		SetActive(false);
 	}
 
 	bool InRange(Transform tran, float range)

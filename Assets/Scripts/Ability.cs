@@ -174,7 +174,8 @@ public enum AbilityType
 	NoReload,
 	SelfDestruct,
 	IonMissile,
-	ShieldMode
+	ShieldMode,
+	RailMode
 }
 
 public struct AbilityDisplayUpdateConfig
@@ -217,6 +218,8 @@ public static class AbilityUtils
 			case AbilityType.IonMissile:
 				return GetDeltaOf(new Vector3(5, 40, 0));
 			case AbilityType.ShieldMode:
+				return GetDeltaOf(new Vector3(10, 0, 0));
+			case AbilityType.RailMode:
 				return GetDeltaOf(new Vector3(10, 0, 0));
 			default:
 				return GetDeltaOf(new Vector3());
@@ -288,6 +291,10 @@ public static class AbilityUtils
 				return "Overload Reactor";
 			case AbilityType.IonMissile:
 				return "Storm Rockets";
+			case AbilityType.ShieldMode:
+				return "Mode: Tech Shield";
+			case AbilityType.RailMode:
+				return "Mode: Rail Amp";
 			default:
 				return "default";
 		}
@@ -320,6 +327,10 @@ public static class AbilityUtils
 				return "Disables reactor cooling, causing a massive explosion after several seconds.";
 			case AbilityType.IonMissile:
 				return "Fires an ion rocket at the target unit, suppressing it. Units are also disabled when they are fully ionized.";
+			case AbilityType.ShieldMode:
+				return "A low-strength but quickly- regenerating defensive shield. Disables Rail Mode.";
+			case AbilityType.RailMode:
+				return "Switches turrets to high-velocity mode, letting them hit enemy fighters. Disables Shield Mode.";
 			default:
 				return "default";
 		}

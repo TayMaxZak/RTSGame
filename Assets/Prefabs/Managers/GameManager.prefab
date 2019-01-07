@@ -400,20 +400,21 @@ MonoBehaviour:
     ABLY_ionMissileDecayCutoff: 5
     ABLY_ionMissileMaxAmmo: 2
     ABLY_ionMissileAmmoTick: 1
-    ABLY_shieldModeMaxPool: 50
-    ABLY_shieldModeRegenDelay: 1
+    ABLY_modeSpeedMult: 0.5
+    ABLY_shieldModeMaxPool: 40
+    ABLY_shieldModeRegenDelay: 0.25
     ABLY_shieldModeRegenGPS:
-    - 4
-    - 8
-    - 16
-    - 16
-    - 2
-    - 2
+    - 5
+    - 10
+    - 10
+    - 5
+    - 5
+    - 5
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3
     STATswarmResistTransferMult: 1
-    STAT_armorMeltDPS: 0
+    STAT_armorMeltDPS: 3
     STAT_armorMeltAbsorbFlat: 1
     STAT_armorMeltAbsorbScalingMult: 0.5
   commanders:
@@ -436,10 +437,13 @@ MonoBehaviour:
   controller: {fileID: 0}
   buildUnits:
   - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
+  - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
+  - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
   - {fileID: 114214795380621988, guid: 8cc9506457f748847a9d34bd6755cddf, type: 2}
-  - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
+  - {fileID: 114214795380621988, guid: 2d4a613ca2fbd4e47a3581c32748146c, type: 2}
   - {fileID: 114214795380621988, guid: 54f4b3e7cb179aa4483ae56a3be785e3, type: 2}
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
+  - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
   resPoints: 30
   reclaimPoints: 0
@@ -459,10 +463,13 @@ MonoBehaviour:
   controller: {fileID: 0}
   buildUnits:
   - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
+  - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
+  - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
   - {fileID: 114214795380621988, guid: 8cc9506457f748847a9d34bd6755cddf, type: 2}
-  - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
+  - {fileID: 114214795380621988, guid: 2d4a613ca2fbd4e47a3581c32748146c, type: 2}
   - {fileID: 114214795380621988, guid: 54f4b3e7cb179aa4483ae56a3be785e3, type: 2}
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
+  - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
   resPoints: 30
   reclaimPoints: 0

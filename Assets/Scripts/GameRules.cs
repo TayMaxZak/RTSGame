@@ -157,7 +157,7 @@ public class GameRules
 
 	public float ABLY_shieldModeMaxPool = 50;
 	public float ABLY_shieldModeRegenDelay = 1;
-	public float[] ABLY_shieldModeRegenGPS = new float[] { 4, 8, 16, 16, 2, 2 }; // Based on shields missing: 20% -> 4ps / 40% -> 8ps / 60% -> 16ps / 80% -> 16ps / 100% -> 2ps / over 100& -> 2ps
+	public float[] ABLY_shieldModeRegenGPS = new float[] { 8, 12, 12, 8, 8, 4 }; // Based on shields missing: 20% -> 8ps / 40% -> 12ps / 60% -> 12ps / 80% -> 8ps / 100% -> 8ps / over 100& -> 4ps
 
 
 	[Header("Statuses")]
