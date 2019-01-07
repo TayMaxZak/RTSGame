@@ -9,6 +9,7 @@ public class Turret : MonoBehaviour
 
 	protected Status onHitStatus;
 
+	// TODO: Let user-specified target override preferences
 	[Header("Targeting")]
 	[SerializeField]
 	protected TargetType preferredTargetType = TargetType.Default;

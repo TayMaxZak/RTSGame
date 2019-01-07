@@ -57,7 +57,7 @@ public class Clone_Build : MonoBehaviour
 		finishTime = buildUnit.buildTime;
 
 		if (gameRules.useTestValues)
-			finishTime = finishTime * gameRules.TESTtimeMult;
+			finishTime = finishTime * gameRules.TESTbuildTimeMult;
 
 		UpdateUI();
 

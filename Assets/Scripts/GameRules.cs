@@ -8,6 +8,7 @@ public class GameRules
 	[Header("Testing")]
 	public bool useTestValues = false;
 	public float TESTtimeMult = 0.25f;
+	public float TESTbuildTimeMult = 0.25f;
 	public float TESTinitHPAdd = 0;
 	public float TESTinitHPMult = 0.2f;
 
