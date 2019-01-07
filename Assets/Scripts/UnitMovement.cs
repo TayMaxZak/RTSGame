@@ -324,6 +324,8 @@ public class UnitMovement
 				statusSpeedMult = gameRules.ABLYswarmFirstUseSpeedMult;
 			else if (s.statusType == StatusType.SelfDestructSpeedBuff)
 				statusSpeedMult = gameRules.ABLY_selfDestructSpeedMult;
+			else if (s.statusType == StatusType.ModeSpeedNerf)
+				statusSpeedMult = gameRules.ABLY_modeSpeedMult;
 		}
 		return statusSpeedMult;
 	}

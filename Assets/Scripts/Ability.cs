@@ -173,7 +173,8 @@ public enum AbilityType
 	StatusMissile,
 	NoReload,
 	SelfDestruct,
-	IonMissile
+	IonMissile,
+	ShieldMode
 }
 
 public struct AbilityDisplayUpdateConfig
@@ -215,6 +216,8 @@ public static class AbilityUtils
 				return GetDeltaOf(new Vector3(2, 5, 20));
 			case AbilityType.IonMissile:
 				return GetDeltaOf(new Vector3(5, 40, 0));
+			case AbilityType.ShieldMode:
+				return GetDeltaOf(new Vector3(10, 0, 0));
 			default:
 				return GetDeltaOf(new Vector3());
 		}

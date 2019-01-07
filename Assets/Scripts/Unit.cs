@@ -620,10 +620,12 @@ public class Unit : Entity, ITargetable
 		float total = 0;
 		foreach (ShieldMod s in shieldMods) // Check all current shield mods
 		{
-			// Projected Shield
-			if (s.shieldModType == ShieldModType.ShieldProject)
+			
+			if (s.shieldModType == ShieldModType.ShieldProject) // Projected Shield
 				total += s.shieldPercent * gameRules.ABLYshieldProjectMaxPool;
-			else if (s.shieldModType == ShieldModType.Flagship)
+			else if (s.shieldModType == ShieldModType.ShieldMode) // Shield Mode shield
+				total += s.shieldPercent * gameRules.ABLY_shieldModeMaxPool;
+			else if (s.shieldModType == ShieldModType.Flagship) // Flagship Shield
 				total += s.shieldPercent * gameRules.FLAGshieldMaxPool;
 		}
 
@@ -638,10 +640,11 @@ public class Unit : Entity, ITargetable
 		float total = 0;
 		foreach (ShieldMod s in shieldMods) // Check all current shield mods
 		{
-			// Projected Shield
-			if (s.shieldModType == ShieldModType.ShieldProject)
+			if (s.shieldModType == ShieldModType.ShieldProject) // Projected Shield
 				total += gameRules.ABLYshieldProjectMaxPool;
-			else if (s.shieldModType == ShieldModType.Flagship)
+			else if (s.shieldModType == ShieldModType.ShieldMode) // Shield Mode shield
+				total += gameRules.ABLY_shieldModeMaxPool;
+			else if (s.shieldModType == ShieldModType.Flagship) // Flagship Shield
 				total += gameRules.FLAGshieldMaxPool;
 		}
 
@@ -650,15 +653,17 @@ public class Unit : Entity, ITargetable
 
 	public bool AddShieldMod(ShieldMod shieldMod)
 	{
-		bool isProjectedShield = shieldMod.shieldModType == ShieldModType.ShieldProject;
-
 		// A destroyed Projected Shield can't be applied to anything until it regenerates past 0
-		if (isProjectedShield && shieldMod.shieldPercent <= 0)
+		if (shieldMod.shieldModType == ShieldModType.ShieldProject && shieldMod.shieldPercent <= 0)
 			return false;
+
+		// A destroyed Shield Mode shield can't be applied to anything until it regenerates past 0
+		//if (shieldMod.shieldModType == ShieldModType.ShieldMode && shieldMod.shieldPercent <= 0)
+		//	return false;
 
 		foreach (ShieldMod s in shieldMods) // Check all current Shield mods
 		{
-			// Only one Projected Shield or Flagship Shield on a unit at a time
+			// Only one Projected Shield, Shield Mode shield, or Flagship Shield can be on a unit at a time
 			// If it belongs to the same unit,
 			if (s.shieldModType == shieldMod.shieldModType)
 			{
@@ -915,13 +920,16 @@ public class Unit : Entity, ITargetable
 		if (dmg <= 0)
 			return -1;
 
-		// Each unit has at most one Projected Shield and at most one Flagship Shield
+		// Each unit has at most one Projected Shield, at most one Shield Mode shield, and at most one Flagship Shield
 		ShieldMod projShield = null;
+		ShieldMod shieldModeShield = null;
 		ShieldMod flagShield = null;
 		foreach (ShieldMod s in shieldMods)
 		{
 			if (s.shieldModType == ShieldModType.ShieldProject)
 				projShield = s;
+			else if (s.shieldModType == ShieldModType.ShieldMode)
+				shieldModeShield = s;
 			else if (s.shieldModType == ShieldModType.Flagship)
 				flagShield = s;
 		}
@@ -940,8 +948,9 @@ public class Unit : Entity, ITargetable
 			{
 				projShield.shieldPercent = curShieldPool / gameRules.ABLYshieldProjectMaxPool;
 
-				UpdateShield();
 				projShield.from.GetComponent<Ability_ShieldProject>().OnDamage(); // TODO: Optimize
+
+				UpdateShield();
 				return -1; // Return a negative number so Damage() knows the shield was not broken
 			}
 			else // Negative value
@@ -954,6 +963,41 @@ public class Unit : Entity, ITargetable
 
 				// Notify source that the shield was destroyed, no further action on our side needed
 				projShield.from.GetComponent<Ability_ShieldProject>().BreakShield(); // TODO: Optimize
+			}
+		}
+
+		if (shieldModeShield != null)
+		{
+			float curShieldPool = shieldModeShield.shieldPercent * gameRules.ABLY_shieldModeMaxPool;
+
+			// If projShieldPool is positive, the shield held, and it now represents the remaining pool
+			// otherwise, the shield was broken, and it now represents the leftover damage
+			curShieldPool -= dmg;
+			// dmg should also be updated for next shield types to take damage
+			dmg = Mathf.Max(dmg - shieldModeShield.shieldPercent * gameRules.ABLY_shieldModeMaxPool, 0);
+
+			if (curShieldPool >= 0)
+			{
+				shieldModeShield.shieldPercent = curShieldPool / gameRules.ABLY_shieldModeMaxPool;
+
+				shieldModeShield.from.GetComponent<Ability_ShieldMode>().OnDamage(); // TODO: Optimize
+
+				UpdateShield();
+				return -1; // Return a negative number so Damage() knows the shield was not broken
+			}
+			else // Negative value
+			{
+				// Apply damage to shield pool, which can go negative
+				//shieldModeShield.shieldPercent = curShieldPool / gameRules.ABLY_shieldModeMaxPool;
+				shieldModeShield.shieldPercent = 0;
+
+				shieldModeShield.from.GetComponent<Ability_ShieldMode>().OnDamage(); // TODO: Optimize
+
+				// Reset shield to a baseline pool value
+				//projShield.shieldPercent = 0;
+
+				// Notify source that the shield was destroyed, no further action on our side needed
+				//shieldModeShield.from.GetComponent<Ability_ShieldMode>().BreakShield(); // TODO: Optimize
 			}
 		}
 

@@ -62,7 +62,6 @@ public class Ability_SelfDestruct : Ability
 				// Deal damage over time
 				parentUnit.DamageSimple(gameRules.ABLY_selfDestructDPSSelf * Time.deltaTime, 0);
 				parentUnit.AddFragileHealth(gameRules.ABLY_selfDestructDPSSelf * Time.deltaTime);
-				parentUnit.AddStatus(new Status(gameObject, StatusType.SelfDestructSpeedBuff));
 
 				// Getting closer to detonation
 				if (energy < 0.5f)
@@ -102,9 +101,23 @@ public class Ability_SelfDestruct : Ability
 
 	void Toggle()
 	{
-		isActive = !isActive;
+		SetActive(!isActive);
+	}
+
+	void SetActive(bool newActive)
+	{
+		isActive = newActive;
 
 		pointEffect.SetEffectActive(isActive);
+
+		if (isActive)
+		{
+			parentUnit.AddStatus(new Status(gameObject, StatusType.SelfDestructSpeedBuff));
+		}
+		else
+		{
+			parentUnit.RemoveStatus(new Status(gameObject, StatusType.SelfDestructSpeedBuff));
+		}
 	}
 
 	void Display(float fill)

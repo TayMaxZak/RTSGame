@@ -153,6 +153,12 @@ public class GameRules
 	public int ABLY_ionMissileMaxAmmo = 2;
 	public int ABLY_ionMissileAmmoTick = 1;
 
+	public float ABLY_modeSpeedMult = 0.5f;
+
+	public float ABLY_shieldModeMaxPool = 50;
+	public float ABLY_shieldModeRegenDelay = 1;
+	public float[] ABLY_shieldModeRegenGPS = new float[] { 4, 8, 16, 16, 2, 2 }; // Based on shields missing: 20% -> 4ps / 40% -> 8ps / 60% -> 16ps / 80% -> 16ps / 100% -> 2ps / over 100& -> 2ps
+
 
 	[Header("Statuses")]
 	public float STATswarmResistMult = 0.1f; // How much of all incoming damage does each swarm protecting an ally absorb

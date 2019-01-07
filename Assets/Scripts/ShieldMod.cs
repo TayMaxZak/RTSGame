@@ -5,7 +5,8 @@ using UnityEngine;
 public enum ShieldModType
 {
 	ShieldProject,
-	Flagship
+	Flagship,
+	ShieldMode
 }
 
 [System.Serializable]

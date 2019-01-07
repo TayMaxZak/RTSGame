@@ -11,7 +11,8 @@ public enum StatusType
 	ArmorMelt,
 	SelfDestructSpeedBuff,
 	IonSuppressed,
-	IonStunned
+	IonStunned,
+	ModeSpeedNerf
 }
 
 [System.Serializable]
@@ -83,6 +84,10 @@ public static class StatusUtils
 			case StatusType.SpawnSwarmSpeedNerf:
 				return false;
 			case StatusType.SuperlaserMark:
+				return false;
+			case StatusType.SelfDestructSpeedBuff:
+				return false;
+			case StatusType.ModeSpeedNerf:
 				return false;
 			default:
 				return true;

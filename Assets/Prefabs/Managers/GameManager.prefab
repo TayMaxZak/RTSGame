@@ -400,11 +400,20 @@ MonoBehaviour:
     ABLY_ionMissileDecayCutoff: 5
     ABLY_ionMissileMaxAmmo: 2
     ABLY_ionMissileAmmoTick: 1
+    ABLY_shieldModeMaxPool: 50
+    ABLY_shieldModeRegenDelay: 1
+    ABLY_shieldModeRegenGPS:
+    - 4
+    - 8
+    - 16
+    - 16
+    - 2
+    - 2
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3
     STATswarmResistTransferMult: 1
-    STAT_armorMeltDPS: 3
+    STAT_armorMeltDPS: 0
     STAT_armorMeltAbsorbFlat: 1
     STAT_armorMeltAbsorbScalingMult: 0.5
   commanders:

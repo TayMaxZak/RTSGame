@@ -204,7 +204,8 @@ public class Ability_ShieldProject : Ability
 
 	public void OnDamage()
 	{
-		activeRegenTimer = gameRules.ABLYshieldProjectOnGPSDelay;
+		if (targetUnit)
+			activeRegenTimer = gameRules.ABLYshieldProjectOnGPSDelay;
 		UpdateAbilityBar();
 	}
 

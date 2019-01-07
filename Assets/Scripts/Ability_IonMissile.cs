@@ -289,8 +289,6 @@ public class Ability_IonMissile : Ability
 					{
 						if (unit != parentUnit) // If we hit a unit and its not us, damage it
 						{
-							unit.AddStatus(new Status(parentUnit.gameObject, StatusType.IonSuppressed));
-
 							float curShields = unit.GetShields().x;
 							float maxShields = unit.GetShields().y;
 							DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage + gameRules.ABLY_ionMissileDamageBonusMult * curShields + gameRules.ABLY_ionMissileDamageBonusMult * maxShields, (startPosition[startIndexCur].position - hit.point).magnitude, DamageType.IonMissile);
@@ -298,9 +296,11 @@ public class Ability_IonMissile : Ability
 							// Is the unit still alive?
 							if (!result.lastHit)
 							{
-								// Don't add ions if shields are up
+								// Don't do anything else if shields are still up
 								if (curShields <= 0)
 								{
+									unit.AddStatus(new Status(parentUnit.gameObject, StatusType.IonSuppressed));
+
 									if (unit.GetIons() <= gameRules.ABLY_ionMissileDecayCutoff)
 										unit.AddIons(gameRules.ABLY_ionMissileIonsFirst, true);
 									else

@@ -50,7 +50,7 @@ public class Effect_Point : MonoBehaviour
 		else
 		{
 			if (audioSource)
-			{;
+			{
 				if (audioSource.isPlaying)
 					audioSource.Stop();
 			}
