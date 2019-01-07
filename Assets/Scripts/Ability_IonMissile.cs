@@ -291,6 +291,7 @@ public class Ability_IonMissile : Ability
 						{
 							float curShields = unit.GetShields().x;
 							float maxShields = unit.GetShields().y;
+							// TODO: Get a better damage calculation that doesn't obliterate flagships while leaving hybrid frigates unscathed
 							DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage + gameRules.ABLY_ionMissileDamageBonusMult * curShields + gameRules.ABLY_ionMissileDamageBonusMult * maxShields, (startPosition[startIndexCur].position - hit.point).magnitude, DamageType.IonMissile);
 
 							// Is the unit still alive?

@@ -21,6 +21,9 @@ public class Ability_ShieldMode : Ability
 	[SerializeField]
 	private GameObject breakEffectPrefab;
 
+	[SerializeField]
+	private Ability_RailMode otherMode;
+
 	//private UI_AbilBar_ShieldProject abilityBar;
 	private bool isActive = false;
 
@@ -54,6 +57,7 @@ public class Ability_ShieldMode : Ability
 			return;
 
 		base.UseAbility(target);
+		otherMode._StartCooldown();
 
 		SetActive(!isActive);
 	}
@@ -63,6 +67,10 @@ public class Ability_ShieldMode : Ability
 		isActive = newActive;
 		if (isActive)
 		{
+			// Has to happen first so we don't remove the speed nerf
+			if (otherMode.GetIsActive())
+				otherMode.SetActive(false);
+
 			ProjectShield();
 			parentUnit.AddStatus(new Status(gameObject, StatusType.ModeSpeedNerf));
 		}
@@ -89,17 +97,15 @@ public class Ability_ShieldMode : Ability
 
 	public void BreakShield()
 	{
-		// Indicate shield broke, return shield, and put on cooldown
+		// Indicate shield broke and return shield
 		Instantiate(breakEffectPrefab, transform.position, transform.rotation);
-		//StartCooldown();
-		//RemoveShield();
+		RemoveShield();
 	}
 
 	void ReturnShield()
 	{
-		// Indicate shield broke, return shield, and put on cooldown
+		// Indicate shield returned and return shield
 		Instantiate(returnEffectPrefab, transform.position, transform.rotation);
-		StartCooldown();
 		RemoveShield();
 	}
 
@@ -188,5 +194,13 @@ public class Ability_ShieldMode : Ability
 			return false;
 	}
 
+	public void _StartCooldown()
+	{
+		StartCooldown();
+	}
 
+	public bool GetIsActive()
+	{
+		return isActive;
+	}
 }
