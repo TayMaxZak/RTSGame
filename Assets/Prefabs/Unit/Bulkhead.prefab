@@ -1004,7 +1004,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1302791793192360}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.78, y: 0, z: -59.47}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4584040605619210}
@@ -3472,6 +3472,7 @@ MonoBehaviour:
   maxHealth: 800
   alwaysBurnImmune: 0
   curFragileHealth: 0
+  curIons: 0
   deathClone: {fileID: 1796662562453436, guid: 0ab5eb26f10e3a34fa89f2371c77dcd4, type: 2}
   turrets:
   - {fileID: 114095846976579942}

@@ -56,6 +56,6 @@ MonoBehaviour:
     type: 2}
   spawnObject: {fileID: 1302791793192360, guid: 72d1c0541f22fdc4b89cb945cd5eeaaa,
     type: 2}
-  cost: 4
+  cost: 6
   unitCap: 5
   buildTime: 10

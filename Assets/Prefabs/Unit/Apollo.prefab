@@ -803,7 +803,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1025386178585290}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -78.31}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4198420506338300}
@@ -1632,7 +1632,7 @@ MonoBehaviour:
   swarmTarget: {fileID: 4671991824821066}
   selCircleSize: 1.5
   visionRange: 40
-  disableTurrets: 1
+  disableTurrets: 0
   objectiveWeight: 2
   hpBarPrefab: {fileID: 114477666003345976, guid: c3b28b4f6a7a9fb4db418ee97ac67eb0,
     type: 2}
@@ -1729,7 +1729,7 @@ MonoBehaviour:
   maxH: 180
   minH: 180
   minV: 70
-  maxV: 180
+  maxV: 170
   projTemplate:
     dmgType: 0
     speed: 30

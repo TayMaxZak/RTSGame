@@ -863,10 +863,10 @@ public class Unit : Entity, ITargetable
 		bool canOverflow = !DamageUtils.CannotOverflowArmor(dmgType);
 
 		// ArmorMelt status affects armor absorption limit (unless this is a Flagship)
-		float meltPenaltyFlat = armorMeltCount == 0 || Type == EntityType.Flagship ? gameRules.ARMabsorbFlat : gameRules.STAT_armorMeltAbsorbFlat;
-		float meltScalingMult = armorMeltCount == 0 || Type == EntityType.Flagship ? 1 : gameRules.STAT_armorMeltAbsorbScalingMult;
+		float armorFlat = armorMeltCount == 0 || Type == EntityType.Flagship ? gameRules.ARMabsorbFlat : gameRules.STAT_armorMeltAbsorbFlat;
+		float armorScalingMult = armorMeltCount == 0 || Type == EntityType.Flagship ? 1 : gameRules.STAT_armorMeltAbsorbScalingMult;
 
-		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : meltPenaltyFlat + (curArmor / maxArmor) * gameRules.ARMabsorbScaling * meltScalingMult); // Absorbtion limit formula
+		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : armorFlat + (curArmor / maxArmor) * gameRules.ARMabsorbScaling * armorScalingMult); // Absorbtion limit formula
 		float dmgToArmor = canOverflow ? Mathf.Min(absorbLim, dmg) : dmg; // How much damage armor takes
 		float overflowDmg = canOverflow ? Mathf.Max(0, dmg - absorbLim) : 0; // How much damage health takes (aka by how much damage exceeds absorbtion limit)
 
@@ -1044,12 +1044,13 @@ public class Unit : Entity, ITargetable
 		DamageSimple(healthDmg, armorDmg, false);
 	}
 
-	public void Die(DamageType damageType)
+	public virtual void Die(DamageType damageType)
 	{
 		if (dead)
 			return;
 		dead = true; // Prevents multiple deaths
 
+		// Superlaser stacks
 		foreach (Status s in statuses)
 		{
 			// Check if sufficient damage was dealt to grant a Superlaser stack
@@ -1068,9 +1069,13 @@ public class Unit : Entity, ITargetable
 			ab.End();
 		}
 
+		// End effects
 		if (hpEffects)
 			hpEffects.End();
+		if (engineEffects)
+			engineEffects.End();
 
+		// Death clone
 		if (deathClone)
 		{
 			if (damageType == DamageType.Superlaser || damageType == DamageType.Internal)

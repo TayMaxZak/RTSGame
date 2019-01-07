@@ -1755,6 +1755,7 @@ MonoBehaviour:
   maxHealth: 50
   alwaysBurnImmune: 0
   curFragileHealth: 0
+  curIons: 0
   deathClone: {fileID: 1796662562453436, guid: 92a8ad440104d3b4fa9c1b30e2acd5da, type: 2}
   turrets:
   - {fileID: 114962401244220950}

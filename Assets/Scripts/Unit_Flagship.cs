@@ -45,4 +45,15 @@ public class Unit_Flagship : Unit
 		base.OnDamage();
 		shieldRegenTimer = gameRules.FLAGshieldRegenDelay; // Reset shield regen out-of-combat timer
 	}
+
+	public override void Die(DamageType damageType)
+	{
+		base.Die(damageType);
+
+		Commander comm = gameManager.GetCommander(team);
+		if (comm)
+		{
+
+		}
+	}
 }

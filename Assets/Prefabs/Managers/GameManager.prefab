@@ -321,7 +321,7 @@ MonoBehaviour:
     PRJfriendlyFireCheckRangeMult: 1
     DMG_ffDamageMult: 0.5
     DMG_ffDamageMultSplash: 0.25
-    MOVabilityAimingRSMult: 0.33
+    MOVabilityAimingRSMult: 1
     MOV_heightCount: 10
     MOV_heightSpacing: 5
     ABLYarmorDrainRange: 20
@@ -363,7 +363,7 @@ MonoBehaviour:
     ABLYchainFlagshipMult: 0.5
     ABLYsuperlaserRangeTargeting: 60
     ABLYsuperlaserCancelCDMult: 0.5
-    ABLYsuperlaserRangeTolerance: 10
+    ABLYsuperlaserCancelTime: 1
     ABLYsuperlaserDelay: 3.5
     ABLYsuperlaserInitStacks: 0
     ABLYsuperlaserStackDmgReq: 0.6
@@ -387,6 +387,7 @@ MonoBehaviour:
     ABLY_selfDestructDPSSelf: 20
     ABLY_selfDestructSpeedMult: 1.25
     ABLY_ionMissileRangeUse: 40
+    ABLY_ionMissileCancelTime: 1
     ABLY_ionMissileRangeMissile: 60
     ABLY_ionMissileMaxLifetime: 10
     ABLY_ionMissileDamage: 10
@@ -396,7 +397,7 @@ MonoBehaviour:
     ABLY_ionMissileArmorDmgToIons: 0.5
     ABLY_ionMissileDecayDelay: 10
     ABLY_ionMissileDecayLPS: 4
-    ABLY_ionMissileDecayCutoff: 10
+    ABLY_ionMissileDecayCutoff: 5
     ABLY_ionMissileMaxAmmo: 2
     ABLY_ionMissileAmmoTick: 1
     STATswarmResistMult: 0.1
