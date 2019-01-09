@@ -1067,7 +1067,7 @@ Transform:
   m_GameObject: {fileID: 1873905472822968}
   m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 1.2, y: -0.208, z: -2.894}
-  m_LocalScale: {x: 0.20000005, y: 0.19999999, z: 0.20000005}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children:
   - {fileID: 4327116471365614}
   - {fileID: 4302420561652690}
@@ -1495,7 +1495,7 @@ Transform:
   m_GameObject: {fileID: 1767335360924016}
   m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
   m_LocalPosition: {x: -1.2, y: -0.208, z: -2.8940005}
-  m_LocalScale: {x: 0.20000005, y: 0.19999999, z: 0.20000005}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children:
   - {fileID: 4278976958987808}
   - {fileID: 4541190231139758}
@@ -1523,7 +1523,7 @@ Transform:
   m_GameObject: {fileID: 1796297292139608}
   m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
   m_LocalPosition: {x: -3.6, y: -0.208, z: 1.2170005}
-  m_LocalScale: {x: 0.20000005, y: 0.19999999, z: 0.20000005}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children:
   - {fileID: 4288816455629380}
   - {fileID: 4841733033671590}
@@ -1681,7 +1681,7 @@ Transform:
   m_GameObject: {fileID: 1247695333607624}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 3.6, y: -0.208, z: 1.217}
-  m_LocalScale: {x: 0.20000036, y: 0.2, z: 0.20000036}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children:
   - {fileID: 4390999690557066}
   - {fileID: 4579288717554934}
@@ -3913,10 +3913,10 @@ MonoBehaviour:
   engineEffects: {fileID: 114351665326567240}
   team: 0
   buildIndex: -1
-  curArmor: 2000
-  maxArmor: 2000
-  curHealth: 2000
-  maxHealth: 2000
+  curArmor: 800
+  maxArmor: 800
+  curHealth: 800
+  maxHealth: 800
   alwaysBurnImmune: 1
   curFragileHealth: 0
   curIons: 0

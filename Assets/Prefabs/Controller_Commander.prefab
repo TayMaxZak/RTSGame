@@ -134,8 +134,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowTeamSwaps: 1
   team: 0
-  resPointsCounter: {fileID: 0}
   entityStats: {fileID: 0}
+  commandWheel: {fileID: 0}
+  resPointsCounter: {fileID: 0}
   buildButtonsRoot: {fileID: 0}
   buildButtons: []
   soundMove: {fileID: 0}

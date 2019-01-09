@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Manager_Game : MonoBehaviour
 {
@@ -84,5 +85,11 @@ public class Manager_Game : MonoBehaviour
 		{
 			unitSels[j].unit.SetVisibility(vis);
 		}
+	}
+
+	public void Defeat(int losingTeam)
+	{
+		Debug.Log("Hey player " + losingTeam +", you lost!");
+		SceneManager.LoadScene("Defeat");
 	}
 }

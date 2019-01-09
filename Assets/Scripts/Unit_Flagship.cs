@@ -50,10 +50,6 @@ public class Unit_Flagship : Unit
 	{
 		base.Die(damageType);
 
-		Commander comm = gameManager.GetCommander(team);
-		if (comm)
-		{
-
-		}
+		gameManager.Defeat(team);
 	}
 }

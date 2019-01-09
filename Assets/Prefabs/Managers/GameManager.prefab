@@ -276,7 +276,8 @@ MonoBehaviour:
   FOWtickRate: 1
   GameRules:
     useTestValues: 1
-    TESTtimeMult: 0.2
+    TESTtimeMult: 1
+    TESTbuildTimeMult: 0.2
     TESTinitHPAdd: 0
     TESTinitHPMult: 1
     entityLayerMask:
@@ -306,7 +307,7 @@ MonoBehaviour:
     WRCKmassArmorMult: 0.5
     WRCKinitialVelMult: 0.5
     WRCKcollisionSpeedPenalty: 0.8
-    FLAGshieldMaxPool: 500
+    FLAGshieldMaxPool: 300
     FLAGshieldRegenGPS: 5
     FLAGshieldRegenDelay: 10
     OBJV_captureRange: 25

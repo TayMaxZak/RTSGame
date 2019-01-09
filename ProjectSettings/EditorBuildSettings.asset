@@ -8,3 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Demo.unity
     guid: 330c4528ef9fe1d4e9b986f89e47a370
+  - enabled: 1
+    path: Assets/Scenes/Defeat.unity
+    guid: 4efa2349294d0bb4fa5d7717c58d452f
