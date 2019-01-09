@@ -3344,21 +3344,21 @@ MonoBehaviour:
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4243905669122736}
   maxAmmo: 1
-  reloadCooldown: 4
+  reloadCooldown: 1
   rateOfFire: 20
   shootOffsetRatio: 0
   RS: 90
   baseRotatesOnY: 1
   pivotX: {fileID: 4243905669122736}
   pivotY: {fileID: 4330642337391486}
-  maxH: 110
-  minH: 110
+  maxH: 95
+  minH: 95
   minV: 0
   maxV: 110
   projTemplate:
     dmgType: 0
     speed: 20
-    damage: 3
+    damage: 5
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 4
@@ -3537,16 +3537,16 @@ MonoBehaviour:
   riskFFAgainstFighters: 0
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4797039136077352}
-  maxAmmo: 3
+  maxAmmo: 6
   reloadCooldown: 3
-  rateOfFire: 75
+  rateOfFire: 60
   shootOffsetRatio: 0
   RS: 90
   baseRotatesOnY: 1
   pivotX: {fileID: 4797039136077352}
   pivotY: {fileID: 4398658762269164}
-  maxH: 100
-  minH: 100
+  maxH: 90
+  minH: 95
   minV: 0
   maxV: 110
   projTemplate:
@@ -3611,16 +3611,16 @@ MonoBehaviour:
   riskFFAgainstFighters: 0
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4223491208674986}
-  maxAmmo: 3
+  maxAmmo: 6
   reloadCooldown: 3
-  rateOfFire: 75
+  rateOfFire: 60
   shootOffsetRatio: 0.5
   RS: 90
   baseRotatesOnY: 1
   pivotX: {fileID: 4223491208674986}
   pivotY: {fileID: 4496063553004338}
-  maxH: 100
-  minH: 100
+  maxH: 95
+  minH: 90
   minV: 0
   maxV: 110
   projTemplate:
@@ -3667,21 +3667,21 @@ MonoBehaviour:
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4136594193375280}
   maxAmmo: 1
-  reloadCooldown: 4
+  reloadCooldown: 1
   rateOfFire: 20
-  shootOffsetRatio: 0.5
+  shootOffsetRatio: 0
   RS: 90
   baseRotatesOnY: 1
   pivotX: {fileID: 4136594193375280}
   pivotY: {fileID: 4487219475702638}
-  maxH: 110
-  minH: 110
+  maxH: 95
+  minH: 95
   minV: 0
   maxV: 110
   projTemplate:
     dmgType: 0
     speed: 20
-    damage: 3
+    damage: 5
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 4

@@ -10,8 +10,6 @@ public class Ability_IonMissile : Ability
 	[SerializeField]
 	private Transform[] startPosition;
 	private int startIndexCur = 0;
-	[SerializeField]
-	private int startIndexMax = 1;
 	//[SerializeField]
 	//private float initAngle = 45;
 
@@ -193,7 +191,7 @@ public class Ability_IonMissile : Ability
 
 		// Change firing position
 		startIndexCur++;
-		if (startIndexCur > startIndexMax)
+		if (startIndexCur > startPosition.Length - 1)
 			startIndexCur = 0;
 	}
 

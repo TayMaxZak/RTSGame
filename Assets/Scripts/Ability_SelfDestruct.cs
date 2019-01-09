@@ -167,6 +167,13 @@ public class Ability_SelfDestruct : Ability
 		parentUnit.Die(DamageType.Internal);
 	}
 
+	public override void Suspend()
+	{
+		base.Suspend();
+
+		SetActive(false);
+	}
+
 	public bool GetIsActive()
 	{
 		return isActive;
