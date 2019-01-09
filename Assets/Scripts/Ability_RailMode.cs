@@ -194,8 +194,8 @@ public class Ability_RailMode : Ability
 	{
 		base.Suspend();
 
-		// Force the shield to return
-		//RemoveShield();
+		// Disable high velocity turrets
+		SetActive(false);
 	}
 
 	public void _StartCooldown()

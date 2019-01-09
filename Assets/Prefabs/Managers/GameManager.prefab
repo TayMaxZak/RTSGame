@@ -328,7 +328,7 @@ MonoBehaviour:
     ABLYarmorDrainRange: 20
     ABLYarmorDrainDPSEnemy: 9
     ABLYarmorDrainDPSAlly: 3
-    ABLYarmorDrainGPSEnemy: 1
+    ABLYarmorDrainGPSEnemy: 6
     ABLYarmorDrainGPSAlly: 2
     ABLYarmorDrainGPSBonusMult: 1
     ABLYarmorDrainMaxVictims: 5
@@ -392,7 +392,8 @@ MonoBehaviour:
     ABLY_ionMissileRangeMissile: 60
     ABLY_ionMissileMaxLifetime: 10
     ABLY_ionMissileDamage: 10
-    ABLY_ionMissileDamageBonusMult: 0.15
+    ABLY_ionMissileDamageBonusMult: 20
+    ABLY_ionMissileDamageBonusMultFlagship: 10
     ABLY_ionMissileIonsFirst: 20
     ABLY_ionMissileIonsNext: 20
     ABLY_ionMissileArmorDmgToIons: 0.5

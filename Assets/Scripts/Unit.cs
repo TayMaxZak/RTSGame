@@ -830,7 +830,7 @@ public class Unit : Entity, ITargetable
 		if (dmg <= 0)
 			return new DamageResult(false);
 
-		dmg = DamageShield(dmg); // Try to damage shield before damaging main health pool
+		dmg = DamageShield(dmg, dmgType); // Try to damage shield before damaging main health pool
 
 		if (dmg <= 0)
 			return new DamageResult(false);
@@ -914,11 +914,20 @@ public class Unit : Entity, ITargetable
 	// If a shield's percent is brought below zero, remove it (depending on the shield type)
 	// Any excess after a breaking a shield is applied to the next shield in line
 	// At the end, return how much damage was left after filtering through all shields
-	public float DamageShield(float dmg)
+	public float DamageShield(float dmg, DamageType dmgType)
 	{
-		// TODO: Make shields not affect damage coming from the unit itself (like damage over time)
+		// TODO: Make shields not affect damage coming from the unit itself (like disintegration already on the unit over time)
 		if (dmg <= 0)
 			return -1;
+
+		// Ion damage does bonus damage against shields
+		if (dmgType == DamageType.IonMissile)
+		{
+			if (Type != EntityType.Flagship)
+				dmg *= gameRules.ABLY_ionMissileDamageBonusMult;
+			else
+				dmg *= gameRules.ABLY_ionMissileDamageBonusMultFlagship;
+		}
 
 		// Each unit has at most one Projected Shield, at most one Shield Mode shield, and at most one Flagship Shield
 		ShieldMod projShield = null;
@@ -938,13 +947,13 @@ public class Unit : Entity, ITargetable
 		{
 			float curShieldPool = projShield.shieldPercent * gameRules.ABLYshieldProjectMaxPool;
 
-			// If projShieldPool is positive, the shield held, and it now represents the remaining pool
+			// If curShieldPool is positive, the shield held, and it now represents the remaining pool
 			// otherwise, the shield was broken, and it now represents the leftover damage
 			curShieldPool -= dmg;
 			// dmg should also be updated for next shield types to take damage
 			dmg = Mathf.Max(dmg - projShield.shieldPercent * gameRules.ABLYshieldProjectMaxPool, 0);
 
-			if (curShieldPool >= 0)
+			if (curShieldPool > 0)
 			{
 				projShield.shieldPercent = curShieldPool / gameRules.ABLYshieldProjectMaxPool;
 
@@ -970,13 +979,13 @@ public class Unit : Entity, ITargetable
 		{
 			float curShieldPool = shieldModeShield.shieldPercent * gameRules.ABLY_shieldModeMaxPool;
 
-			// If projShieldPool is positive, the shield held, and it now represents the remaining pool
+			// If curShieldPool is positive, the shield held, and it now represents the remaining pool
 			// otherwise, the shield was broken, and it now represents the leftover damage
 			curShieldPool -= dmg;
 			// dmg should also be updated for next shield types to take damage
 			dmg = Mathf.Max(dmg - shieldModeShield.shieldPercent * gameRules.ABLY_shieldModeMaxPool, 0);
 
-			if (curShieldPool >= 0)
+			if (curShieldPool > 0)
 			{
 				shieldModeShield.shieldPercent = curShieldPool / gameRules.ABLY_shieldModeMaxPool;
 
@@ -1005,13 +1014,13 @@ public class Unit : Entity, ITargetable
 		{
 			float curShieldPool = flagShield.shieldPercent * gameRules.FLAGshieldMaxPool;
 
-			// If projShieldPool is positive, the shield held, and it now represents the remaining pool
+			// If curShieldPool is positive, the shield held, and it now represents the remaining pool
 			// otherwise, the shield was broken, and it now represents the leftover damage
 			curShieldPool -= dmg;
 			// dmg should also be updated for next shield types to take damage
 			dmg = Mathf.Max(dmg - flagShield.shieldPercent * gameRules.FLAGshieldMaxPool, 0);
 
-			if (curShieldPool >= 0)
+			if (curShieldPool > 0)
 			{
 				float percent = curShieldPool / gameRules.FLAGshieldMaxPool;
 				flagShield.shieldPercent = percent;
@@ -1028,6 +1037,15 @@ public class Unit : Entity, ITargetable
 		}
 
 		UpdateShield();
+
+		// Leftover ion damage should not be multiplied
+		if (dmgType == DamageType.IonMissile)
+		{
+			if (Type != EntityType.Flagship)
+				dmg /= gameRules.ABLY_ionMissileDamageBonusMult;
+			else
+				dmg /= gameRules.ABLY_ionMissileDamageBonusMultFlagship;
+		}
 		return dmg; // Leftover damage, should be positive
 	}
 

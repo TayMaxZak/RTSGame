@@ -287,16 +287,14 @@ public class Ability_IonMissile : Ability
 					{
 						if (unit != parentUnit) // If we hit a unit and its not us, damage it
 						{
-							float curShields = unit.GetShields().x;
-							float maxShields = unit.GetShields().y;
-							// TODO: Get a better damage calculation that doesn't obliterate flagships while leaving hybrid frigates unscathed
-							DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage + gameRules.ABLY_ionMissileDamageBonusMult * curShields + gameRules.ABLY_ionMissileDamageBonusMult * maxShields, (startPosition[startIndexCur].position - hit.point).magnitude, DamageType.IonMissile);
+							//DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage + gameRules.ABLY_ionMissileDamageBonusMult * curShields + gameRules.ABLY_ionMissileDamageBonusMult * maxShields, (startPosition[startIndexCur].position - hit.point).magnitude, DamageType.IonMissile);
+							DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage, (startPosition[startIndexCur].position - hit.point).magnitude, DamageType.IonMissile);
 
 							// Is the unit still alive?
 							if (!result.lastHit)
 							{
 								// Don't do anything else if shields are still up
-								if (curShields <= 0)
+								if (unit.GetShields().x <= 0)
 								{
 									unit.AddStatus(new Status(parentUnit.gameObject, StatusType.IonSuppressed));
 

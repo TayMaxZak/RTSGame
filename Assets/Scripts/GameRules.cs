@@ -114,7 +114,7 @@ public class GameRules
 	public float ABLYchainRange = 25; // Max distance for cast
 	public float ABLYchainAllyMult = 0.667f; // Multiplier applied to velocity when adding to it the target
 	public float ABLYchainEnemyMult = 0.667f;
-	public float ABLYchainFlagshipMult = 0.5f; // Stacks with prior 2 multipliers (0.667 * 0.5 = 0.333)
+	public float ABLYchainFlagshipMult = 0.5f; // Stacks with prior 2 multipliers (ex. 0.667 * 0.5 = 0.333)
 
 	public float ABLYsuperlaserRangeTargeting = 60; // Max distance for cast and distance which the target must stay in during Superlaser targeting state
 	public float ABLYsuperlaserCancelCDMult = 0.5f; // What ratio of cooldown is refunded if the target leaves the targeting range or the ability is cancelled manually
@@ -144,7 +144,8 @@ public class GameRules
 	public float ABLY_ionMissileRangeMissile = 60; // Max distance for before missile detonates
 	public float ABLY_ionMissileMaxLifetime = 10; // How long the missile can exist before detonating
 	public float ABLY_ionMissileDamage = 10; // Flat damage dealt on impact
-	public float ABLY_ionMissileDamageBonusMult = 0.1f; // Ratio of target's current shields dealt on impact
+	public float ABLY_ionMissileDamageBonusMult = 20f; // Damage multiplier against shields
+	public float ABLY_ionMissileDamageBonusMultFlagship = 10f; // Damage multiplier reduced against flagship shields
 	public float ABLY_ionMissileIonsFirst = 20f;
 	public float ABLY_ionMissileIonsNext = 20f;
 	public float ABLY_ionMissileArmorDmgToIons = 0.5f;
