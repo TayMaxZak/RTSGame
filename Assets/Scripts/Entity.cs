@@ -23,27 +23,34 @@ public class Entity : MonoBehaviour
 	[SerializeField]
 	private EntityType type;
 	[SerializeField]
-	protected GameObject model;
-	private MeshRenderer meshRenderer;
+	protected GameObject model; // Primary visual representation of entity
+	private MeshRenderer meshRenderer; // Derived from model
 	[SerializeField]
-	protected Transform swarmTarget;
+	protected Transform swarmTarget; // Object that swarms will focus on
 	[SerializeField]
-	private float selCircleSize = 1;
+	private float selCircleSize = 1; // Radius of selection circle (actual size is doubled)
 	
 	[Header("Vision")]
 	[SerializeField]
-	private float visionRange = 40;
+	protected float visionRange = 40; // Radius in which other entities are revealed
+	private byte visibilityFlags; // Stores what teams can see this unit
+	private const byte TEAM_0 = 1;
+	private const byte TEAM_1 = 2;
+	private const byte TEAM_2 = 4;
+	private const byte TEAM_3 = 8;
 
+	protected bool localVisible = true; // Is this entity visible in this particular game instance
+	private float opacity; // From 0 to 1, how dissolved/solid is this entity
+	private float opacityT = 1; // Used for lerping opacity
+
+	protected bool isSelected; // Is this entity selected by the game instance's commander controller
 	protected GameObject selCircle;
-	protected float selCircleSpeed;
-	protected bool isSelected;
-	protected bool isHovered;
+	protected float selCircleSpeed; // Rate at which the selection circle rotates
+	protected bool isHovered; // Is the game instance's cursor over this entity
 
-	protected Controller_Commander controller;
+	protected Controller_Commander controller; // Used to display entity stats in the UI
 
-	protected bool visible = true;
-	private float opacity;
-	private float opacityT = 1;
+
 
 	protected Manager_Game gameManager;
 	protected GameRules gameRules;
@@ -96,17 +103,12 @@ public class Entity : MonoBehaviour
 		//}
 
 		opacity = Mathf.Lerp(0, 1, opacityT);
-		opacityT = Mathf.Clamp01(opacityT + (visible ? 1 : -1) * Time.deltaTime * 4);
+		opacityT = Mathf.Clamp01(opacityT + (localVisible ? 1 : -1) * Time.deltaTime * 4);
 		meshRenderer.material.SetFloat("_Opacity", opacity);
 	}
 
 	public virtual void OnHover(bool hovered)
 	{
-		if (!visible)
-		{
-			hovered = false;
-		}
-
 		isHovered = hovered;
 	}
 
@@ -135,41 +137,47 @@ public class Entity : MonoBehaviour
 	}
 
 
-	public void SetVisibility(bool newVis)
+
+	public void ClearTeamVisibility()
 	{
-		SetVisibility(newVis, true);
+		visibilityFlags = 0;
 	}
 
-	public void SetVisibility(bool newVis, bool update)
+	public void SetTeamVisibility(int otherTeam, bool visible)
 	{
-		if (visible == newVis)
+		// Bitwise flag i.e. team 0 = 1, team 1 = 2, team 2 = 4, team 3 = 8, etc.
+		byte who = 0;
+		if (otherTeam == 0)
+			who = TEAM_0;
+		else if (otherTeam == 1)
+			who = TEAM_1;
+		else if (otherTeam == 2)
+			who = TEAM_2;
+		else if(otherTeam == 3)
+			who = TEAM_3;
+
+		visibilityFlags = (byte)(visibilityFlags | who);
+	}
+
+	public bool VisibleBy(int otherTeam)
+	{
+		return (visibilityFlags & (1 << otherTeam)) != 0;
+	}
+
+	public void SetLocalVisiblity(bool newVis)
+	{
+		if (localVisible == newVis)
 			return;
 
-		visible = newVis;
+		localVisible = newVis;
 		UpdateVisibility();
 	}
 
-	public void ToggleVisibility()
-	{
-		visible = !visible;
-		UpdateVisibility();
-	}
+
 
 	protected virtual void UpdateVisibility()
 	{
 		//meshRenderer.enabled = visible;
-	}
-
-	public void UseVision()
-	{
-		Collider[] cols = Physics.OverlapSphere(transform.position, visionRange, gameRules.entityLayerMask);
-		//List<Entity> ents = new List<Entity>();
-		for (int i = 0; i < cols.Length; i++)
-		{
-			Entity ent = cols[i].GetComponentInParent<Entity>();
-			if (ent)
-				ent.SetVisibility(true);
-		}
 	}
 }
 

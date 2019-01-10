@@ -1288,11 +1288,23 @@ public class Unit : Entity, ITargetable
 		}
 	}
 
+	public void RevealNearbyUnits()
+	{
+		Collider[] cols = Physics.OverlapSphere(transform.position, visionRange, gameRules.entityLayerMask);
+		//List<Entity> ents = new List<Entity>();
+		for (int i = 0; i < cols.Length; i++)
+		{
+			Entity ent = cols[i].GetComponentInParent<Entity>();
+			if (ent)
+				ent.SetTeamVisibility(team, true);
+		}
+	}
+
 	override protected void UpdateVisibility()
 	{
 		base.UpdateVisibility();
-		engineEffects.SetVisible(visible);
-		hpEffects.SetVisible(visible);
+		engineEffects.SetVisible(localVisible);
+		hpEffects.SetVisible(localVisible);
 	}
 
 

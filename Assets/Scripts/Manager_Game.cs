@@ -14,8 +14,8 @@ public class Manager_Game : MonoBehaviour
 	[SerializeField]
 	private Commander[] commanders;
 
-	[SerializeField]
-	private Commander playerCommander;
+	//[SerializeField]
+	//private Commander playerCommander;
 
 	[SerializeField]
 	private Controller_Commander commanderController;
@@ -28,12 +28,12 @@ public class Manager_Game : MonoBehaviour
 			return null;
 	}
 
-	public void SetPlayerCommander(Commander commander)
-	{
-		UpdateVisibilityForCommander(false);
-		playerCommander = commander;
-		UpdateVisibilityForCommander(true);
-	}
+	//public void SetPlayerCommander(Commander commander)
+	//{
+	//	//UpdateVisibilityForCommander(false);
+	//	playerCommander = commander;
+	//	//UpdateVisibilityForCommander(true);
+	//}
 
 	public Controller_Commander GetController()
 	{
@@ -45,47 +45,86 @@ public class Manager_Game : MonoBehaviour
 		InvokeRepeating("FOWTick", FOWtickRate, FOWtickRate);
 	}
 
+	// Mark
 	void FOWTick()
 	{
-		// Default enemy units as invisible and your units as visible
+		//int t = 0;
+		// Initialize visibility for all units
 		for (int i = 0; i < commanders.Length; i++)
 		{
 			List<UnitSelectable> allUnits = commanders[i].GetSelectableUnits();
-			if (commanders[i] != playerCommander)
+			for (int j = 0; j < allUnits.Count; j++)
 			{
-				for (int j = 0; j < allUnits.Count; j++)
-				{
-					allUnits[j].unit.SetVisibility(false);
-				}
-			}
-			else
-			{
-				for (int j = 0; j < allUnits.Count; j++)
-				{
-					allUnits[j].unit.SetVisibility(true);
-				}
+				//t++;
+				// Reset flags
+				allUnits[j].unit.ClearTeamVisibility();
+				// You can see your own units
+				allUnits[j].unit.SetTeamVisibility(i, true);
 			}
 		}
 
-		// Every second check for nearby enemy entities around each of your selectable units
-		List<UnitSelectable> unitSels = playerCommander.GetSelectableUnits();
-		for (int j = 0; j < unitSels.Count; j++)
+		// Each unit will reveal nearby enemy units as visible
+		for (int i = 0; i < commanders.Length; i++)
 		{
-			unitSels[j].unit.UseVision();
+			List<UnitSelectable> allUnits = commanders[i].GetSelectableUnits();
+			for (int j = 0; j < allUnits.Count; j++)
+			{
+				//t++;
+				allUnits[j].unit.RevealNearbyUnits();
+			}
 		}
+
+		//Debug.Log(t);
+
+		// Update unit visuals based on who the player is in this game instance
+		FOWVisuals();
 	}
 
-	void UpdateVisibilityForCommander(bool vis)
+	void FOWVisuals()
 	{
-		if (!playerCommander)
-			return;
-
-		List<UnitSelectable> unitSels = playerCommander.GetSelectableUnits();
-		for (int j = 0; j < unitSels.Count; j++)
+		for (int i = 0; i < commanders.Length; i++)
 		{
-			unitSels[j].unit.SetVisibility(vis);
+			List<UnitSelectable> allUnits = commanders[i].GetSelectableUnits();
+			for (int j = 0; j < allUnits.Count; j++)
+			{
+				allUnits[j].unit.SetLocalVisiblity(allUnits[j].unit.VisibleBy(commanderController.team));
+			}
 		}
 	}
+
+	/*
+	// Default enemy units as invisible and your units as visible
+	for (int i = 0; i<commanders.Length; i++)
+	{
+		List<UnitSelectable> allUnits = commanders[i].GetSelectableUnits();
+		if (commanders[i] != playerCommander)
+		{
+			for (int j = 0; j<allUnits.Count; j++)
+			{
+				allUnits[j].unit.SetLocalVisiblity(false);
+			}
+		}
+		else
+		{
+			for (int j = 0; j<allUnits.Count; j++)
+			{
+				allUnits[j].unit.SetLocalVisiblity(true);
+			}
+		}
+	}
+	*/
+
+	//void UpdateVisibilityForCommander(bool vis)
+	//{
+	//	if (!playerCommander)
+	//		return;
+
+	//	List<UnitSelectable> unitSels = playerCommander.GetSelectableUnits();
+	//	for (int j = 0; j < unitSels.Count; j++)
+	//	{
+	//		unitSels[j].unit.SetVisibility(vis);
+	//	}
+	//}
 
 	public void Defeat(int losingTeam)
 	{

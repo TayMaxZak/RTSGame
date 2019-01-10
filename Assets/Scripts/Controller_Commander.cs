@@ -106,7 +106,7 @@ public class Controller_Commander : MonoBehaviour
 		commander.SetController(this);
 		commander.InitUI();
 
-		gameManager.SetPlayerCommander(commander);
+		//gameManager.SetPlayerCommander(commander);
 	}
 
 	void SetTeam(int newTeam)
