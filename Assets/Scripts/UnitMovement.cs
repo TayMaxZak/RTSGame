@@ -156,7 +156,7 @@ public class UnitMovement
 		}
 
 		//Quaternion origRotate = transform.rotation;
-		float speed = abilityGoal == null ? RS : RS * gameRules.MOVabilityAimingRSMult;
+		float speed = abilityGoal == null ? RS : RS * gameRules.MOV_abilityAimingRSMult;
 
 		transform.Rotate(0, speed * curRSRatio * Time.deltaTime, 0);
 
@@ -293,15 +293,15 @@ public class UnitMovement
 
 			if (velocityMods[i].from.team == parentUnit.team)
 			{
-				curMult *= gameRules.ABLYchainAllyMult;
+				curMult *= gameRules.ABLY_chainAllyMult;
 			}
 			else
 			{
-				curMult *= gameRules.ABLYchainEnemyMult;
+				curMult *= gameRules.ABLY_chainEnemyMult;
 			}
 
 			if (parentUnit.Type == EntityType.Flagship)
-				curMult *= gameRules.ABLYchainFlagshipMult;
+				curMult *= gameRules.ABLY_chainFlagshipMult;
 
 			total += velocityMods[i].vel * curMult;
 		}
@@ -321,7 +321,7 @@ public class UnitMovement
 		foreach (Status s in parentUnit.GetStatuses()) // TODO: Optimize
 		{
 			if (s.statusType == StatusType.SpawnSwarmSpeedNerf)
-				statusSpeedMult = gameRules.ABLYswarmFirstUseSpeedMult;
+				statusSpeedMult = gameRules.ABLY_swarmFirstUseSpeedMult;
 			else if (s.statusType == StatusType.SelfDestructSpeedBuff)
 				statusSpeedMult = gameRules.ABLY_selfDestructSpeedMult;
 			else if (s.statusType == StatusType.ModeSpeedNerf)

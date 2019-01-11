@@ -156,7 +156,7 @@ public class Ability_Chain : Ability
 
 	bool InRange(Transform tran)
 	{
-		if (Vector3.SqrMagnitude(tran.position - transform.position) < gameRules.ABLYchainRange * gameRules.ABLYchainRange)
+		if (Vector3.SqrMagnitude(tran.position - transform.position) < gameRules.ABLY_chainRange * gameRules.ABLY_chainRange)
 			return true;
 		else
 			return false;

@@ -357,7 +357,7 @@ public class Turret : MonoBehaviour
 		Vector3 forward = GetForward();
 		RaycastHit hit;
 		// If we are targeting a fighter and willing to aim at an ally unit hoping to hit an enemy fighter, we will check for FF in a shorter distance
-		float checkDistance = (riskFFAgainstFighters && !target.HasCollision()) ? Vector3.Distance(firePos.position, target.GetPosition()) : range * gameRules.PRJfriendlyFireCheckRangeMult;
+		float checkDistance = (riskFFAgainstFighters && !target.HasCollision()) ? Vector3.Distance(firePos.position, target.GetPosition()) : range * gameRules.PRJ_friendlyFireCheckRangeMult;
 		float offset = 0.02f; // How much we move in towards our first raycast hit location to make sure the next raycast is technically inside the collider we hit the first time around
 		if (Physics.Raycast(firePos.position, forward, out hit, checkDistance, gameRules.collisionLayerMask))
 		{

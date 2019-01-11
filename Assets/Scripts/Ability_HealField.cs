@@ -45,7 +45,7 @@ public class Ability_HealField : Ability
 		{
 			GameObject go = new GameObject();
 			Util_ResDelay resDelay = go.AddComponent<Util_ResDelay>();
-			resDelay.GiveResAfterDelay(gameRules.ABLYhealFieldResCost, gameRules.WRCKlifetime, team);
+			resDelay.GiveResAfterDelay(gameRules.ABLY_healFieldResCost, gameRules.WRCK_lifetime, team);
 		}
 		pointEffect.End();
 	}
@@ -58,7 +58,7 @@ public class Ability_HealField : Ability
 
 		if (isActive)
 		{
-			Collider[] cols = Physics.OverlapSphere(transform.position, gameRules.ABLYhealFieldRange, gameRules.entityLayerMask);
+			Collider[] cols = Physics.OverlapSphere(transform.position, gameRules.ABLY_healFieldRange, gameRules.entityLayerMask);
 			List<Unit> units = new List<Unit>();
 			for (int i = 0; i < cols.Length; i++)
 			{
@@ -87,11 +87,11 @@ public class Ability_HealField : Ability
 
 			for (int i = 0; i < units.Count; i++) // For each ally unit, add health
 			{
-				units[i].AddFragileHealth((gameRules.ABLYhealFieldAllyGPS + gameRules.ABLYhealFieldAllyGPSBonusMult * units[i].GetHP().y) * Time.deltaTime);
+				units[i].AddFragileHealth((gameRules.ABLY_healFieldAllyGPS + gameRules.ABLY_healFieldAllyGPSBonusMult * units[i].GetHP().y) * Time.deltaTime);
 				units[i].AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
 			}
 
-			parentUnit.AddFragileHealth((gameRules.ABLYhealFieldAllyGPS * gameRules.ABLYhealFieldUserGPSMult + gameRules.ABLYhealFieldAllyGPSBonusMult * parentUnit.GetHP().y) * Time.deltaTime);
+			parentUnit.AddFragileHealth((gameRules.ABLY_healFieldAllyGPS * gameRules.ABLY_healFieldUserGPSMult + gameRules.ABLY_healFieldAllyGPSBonusMult * parentUnit.GetHP().y) * Time.deltaTime);
 			parentUnit.AddStatus(new Status(gameObject, StatusType.CriticalBurnImmune));
 		}
 		else
@@ -100,7 +100,7 @@ public class Ability_HealField : Ability
 
 	void CheckDisplayConditions()
 	{
-		if (!isBorrowing && command.GetResources() < gameRules.ABLYhealFieldResCost)
+		if (!isBorrowing && command.GetResources() < gameRules.ABLY_healFieldResCost)
 			DisplayUsable(true);
 		else
 			DisplayUsable(false);
@@ -150,7 +150,7 @@ public class Ability_HealField : Ability
 		if (newActive) // About to become active
 		{
 			// If we are not already borrowing and there are no resources to borrow, don't activate this ability
-			if (!isBorrowing && !command.TakeResources(gameRules.ABLYhealFieldResCost))
+			if (!isBorrowing && !command.TakeResources(gameRules.ABLY_healFieldResCost))
 			{
 				ResetCooldown();
 				return;
@@ -165,7 +165,7 @@ public class Ability_HealField : Ability
 		else
 		{
 			if (isBorrowing)
-				giveResourcesCoroutine = StartCoroutine(GiveResourcesCoroutine(gameRules.ABLYhealFieldResTime));
+				giveResourcesCoroutine = StartCoroutine(GiveResourcesCoroutine(gameRules.ABLY_healFieldResTime));
 		}
 
 		isActive = newActive;
@@ -177,7 +177,7 @@ public class Ability_HealField : Ability
 	{
 		DisplayBorrowing(isBorrowing);
 		yield return new WaitForSeconds(time);
-		command.GiveResources(gameRules.ABLYhealFieldResCost);
+		command.GiveResources(gameRules.ABLY_healFieldResCost);
 
 		isBorrowing = false;
 		DisplayBorrowing(isBorrowing);

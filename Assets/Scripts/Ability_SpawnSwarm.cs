@@ -61,14 +61,14 @@ public class Ability_SpawnSwarm : Ability
 		abilityType = AbilityType.SpawnSwarm;
 		InitCooldown();
 
-		stacks = gameRules.ABLYswarmMaxUses;
+		stacks = gameRules.ABLY_swarmMaxUses;
 
 		fighterGroups = new List<FighterGroup>();
 		particlesRemoved = new List<int>();
 		particlesJustRemoved = new List<int>();
 		fighterCountPerGroup = new List<int>();
 
-		swarmSize = pS.main.maxParticles / gameRules.ABLYswarmMaxUses; // Calculate swarm size
+		swarmSize = pS.main.maxParticles / gameRules.ABLY_swarmMaxUses; // Calculate swarm size
 		particles = new Particle[pS.main.maxParticles];
 		ParticleSystem.EmissionModule emission = pS.emission;
 		emission.rateOverTime = new ParticleSystem.MinMaxCurve(swarmSize / deployTime);
@@ -151,7 +151,7 @@ public class Ability_SpawnSwarm : Ability
 			if (stacks > 0) // If still over 0 stacks, can be used again
 			{
 				// If used for the first time,
-				if (stacks == gameRules.ABLYswarmMaxUses - 1)
+				if (stacks == gameRules.ABLY_swarmMaxUses - 1)
 				{
 					// nerf parent unit's movement speed
 					parentUnit.AddStatus(new Status(gameObject, StatusType.SpawnSwarmSpeedNerf));
@@ -357,7 +357,7 @@ public class Ability_SpawnSwarm : Ability
 
 	public bool HasUsed()
 	{
-		return stacks < gameRules.ABLYswarmMaxUses;
+		return stacks < gameRules.ABLY_swarmMaxUses;
 	}
 
 	public Unit GetTargetUnit()

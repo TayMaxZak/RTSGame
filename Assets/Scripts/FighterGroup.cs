@@ -42,7 +42,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		// Initialize each fighter's health
 		hp = new float[ind.Length];
 		for (int i = 0; i < hp.Length; i++)
-			hp[i] = gameRules.ABLYswarmFighterHealth;
+			hp[i] = gameRules.ABLY_swarmFighterHealth;
 	}
 
 	public void SetTeam(int t)
@@ -75,12 +75,12 @@ public class FighterGroup : MonoBehaviour, ITargetable
 
 		if (targetUnit)
 		{
-			if (Vector3.SqrMagnitude(transform.position - targetUnit.GetSwarmTarget().position) < gameRules.ABLYswarmInteractRadius * gameRules.ABLYswarmInteractRadius)
+			if (Vector3.SqrMagnitude(transform.position - targetUnit.GetSwarmTarget().position) < gameRules.ABLY_swarmInteractRadius * gameRules.ABLY_swarmInteractRadius)
 			{
 				if (targetUnit.team != team) // If target is an enemy unit, damage it
 				{
 					targetUnit.AddEnemySwarm(this);
-					targetUnit.Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
+					targetUnit.Damage(gameRules.ABLY_swarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
 				}
 				else // Ally unit
 				{
@@ -92,7 +92,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 					{
 						if (!IsNull(enemySwarms[0]))
 						{
-							enemySwarms[0].Damage(gameRules.ABLYswarmDPS * Time.deltaTime, 0, DamageType.Swarm);
+							enemySwarms[0].Damage(gameRules.ABLY_swarmDPS * Time.deltaTime, 0, DamageType.Swarm);
 						}
 					} // enemy swarms present
 				} // ally unit

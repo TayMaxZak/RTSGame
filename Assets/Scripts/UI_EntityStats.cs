@@ -128,7 +128,7 @@ public class UI_EntityStats : MonoBehaviour
 
 		// Tooltip
 		healthTooltip.SetText(!burnPossible ? "Burn Immune\nEven if this unit's health is below the burn threshold, it will not take burn damage over time." : 
-			string.Format("Burn threshold: {0:0}\nIf health drops below this threshold, it will start taking {1:0} damage over every 10 seconds.", healthMax * gameRules.HLTHburnThresh, (gameRules.HLTHburnMin + gameRules.HLTHburnMax) * 5));
+			string.Format("Burn threshold: {0:0}\nIf health drops below this threshold, it will start taking {1:0} damage over every 10 seconds.", healthMax * gameRules.HLTH_burnThresh, (gameRules.HLTH_burnMin + gameRules.HLTH_burnMax) * 5));
 
 
 		float armorRatio = armorCur / (Mathf.RoundToInt(armorMax) != 0 ? armorMax : 1);
@@ -138,8 +138,8 @@ public class UI_EntityStats : MonoBehaviour
 			text.text = StringFromFloat(armorCur) + "/" + StringFromFloat(armorMax);
 
 		string armorToolotipText = Mathf.RoundToInt(armorMax) == 0 ? "This unit has no armor." : 
-			Mathf.FloorToInt(armorCur) < gameRules.ABLYarmorDrainGPSEnemy * 2 ? "Armor has been destroyed." : 
-			string.Format("Absorption limit: {0:0.0}\nCan take up to {0:0.0} damage in one shot before letting excess damage through to health.", (armorCur / armorMax) * gameRules.ARMabsorbScaling + gameRules.ARMabsorbFlat);
+			Mathf.FloorToInt(armorCur) < gameRules.ABLY_armorDrainGPSEnemy * 2 ? "Armor has been destroyed." : 
+			string.Format("Absorption limit: {0:0.0}\nCan take up to {0:0.0} damage in one shot before letting excess damage through to health.", (armorCur / armorMax) * gameRules.ARM_absorbScaling + gameRules.ARM_absorbFlat);
 
 		//Tooltip
 		armorTooltip.SetText(armorToolotipText);

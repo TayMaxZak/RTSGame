@@ -97,7 +97,7 @@ public class UI_BuildButton : MonoBehaviour
 		if (!hasHealField)
 			costText.text = costCur.ToString();
 		else
-			costText.text = costCur.ToString() + " (+" + gameRules.ABLYhealFieldResCost + ") ";
+			costText.text = costCur.ToString() + " (+" + gameRules.ABLY_healFieldResCost + ") ";
 		UpdateInteractable();
 	}
 

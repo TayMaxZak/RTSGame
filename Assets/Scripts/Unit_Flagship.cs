@@ -31,7 +31,7 @@ public class Unit_Flagship : Unit
 			// Regenerate shieldPercent
 			if (shieldMod.shieldPercent < 1)
 			{
-				shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + (gameRules.FLAGshieldRegenGPS / gameRules.FLAGshieldMaxPool) * Time.deltaTime, 1);
+				shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + (gameRules.FLAG_shieldRegenGPS / gameRules.FLAG_shieldMaxPool) * Time.deltaTime, 1);
 				// Apply shieldMod to the unit
 				UpdateShield();
 				// Already passing by reference, no need to add again
@@ -43,7 +43,7 @@ public class Unit_Flagship : Unit
 	protected override void OnDamage()
 	{
 		base.OnDamage();
-		shieldRegenTimer = gameRules.FLAGshieldRegenDelay; // Reset shield regen out-of-combat timer
+		shieldRegenTimer = gameRules.FLAG_shieldRegenDelay; // Reset shield regen out-of-combat timer
 	}
 
 	public override void Die(DamageType damageType)

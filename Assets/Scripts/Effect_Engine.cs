@@ -20,7 +20,7 @@ public class Effect_Engine : MonoBehaviour, IHideable
 	void Awake()
 	{
 		//audioSource = GetComponent<AudioSource>();
-		fireThresh = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules.HLTHburnThresh;
+		fireThresh = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules.HLTH_burnThresh;
 
 		enginePSystems = new List<ParticleSystem>();
 

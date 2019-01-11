@@ -28,7 +28,7 @@ public class UI_AbilBar_Superlaser : UI_Bar
 	{
 		uiRules = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>().UIRules;
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
-		maxStacks = gameRules.ABLYsuperlaserDmgByStacks.Length - 2;
+		maxStacks = gameRules.ABLY_superlaserDmgByStacks.Length - 2;
 
 		markOrigColor = markIcons[0].color;
 	}

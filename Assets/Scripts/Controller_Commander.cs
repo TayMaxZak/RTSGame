@@ -491,7 +491,7 @@ public class Controller_Commander : MonoBehaviour
 			if (hit.collider)
 			{
 				// From the flagship (selection), find a position within the spawning radius which is closest to our preview position
-				Vector3 dif = Vector3.ClampMagnitude(hit.point - selection[0].transform.position, gameRules.SPWNflagshipRadius * (gameRules.useTestValues ? gameRules.TEST_spawnRangeMult : 1));
+				Vector3 dif = Vector3.ClampMagnitude(hit.point - selection[0].transform.position, gameRules.SPWN_flagshipRadius * (gameRules.useTestValues ? gameRules.TEST_spawnRangeMult : 1));
 				Vector3 pos = selection[0].transform.position + dif;
 				pos.y = HeightSnap(pos.y);
 
@@ -1028,7 +1028,7 @@ public class Controller_Commander : MonoBehaviour
 
 	public void UpdateResourceTime(float reclaimTimer)
 	{
-		resPointsCounter.UpdateTime(1.0f - (reclaimTimer / gameRules.RESreclaimTime));
+		resPointsCounter.UpdateTime(1.0f - (reclaimTimer / gameRules.RES_reclaimTime));
 	}
 
 	public void UpdateResourceAudio(float timer)

@@ -273,13 +273,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b005ef7048fca7d418b812ae71fd4dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FOWtickRate: 1
+  FOWtickRate: 0.5
   GameRules:
     useTestValues: 1
-    TESTtimeMult: 1
-    TESTbuildTimeMult: 0.2
-    TESTinitHPAdd: 0
-    TESTinitHPMult: 1
+    TEST_timeMultCooldown: 1
+    TEST_timeMultBuild: 0.2
+    TEST_initHPAdd: 0
+    TEST_initHPMult: 1
+    TEST_spawnRangeMult: 3
     entityLayerMask:
       serializedVersion: 2
       m_Bits: 1
@@ -292,84 +293,78 @@ MonoBehaviour:
     gridLayerMask:
       serializedVersion: 2
       m_Bits: 512
-    ARMabsorbFlat: 5
-    ARMabsorbScaling: 15
-    ARMrangeMin: 30
-    ARMrangeMax: 60
-    ARMrangeMult: 0.8
-    HLTHburnThresh: 0.2001
-    HLTHburnMin: 2
-    HLTHburnMax: 3
-    WRCKfallSpeedMax: 10
-    WRCKfallSpeedAccel: 3
-    WRCKlifetime: 10
-    WRCKmassHealthMult: 1
-    WRCKmassArmorMult: 0.5
-    WRCKinitialVelMult: 0.5
-    WRCKcollisionSpeedPenalty: 0.8
-    FLAGshieldMaxPool: 300
-    FLAGshieldRegenGPS: 5
-    FLAGshieldRegenDelay: 10
+    ARM_absorbFlat: 5
+    ARM_absorbScaling: 15
+    ARM_rangeMin: 30
+    ARM_rangeMax: 60
+    ARM_rangeMult: 0.8
+    HLTH_burnThresh: 0.2001
+    HLTH_burnMin: 2
+    HLTH_burnMax: 3
+    WRCK_fallSpeedMax: 10
+    WRCK_fallSpeedAccel: 3
+    WRCK_lifetime: 10
+    WRCK_massHealthMult: 1
+    WRCK_massArmorMult: 0.5
+    WRCK_initialVelMult: 0.5
+    WRCK_collisionSpeedPenalty: 0.8
+    FLAG_shieldMaxPool: 300
+    FLAG_shieldRegenDelay: 10
+    FLAG_shieldRegenGPS: 5
     OBJV_captureRange: 25
-    OBJV_captureTime: 15
+    OBJV_captureTime: 20
     OBJV_captureAddPerUnitMult: 1
     OBJV_captureAddMax: 1
-    RESreclaimTime: 5
-    SPWNflagshipRadius: 150
-    AUDpitchVariance: 0.05
-    PRJmaxTimeAlive: 4
-    PRJhitOffset: 0.2
-    PRJfriendlyFireCheckRangeMult: 1
+    RES_reclaimTime: 5
+    SPWN_flagshipRadius: 50
+    AUD_pitchVariance: 0.05
+    PRJ_maxTimeAlive: 4
+    PRJ_hitOffset: 0.1
+    PRJ_friendlyFireCheckRangeMult: 1
     DMG_ffDamageMult: 0.5
     DMG_ffDamageMultSplash: 0.25
-    MOVabilityAimingRSMult: 1
+    MOV_abilityAimingRSMult: 1
     MOV_heightCount: 10
     MOV_heightSpacing: 5
-    ABLYarmorDrainRange: 20
-    ABLYarmorDrainDPSEnemy: 9
-    ABLYarmorDrainDPSAlly: 3
-    ABLYarmorDrainGPSEnemy: 6
-    ABLYarmorDrainGPSAlly: 2
-    ABLYarmorDrainGPSBonusMult: 1
-    ABLYarmorDrainMaxVictims: 5
-    ABLYarmorRegenHPS:
-    - 4
-    - 8
-    - 16
-    - 16
-    - 2
-    ABLYshieldProjectRangeUse: 20
-    ABLYshieldProjectRange: 30
-    ABLYshieldProjectMaxPool: 200
-    ABLYshieldProjectOnGPS: 4
-    ABLYshieldProjectOnGPSDelay: 5
-    ABLYshieldProjectOffGPS: 8
-    ABLYshieldProjectOffGPSNegMult: 1.5
-    ABLYswarmMaxUses: 3
-    ABLYswarmFirstUseSpeedMult: 0.75
-    ABLYswarmDPS: 4
-    ABLYswarmInteractRadius: 5
-    ABLYswarmFighterHealth: 20
-    ABLYhealFieldRange: 25
-    ABLYhealFieldAllyGPS: 5
-    ABLYhealFieldUserGPSMult: 1.75
-    ABLYhealFieldConvertGPS: 5
-    ABLYhealFieldAllyGPSBonusMult: 0.02
-    ABLYhealFieldConvertDelay: 5
-    ABLYhealFieldResCost: 4
-    ABLYhealFieldResTime: 5
-    ABLYchainRange: 25
-    ABLYchainAllyMult: 0.667
-    ABLYchainEnemyMult: 0.667
-    ABLYchainFlagshipMult: 0.5
-    ABLYsuperlaserRangeTargeting: 60
-    ABLYsuperlaserCancelCDMult: 0.5
-    ABLYsuperlaserCancelTime: 1
-    ABLYsuperlaserDelay: 3.5
-    ABLYsuperlaserInitStacks: 0
-    ABLYsuperlaserStackDmgReq: 0.6
-    ABLYsuperlaserDmgBase: 200
-    ABLYsuperlaserDmgByStacks:
+    ABLY_armorDrainRange: 20
+    ABLY_armorDrainDPSEnemy: 9
+    ABLY_armorDrainDPSAlly: 3
+    ABLY_armorDrainGPSEnemy: 6
+    ABLY_armorDrainGPSAlly: 2
+    ABLY_armorDrainGPSBonusMult: 1
+    ABLY_armorDrainMaxVictims: 5
+    ABLY_shieldProjectRangeUse: 20
+    ABLY_shieldProjectRange: 30
+    ABLY_shieldProjectMaxPool: 200
+    ABLY_shieldProjectOnGPS: 4
+    ABLY_shieldProjectOnGPSDelay: 5
+    ABLY_shieldProjectOffGPS: 8
+    ABLY_shieldProjectOffGPSNegMult: 1.5
+    ABLY_swarmMaxUses: 3
+    ABLY_swarmFirstUseSpeedMult: 0.75
+    ABLY_swarmDPS: 4
+    ABLY_swarmInteractRadius: 5
+    ABLY_swarmFighterHealth: 20
+    ABLY_healFieldRange: 25
+    ABLY_healFieldAllyGPS: 5
+    ABLY_healFieldUserGPSMult: 1.5
+    ABLY_healFieldConvertGPS: 5
+    ABLY_healFieldAllyGPSBonusMult: 0.02
+    ABLY_healFieldConvertDelay: 5
+    ABLY_healFieldResCost: 4
+    ABLY_healFieldResTime: 5
+    ABLY_chainRange: 25
+    ABLY_chainAllyMult: 0.667
+    ABLY_chainEnemyMult: 0.667
+    ABLY_chainFlagshipMult: 0.5
+    ABLY_superlaserRangeTargeting: 60
+    ABLY_superlaserCancelCDMult: 0.5
+    ABLY_superlaserCancelTime: 1
+    ABLY_superlaserDelay: 3.5
+    ABLY_superlaserInitStacks: 0
+    ABLY_superlaserStackDmgReq: 0.6
+    ABLY_superlaserDmgBase: 200
+    ABLY_superlaserDmgByStacks:
     - -1
     - 50
     - 100
@@ -422,7 +417,6 @@ MonoBehaviour:
   commanders:
   - {fileID: 114578553437470668}
   - {fileID: 114476393172418668}
-  playerCommander: {fileID: 0}
   commanderController: {fileID: 0}
 --- !u!114 &114476393172418668
 MonoBehaviour:

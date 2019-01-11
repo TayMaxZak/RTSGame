@@ -53,7 +53,7 @@ public class UI_ResCounter : MonoBehaviour
 	{
 		timeCur = time;
 		timeFill.fillAmount = minMaxFill.x + timeCur * (minMaxFill.y - minMaxFill.x);
-		timeTooltip.SetText(string.Format("Next resource point in: {0:0.0}s\nEvery {1:0} seconds a raw material point is converted into a resource point.", (1 - time) * gameRules.RESreclaimTime, gameRules.RESreclaimTime));
+		timeTooltip.SetText(string.Format("Next resource point in: {0:0.0}s\nEvery {1:0} seconds a raw material point is converted into a resource point.", (1 - time) * gameRules.RES_reclaimTime, gameRules.RES_reclaimTime));
 	}
 
 	public void PlayReclaimAudio(float timer)
@@ -68,7 +68,7 @@ public class UI_ResCounter : MonoBehaviour
 	IEnumerator ReclaimAudioCoroutine()
 	{
 		timeAudio.Play();
-		yield return new WaitForSeconds(gameRules.RESreclaimTime - timeAudioTime);
+		yield return new WaitForSeconds(gameRules.RES_reclaimTime - timeAudioTime);
 		reclaimAudioCoroutine = null;
 	}
 }

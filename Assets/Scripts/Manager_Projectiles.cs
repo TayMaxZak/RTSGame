@@ -72,7 +72,7 @@ public class Manager_Projectiles : MonoBehaviour
 							if (status != null)
 							{
 								if (status.statusType == StatusType.SuperlaserMark)
-									status.SetTimeLeft(proj.GetDamage() < gameRules.ABLYsuperlaserDmgByStacks[1] ? proj.GetDamage() * SL_turretMult : proj.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
+									status.SetTimeLeft(proj.GetDamage() < gameRules.ABLY_superlaserDmgByStacks[1] ? proj.GetDamage() * SL_turretMult : proj.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
 
 								unit.AddStatus(status);
 							}
@@ -96,7 +96,7 @@ public class Manager_Projectiles : MonoBehaviour
 				// Don't do anything if we are passing through the unit that fired us
 				if (!hitSelf)
 				{
-					proj.position = hit.point - proj.direction * gameRules.PRJhitOffset; // Move to contact point
+					proj.position = hit.point - proj.direction * gameRules.PRJ_hitOffset; // Move to contact point
 					particles[i].position = proj.position;
 
 					particles[i].remainingLifetime = 0; // Destroy particle
@@ -118,7 +118,7 @@ public class Manager_Projectiles : MonoBehaviour
 			}//if Raycast
 			
 			proj.UpdateTimeAlive(Time.deltaTime);
-			if (proj.GetTimeAlive() > gameRules.PRJmaxTimeAlive)
+			if (proj.GetTimeAlive() > gameRules.PRJ_maxTimeAlive)
 			{
 				particles[i].remainingLifetime = 0; // Destroy particle
 				toDelete.Add(proj); // Destroy projectile

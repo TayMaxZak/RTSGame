@@ -45,19 +45,19 @@ public class Clone_Wreck : MonoBehaviour
 
 	public void SetMass(float health, float armor)
 	{
-		mass = health * gameRules.WRCKmassHealthMult + armor * gameRules.WRCKmassArmorMult;
+		mass = health * gameRules.WRCK_massHealthMult + armor * gameRules.WRCK_massArmorMult;
 	}
 
 	public void SetHVelocity(Vector3 vel)
 	{
-		velocity = new Vector3(vel.x, 0, vel.z) * gameRules.WRCKinitialVelMult;
+		velocity = new Vector3(vel.x, 0, vel.z) * gameRules.WRCK_initialVelMult;
 	}
 
 	void Update()
 	{
-		transform.Rotate(angularVelocity * (curFallSpeed / gameRules.WRCKfallSpeedMax) * Time.deltaTime);
+		transform.Rotate(angularVelocity * (curFallSpeed / gameRules.WRCK_fallSpeedMax) * Time.deltaTime);
 
-		curFallSpeed = Mathf.Clamp(curFallSpeed + gameRules.WRCKfallSpeedAccel * Time.deltaTime, -gameRules.WRCKfallSpeedMax, gameRules.WRCKfallSpeedMax);
+		curFallSpeed = Mathf.Clamp(curFallSpeed + gameRules.WRCK_fallSpeedAccel * Time.deltaTime, -gameRules.WRCK_fallSpeedMax, gameRules.WRCK_fallSpeedMax);
 		velocity.y = -curFallSpeed;
 		transform.Translate(velocity * Time.deltaTime, Space.World);
 	}
@@ -75,7 +75,7 @@ public class Clone_Wreck : MonoBehaviour
 				Die(true);
 			else // If we do kill the unit, briefly slow down and reset lifetime
 			{
-				curFallSpeed -= curFallSpeed * gameRules.WRCKcollisionSpeedPenalty;
+				curFallSpeed -= curFallSpeed * gameRules.WRCK_collisionSpeedPenalty;
 				StopCoroutine(destroyCoroutine);
 				destroyCoroutine = StartCoroutine(DestroyCoroutine());
 			}
@@ -84,7 +84,7 @@ public class Clone_Wreck : MonoBehaviour
 
 	IEnumerator DestroyCoroutine()
 	{
-		yield return new WaitForSeconds(gameRules.WRCKlifetime);
+		yield return new WaitForSeconds(gameRules.WRCK_lifetime);
 
 		Die(false);
 	}

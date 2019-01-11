@@ -85,7 +85,7 @@ public class Ability_ShieldProject : Ability
 				}
 				else if (target.team == team)
 				{
-					if (InRange(target.transform, gameRules.ABLYshieldProjectRangeUse)) // Make sure target is in casting range
+					if (InRange(target.transform, gameRules.ABLY_shieldProjectRangeUse)) // Make sure target is in casting range
 					{
 						// If we successfully added a shield,
 						if (target.AddShieldMod(shieldMod))
@@ -148,14 +148,14 @@ public class Ability_ShieldProject : Ability
 
 		if (targetUnit)
 		{
-			if (!targetUnit.IsDead() && InRange(targetUnit.transform, gameRules.ABLYshieldProjectRange))
+			if (!targetUnit.IsDead() && InRange(targetUnit.transform, gameRules.ABLY_shieldProjectRange))
 			{
 				activeRegenTimer -= Time.deltaTime;
 				if (activeRegenTimer <= 0)
 				{
 					if (shieldMod.shieldPercent < 1)
 					{
-						float increment = (gameRules.ABLYshieldProjectOnGPS / gameRules.ABLYshieldProjectMaxPool) * Time.deltaTime;
+						float increment = (gameRules.ABLY_shieldProjectOnGPS / gameRules.ABLY_shieldProjectMaxPool) * Time.deltaTime;
 						if (shieldMod.shieldPercent >= 0)
 							shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + increment, 1);
 						UpdateAbilityBar();
@@ -184,11 +184,11 @@ public class Ability_ShieldProject : Ability
 			// While inactive, constantly regenerate shieldPercent
 			if (shieldMod.shieldPercent < 1)
 			{
-				float increment = (gameRules.ABLYshieldProjectOffGPS / gameRules.ABLYshieldProjectMaxPool) * Time.deltaTime;
+				float increment = (gameRules.ABLY_shieldProjectOffGPS / gameRules.ABLY_shieldProjectMaxPool) * Time.deltaTime;
 				if (shieldMod.shieldPercent >= 0)
 					shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + increment, 1);
 				else // Accelerated regeneration if in negative pool
-					shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + increment * gameRules.ABLYshieldProjectOffGPSNegMult, 1);
+					shieldMod.shieldPercent = Mathf.Min(shieldMod.shieldPercent + increment * gameRules.ABLY_shieldProjectOffGPSNegMult, 1);
 				UpdateAbilityBar();
 			}
 		}
@@ -205,7 +205,7 @@ public class Ability_ShieldProject : Ability
 	public void OnDamage()
 	{
 		if (targetUnit)
-			activeRegenTimer = gameRules.ABLYshieldProjectOnGPSDelay;
+			activeRegenTimer = gameRules.ABLY_shieldProjectOnGPSDelay;
 		UpdateAbilityBar();
 	}
 

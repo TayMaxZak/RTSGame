@@ -59,7 +59,7 @@ public class Ability_ArmorDrain : Ability
 				energy -= deltaDurations.y * Time.deltaTime;
 				Display(1 - energy);
 
-				Collider[] cols = Physics.OverlapSphere(transform.position, gameRules.ABLYarmorDrainRange, gameRules.entityLayerMask);
+				Collider[] cols = Physics.OverlapSphere(transform.position, gameRules.ABLY_armorDrainRange, gameRules.entityLayerMask);
 				List<Unit> units = new List<Unit>();
 				for (int i = 0; i < cols.Length; i++)
 				{
@@ -95,23 +95,23 @@ public class Ability_ArmorDrain : Ability
 				int allyCount = 0;
 				int enemyCount = 0;
 
-				for (int i = 0; i < units.Count && i < gameRules.ABLYarmorDrainMaxVictims; i++) // For each unit, subtract armor
+				for (int i = 0; i < units.Count && i < gameRules.ABLY_armorDrainMaxVictims; i++) // For each unit, subtract armor
 				{
 					if (units[i].team == parentUnit.team) // Ally
 					{
 						if (parentUnit.GetHP().z < parentUnit.GetHP().w) // Only damage allies if we have missing armor
 						{
-							units[i].DamageSimple(0, gameRules.ABLYarmorDrainDPSAlly * Time.deltaTime);
+							units[i].DamageSimple(0, gameRules.ABLY_armorDrainDPSAlly * Time.deltaTime);
 							allyCount++;
 						}
 					}
 					else // Enemy
 					{
-						units[i].DamageSimple(0, gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
+						units[i].DamageSimple(0, gameRules.ABLY_armorDrainDPSEnemy * Time.deltaTime);
 						if (hasSuperlaser)
 						{
 							Status markStatus = new Status(gameObject, StatusType.SuperlaserMark); // TODO: Optimize?
-							markStatus.SetTimeLeft(gameRules.ABLYarmorDrainDPSEnemy * Time.deltaTime);
+							markStatus.SetTimeLeft(gameRules.ABLY_armorDrainDPSEnemy * Time.deltaTime);
 							units[i].AddStatus(markStatus);
 						}
 						enemyCount++;
@@ -119,8 +119,8 @@ public class Ability_ArmorDrain : Ability
 				}
 
 				// Add armor to us based on number of units
-				parentUnit.DamageSimple(0, -(gameRules.ABLYarmorDrainGPSEnemy + gameRules.ABLYarmorDrainGPSBonusMult * enemyCount) * (enemyCount) * Time.deltaTime);
-				parentUnit.DamageSimple(0, -gameRules.ABLYarmorDrainGPSAlly * (allyCount) * Time.deltaTime);
+				parentUnit.DamageSimple(0, -(gameRules.ABLY_armorDrainGPSEnemy + gameRules.ABLY_armorDrainGPSBonusMult * enemyCount) * (enemyCount) * Time.deltaTime);
+				parentUnit.DamageSimple(0, -gameRules.ABLY_armorDrainGPSAlly * (allyCount) * Time.deltaTime);
 
 				if ((allyCount + enemyCount) == 0)
 					pointEffect.SetEffectActive(true, false);

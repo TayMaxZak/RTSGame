@@ -39,7 +39,7 @@ public class Commander : MonoBehaviour
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
 		buildUnitCounters = new int[buildUnits.Length]; // All BuildUnit counters start at 0
-		reclaimTimer = gameRules.RESreclaimTime; // Don't start at 0. This way the first reclaimPoint will take time to reclaim
+		reclaimTimer = gameRules.RES_reclaimTime; // Don't start at 0. This way the first reclaimPoint will take time to reclaim
 	}
 
 	public void SetController(Controller_Commander newController)
@@ -71,7 +71,7 @@ public class Commander : MonoBehaviour
 
 			if (reclaimTimer <= 0)
 			{
-				reclaimTimer = gameRules.RESreclaimTime;
+				reclaimTimer = gameRules.RES_reclaimTime;
 				reclaimPoints--;
 				resPoints++;
 				Controller_UpdateResourceAmounts();

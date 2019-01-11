@@ -91,7 +91,7 @@ public class Manager_Hitscan : MonoBehaviour
 						if (status != null)
 						{
 							if (status.statusType == StatusType.SuperlaserMark)
-								status.SetTimeLeft(scan.GetDamage() < gameRules.ABLYsuperlaserDmgByStacks[1] ? scan.GetDamage() * SL_turretMult : scan.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
+								status.SetTimeLeft(scan.GetDamage() < gameRules.ABLY_superlaserDmgByStacks[1] ? scan.GetDamage() * SL_turretMult : scan.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
 
 							unit.AddStatus(status);
 						}
@@ -113,7 +113,7 @@ public class Manager_Hitscan : MonoBehaviour
 				}
 			}
 
-			Vector3 endPosition = (hit.point - scan.direction * gameRules.PRJhitOffset);
+			Vector3 endPosition = (hit.point - scan.direction * gameRules.PRJ_hitOffset);
 
 			// Don't do anything if we are passing through the unit that fired us
 			if (!hitSelf)

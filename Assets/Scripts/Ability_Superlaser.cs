@@ -63,7 +63,7 @@ public class Ability_Superlaser : Ability
 		abilityType = AbilityType.Superlaser;
 		InitCooldown();
 
-		stacks = gameRules.ABLYsuperlaserInitStacks;
+		stacks = gameRules.ABLY_superlaserInitStacks;
 
 		displayInfo.displayStacks = true;
 		//displayInfo.displayFill = true;
@@ -94,7 +94,7 @@ public class Ability_Superlaser : Ability
 
 	void Display()
 	{
-		displayInfo.stacks = Mathf.Min(stacks, gameRules.ABLYsuperlaserDmgByStacks.Length - 1);
+		displayInfo.stacks = Mathf.Min(stacks, gameRules.ABLY_superlaserDmgByStacks.Length - 1);
 		if (stacks <= 0)
 			displayInfo.displayInactive = true;
 		else
@@ -126,11 +126,11 @@ public class Ability_Superlaser : Ability
 		}
 		else if (state == 1)
 		{
-			if (Time.time > startTargetTime + gameRules.ABLYsuperlaserCancelTime)
+			if (Time.time > startTargetTime + gameRules.ABLY_superlaserCancelTime)
 			{
 				base.UseAbility(target);
 				Reset();
-				SetCooldown(gameRules.ABLYsuperlaserCancelCDMult); // Reduced cooldown
+				SetCooldown(gameRules.ABLY_superlaserCancelCDMult); // Reduced cooldown
 			}
 		}
 	}
@@ -143,7 +143,7 @@ public class Ability_Superlaser : Ability
 		if (unit.team == team) // Cannot target allies
 			return;
 
-		if (InRange(unit.transform, gameRules.ABLYsuperlaserRangeTargeting)) // In range
+		if (InRange(unit.transform, gameRules.ABLY_superlaserRangeTargeting)) // In range
 		{
 			state = 1; // Targeting state
 
@@ -176,7 +176,7 @@ public class Ability_Superlaser : Ability
 
 	IEnumerator CountdownCoroutine()
 	{
-		yield return new WaitForSeconds(gameRules.ABLYsuperlaserDelay);
+		yield return new WaitForSeconds(gameRules.ABLY_superlaserDelay);
 		Fire();
 	}
 
@@ -219,7 +219,7 @@ public class Ability_Superlaser : Ability
 
 	float CalcDamage()
 	{
-		return gameRules.ABLYsuperlaserDmgBase + gameRules.ABLYsuperlaserDmgByStacks[Mathf.Clamp(stacks, 0, gameRules.ABLYsuperlaserDmgByStacks.Length - 1)];
+		return gameRules.ABLY_superlaserDmgBase + gameRules.ABLY_superlaserDmgByStacks[Mathf.Clamp(stacks, 0, gameRules.ABLY_superlaserDmgByStacks.Length - 1)];
 	}
 
 	public override void End()
@@ -239,7 +239,7 @@ public class Ability_Superlaser : Ability
 		{
 			if (targetUnit) // We have something to aim at
 			{
-				if (InRange(targetUnit.transform, gameRules.ABLYsuperlaserRangeTargeting)) // In range
+				if (InRange(targetUnit.transform, gameRules.ABLY_superlaserRangeTargeting)) // In range
 				{
 					if (Vector3.Dot(cannon.transform.forward, (targetUnit.transform.position - cannon.transform.position).normalized) > 1 - aimThreshold) // Aimed close enough
 					{
@@ -250,7 +250,7 @@ public class Ability_Superlaser : Ability
 				else
 				{
 					Reset();
-					SetCooldown(gameRules.ABLYsuperlaserCancelCDMult);  // Reduced cooldown
+					SetCooldown(gameRules.ABLY_superlaserCancelCDMult);  // Reduced cooldown
 				} // in range
 			}
 			else // Target died early
@@ -281,7 +281,7 @@ public class Ability_Superlaser : Ability
 		{
 			for (int i = 0; i < sourcePositions.Length; i++)
 			{
-				laserEffects[i].SetEffectActive(1, sourcePositions[i].position, sourcePositions[i].position + sourcePositions[0].forward * gameRules.ABLYsuperlaserRangeTargeting);
+				laserEffects[i].SetEffectActive(1, sourcePositions[i].position, sourcePositions[i].position + sourcePositions[0].forward * gameRules.ABLY_superlaserRangeTargeting);
 			}
 
 			if (state == 2)
@@ -374,7 +374,7 @@ public class Ability_Superlaser : Ability
 		if (state == 1)
 		{
 			Reset();
-			SetCooldown(gameRules.ABLYsuperlaserCancelCDMult); // Reduced cooldown
+			SetCooldown(gameRules.ABLY_superlaserCancelCDMult); // Reduced cooldown
 		}
 		else if (state == 2)
 		{

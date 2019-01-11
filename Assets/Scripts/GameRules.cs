@@ -7,10 +7,10 @@ public class GameRules
 {
 	[Header("Testing")]
 	public bool useTestValues = false;
-	public float TESTtimeMult = 0.25f;
-	public float TESTbuildTimeMult = 0.25f;
-	public float TESTinitHPAdd = 0;
-	public float TESTinitHPMult = 0.2f;
+	public float TEST_timeMultCooldown = 1f;
+	public float TEST_timeMultBuild = 0.2f;
+	public float TEST_initHPAdd = 0;
+	public float TEST_initHPMult = 1f;
 	public float TEST_spawnRangeMult = 3f;
 
 	[Header("Layer Masks")]
@@ -20,112 +20,118 @@ public class GameRules
 	public LayerMask gridLayerMask;
 
 	[Header("Armor")]
-	public float ARMabsorbFlat = 5; // How much armor absorb is guaranteed
-	public float ARMabsorbScaling = 15; // How much armor absorb is added based on current percentage of armor
-	public float ARMrangeMin = 30f; // Range past which armor range resist begins
-	public float ARMrangeMax = 60f; // Range past which armor range resist is at full effect
-	public float ARMrangeMult = 0.8f; // Overall range resist multiplier
+	public float ARM_absorbFlat = 5; // How much armor absorb is guaranteed
+	public float ARM_absorbScaling = 15; // How much armor absorb is added based on current percentage of armor
+	public float ARM_rangeMin = 30f; // Range past which armor range resist begins
+	public float ARM_rangeMax = 60f; // Range past which armor range resist is at full effect
+	public float ARM_rangeMult = 0.8f; // Overall range resist multiplier
 
 	[Header("Health")]
-	public float HLTHburnThresh = 0.2001f; // How low does health drop before it starts automatically burning away
-	public float HLTHburnMin = 2; // Burn damage per second
-	public float HLTHburnMax = 3; // Burn damage per second
+	public float HLTH_burnThresh = 0.2001f; // How low does health drop before it starts automatically burning away
+	public float HLTH_burnMin = 2; // Burn damage per second
+	public float HLTH_burnMax = 3; // Burn damage per second
 
 	[Header("Wrecks")]
-	public float WRCKfallSpeedMax = 10;
-	public float WRCKfallSpeedAccel = 3;
-	public float WRCKlifetime = 10; // How long the wreck lasts before dissapearing. Also how long before resources begin to be recovered from a dead unit
-	public float WRCKmassHealthMult = 1f; // When calculating mass, how much should max health count for ("mass" determines damage dealt on collision with a unit)
-	public float WRCKmassArmorMult = 0.5f; // When calculating mass, how much should max armor count for
-	public float WRCKinitialVelMult = 0.5f; // When a unit dies, this ratio of its current horizontal velocity is transferred to its wreck
-	public float WRCKcollisionSpeedPenalty = 0.8f; // If it hits something, how much speed should it lose
+	public float WRCK_fallSpeedMax = 10;
+	public float WRCK_fallSpeedAccel = 3;
+	public float WRCK_lifetime = 10; // How long the wreck lasts before dissapearing. Also how long before resources begin to be recovered from a dead unit
+	public float WRCK_massHealthMult = 1; // When calculating mass, how much should max health count for ("mass" determines damage dealt on collision with a unit)
+	public float WRCK_massArmorMult = 0.5f; // When calculating mass, how much should max armor count for
+	public float WRCK_initialVelMult = 0.5f; // When a unit dies, this ratio of its current horizontal velocity is transferred to its wreck
+	public float WRCK_collisionSpeedPenalty = 0.8f; // If it hits something, how much speed should it lose
 
 	[Header("Flagship")]
-	public float FLAGshieldMaxPool = 500;
-	public float FLAGshieldRegenGPS = 5;
-	public float FLAGshieldRegenDelay = 10;
+	public float FLAG_shieldMaxPool = 300; // Hit points of shield
+	public float FLAG_shieldRegenDelay = 10; // Delay after taking damage before shield begins to regen
+	public float FLAG_shieldRegenGPS = 5; // Shield hit points gained per second
 
 	[Header("Objectives")]
 	public float OBJV_captureRange = 25; // Range around objective which counts toward capture
 	public float OBJV_captureTime = 20; // Time to go from neutral state to fully controlled state, given a contribution of 1
-	public float OBJV_captureAddPerUnitMult = 1; // How much each unit contributes
-	public float OBJV_captureAddMax = 3; // capped by this amount
+	public float OBJV_captureAddPerUnitMult = 1; // How much each unit contributes,
+	public float OBJV_captureAddMax = 3; // total capped by this amount
 
 	[Header("Resources")]
-	public float RESreclaimTime = 5;
+	public float RES_reclaimTime = 5; // How long it takes to convert a raw material point into a resource point
 
 	[Header("Spawning")]
-	public float SPWNflagshipRadius = 50; // Radius around flagship where units can be spawned
+	public float SPWN_flagshipRadius = 50; // Radius around flagship where units can be spawned
 
 	[Header("Audio")]
-	public float AUDpitchVariance = 0.05f; // Audio pitch variation for each clip instance
+	public float AUD_pitchVariance = 0.05f; // Audio pitch variation for each clip instance
 
 	[Header("Projectiles")]
-	public float PRJmaxTimeAlive = 5f; // How long each projectile lives
-	public float PRJhitOffset = 0.05f; // When hitting an object, a projectile always detonates this back far from the hit point
-	public float PRJfriendlyFireCheckRangeMult = 1.0f; // When testing for the potential of friendly fire, how far ahead do we want to check? This is a multiplier on the turret's base range
+	public float PRJ_maxTimeAlive = 4f; // How long each projectile lives
+	public float PRJ_hitOffset = 0.1f; // When hitting an object, a projectile always detonates this back far from the hit point
+	public float PRJ_friendlyFireCheckRangeMult = 1.0f; // When testing for the potential of friendly fire, how far ahead do we want to check? This is a multiplier on the turret's base range
 
 	[Header("Damage")]
 	public float DMG_ffDamageMult = 0.5f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
 	public float DMG_ffDamageMultSplash = 0.25f; // If we do hit an ally, do reduced damage because splash damage friendly fire is almost unavoidable
 
 	[Header("Movement")]
-	public float MOVabilityAimingRSMult = 0.33f;
-	public int MOV_heightCount = 10;
-	public int MOV_heightSpacing = 5;
+	public float MOV_abilityAimingRSMult = 1; // While a unit is being aimed by an ability, what should be the multiplier on its rotation speed
+	public int MOV_heightCount = 10; // How many different heights can units move on
+	public int MOV_heightSpacing = 5; // How far apart is each height
 
 	//[Header("Vision")]
 	//public float VIS_lol = 25;
 
 	[Header("Abilities")]
-	public float ABLYarmorDrainRange = 20;
-	public float ABLYarmorDrainDPSEnemy = 9;
-	public float ABLYarmorDrainDPSAlly = 3;
-	public float ABLYarmorDrainGPSEnemy = 1; // How much armor is gained per second, per victim (total APS scales with number of victims)
-	public float ABLYarmorDrainGPSAlly = 2; // How much armor is gained per second, per victim (total APS scales with number of victims)
-	public float ABLYarmorDrainGPSBonusMult = 1; // How much armor is gained per second, per victim, per number of victims? (total APS scales with number of victims, squared)
-	public float ABLYarmorDrainMaxVictims = 5;
+	[Header("Armor Drain")]
+	public float ABLY_armorDrainRange = 20;
+	public float ABLY_armorDrainDPSEnemy = 9;
+	public float ABLY_armorDrainDPSAlly = 3;
+	public float ABLY_armorDrainGPSEnemy = 6; // How much armor is gained per second, per victim (total APS scales with number of victims)
+	public float ABLY_armorDrainGPSAlly = 2; // How much armor is gained per second, per victim (total APS scales with number of victims)
+	public float ABLY_armorDrainGPSBonusMult = 1; // How much armor is gained per second, per victim, per number of victims? (total APS scales with number of victims, squared)
+	public float ABLY_armorDrainMaxVictims = 5;
 
-	public float[] ABLYarmorRegenHPS = new float[] { 4, 8, 16, 16, 2 }; // Based on armor missing: 20% -> 4ps / 40% -> 8ps / 60% -> 16ps / 80% -> 16ps / 100% -> 2ps
+	//public float[] ABLY_armorRegenHPS = new float[] { 4, 8, 16, 16, 2 }; // Based on armor missing: 20% -> 4ps / 40% -> 8ps / 60% -> 16ps / 80% -> 16ps / 100% -> 2ps
 
-	public float ABLYshieldProjectRangeUse = 20; // Max distance for cast
-	public float ABLYshieldProjectRange = 30; // If distance exceeds this post-cast, shield is returned
-	public float ABLYshieldProjectMaxPool = 200; // Size of shield
-	public float ABLYshieldProjectOnGPS = 4; // How much shield pool is gained per second the shield is active
-	public float ABLYshieldProjectOnGPSDelay = 5; // Delay after taking damage before shield pool gain begins while the shield is active
-	public float ABLYshieldProjectOffGPS = 8; // How much shield pool is gained per second the shield is inactive
-	public float ABLYshieldProjectOffGPSNegMult = 1.5f; // GPS multiplier if shield is negative
+	[Header("Shield Project")]
+	public float ABLY_shieldProjectRangeUse = 20; // Max distance for cast
+	public float ABLY_shieldProjectRange = 30; // If distance exceeds this post-cast, shield is returned
+	public float ABLY_shieldProjectMaxPool = 200; // Hitpoints of shield
+	public float ABLY_shieldProjectOnGPS = 4; // How much shield pool is gained per second the shield is active
+	public float ABLY_shieldProjectOnGPSDelay = 5; // Delay after taking damage before regen begins while the shield is active
+	public float ABLY_shieldProjectOffGPS = 8; // How much shield pool is gained per second the shield is inactive
+	public float ABLY_shieldProjectOffGPSNegMult = 1.5f; // GPS multiplier if shield is negative
 
-	public int ABLYswarmMaxUses = 3;
-	public float ABLYswarmFirstUseSpeedMult = 0.75f;
-	public int ABLYswarmDPS = 4;
-	public int ABLYswarmInteractRadius = 5; // How close a swarm has to be to proc its damage reduction status / damage over time
-	public float ABLYswarmFighterHealth = 20;
+	[Header("Swarm")]
+	public int ABLY_swarmMaxUses = 3;
+	public float ABLY_swarmFirstUseSpeedMult = 0.75f; // After using the ability once and until it is no longer usable, the carrier is encumbered with a slow
+	public int ABLY_swarmDPS = 4;
+	public int ABLY_swarmInteractRadius = 5; // How close a swarm has to be to proc its damage reduction status / damage over time
+	public float ABLY_swarmFighterHealth = 20;
 
-	public float ABLYhealFieldRange = 25;
-	public float ABLYhealFieldAllyGPS = 5; // Fragile health gained per second by each ally
-	public float ABLYhealFieldUserGPSMult = 2; // Multiplier of base GPS for user
-	public float ABLYhealFieldConvertGPS = 5; // Fragile health exchanged into health per second
-	public float ABLYhealFieldAllyGPSBonusMult = 0.02f; // plus this percent of max health
-	public float ABLYhealFieldConvertDelay = 5; // Time it takes for fragile health to start transforming into health
+	[Header("Heal Field")]
+	public float ABLY_healFieldRange = 25;
+	public float ABLY_healFieldAllyGPS = 5; // Fragile health gained per second by each ally
+	public float ABLY_healFieldUserGPSMult = 1.5f; // Multiplier of base GPS for user
+	public float ABLY_healFieldConvertGPS = 5; // Fragile health exchanged into health per second
+	public float ABLY_healFieldAllyGPSBonusMult = 0.02f; // plus this percent of max health
+	public float ABLY_healFieldConvertDelay = 5; // Time it takes for fragile health to start transforming into health
+	public int ABLY_healFieldResCost = 4; // Amount of resource points held by this ability while active
+	public float ABLY_healFieldResTime = 5; // Delay to return resource points when the ability ends
 
-	public int ABLYhealFieldResCost = 4; // Amount of resource points held by this ability while active
-	public float ABLYhealFieldResTime = 5; // Delay to return resource points when the ability ends
+	[Header("Chain")]
+	public float ABLY_chainRange = 25; // Max distance for cast
+	public float ABLY_chainAllyMult = 0.667f; // Multiplier applied to velocity when adding to it the target
+	public float ABLY_chainEnemyMult = 0.667f;
+	public float ABLY_chainFlagshipMult = 0.5f; // Stacks with prior 2 multipliers (ex. 0.667 * 0.5 = 0.333)
 
-	public float ABLYchainRange = 25; // Max distance for cast
-	public float ABLYchainAllyMult = 0.667f; // Multiplier applied to velocity when adding to it the target
-	public float ABLYchainEnemyMult = 0.667f;
-	public float ABLYchainFlagshipMult = 0.5f; // Stacks with prior 2 multipliers (ex. 0.667 * 0.5 = 0.333)
+	[Header("Superlaser")]
+	public float ABLY_superlaserRangeTargeting = 60; // Max distance for cast and distance which the target must stay in during Superlaser targeting state
+	public float ABLY_superlaserCancelCDMult = 0.5f; // What ratio of cooldown is refunded if the target leaves the targeting range or the ability is cancelled manually
+	public float ABLY_superlaserCancelTime = 1f; // How long after initial cast do you have to wait before you can re-cast to cancel targeting
+	public float ABLY_superlaserDelay = 3.5f; // Delay before damage is dealt during ability can be interupted or range-cancelled
+	public int ABLY_superlaserInitStacks = 0; // Stacks the ability starts with
+	public float ABLY_superlaserStackDmgReq = 0.6f; // How much damage (by percentage of max health + max armor) has to be done to a unit to earn a stack from its death
+	public float ABLY_superlaserDmgBase = 200; // Base damage
+	public float[] ABLY_superlaserDmgByStacks = new float[] { -1, 50, 100, 150, 200}; // Damage added based on stacks: 0 -> cannot be activated / 1 -> 100 / 2 -> 200 / 3 -> 300 / 4 -> 400
 
-	public float ABLYsuperlaserRangeTargeting = 60; // Max distance for cast and distance which the target must stay in during Superlaser targeting state
-	public float ABLYsuperlaserCancelCDMult = 0.5f; // What ratio of cooldown is refunded if the target leaves the targeting range or the ability is cancelled manually
-	public float ABLYsuperlaserCancelTime = 1f; // How long after initial cast do you have to wait before you can re-cast to cancel targeting
-	public float ABLYsuperlaserDelay = 3.5f; // Delay before damage is dealt during ability can be interupted or range-cancelled
-	public int ABLYsuperlaserInitStacks = 0; // Stacks the ability starts with
-	public float ABLYsuperlaserStackDmgReq = 0.6f; // How much damage (by percentage of max health + max armor) has to be done to a unit to earn a stack from its death
-	public float ABLYsuperlaserDmgBase = 200; // Base damage
-	public float[] ABLYsuperlaserDmgByStacks = new float[] { -1, 50, 100, 150, 200}; // Damage added based on stacks: 0 -> cannot be activated / 1 -> 100 / 2 -> 200 / 3 -> 300 / 4 -> 400
-
+	[Header("Status Missile")]
 	public float ABLY_statusMissileRangeUse = 40; // Max distance for cast
 	public float ABLY_statusMissileRangeMissile = 60; // Max distance for before missile detonates
 	public float ABLY_statusMissileMaxLifetime = 10; // How long the missile can exist before detonating
@@ -134,12 +140,14 @@ public class GameRules
 	public float ABLY_statusMissileDamage = 10; // Flat damage dealt once to targets caught in cloud
 	public float ABLY_statusMissileDamageBonusMult = 0.05f; // Ratio of target's max health + max armor dealt once to targets caught in cloud
 
+	[Header("Self Destruct")]
 	public float ABLY_selfDestructRange = 25; // Radius for dealing damage
 	public float ABLY_selfDestructDamage = 500; // Damage dealt
 	public float ABLY_selfDestructDamageFlagMult = 0.33f; // Damage multiplier against flagship units
 	public float ABLY_selfDestructDPSSelf = 10; // How much health per second is converted to fragile health while channeling
 	public float ABLY_selfDestructSpeedMult = 1.25f; // Speed mult while channeling
 
+	[Header("Ion Missile")]
 	public float ABLY_ionMissileRangeUse = 40; // Max distance for cast
 	public float ABLY_ionMissileCancelTime = 1f; // How long after initial cast do you have to wait before you can re-cast to cancel targeting
 	public float ABLY_ionMissileRangeMissile = 60; // Max distance for before missile detonates
@@ -147,20 +155,21 @@ public class GameRules
 	public float ABLY_ionMissileDamage = 10; // Flat damage dealt on impact
 	public float ABLY_ionMissileDamageBonusMult = 20f; // Damage multiplier against shields
 	public float ABLY_ionMissileDamageBonusMultFlagship = 10f; // Damage multiplier reduced against flagship shields
-	public float ABLY_ionMissileIonsFirst = 20f;
-	public float ABLY_ionMissileIonsNext = 20f;
-	public float ABLY_ionMissileArmorDmgToIons = 0.5f;
-	public float ABLY_ionMissileDecayDelay = 10f;
-	public float ABLY_ionMissileDecayLPS = 4;
-	public float ABLY_ionMissileDecayCutoff = 10;
-	public int ABLY_ionMissileMaxAmmo = 2;
-	public int ABLY_ionMissileAmmoTick = 1;
+	public float ABLY_ionMissileIonsFirst = 20f; // How many ions are added to a unit with no ions
+	public float ABLY_ionMissileIonsNext = 20f; // How many ions are added to a unit with ions
+	public float ABLY_ionMissileArmorDmgToIons = 0.5f; // At what rate is damage dealt to armor converted to ions (percent to percent with this multiplier)
+	public float ABLY_ionMissileDecayDelay = 10f; // Time after last taking damage before ions begin to decay
+	public float ABLY_ionMissileDecayLPS = 4; // How many ions are decayed per second
+	public float ABLY_ionMissileDecayCutoff = 5; // If ion count drops below this number, it is rounded down to zero
+	public int ABLY_ionMissileMaxAmmo = 2; // How many missiles are stored at once
+	public int ABLY_ionMissileAmmoTick = 1; // How many missiles are restored per reload
 
-	public float ABLY_modeSpeedMult = 0.5f;
+	[Header("Modes")]
+	public float ABLY_modeSpeedMult = 0.5f; // While a mode is active, the unit's movement speed is multiplied by this amount
 
-	public float ABLY_shieldModeMaxPool = 50;
-	public float ABLY_shieldModeRegenDelay = 1;
-	public float[] ABLY_shieldModeRegenGPS = new float[] { 8, 12, 12, 8, 8, 4 }; // Based on shields missing: 20% -> 8ps / 40% -> 12ps / 60% -> 12ps / 80% -> 8ps / 100% -> 8ps / over 100& -> 4ps
+	public float ABLY_shieldModeMaxPool = 40; // Hitpoints of shield
+	public float ABLY_shieldModeRegenDelay = 0.25f; // Delay after taking damage before regen starts
+	public float[] ABLY_shieldModeRegenGPS = new float[] { 5, 10, 10, 5, 5, 5 }; // Based on shields missing: 20% -> 8ps / 40% -> 12ps / 60% -> 12ps / 80% -> 8ps / 100% -> 8ps / over 100& -> 4ps
 
 
 	[Header("Statuses")]

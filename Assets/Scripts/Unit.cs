@@ -105,11 +105,11 @@ public class Unit : Entity, ITargetable
 
 		if (gameRules.useTestValues)
 		{
-			curHealth = curHealth * gameRules.TESTinitHPMult + gameRules.TESTinitHPAdd;
-			curArmor = curArmor * gameRules.TESTinitHPMult + gameRules.TESTinitHPAdd;
+			curHealth = curHealth * gameRules.TEST_initHPMult + gameRules.TEST_initHPAdd;
+			curArmor = curArmor * gameRules.TEST_initHPMult + gameRules.TEST_initHPAdd;
 			//curFragileHealth = (maxHealth - curHealth) * gameRules.TESTinitHPMult;
 		}
-		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
+		curFragileTimer = gameRules.ABLY_healFieldConvertDelay;
 		curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
 
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
@@ -152,7 +152,7 @@ public class Unit : Entity, ITargetable
 		// Burning
 		if (!alwaysBurnImmune)
 		{
-			isBurning = curHealth / maxHealth <= gameRules.HLTHburnThresh;
+			isBurning = curHealth / maxHealth <= gameRules.HLTH_burnThresh;
 
 			foreach (Status s in statuses)
 				if (s.statusType == StatusType.CriticalBurnImmune)
@@ -164,7 +164,7 @@ public class Unit : Entity, ITargetable
 				if (curBurnTimer >= 1)
 				{
 					curBurnTimer = 0;
-					DamageSimple(Mathf.RoundToInt(Random.Range(gameRules.HLTHburnMin, gameRules.HLTHburnMax)), 0);
+					DamageSimple(Mathf.RoundToInt(Random.Range(gameRules.HLTH_burnMin, gameRules.HLTH_burnMax)), 0);
 				}
 			}
 		}
@@ -174,12 +174,12 @@ public class Unit : Entity, ITargetable
 			curFragileTimer -= Time.deltaTime;
 			if (curFragileTimer <= 0)
 			{
-				float amount = gameRules.ABLYhealFieldConvertGPS + gameRules.ABLYhealFieldAllyGPSBonusMult * maxHealth;
+				float amount = gameRules.ABLY_healFieldConvertGPS + gameRules.ABLY_healFieldAllyGPSBonusMult * maxHealth;
 				AddFragileHealth(-amount * Time.deltaTime);
 				DamageSimple(-amount * Time.deltaTime, 0);
 
 				if (curFragileHealth <= 0)
-					curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
+					curFragileTimer = gameRules.ABLY_healFieldConvertDelay;
 			}
 		}
 
@@ -622,11 +622,11 @@ public class Unit : Entity, ITargetable
 		{
 			
 			if (s.shieldModType == ShieldModType.ShieldProject) // Projected Shield
-				total += s.shieldPercent * gameRules.ABLYshieldProjectMaxPool;
+				total += s.shieldPercent * gameRules.ABLY_shieldProjectMaxPool;
 			else if (s.shieldModType == ShieldModType.ShieldMode) // Shield Mode shield
 				total += s.shieldPercent * gameRules.ABLY_shieldModeMaxPool;
 			else if (s.shieldModType == ShieldModType.Flagship) // Flagship Shield
-				total += s.shieldPercent * gameRules.FLAGshieldMaxPool;
+				total += s.shieldPercent * gameRules.FLAG_shieldMaxPool;
 		}
 
 		return total;
@@ -641,11 +641,11 @@ public class Unit : Entity, ITargetable
 		foreach (ShieldMod s in shieldMods) // Check all current shield mods
 		{
 			if (s.shieldModType == ShieldModType.ShieldProject) // Projected Shield
-				total += gameRules.ABLYshieldProjectMaxPool;
+				total += gameRules.ABLY_shieldProjectMaxPool;
 			else if (s.shieldModType == ShieldModType.ShieldMode) // Shield Mode shield
 				total += gameRules.ABLY_shieldModeMaxPool;
 			else if (s.shieldModType == ShieldModType.Flagship) // Flagship Shield
-				total += gameRules.FLAGshieldMaxPool;
+				total += gameRules.FLAG_shieldMaxPool;
 		}
 
 		return total;
@@ -752,7 +752,7 @@ public class Unit : Entity, ITargetable
 	void RemoveFragileHealth()
 	{
 		curFragileHealth = 0;
-		curFragileTimer = gameRules.ABLYhealFieldConvertDelay;
+		curFragileTimer = gameRules.ABLY_healFieldConvertDelay;
 	}
 
 	public void AddIons(float ionsToAdd, bool ionSeed)
@@ -836,9 +836,9 @@ public class Unit : Entity, ITargetable
 			return new DamageResult(false);
 
 		// Damage lost to range resist / damage falloff, incentivising shooting armor from up close
-		float rangeRatio = Mathf.Max(0, (range - gameRules.ARMrangeMin) / (gameRules.ARMrangeMax - gameRules.ARMrangeMin));
+		float rangeRatio = Mathf.Max(0, (range - gameRules.ARM_rangeMin) / (gameRules.ARM_rangeMax - gameRules.ARM_rangeMin));
 
-		float rangeDamage = Mathf.Min(dmg * rangeRatio, dmg) * gameRules.ARMrangeMult;
+		float rangeDamage = Mathf.Min(dmg * rangeRatio, dmg) * gameRules.ARM_rangeMult;
 		if (!DamageUtils.IgnoresRangeResist(dmgType)) // Range-resist-exempt damage types
 		{
 			if (curArmor > Mathf.Max(0, dmg - rangeDamage)) // Range resist condition: if this shot wont break the armor, it will be range resisted
@@ -868,10 +868,10 @@ public class Unit : Entity, ITargetable
 		bool canOverflow = !DamageUtils.CannotOverflowArmor(dmgType);
 
 		// ArmorMelt status affects armor absorption limit (unless this is a Flagship)
-		float armorFlat = armorMeltCount == 0 || Type == EntityType.Flagship ? gameRules.ARMabsorbFlat : gameRules.STAT_armorMeltAbsorbFlat;
+		float armorFlat = armorMeltCount == 0 || Type == EntityType.Flagship ? gameRules.ARM_absorbFlat : gameRules.STAT_armorMeltAbsorbFlat;
 		float armorScalingMult = armorMeltCount == 0 || Type == EntityType.Flagship ? 1 : gameRules.STAT_armorMeltAbsorbScalingMult;
 
-		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : armorFlat + (curArmor / maxArmor) * gameRules.ARMabsorbScaling * armorScalingMult); // Absorbtion limit formula
+		float absorbLim = Mathf.Min(curArmor, maxArmor < Mathf.Epsilon ? 0 : armorFlat + (curArmor / maxArmor) * gameRules.ARM_absorbScaling * armorScalingMult); // Absorbtion limit formula
 		float dmgToArmor = canOverflow ? Mathf.Min(absorbLim, dmg) : dmg; // How much damage armor takes
 		float overflowDmg = canOverflow ? Mathf.Max(0, dmg - absorbLim) : 0; // How much damage health takes (aka by how much damage exceeds absorbtion limit)
 
@@ -945,17 +945,17 @@ public class Unit : Entity, ITargetable
 
 		if (projShield != null)
 		{
-			float curShieldPool = projShield.shieldPercent * gameRules.ABLYshieldProjectMaxPool;
+			float curShieldPool = projShield.shieldPercent * gameRules.ABLY_shieldProjectMaxPool;
 
 			// If curShieldPool is positive, the shield held, and it now represents the remaining pool
 			// otherwise, the shield was broken, and it now represents the leftover damage
 			curShieldPool -= dmg;
 			// dmg should also be updated for next shield types to take damage
-			dmg = Mathf.Max(dmg - projShield.shieldPercent * gameRules.ABLYshieldProjectMaxPool, 0);
+			dmg = Mathf.Max(dmg - projShield.shieldPercent * gameRules.ABLY_shieldProjectMaxPool, 0);
 
 			if (curShieldPool > 0)
 			{
-				projShield.shieldPercent = curShieldPool / gameRules.ABLYshieldProjectMaxPool;
+				projShield.shieldPercent = curShieldPool / gameRules.ABLY_shieldProjectMaxPool;
 
 				projShield.from.GetComponent<Ability_ShieldProject>().OnDamage(); // TODO: Optimize
 
@@ -965,7 +965,7 @@ public class Unit : Entity, ITargetable
 			else // Negative value
 			{
 				// Apply damage to shield pool, which can go negative
-				projShield.shieldPercent = curShieldPool / gameRules.ABLYshieldProjectMaxPool;
+				projShield.shieldPercent = curShieldPool / gameRules.ABLY_shieldProjectMaxPool;
 
 				// Reset shield to a baseline pool value
 				//projShield.shieldPercent = 0;
@@ -1012,17 +1012,17 @@ public class Unit : Entity, ITargetable
 
 		if (flagShield != null)
 		{
-			float curShieldPool = flagShield.shieldPercent * gameRules.FLAGshieldMaxPool;
+			float curShieldPool = flagShield.shieldPercent * gameRules.FLAG_shieldMaxPool;
 
 			// If curShieldPool is positive, the shield held, and it now represents the remaining pool
 			// otherwise, the shield was broken, and it now represents the leftover damage
 			curShieldPool -= dmg;
 			// dmg should also be updated for next shield types to take damage
-			dmg = Mathf.Max(dmg - flagShield.shieldPercent * gameRules.FLAGshieldMaxPool, 0);
+			dmg = Mathf.Max(dmg - flagShield.shieldPercent * gameRules.FLAG_shieldMaxPool, 0);
 
 			if (curShieldPool > 0)
 			{
-				float percent = curShieldPool / gameRules.FLAGshieldMaxPool;
+				float percent = curShieldPool / gameRules.FLAG_shieldMaxPool;
 				flagShield.shieldPercent = percent;
 
 				UpdateShield();
@@ -1120,7 +1120,7 @@ public class Unit : Entity, ITargetable
 			{
 				float ratio = s.GetTimeLeft() / (maxHealth + maxArmor);
 
-				if (ratio >= gameRules.ABLYsuperlaserStackDmgReq)
+				if (ratio >= gameRules.ABLY_superlaserStackDmgReq)
 					if (s.from) // Potentially the recipient of the stack does not exist anymore
 						s.from.GetComponent<Ability_Superlaser>().GiveStack(this);
 			}
@@ -1169,7 +1169,7 @@ public class Unit : Entity, ITargetable
 				GameObject go2 = new GameObject();
 				Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
 
-				resDelay.GiveRecAfterDelay(comm.GetBuildUnit(buildIndex).cost, gameRules.WRCKlifetime, team);
+				resDelay.GiveRecAfterDelay(comm.GetBuildUnit(buildIndex).cost, gameRules.WRCK_lifetime, team);
 			}
 		}
 
