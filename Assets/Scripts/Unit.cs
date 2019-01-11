@@ -1333,6 +1333,11 @@ public class Unit : Entity, ITargetable
 		return TargetType.Unit;
 	}
 
+	public bool GetVisibleTo(int team)
+	{
+		return VisibleBy(team);
+	}
+
 
 	public void OnDrawGizmos()
 	{

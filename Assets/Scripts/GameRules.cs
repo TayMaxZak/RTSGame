@@ -11,6 +11,7 @@ public class GameRules
 	public float TESTbuildTimeMult = 0.25f;
 	public float TESTinitHPAdd = 0;
 	public float TESTinitHPMult = 0.2f;
+	public float TEST_spawnRangeMult = 3f;
 
 	[Header("Layer Masks")]
 	public LayerMask entityLayerMask;

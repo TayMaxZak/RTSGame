@@ -169,6 +169,11 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		return TargetType.Fighter;
 	}
 
+	public bool GetVisibleTo(int team)
+	{
+		return true;
+	}
+
 	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
 	{
 		bool die = false;

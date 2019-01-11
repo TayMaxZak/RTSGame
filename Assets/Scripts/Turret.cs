@@ -202,6 +202,9 @@ public class Turret : MonoBehaviour
 			if (targ.GetTeam() == team) // Can't target allies
 				continue;
 
+			if (!targ.GetVisibleTo(team)) // Must be visible to this team
+				continue;
+
 			// Can ignore non-preferred targets altogether (used when searching for a better target)
 			if (ignoreNonPreferred && targ.GetTargetType() != preferredTargetType)
 				continue;
@@ -239,7 +242,8 @@ public class Turret : MonoBehaviour
 		Vector3 dir = !IsNull(potentialTarget) ? CalcAdjDirection(potentialTarget) : transform.forward; // direction used elsewhere to check if aimed at target or not
 
 		bool valid = false;
-		if (!IsNull(potentialTarget) && sqrDistance <= range * range && ValidRotationHorizontal(CalcLookRotation(dir))) // Have target, its in range, and the look rotation is within limits
+		// Have target, its in range, the look rotation is within limits, it is visible to our team
+		if (!IsNull(potentialTarget) && sqrDistance <= range * range && ValidRotationHorizontal(CalcLookRotation(dir)) && potentialTarget.GetVisibleTo(team))
 		{
 			valid = true;
 		}
@@ -716,6 +720,7 @@ public interface ITargetable
 	bool HasCollision(); // Is a proper raycast check required to hit this target?
 	TargetType GetTargetType();
 	DamageResult Damage(float damageBase, float range, DamageType dmgType);
+	bool GetVisibleTo(int team); // Can the given team see this target
 }
 
 public enum TargetType
