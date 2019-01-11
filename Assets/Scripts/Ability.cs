@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Particle = UnityEngine.ParticleSystem.Particle;
 
-public class Ability : MonoBehaviour {
+public class Ability : MonoBehaviour
+{
 	protected AbilityType abilityType; // Used to determine how to interact with this Ability
 	protected int team; // Doesn't need to be public
 	protected bool suspended;
@@ -141,6 +142,10 @@ public class Ability : MonoBehaviour {
 	public virtual void UnSuspend()
 	{
 		suspended = false;
+	}
+
+	public virtual void SetEffectsVisible(bool visible)
+	{
 	}
 }
 

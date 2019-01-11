@@ -186,6 +186,11 @@ public class Ability_ShieldMode : Ability
 		SetActive(false);
 	}
 
+	public override void SetEffectsVisible(bool visible)
+	{
+		targetLoopEffect.SetVisible(visible);
+	}
+
 	bool InRange(Transform tran, float range)
 	{
 		if (Vector3.SqrMagnitude(tran.position - transform.position) < range * range)

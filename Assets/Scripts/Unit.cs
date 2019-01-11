@@ -1300,11 +1300,13 @@ public class Unit : Entity, ITargetable
 		}
 	}
 
-	override protected void UpdateVisibility()
+	override protected void UpdateLocalVisibility()
 	{
-		base.UpdateVisibility();
+		base.UpdateLocalVisibility();
 		engineEffects.SetVisible(localVisible);
 		hpEffects.SetVisible(localVisible);
+		foreach (Ability a in abilities)
+			a.SetEffectsVisible(localVisible);
 	}
 
 

@@ -170,12 +170,12 @@ public class Entity : MonoBehaviour
 			return;
 
 		localVisible = newVis;
-		UpdateVisibility();
+		UpdateLocalVisibility();
 	}
 
 
 
-	protected virtual void UpdateVisibility()
+	protected virtual void UpdateLocalVisibility()
 	{
 		//meshRenderer.enabled = visible;
 	}
