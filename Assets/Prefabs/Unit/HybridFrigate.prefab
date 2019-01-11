@@ -4011,14 +4011,15 @@ MonoBehaviour:
   - {fileID: 114640070245601930}
   - {fileID: 114153668136258048}
   movement:
+    audioLoopPrefab: {fileID: 0}
     MS: 4
     MSVMult: 0.6
-    MSAccel: 1
+    MSAccel: 2
     MSDeccel: 1
     model: {fileID: 4071519899239004}
     RS: 30
     RSAccel: 1
-    allowMoveThresh: 0.3
+    allowMoveThresh: 0.4
     reachGoalThresh: 2
 --- !u!114 &114467501981516294
 MonoBehaviour:
@@ -4121,13 +4122,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shieldStart: {fileID: 4834991525726884}
-  targetLoopEffectPrefab: {fileID: 114029768352615074, guid: 28af50c8d05a7c348a94f8cb6b7cb0a4,
+  meshEffectPrefab: {fileID: 114029768352615074, guid: 28af50c8d05a7c348a94f8cb6b7cb0a4,
     type: 2}
   targetProjectEffectPrefab: {fileID: 1928473051249270, guid: 1d37fa4a7ed68474a90d414eb625008e,
     type: 2}
   returnEffectPrefab: {fileID: 1928473051249270, guid: 3929c49360c79aa44a4b9e1a884563fc,
     type: 2}
   breakEffectPrefab: {fileID: 1928473051249270, guid: de1b900b96fbe354da76b7834f94a44c,
+    type: 2}
+  audioLoopPrefab: {fileID: 114609254506899492, guid: 1b7ffbf322bd2734ba726ffe5aefa531,
     type: 2}
   otherMode: {fileID: 114153668136258048}
 --- !u!114 &114846295635110128

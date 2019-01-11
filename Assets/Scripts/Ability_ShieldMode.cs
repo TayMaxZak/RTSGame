@@ -7,13 +7,12 @@ public class Ability_ShieldMode : Ability
 	private ShieldMod shieldMod;
 	private float activeRegenTimer = 0;
 
+	[Header("Effects")]
 	[SerializeField]
 	private Transform shieldStart;
 	[SerializeField]
-	private Effect_Mesh targetLoopEffectPrefab;
-	private Effect_Mesh targetLoopEffect;
-	private bool reEnabledLoop = true;
-
+	private Effect_Mesh meshEffectPrefab;
+	private Effect_Mesh meshEffect;
 	[SerializeField]
 	private GameObject targetProjectEffectPrefab;
 	[SerializeField]
@@ -21,8 +20,15 @@ public class Ability_ShieldMode : Ability
 	[SerializeField]
 	private GameObject breakEffectPrefab;
 
+	[Header("Audio")]
 	[SerializeField]
-	private Ability_RailMode otherMode;
+	private AudioEffect_Loop audioLoopPrefab;
+	private AudioEffect_Loop audioLoop;
+
+	private bool reEnabledLoop = true; // Used to optimize activation/deactivation of looping effect/audio in Update
+
+	[SerializeField]
+	private Ability_RailMode otherMode; // Only one mode can be active at once
 
 	//private UI_AbilBar_ShieldProject abilityBar;
 	private bool isActive = false;
@@ -44,8 +50,12 @@ public class Ability_ShieldMode : Ability
 		//abilityBar = parentUnit.hpBar.GetComponent<UI_AbilBar_ShieldProject>();
 		//abilityBar.SetShield(shieldMod.shieldPercent, shieldMod.shieldPercent < 0);
 
-		targetLoopEffect = Instantiate(targetLoopEffectPrefab, transform.position, Quaternion.identity);
-		targetLoopEffect.SetEffectActive(false);
+		meshEffect = Instantiate(meshEffectPrefab, transform.position, Quaternion.identity);
+		meshEffect.SetEffectActive(false);
+
+		audioLoop = Instantiate(audioLoopPrefab, transform.position, Quaternion.identity);
+		audioLoop.transform.parent = transform;
+		audioLoop.SetEffectActive(false);
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -89,7 +99,8 @@ public class Ability_ShieldMode : Ability
 			// Update effects accordingly
 			Instantiate(targetProjectEffectPrefab, shieldStart.position, transform.rotation);
 
-			targetLoopEffect.SetEffectActive(true);
+			meshEffect.SetEffectActive(true);
+			audioLoop.SetEffectActive(true);
 
 			UpdateActiveEffects();
 		}
@@ -112,12 +123,14 @@ public class Ability_ShieldMode : Ability
 	void RemoveShield()
 	{
 		parentUnit.RemoveShieldMod(shieldMod);
-		targetLoopEffect.SetEffectActive(false);
+
+		meshEffect.SetEffectActive(false);
+		audioLoop.SetEffectActive(false);
 	}
 
 	public override void End()
 	{
-		targetLoopEffect.End();
+		meshEffect.End();
 	}
 
 	new void Update()
@@ -131,7 +144,8 @@ public class Ability_ShieldMode : Ability
 			{
 				if (isActive && !reEnabledLoop)
 				{
-					targetLoopEffect.SetEffectActive(true);
+					meshEffect.SetEffectActive(true);
+					audioLoop.SetEffectActive(true);
 					reEnabledLoop = true;
 				}
 
@@ -155,8 +169,8 @@ public class Ability_ShieldMode : Ability
 	void UpdateActiveEffects()
 	{
 		//lineEffect.SetEffectActive(1, shieldStart.position, targetUnit.transform.position);
-		targetLoopEffect.transform.rotation = transform.rotation;
-		targetLoopEffect.transform.position = transform.position;
+		meshEffect.transform.rotation = transform.rotation;
+		meshEffect.transform.position = transform.position;
 	}
 
 	public void OnDamage()
@@ -166,7 +180,8 @@ public class Ability_ShieldMode : Ability
 
 		if (shieldMod.shieldPercent <= 0.01f)
 		{
-			targetLoopEffect.SetEffectActive(false);
+			meshEffect.SetEffectActive(false);
+			audioLoop.SetEffectActive(false);
 			reEnabledLoop = false;
 		}
 	}
@@ -188,7 +203,8 @@ public class Ability_ShieldMode : Ability
 
 	public override void SetEffectsVisible(bool visible)
 	{
-		targetLoopEffect.SetVisible(visible);
+		meshEffect.SetVisible(visible);
+		audioLoop.SetVisible(visible);
 	}
 
 	bool InRange(Transform tran, float range)

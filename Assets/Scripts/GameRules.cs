@@ -58,7 +58,8 @@ public class GameRules
 	public float SPWN_flagshipRadius = 50; // Radius around flagship where units can be spawned
 
 	[Header("Audio")]
-	public float AUD_pitchVariance = 0.05f; // Audio pitch variation for each clip instance
+	public float AUD_randomPitchVariance = 0.05f; // Audio pitch variation for each clip instance
+	public float AUD_enginePitchVariance = 0.05f; // By how much engine pitch goes up from moving faster
 
 	[Header("Projectiles")]
 	public float PRJ_maxTimeAlive = 4f; // How long each projectile lives

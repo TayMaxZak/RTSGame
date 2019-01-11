@@ -1307,6 +1307,7 @@ public class Unit : Entity, ITargetable
 		hpEffects.SetVisible(localVisible);
 		foreach (Ability a in abilities)
 			a.SetEffectsVisible(localVisible);
+		movement.SetEffectsVisible(localVisible);
 	}
 
 

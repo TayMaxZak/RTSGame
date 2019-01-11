@@ -9,6 +9,11 @@ public class UnitMovement
 	private Unit parentUnit;
 	private Unit target;
 
+	[Header("Audio")]
+	[SerializeField]
+	private AudioEffect_Loop audioLoopPrefab;
+	private AudioEffect_Loop audioLoop;
+
 	[Header("Moving")]
 	[SerializeField]
 	private float MS = 7;
@@ -67,16 +72,22 @@ public class UnitMovement
 	{
 		hGoals = new List<Vector3>();
 
+		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 		parentUnit = parent;
 		transform = parentUnit.transform;
+
+		if (audioLoopPrefab)
+		{
+			audioLoop = Object.Instantiate(audioLoopPrefab, transform.position, Quaternion.identity);
+			audioLoop.transform.parent = transform;
+			audioLoop.SetEffectActive(true);
+		}
 
 		reachedHGoal = true;
 		reachedVGoal = true;
 
 		hGoalCur = transform.position; // Path towards current location (i.e. nowhere)
 		vGoalCur = Mathf.RoundToInt(transform.position.y);
-
-		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
 
 		curRSRatio = 0;
 	}
@@ -127,6 +138,9 @@ public class UnitMovement
 		velocity = Vector3.ClampMagnitude(ourVel + new Vector3(chainVel.x, chainVel.y, chainVel.z), chainVel.w);
 		// Finally apply velocity to unit's position
 		transform.position += velocity * Time.deltaTime;
+
+		if (audioLoop)
+			audioLoop.GetAudioSource().pitch = 1 + (velocity.magnitude / MS) * gameRules.AUD_enginePitchVariance;
 	}
 
 	float UpdateRotation(Vector3 dir, bool ignoreHGoal)
@@ -438,6 +452,12 @@ public class UnitMovement
 	public void UnSuspend()
 	{
 		suspended = false;
+	}
+
+	public void SetEffectsVisible(bool localVisible)
+	{
+		if (audioLoop)
+			audioLoop.SetVisible(localVisible);
 	}
 
 	public void OnDrawGizmos()
