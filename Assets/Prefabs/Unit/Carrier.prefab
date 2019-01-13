@@ -3760,6 +3760,8 @@ MonoBehaviour:
     type: 2}
   hpEffects: {fileID: 114299271673986788}
   engineEffects: {fileID: 114347823518688834}
+  audioLoopPrefab: {fileID: 114609254506899492, guid: 3a1c3146576773945ab528372ee28b5a,
+    type: 2}
   team: 0
   buildIndex: -1
   curArmor: 350

@@ -20,6 +20,11 @@ public class Unit : Entity, ITargetable
 	[SerializeField]
 	private Effect_Engine engineEffects;
 
+	[Header("Audio")]
+	[SerializeField]
+	private AudioEffect_Loop fireAudioLoopPrefab;
+	private AudioEffect_Loop fireAudioLoop;
+
 	[Header("Identification")]
 	public int team = 0;
 	[HideInInspector]
@@ -141,6 +146,12 @@ public class Unit : Entity, ITargetable
 		}
 
 		engineEffects.SetEngineActive(true);
+		if (fireAudioLoopPrefab)
+		{
+			fireAudioLoop = Instantiate(fireAudioLoopPrefab, transform.position, Quaternion.identity);
+			fireAudioLoop.transform.parent = transform;
+			fireAudioLoop.SetEffectActive(false);
+		}
 	}
 
 	// Update is called once per frame
@@ -265,7 +276,6 @@ public class Unit : Entity, ITargetable
 	{
 		UpdateHPBarVal(false);
 
-		// Updating health effects now would interfere with the End() method of effect objects
 		UpdateHPEffects();
 	}
 
@@ -347,6 +357,10 @@ public class Unit : Entity, ITargetable
 		if (hpEffects)
 		{
 			hpEffects.UpdateHealthEffects(curHealth / maxHealth);
+		}
+		if (fireAudioLoop)
+		{
+			fireAudioLoop.SetEffectActive((curHealth / maxHealth) < gameRules.HLTH_burnThresh);
 		}
 	}
 
@@ -1320,7 +1334,10 @@ public class Unit : Entity, ITargetable
 	{
 		base.UpdateLocalVisibility();
 		engineEffects.SetVisible(localVisible);
-		hpEffects.SetVisible(localVisible);
+		if (hpEffects)
+			hpEffects.SetVisible(localVisible);
+		if (fireAudioLoop)
+			fireAudioLoop.SetVisible(localVisible);
 		foreach (Ability a in abilities)
 			a.SetEffectsVisible(localVisible);
 		movement.SetEffectsVisible(localVisible);

@@ -276,7 +276,7 @@ MonoBehaviour:
   FOWtickRate: 0.5
   GameRules:
     useTestValues: 1
-    TEST_timeMultCooldown: 1
+    TEST_timeMultCooldown: 0.2
     TEST_timeMultBuild: 0.2
     TEST_initHPAdd: 0
     TEST_initHPMult: 1
@@ -317,7 +317,8 @@ MonoBehaviour:
     OBJV_captureAddMax: 1
     RES_reclaimTime: 5
     SPWN_flagshipRadius: 50
-    AUD_pitchVariance: 0.05
+    AUD_randomPitchVariance: 0.05
+    AUD_enginePitchVariance: 0.05
     PRJ_maxTimeAlive: 4
     PRJ_hitOffset: 0.1
     PRJ_friendlyFireCheckRangeMult: 1
@@ -361,7 +362,7 @@ MonoBehaviour:
     ABLY_superlaserCancelCDMult: 0.5
     ABLY_superlaserCancelTime: 1
     ABLY_superlaserDelay: 3.5
-    ABLY_superlaserInitStacks: 0
+    ABLY_superlaserInitStacks: 1
     ABLY_superlaserStackDmgReq: 0.6
     ABLY_superlaserDmgBase: 200
     ABLY_superlaserDmgByStacks:
@@ -376,7 +377,7 @@ MonoBehaviour:
     ABLY_statusMissileVerticalOffset: 2
     ABLY_statusMissileExplodeDist: 1.5
     ABLY_statusMissileDamage: 10
-    ABLY_statusMissileDamageBonusMult: 0.05
+    ABLY_statusMissileDamageBonusMult: 0.02
     ABLY_selfDestructRange: 20
     ABLY_selfDestructDamage: 450
     ABLY_selfDestructDamageFlagMult: 0.33
@@ -384,7 +385,7 @@ MonoBehaviour:
     ABLY_selfDestructSpeedMult: 1.25
     ABLY_ionMissileRangeUse: 40
     ABLY_ionMissileCancelTime: 1
-    ABLY_ionMissileRangeMissile: 60
+    ABLY_ionMissileRangeMissile: 80
     ABLY_ionMissileMaxLifetime: 10
     ABLY_ionMissileDamage: 10
     ABLY_ionMissileDamageBonusMult: 20

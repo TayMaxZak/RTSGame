@@ -67,7 +67,7 @@ public class Effect_Point : MonoBehaviour, IHideable
 		SetEffectActive(false);
 		ended = true;
 
-		float duration = Mathf.Max(mainPS.main.duration, secondaryPS ? secondaryPS.main.duration : 0);;
+		float duration = Mathf.Max(mainPS.main.duration, secondaryPS ? secondaryPS.main.duration : 0);
 		
 		Destroy(gameObject, duration);
 	}
