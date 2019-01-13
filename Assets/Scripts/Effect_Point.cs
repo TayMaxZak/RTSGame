@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Effect_Point : MonoBehaviour
+public class Effect_Point : MonoBehaviour, IHideable
 {
-	private AudioSource audioSource;
 	[SerializeField]
 	private ParticleSystem mainPS;
 	[SerializeField]
@@ -13,11 +12,8 @@ public class Effect_Point : MonoBehaviour
 	private ParticleSystem secondaryPS;
 
 	private bool ended = false;
-
-	void Awake()
-	{
-		audioSource = GetComponent<AudioSource>();
-	}
+	private bool mainOn = false;
+	private bool secOn = false;
 
 	public void SetEffectActive(bool state)
 	{
@@ -29,40 +25,21 @@ public class Effect_Point : MonoBehaviour
 		if (ended)
 			return;
 
+		mainOn = state;
+		secOn = secondaryState;
+
 		if (state)
 		{
-			if (audioSource)
-			{
-				if (!audioSource.isPlaying)
-					audioSource.Play();
-			}
-
-			if (!mainPSInstant)
-			{
-				if (!mainPS.isPlaying)
-					mainPS.Play();
-			}
-			else
-			{
-				mainPS.gameObject.SetActive(true);
-			}
+			if (!mainPS.isPlaying)
+				mainPS.Play();
 		}
 		else
 		{
-			if (audioSource)
+			if (mainPS.isPlaying)
 			{
-				if (audioSource.isPlaying)
-					audioSource.Stop();
-			}
-
-			if (!mainPSInstant)
-			{
-				if (mainPS.isPlaying)
-					mainPS.Stop();
-			}
-			else
-			{
-				mainPS.gameObject.SetActive(false);
+				mainPS.Stop();
+				if (mainPSInstant)
+					mainPS.Clear();
 			}
 		}
 
@@ -80,9 +57,9 @@ public class Effect_Point : MonoBehaviour
 		}
 	} //SetEffectActive
 
-	public AudioSource GetAudioSource()
+	public ParticleSystem GetMainPS()
 	{
-		return audioSource;
+		return mainPS;
 	}
 
 	public void End()
@@ -93,5 +70,25 @@ public class Effect_Point : MonoBehaviour
 		float duration = Mathf.Max(mainPS.main.duration, secondaryPS ? secondaryPS.main.duration : 0);;
 		
 		Destroy(gameObject, duration);
+	}
+
+	public void SetVisible(bool visible)
+	{
+		mainPS.gameObject.SetActive(visible);
+		if (secondaryPS)
+			secondaryPS.gameObject.SetActive(visible);
+		if (visible)
+		{
+			if (mainOn)
+			{
+				if (!mainPS.isPlaying)
+					mainPS.Play();
+			}
+			if (secondaryPS && secOn)
+			{
+				if (!secondaryPS.isPlaying)
+					secondaryPS.Play();
+			}
+		} // new state visible
 	}
 }

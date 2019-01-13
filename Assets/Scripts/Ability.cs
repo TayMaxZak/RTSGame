@@ -147,6 +147,10 @@ public class Ability : MonoBehaviour
 	public virtual void SetEffectsVisible(bool visible)
 	{
 	}
+
+	public virtual void SetRecievingEffectsVisible(bool visible)
+	{
+	}
 }
 
 public class AbilityDisplayInfo

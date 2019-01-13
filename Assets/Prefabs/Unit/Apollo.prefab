@@ -802,7 +802,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1025386178585290}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -5, y: 0, z: -62.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4198420506338300}
@@ -1655,7 +1655,9 @@ MonoBehaviour:
   shieldStart: {fileID: 4573455083156152}
   lineEffectPrefab: {fileID: 114738217270647106, guid: a0c1f6e38ad765f4298e151f21fd6673,
     type: 2}
-  targetLoopEffectPrefab: {fileID: 114576451638010940, guid: c70c1f37dcfb35d4a917cbcfbe253f6a,
+  pointEffectPrefab: {fileID: 114576451638010940, guid: c70c1f37dcfb35d4a917cbcfbe253f6a,
+    type: 2}
+  audioLoopPrefab: {fileID: 114609254506899492, guid: cce3cd7ff8652c342b322f86f70cdfb1,
     type: 2}
   targetProjectEffectPrefab: {fileID: 1928473051249270, guid: 1d37fa4a7ed68474a90d414eb625008e,
     type: 2}

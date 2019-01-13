@@ -13,8 +13,13 @@ public class Ability_ShieldProject : Ability
 	private Effect_Line lineEffectPrefab;
 	private Effect_Line lineEffect;
 	[SerializeField]
-	private Effect_Point targetLoopEffectPrefab;
-	private Effect_Point targetLoopEffect;
+	private Effect_Point pointEffectPrefab;
+	private Effect_Point pointEffect;
+
+	[Header("Audio")]
+	[SerializeField]
+	private AudioEffect_Loop audioLoopPrefab;
+	private AudioEffect_Loop audioLoop;
 
 	[SerializeField]
 	private GameObject targetProjectEffectPrefab;
@@ -48,8 +53,11 @@ public class Ability_ShieldProject : Ability
 		lineEffect = Instantiate(lineEffectPrefab, transform.position, Quaternion.identity);
 		lineEffect.SetEffectActive(0);
 
-		targetLoopEffect = Instantiate(targetLoopEffectPrefab, transform.position, Quaternion.identity);
-		targetLoopEffect.SetEffectActive(false);
+		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
+		pointEffect.SetEffectActive(false);
+
+		audioLoop = Instantiate(audioLoopPrefab, transform.position, Quaternion.identity);
+		audioLoop.SetEffectActive(false);
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -65,6 +73,7 @@ public class Ability_ShieldProject : Ability
 		ProjectShield(target.unit);
 	}
 
+	// TODO: CLEAN UP
 	void ProjectShield(Unit target)
 	{
 		if (target != null) // Normal use case
@@ -98,9 +107,12 @@ public class Ability_ShieldProject : Ability
 							targetUnit = target;
 							checkIfDead = true;
 
+							targetUnit.recievingAbilities.Add(this);
+
 							Instantiate(targetProjectEffectPrefab, targetUnit.transform.position, targetUnit.transform.rotation);
 
-							targetLoopEffect.SetEffectActive(true);
+							pointEffect.SetEffectActive(true, false);
+							audioLoop.SetEffectActive(true);
 
 							UpdateActiveEffects();
 						}
@@ -139,7 +151,7 @@ public class Ability_ShieldProject : Ability
 		if (targetUnit)
 			ClearTarget();
 		lineEffect.End();
-		targetLoopEffect.End();
+		pointEffect.End();
 	}
 
 	new void Update()
@@ -177,7 +189,8 @@ public class Ability_ShieldProject : Ability
 			if (checkIfDead)
 			{
 				lineEffect.SetEffectActive(0);
-				targetLoopEffect.SetEffectActive(false);
+				pointEffect.SetEffectActive(false);
+				audioLoop.SetEffectActive(false);
 				checkIfDead = false;
 			}
 
@@ -198,8 +211,9 @@ public class Ability_ShieldProject : Ability
 	{
 		//lineEffect.SetEffectActive(1, shieldStart.position, targetUnit.transform.position);
 		lineEffect.SetEffectActive(1, transform.position, transform.position + (targetUnit.transform.position - shieldStart.position).normalized * 3);
-		targetLoopEffect.transform.rotation = targetUnit.transform.rotation;
-		targetLoopEffect.transform.position = targetUnit.transform.position;
+		pointEffect.transform.rotation = targetUnit.transform.rotation;
+		pointEffect.transform.position = targetUnit.transform.position;
+		audioLoop.transform.position = targetUnit.transform.position;
 	}
 
 	public void OnDamage()
@@ -217,10 +231,12 @@ public class Ability_ShieldProject : Ability
 	void ClearTarget()
 	{
 		targetUnit.RemoveShieldMod(shieldMod);
+		targetUnit.recievingAbilities.Remove(this);
 		targetUnit = null;
 
 		lineEffect.SetEffectActive(0);
-		targetLoopEffect.SetEffectActive(false);
+		pointEffect.SetEffectActive(false);
+		audioLoop.SetEffectActive(false);
 	}
 
 	public override void Suspend()
@@ -236,6 +252,20 @@ public class Ability_ShieldProject : Ability
 
 			StartCooldown();
 		}
+	}
+
+	public override void SetEffectsVisible(bool visible)
+	{
+		lineEffect.SetVisible(visible);
+		//pointEffect.SetVisible(visible);
+		//audioLoop.SetVisible(visible);
+	}
+
+	public override void SetRecievingEffectsVisible(bool visible)
+	{
+		//lineEffect.SetVisible(visible);
+		pointEffect.SetVisible(visible);
+		audioLoop.SetVisible(visible);
 	}
 
 	bool InRange(Transform tran, float range)

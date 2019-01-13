@@ -174,6 +174,12 @@ public class Ability_SelfDestruct : Ability
 		SetActive(false);
 	}
 
+	public override void SetEffectsVisible(bool visible)
+	{
+		pointEffect.SetVisible(visible);
+		//audioLoop.SetVisible(visible);
+	}
+
 	public bool GetIsActive()
 	{
 		return isActive;

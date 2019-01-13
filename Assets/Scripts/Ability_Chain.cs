@@ -12,6 +12,12 @@ public class Ability_Chain : Ability
 	[SerializeField]
 	private Effect_Point chainEndsEffectPrefab;
 	private Effect_Point[] chainEndsEffect;
+
+	[Header("Audio")]
+	[SerializeField]
+	private AudioEffect_Loop audioLoopPrefab;
+	private AudioEffect_Loop audioLoop;
+
 	[SerializeField]
 	private GameObject pointEffectBreakPrefab;
 	private GameObject pointEffectBreak;
@@ -40,6 +46,9 @@ public class Ability_Chain : Ability
 		chainEndsEffect[1] = Instantiate(chainEndsEffectPrefab, transform.position, Quaternion.identity);
 		chainEndsEffect[0].SetEffectActive(false);
 		chainEndsEffect[1].SetEffectActive(false);
+
+		audioLoop = Instantiate(audioLoopPrefab, transform.position, Quaternion.identity);
+		audioLoop.SetEffectActive(false);
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -65,8 +74,11 @@ public class Ability_Chain : Ability
 					targetUnit = unit;
 					checkingForDead = true;
 
+					targetUnit.recievingAbilities.Add(this);
+
 					chainEndsEffect[0].SetEffectActive(true);
 					chainEndsEffect[1].SetEffectActive(true);
+					audioLoop.SetEffectActive(true);
 				}
 				else
 					ResetCooldown();
@@ -109,6 +121,8 @@ public class Ability_Chain : Ability
 				chainEndsEffect[0].transform.rotation = Quaternion.LookRotation(targetUnit.transform.position - chainStart.position);
 				chainEndsEffect[1].transform.position = targetUnit.transform.position;
 				chainEndsEffect[1].transform.rotation = Quaternion.LookRotation(chainStart.position - targetUnit.transform.position);
+
+				audioLoop.transform.position = (chainStart.position + targetUnit.transform.position) * 0.5f;
 			}
 			else // Chain breaks
 			{
@@ -130,6 +144,7 @@ public class Ability_Chain : Ability
 	void ClearTarget(bool clearEffects)
 	{
 		targetUnit.RemoveVelocityMod(new VelocityMod(parentUnit, parentUnit.GetVelocity(), VelocityModType.Chain));
+		targetUnit.recievingAbilities.Remove(this);
 		targetUnit = null;
 		checkingForDead = false;
 		if (clearEffects)
@@ -152,6 +167,23 @@ public class Ability_Chain : Ability
 		lineEffect.SetEffectActive(0);
 		chainEndsEffect[0].SetEffectActive(false);
 		chainEndsEffect[1].SetEffectActive(false);
+		audioLoop.SetEffectActive(false);
+	}
+
+	public override void SetEffectsVisible(bool visible)
+	{
+		lineEffect.SetVisible(visible);
+		chainEndsEffect[0].SetVisible(visible);
+		//chainEndsEffect[1].SetVisible(visible);
+		audioLoop.SetVisible(visible);
+	}
+
+	public override void SetRecievingEffectsVisible(bool visible)
+	{
+		//lineEffect.SetVisible(visible);
+		//chainEndsEffect[0].SetVisible(visible);
+		chainEndsEffect[1].SetVisible(visible);
+		//audioLoop.SetVisible(visible);
 	}
 
 	bool InRange(Transform tran)

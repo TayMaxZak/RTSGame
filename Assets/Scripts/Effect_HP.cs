@@ -104,10 +104,10 @@ public class Effect_HP : MonoBehaviour, IHideable
 
 	void SetFireActive(bool isActive)
 	{
-		fireOn = isActive;
-
 		if (ended)
 			return;
+
+		fireOn = isActive;
 
 		if (firePSystems.Count == 0)
 		{

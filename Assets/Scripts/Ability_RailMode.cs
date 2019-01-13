@@ -198,6 +198,17 @@ public class Ability_RailMode : Ability
 		SetActive(false);
 	}
 
+	public override void SetEffectsVisible(bool visible)
+	{
+		foreach (ParticleSystem ampPS in ampPSystems)
+		{
+			ampPS.gameObject.SetActive(visible);
+			if (visible && isActive)
+				ampPS.Play();
+		}
+		//audioLoop.SetVisible(visible);
+	}
+
 	public void _StartCooldown()
 	{
 		StartCooldown();

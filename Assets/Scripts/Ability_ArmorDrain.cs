@@ -7,9 +7,15 @@ public class Ability_ArmorDrain : Ability
 	private float energy;
 	private Vector3 deltaDurations;
 
+	[Header("Effects")]
 	[SerializeField]
 	private Effect_Point pointEffectPrefab;
 	private Effect_Point pointEffect;
+
+	[Header("Audio")]
+	[SerializeField]
+	private AudioEffect_Loop audioLoopPrefab;
+	private AudioEffect_Loop audioLoop;
 
 	private bool isActive = false;
 	private bool hasSuperlaser = false;
@@ -38,6 +44,9 @@ public class Ability_ArmorDrain : Ability
 
 		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
 		pointEffect.SetEffectActive(isActive);
+
+		audioLoop = Instantiate(audioLoopPrefab, transform.position, Quaternion.identity);
+		audioLoop.SetEffectActive(isActive);
 	}
 
 	public override void End()
@@ -50,6 +59,7 @@ public class Ability_ArmorDrain : Ability
 		base.Update();
 
 		pointEffect.transform.position = transform.position; // Move effect to center of user
+		audioLoop.transform.position = transform.position; // Move effect to center of user
 
 		if (isActive)
 		{
@@ -167,6 +177,7 @@ public class Ability_ArmorDrain : Ability
 		isActive = newActive;
 
 		pointEffect.SetEffectActive(isActive);
+		audioLoop.SetEffectActive(isActive);
 	}
 
 	public override void Suspend()
@@ -175,6 +186,12 @@ public class Ability_ArmorDrain : Ability
 
 		SetActive(false);
 		StartCooldown();
+	}
+
+	public override void SetEffectsVisible(bool visible)
+	{
+		pointEffect.SetVisible(visible);
+		audioLoop.SetVisible(visible);
 	}
 
 	void Display(float fill)

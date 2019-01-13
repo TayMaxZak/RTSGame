@@ -152,7 +152,6 @@ GameObject:
   - component: {fileID: 114153668136258048}
   - component: {fileID: 114846295635110128}
   - component: {fileID: 114520814338689830}
-  - component: {fileID: 82340276203249022}
   m_Layer: 0
   m_Name: HybridFrigate
   m_TagString: Untagged
@@ -3304,104 +3303,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!82 &82340276203249022
-AudioSource:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1217006800066398}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: b631e9fdb9d5a3c45b33d9778cf3bf3c, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 0.1
-  m_Pitch: 1
-  Loop: 1
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 256
-  DopplerLevel: 0
-  MinDistance: 1.5
-  MaxDistance: 75
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0.06666667
-      value: 1
-      inSlope: -15.005997
-      outSlope: -7.4999995
-      tangentMode: 69
-    - serializedVersion: 2
-      time: 0.13333334
-      value: 0.5
-      inSlope: -7.4999995
-      outSlope: -1.8749999
-      tangentMode: 69
-    - serializedVersion: 2
-      time: 0.26666668
-      value: 0.25
-      inSlope: -1.8749999
-      outSlope: -0.46874997
-      tangentMode: 69
-    - serializedVersion: 2
-      time: 0.53333336
-      value: 0.125
-      inSlope: -0.46874997
-      outSlope: -0.26785716
-      tangentMode: 69
-    - serializedVersion: 2
-      time: 1
-      value: 0
-      inSlope: -0.26785716
-      outSlope: -0.06669331
-      tangentMode: 69
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 69
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0.5
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 69
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 69
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
 --- !u!82 &82470388248558574
 AudioSource:
   m_ObjectHideFlags: 1
@@ -4010,8 +3911,10 @@ MonoBehaviour:
   abilities:
   - {fileID: 114640070245601930}
   - {fileID: 114153668136258048}
+  recievingAbilities: []
   movement:
-    audioLoopPrefab: {fileID: 0}
+    audioLoopPrefab: {fileID: 114609254506899492, guid: 9be580ee9fca0e54697695b196f85d60,
+      type: 2}
     MS: 4
     MSVMult: 0.6
     MSAccel: 2

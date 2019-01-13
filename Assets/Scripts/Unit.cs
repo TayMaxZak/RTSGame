@@ -59,7 +59,9 @@ public class Unit : Entity, ITargetable
 
 	[Header("Abilities")]
 	[SerializeField]
-	public List<Ability> abilities;
+	public List<Ability> abilities; // This unit's abilities
+	[SerializeField]
+	public List<Ability> recievingAbilities; // Other units' abiities currently attached to this unit (primarily used for FOW)
 
 	[Header("Movement")]
 	[SerializeField]
@@ -1308,6 +1310,8 @@ public class Unit : Entity, ITargetable
 		foreach (Ability a in abilities)
 			a.SetEffectsVisible(localVisible);
 		movement.SetEffectsVisible(localVisible);
+		foreach (Ability a in recievingAbilities)
+			a.SetRecievingEffectsVisible(localVisible);
 	}
 
 

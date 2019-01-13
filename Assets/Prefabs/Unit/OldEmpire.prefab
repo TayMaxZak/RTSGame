@@ -3665,6 +3665,7 @@ MonoBehaviour:
   abilities:
   - {fileID: 114176062931564522}
   - {fileID: 114119223304552648}
+  recievingAbilities: []
   movement:
     audioLoopPrefab: {fileID: 114609254506899492, guid: 8970cee5185b78640aed0f7aec7527f4,
       type: 2}

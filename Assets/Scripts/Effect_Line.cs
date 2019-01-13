@@ -9,6 +9,9 @@ public class Effect_Line : MonoBehaviour
 	[SerializeField]
 	private LineRenderer lineSecondary;
 
+	private bool mainOn = false;
+	private bool secOn = false;
+
 	public void SetEffectActive(int state)
 	{
 		SetEffectActive(state, Vector3.zero, Vector3.zero);
@@ -23,20 +26,26 @@ public class Effect_Line : MonoBehaviour
 	{
 		if (state == 1)
 		{
-			lineMain.gameObject.SetActive(true);
+			mainOn = true;
+			secOn = false;
+
+			lineMain.enabled = true;
 			if (lineSecondary)
-				lineSecondary.gameObject.SetActive(false);
+				lineSecondary.enabled = false;
 
 			lineMain.SetPosition(0, start);
 			lineMain.SetPosition(1, end);
 		}
 		else if (state == 2)
 		{
+			mainOn = true;
+			secOn = true;
+
 			if (lineSecondary)
 			{
-				lineMain.gameObject.SetActive(false);
+				lineMain.enabled = false;
 				if (lineSecondary)
-					lineSecondary.gameObject.SetActive(true);
+					lineSecondary.enabled = true;
 
 				if (lineSecondary)
 				{
@@ -47,9 +56,12 @@ public class Effect_Line : MonoBehaviour
 		}
 		else
 		{
+			mainOn = false;
+			secOn = false;
+
+			lineMain.enabled = false;
 			if (lineSecondary)
-				lineSecondary.gameObject.SetActive(false);
-			lineMain.gameObject.SetActive(false);
+				lineSecondary.enabled = false;
 		}
 	} //SetEffectActive
 
@@ -58,5 +70,14 @@ public class Effect_Line : MonoBehaviour
 		Destroy(lineMain);
 		Destroy(lineSecondary);
 		Destroy(gameObject);
+	}
+
+	public void SetVisible(bool visible)
+	{
+		lineMain.gameObject.SetActive(visible ? mainOn : false);
+		if (lineSecondary)
+		{
+			lineSecondary.gameObject.SetActive(visible ? secOn : false);
+		}
 	}
 }

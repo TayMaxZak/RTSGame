@@ -5,9 +5,15 @@ using UnityEngine;
 public class Ability_HealField : Ability
 {
 	//private AbilityOld ability;
+	[Header("Effects")]
 	[SerializeField]
 	private Effect_Point pointEffectPrefab;
 	private Effect_Point pointEffect;
+
+	[Header("Audio")]
+	[SerializeField]
+	private AudioEffect_Loop audioLoopPrefab;
+	private AudioEffect_Loop audioLoop;
 
 	private bool isActive = false;
 	private bool isBorrowing = false; // Are we holding resources from our team's commander
@@ -37,6 +43,9 @@ public class Ability_HealField : Ability
 
 		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
 		pointEffect.SetEffectActive(isActive);
+
+		audioLoop = Instantiate(audioLoopPrefab, transform.position, Quaternion.identity);
+		audioLoop.SetEffectActive(isActive);
 	}
 
 	public override void End()
@@ -171,6 +180,7 @@ public class Ability_HealField : Ability
 		isActive = newActive;
 
 		pointEffect.SetEffectActive(isActive);
+		audioLoop.SetEffectActive(isActive);
 	}
 
 	IEnumerator GiveResourcesCoroutine(float time)
@@ -189,6 +199,13 @@ public class Ability_HealField : Ability
 
 		SetActive(false);
 		StartCooldown();
+	}
+
+	// TODO: Maybe should be visible through FOW?
+	public override void SetEffectsVisible(bool visible)
+	{
+		pointEffect.SetVisible(visible);
+		audioLoop.SetVisible(visible);
 	}
 
 	Unit GetUnitFromCol(Collider col)

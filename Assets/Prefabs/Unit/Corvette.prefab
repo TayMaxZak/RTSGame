@@ -1663,6 +1663,7 @@ MonoBehaviour:
   - {fileID: 114804360984428284}
   abilities:
   - {fileID: 114431768053762592}
+  recievingAbilities: []
   movement:
     audioLoopPrefab: {fileID: 114609254506899492, guid: 246d0ea829db6a440b65f7528efd86b5,
       type: 2}
@@ -1722,6 +1723,8 @@ MonoBehaviour:
   lineEffectPrefab: {fileID: 114738217270647106, guid: 8042d02bc66811047978b412e56607b0,
     type: 2}
   chainEndsEffectPrefab: {fileID: 114387442305719452, guid: b2e9d3bf6cf25a84e8fde7a6761975b4,
+    type: 2}
+  audioLoopPrefab: {fileID: 114609254506899492, guid: 25d0da6baab8f264aaa75faf1a1e09f2,
     type: 2}
   pointEffectBreakPrefab: {fileID: 1020491657332010, guid: b5976377b2a39b8459da76dcbd234c97,
     type: 2}

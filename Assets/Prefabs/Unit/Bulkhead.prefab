@@ -3385,6 +3385,7 @@ MonoBehaviour:
   abilities:
   - {fileID: 114177749130366244}
   - {fileID: 114011204531075516}
+  recievingAbilities: []
   movement:
     audioLoopPrefab: {fileID: 114609254506899492, guid: a1f4b884bc596704492010ce20647335,
       type: 2}
@@ -3409,6 +3410,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pointEffectPrefab: {fileID: 114194687130139358, guid: 4753d448a666a184ba79c89141c84f9a,
+    type: 2}
+  audioLoopPrefab: {fileID: 114609254506899492, guid: a4e9065af6afa89498aedcd5a6ecb412,
     type: 2}
 --- !u!114 &114219898966474452
 MonoBehaviour:

@@ -10,6 +10,7 @@ public class Ability_NoReload : Ability
 	[SerializeField]
 	private Effect_Point pointEffectPrefab;
 	private Effect_Point pointEffect;
+	//private ParticleSystem.MainModule mainModule;
 
 	private Turret[] turrets;
 	private Ability_SelfDestruct selfDestruct;
@@ -24,7 +25,7 @@ public class Ability_NoReload : Ability
 		InitCooldown();
 
 		energy = 1;
-		deltaDurations = AbilityUtils.GetDeltaDurations(AbilityType.NoReload);
+		deltaDurations = AbilityUtils.GetDeltaDurations(abilityType);
 
 		displayInfo.displayFill = true;
 	}
@@ -38,7 +39,8 @@ public class Ability_NoReload : Ability
 		selfDestruct = parentUnit.GetComponent<Ability_SelfDestruct>();
 
 		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
-		pointEffect.SetEffectActive(isActive);
+		pointEffect.SetEffectActive(isActive, isActive);
+		//mainModule = pointEffect.GetMainPS().main;
 	}
 
 	public override void End()
@@ -51,6 +53,7 @@ public class Ability_NoReload : Ability
 		base.Update();
 
 		pointEffect.transform.position = transform.position; // Move effect to center of user
+		pointEffect.transform.rotation = transform.rotation; // Move effect to center of user
 
 		if (isActive)
 		{
@@ -58,7 +61,19 @@ public class Ability_NoReload : Ability
 			{
 				// Consume energy according to active duration (unless we are self destructing)
 				if (!selfDestruct.GetIsActive())
+				{
+					pointEffect.SetEffectActive(isActive, isActive);
+					//mainModule.simulationSpeed = 1f;
+
 					energy -= deltaDurations.y * Time.deltaTime;
+				}
+				else
+				{
+					pointEffect.SetEffectActive(isActive, isActive);
+					//mainModule.simulationSpeed = 0.1f;
+
+					
+				}
 				Display(1 - energy);
 			}
 			else
@@ -112,6 +127,12 @@ public class Ability_NoReload : Ability
 
 		SetActive(false);
 		StartCooldown();
+	}
+
+	public override void SetEffectsVisible(bool visible)
+	{
+		pointEffect.SetVisible(visible);
+		//audioLoop.SetVisible(visible);
 	}
 
 	void Display(float fill)
