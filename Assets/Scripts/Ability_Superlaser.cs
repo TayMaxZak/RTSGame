@@ -239,19 +239,27 @@ public class Ability_Superlaser : Ability
 		{
 			if (targetUnit) // We have something to aim at
 			{
-				if (InRange(targetUnit.transform, gameRules.ABLY_superlaserRangeTargeting)) // In range
+				if (targetUnit.VisibleBy(team))
 				{
-					if (Vector3.Dot(cannon.transform.forward, (targetUnit.transform.position - cannon.transform.position).normalized) > 1 - aimThreshold) // Aimed close enough
+					if (InRange(targetUnit.transform, gameRules.ABLY_superlaserRangeTargeting)) // In range
 					{
-						// Start countdown once we are properly aimed
-						BeginCountdown();
+						if (Vector3.Dot(cannon.transform.forward, (targetUnit.transform.position - cannon.transform.position).normalized) > 1 - aimThreshold) // Aimed close enough
+						{
+							// Start countdown once we are properly aimed
+							BeginCountdown();
+						}
 					}
+					else
+					{
+						Reset();
+						SetCooldown(gameRules.ABLY_superlaserCancelCDMult);  // Reduced cooldown
+					} // in range
 				}
 				else
 				{
 					Reset();
 					SetCooldown(gameRules.ABLY_superlaserCancelCDMult);  // Reduced cooldown
-				} // in range
+				} // visible
 			}
 			else // Target died early
 			{

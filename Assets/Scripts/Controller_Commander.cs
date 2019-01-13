@@ -397,6 +397,9 @@ public class Controller_Commander : MonoBehaviour
 				
 				RaycastHit hit = RaycastFromCursor(0);
 				Entity ent = GetEntityFromHit(hit);
+				// Treat invisible entities as if they don't exist
+				if (ent)
+					ent = ent.VisibleBy(team) ? ent : null;
 				// Hovering an entity
 				if (ent)
 				{
@@ -649,6 +652,9 @@ public class Controller_Commander : MonoBehaviour
 				{
 					RaycastHit hit = RaycastFromCursor(2);
 					Entity ent = GetEntityFromHit(hit);
+					// Treat invisible entities as if they don't exist
+					if (ent)
+						ent = ent.VisibleBy(team) ? ent : null;
 					if (ent)
 					{
 						if (IsUnit(ent))
@@ -801,6 +807,7 @@ public class Controller_Commander : MonoBehaviour
 			{
 				Unit unit = (Unit)e;
 
+				// Don't have that many abilities
 				if (unit.abilities.Count < index + 1)
 					return;
 
@@ -814,6 +821,9 @@ public class Controller_Commander : MonoBehaviour
 				else if (AbilityUtils.GetTargetRequirement(current.GetAbilityType()) == 1) // Targets a unit
 				{
 					Entity ent = GetEntityFromHit(RaycastFromCursor(0));
+					// Treat invisible entities as if they don't exist
+					if (ent)
+						ent = ent.VisibleBy(team) ? ent : null;
 					if (ent && IsUnit(ent))
 					{
 						AbilityTarget targ = new AbilityTarget((Unit)ent);
