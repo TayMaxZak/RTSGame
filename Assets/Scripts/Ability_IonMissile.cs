@@ -207,20 +207,28 @@ public class Ability_IonMissile : Ability
 				CalculateTargetPosition();
 				if (InRange(targetUnit.transform)) // In range
 				{
-					if (Time.frameCount > attemptShotWhen) // Should be checking for aim
+					if (targetUnit.VisibleBy(team))
 					{
-						if (Vector3.Dot(launcher.transform.forward, (targetPosition - launcher.transform.position).normalized) > 1 - aimThreshold) // Aimed close enoughs
+						if (Time.frameCount > attemptShotWhen) // Should be checking for aim
 						{
-							stacks--;
-							DisplayStacks();
+							if (Vector3.Dot(launcher.transform.forward, (targetPosition - launcher.transform.position).normalized) > 1 - aimThreshold) // Aimed close enoughs
+							{
+								stacks--;
+								DisplayStacks();
 
-							// Start countdown once we are properly aimed
-							SpawnMissile();
-							StartCoroutine(ClearAbilityGoalCoroutine());
+								// Start countdown once we are properly aimed
+								SpawnMissile();
+								StartCoroutine(ClearAbilityGoalCoroutine());
 
-							StartCooldown();
+								StartCooldown();
+							}
 						}
 					}
+					else
+					{
+						Reset();
+						// No cooldown
+					} // visible
 				}
 				else
 				{
