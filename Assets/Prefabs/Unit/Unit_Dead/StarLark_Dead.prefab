@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 114442233987422222}
   - component: {fileID: 54088889216729734}
   m_Layer: 0
-  m_Name: Corvette_Dead
+  m_Name: StarLark_Dead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

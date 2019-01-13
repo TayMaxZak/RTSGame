@@ -159,7 +159,7 @@ GameObject:
   - component: {fileID: 114299271673986788}
   - component: {fileID: 114347823518688834}
   m_Layer: 0
-  m_Name: Frigate
+  m_Name: Carrier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3752,7 +3752,7 @@ MonoBehaviour:
   type: 4
   model: {fileID: 1883938569703086}
   swarmTarget: {fileID: 4907543980749030}
-  selCircleSize: 2.4
+  selCircleSize: 3.4
   visionRange: 40
   disableTurrets: 0
   objectiveWeight: 2
@@ -3778,9 +3778,11 @@ MonoBehaviour:
   - {fileID: 114511471482141278}
   - {fileID: 114266750467713690}
   - {fileID: 114797077104519824}
+  hideableExtras: []
   abilities:
   - {fileID: 114414820332703200}
   - {fileID: 114437644942323818}
+  recievingAbilities: []
   movement:
     audioLoopPrefab: {fileID: 114609254506899492, guid: c71b0c4fdf20c364086102fe97eec1b6,
       type: 2}

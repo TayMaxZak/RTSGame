@@ -3382,6 +3382,7 @@ MonoBehaviour:
   - {fileID: 114350851330079914}
   - {fileID: 114892274266521994}
   - {fileID: 114219898966474452}
+  hideableExtras: []
   abilities:
   - {fileID: 114177749130366244}
   - {fileID: 114011204531075516}

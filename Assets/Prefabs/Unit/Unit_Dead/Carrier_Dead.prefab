@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 114211141008364508}
   - component: {fileID: 54846037761277584}
   m_Layer: 0
-  m_Name: Frigate_Dead
+  m_Name: Carrier_Dead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

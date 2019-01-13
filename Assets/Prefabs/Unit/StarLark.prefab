@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 114165545472820334}
   - component: {fileID: 114252118710675052}
   m_Layer: 0
-  m_Name: Corvette
+  m_Name: StarLark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1661,6 +1661,7 @@ MonoBehaviour:
   turrets:
   - {fileID: 114962401244220950}
   - {fileID: 114804360984428284}
+  hideableExtras: []
   abilities:
   - {fileID: 114431768053762592}
   recievingAbilities: []

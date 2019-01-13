@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4894642063360000}
   - component: {fileID: 114214795380621988}
   m_Layer: 0
-  m_Name: BuildUnit_Corvette
+  m_Name: BuildUnit_Carrier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,11 +51,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aed46aa5a5abf5d4b962903bf4a2f6c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
-  previewObject: {fileID: 1718537276440054, guid: 3f7dddf2f1c7ade47bb8193bbe8ad63e,
+  type: 4
+  previewObject: {fileID: 1191156931698570, guid: 6b47dcb20f6b36447b949101e93d331b,
     type: 2}
-  spawnObject: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098,
+  spawnObject: {fileID: 1216876717439498, guid: 0910435ad3802534d8ecbb1ef35642d5,
     type: 2}
-  cost: 2
-  unitCap: 8
-  buildTime: 5
+  cost: 8
+  unitCap: 4
+  buildTime: 15
