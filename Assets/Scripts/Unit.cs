@@ -55,6 +55,8 @@ public class Unit : Entity, ITargetable
 	[Header("Combat")]
 	[SerializeField]
 	private Turret[] turrets;
+	[SerializeField]
+	private MeshRenderer[] hideableExtras; // To hide/show
 	private Unit target;
 
 	[Header("Abilities")]
@@ -145,6 +147,18 @@ public class Unit : Entity, ITargetable
 	protected new void Update ()
 	{
 		base.Update(); // Entity base class
+		// Hide/show turrets
+		foreach (Turret t in turrets)
+		{
+			foreach (MeshRenderer r in t.transform.GetComponentsInChildren<MeshRenderer>())
+			{
+				r.material.SetFloat("_Opacity", localOpacity);
+			}
+		}
+		// Hide/show extra models associated with abilities
+		foreach (MeshRenderer r in hideableExtras)
+			r.material.SetFloat("_Opacity", localOpacity);
+
 		UpdateStatuses();
 		movement.Tick();
 
@@ -200,10 +214,10 @@ public class Unit : Entity, ITargetable
 			}
 		}
 
-		if (Time.frameCount == 2)
-		{
-			ProxyAI();
-		}
+		//if (Time.frameCount == 2)
+		//{
+		//	ProxyAI();
+		//}
 	}
 
 	void ProxyAI()

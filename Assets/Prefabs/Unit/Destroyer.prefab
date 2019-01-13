@@ -1675,6 +1675,8 @@ MonoBehaviour:
   turrets:
   - {fileID: 114961553349981566}
   - {fileID: 114200766482715334}
+  hideableExtras:
+  - {fileID: 23618761678167668}
   abilities:
   - {fileID: 114971228717168258}
   - {fileID: 114553389254284404}

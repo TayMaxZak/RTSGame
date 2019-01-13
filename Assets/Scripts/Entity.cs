@@ -40,8 +40,8 @@ public class Entity : MonoBehaviour
 	private const byte TEAM_3 = 8;
 
 	protected bool localVisible = true; // Is this entity visible in this particular game instance
-	private float opacity; // From 0 to 1, how dissolved/solid is this entity
-	private float opacityT = 1; // Used for lerping opacity
+	protected float localOpacity; // From 0 to 1, how dissolved/solid is this entity
+	private float localOpacityT = 1; // Used for lerping opacity
 
 	protected bool isSelected; // Is this entity selected by the game instance's commander controller
 	protected GameObject selCircle;
@@ -102,9 +102,9 @@ public class Entity : MonoBehaviour
 		//	tran.position = transform.position;
 		//}
 
-		opacity = Mathf.Lerp(0, 1, opacityT);
-		opacityT = Mathf.Clamp01(opacityT + (localVisible ? 1 : -1) * Time.deltaTime * 4);
-		meshRenderer.material.SetFloat("_Opacity", opacity);
+		localOpacity = Mathf.Lerp(0, 1, localOpacityT);
+		localOpacityT = Mathf.Clamp01(localOpacityT + (localVisible ? 1 : -1) * Time.deltaTime * 4);
+		meshRenderer.material.SetFloat("_Opacity", localOpacity);
 	}
 
 	public virtual void OnHover(bool hovered)

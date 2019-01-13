@@ -1552,9 +1552,12 @@ MonoBehaviour:
   turrets:
   - {fileID: 114344316377264052}
   - {fileID: 114391197846157378}
+  hideableExtras:
+  - {fileID: 23791042202057026}
   abilities:
   - {fileID: 114511447420377598}
   - {fileID: 114939869380698900}
+  recievingAbilities: []
   movement:
     audioLoopPrefab: {fileID: 114609254506899492, guid: 851f64c19fa47f148b9a86ef92aec825,
       type: 2}
