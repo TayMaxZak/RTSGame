@@ -255,7 +255,7 @@ public static class AbilityUtils
 		switch (type)
 		{
 			case AbilityType.SpawnSwarm:
-				return 1;
+				return 0;
 			case AbilityType.MoveSwarm:
 				return 1;
 			case AbilityType.ShieldProject:
@@ -317,7 +317,7 @@ public static class AbilityUtils
 			case AbilityType.ArmorDrain:
 				return "Gradually drains armor from nearby enemy and allied units.";
 			case AbilityType.SpawnSwarm:
-				return "Deploys new fighters and moves them to the target. Limited uses.";
+				return "Deploys a squadron of fighters. Limited uses.";
 			case AbilityType.MoveSwarm:
 				return "Fighters will follow the target, either protecting or attacking it.";
 			case AbilityType.ShieldProject:

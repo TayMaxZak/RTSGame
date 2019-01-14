@@ -118,7 +118,7 @@ public class Ability_SpawnSwarm : Ability
 		base.UseAbility(target);
 
 		if (SpawnSwarm()) // If spawn cast succeeds, also cast move
-			MoveSwarm(target.unit);
+			MoveSwarm(parentUnit);
 		else // If cast fails, reset cooldown
 			ResetCooldown();
 	}

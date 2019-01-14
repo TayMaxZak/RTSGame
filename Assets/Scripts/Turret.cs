@@ -14,6 +14,7 @@ public class Turret : MonoBehaviour
 	[SerializeField]
 	protected TargetType preferredTargetType = TargetType.Default;
 	protected ITargetable target;
+	private bool hasManualTarget = false;
 	[SerializeField]
 	private float range = 25;
 	[SerializeField]
@@ -120,7 +121,7 @@ public class Turret : MonoBehaviour
 			if (!IsNull(target) && IsValid(target))
 			{
 				// If we are targeting a non-preferred target type, we want to constantly search for a better target
-				if (target.GetTargetType() != preferredTargetType)
+				if (!hasManualTarget && target.GetTargetType() != preferredTargetType)
 				{
 					// Collect a list of all valid targets, ignoring non-preferred targets
 					List<ITargetable> autoTargets = ScanForTargets(true);
@@ -132,7 +133,7 @@ public class Turret : MonoBehaviour
 						target = autoTargets[0];
 
 						// Update resetRotFrame
-						UpdateTarget();
+						UpdateTarget(false);
 					}
 				}
 
@@ -153,7 +154,7 @@ public class Turret : MonoBehaviour
 				if (!IsNull(target))
 				{
 					// Update resetRotFrame
-					UpdateTarget();
+					UpdateTarget(false);
 
 					// Rotate towards the target
 					CalcTargetLookRotation();
@@ -623,7 +624,7 @@ public class Turret : MonoBehaviour
 	public void SetManualTarget(Unit newTarg)
 	{
 		target = newTarg;
-		UpdateTarget();
+		UpdateTarget(true);
 	}
 
 	public void Suspend()
@@ -637,9 +638,10 @@ public class Turret : MonoBehaviour
 		suspended = false;
 	}
 
-	private void UpdateTarget()
+	private void UpdateTarget(bool manual)
 	{
 		resetRotFrame = Time.frameCount;
+		hasManualTarget = manual;
 		//Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
 	}
 
