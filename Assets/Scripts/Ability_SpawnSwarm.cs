@@ -89,6 +89,8 @@ public class Ability_SpawnSwarm : Ability
 
 		abilityBar = parentUnit.hpBar.GetComponent<UI_AbilBar_SpawnSwarm>();
 		Display();
+
+		targetUnit = parentUnit;
 	}
 
 	void Display()
@@ -117,20 +119,22 @@ public class Ability_SpawnSwarm : Ability
 
 		base.UseAbility(target);
 
-		if (SpawnSwarm()) // If spawn cast succeeds, also cast move
-			MoveSwarm(parentUnit);
-		else // If cast fails, reset cooldown
+		//if (SpawnSwarm()) // If spawn cast succeeds, also cast move
+		//	MoveSwarm(parentUnit, true);
+		//else // If cast fails, reset cooldown
+		//	ResetCooldown();
+
+		if (!SpawnSwarm()) // If spawn cast fails, reset cooldown
 			ResetCooldown();
 	}
 
 	public void MoveSwarm(Unit unit)
 	{
 		targetUnit = unit;
-
 		for (int i = 0; i < fighterGroups.Count; i++)
 			fighterGroups[i].SetTarget(targetUnit);
 
-		swarmMover.SetTargetUnit(targetUnit);
+		//swarmMover.SetTargetUnit(targetUnit);
 		if (unit != parentUnit)
 			checkIfDead = true;
 	}
@@ -254,7 +258,7 @@ public class Ability_SpawnSwarm : Ability
 			else
 				return;
 		}
-
+		
 		Vector3 targPos = targetUnit.GetSwarmTarget().position;
 
 		int numAlive = pS.GetParticles(particles);
@@ -276,16 +280,16 @@ public class Ability_SpawnSwarm : Ability
 			if (particlesRemoved.Contains(i))
 			{
 				// Just added
-				if (particlesJustRemoved.Contains(i))
-				{
-					particles[i].velocity = Vector3.zero;
-					particles[i].position = graveyardPosition; // Move offscreen
-					particlesJustRemoved.Remove(i);
-				}
+				//if (particlesJustRemoved.Contains(i))
+				//{
+				//	particles[i].velocity = Vector3.zero;
+				//	particles[i].position = graveyardPosition; // Move offscreen
+				//	particlesJustRemoved.Remove(i);
+				//}
 				// Accelerate it downwards
 				// TODO: Add this behaviour to a managed VFX
-				//particles[i].velocity = new Vector3(particles[i].velocity.x, Mathf.Clamp(particles[i].velocity.y + Time.deltaTime * Physics.gravity.y, -5, 5), particles[i].velocity.z);
-				//particles[i].velocity += Vector3.up * Time.deltaTime * Physics.gravity.y;
+				particles[i].velocity = new Vector3(particles[i].velocity.x, Mathf.Clamp(particles[i].velocity.y + Time.deltaTime * Physics.gravity.y, -5, 5), particles[i].velocity.z);
+				particles[i].velocity += Vector3.up * Time.deltaTime * Physics.gravity.y;
 				continue;
 			}
 

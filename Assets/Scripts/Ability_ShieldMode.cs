@@ -131,6 +131,7 @@ public class Ability_ShieldMode : Ability
 	public override void End()
 	{
 		meshEffect.End();
+		audioLoop.End();
 	}
 
 	new void Update()

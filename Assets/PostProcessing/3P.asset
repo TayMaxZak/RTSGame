@@ -16,7 +16,7 @@ MonoBehaviour:
     m_Settings:
       mode: 0
       depth:
-        scale: 1
+        scale: 0.519
       motionVectors:
         sourceOpacity: 1
         motionImageOpacity: 0
@@ -81,7 +81,7 @@ MonoBehaviour:
     m_Settings:
       shutterAngle: 360
       sampleCount: 22
-      frameBlending: 0
+      frameBlending: 0.23
   eyeAdaptation:
     m_Enabled: 0
     m_Settings:

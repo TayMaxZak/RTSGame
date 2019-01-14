@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Unit : Entity, ITargetable
 {
-	public bool disableTurrets = false;
+	public bool disableTurrets = false; // Should this unit spawn with the turret GameObjects inactive
 
 	[Header("Objectives")]
 	[SerializeField]
@@ -12,24 +12,29 @@ public class Unit : Entity, ITargetable
 
 	[Header("Feedback")]
 	[SerializeField]
-	private UI_HPBar hpBarPrefab;
+	private UI_HPBar hpBarPrefab; // The HPBar which is displayed above this unit
+	[System.NonSerialized]
+	public UI_HPBar hpBar; // Should be accessible by ability scripts
+	[SerializeField]
+	private float hpBarHeight;
+	private Vector2 hpBarOffset;
 
 	[Header("Effects")]
 	[SerializeField]
-	private Effect_HP hpEffects;
+	private Effect_HP hpEffects; // Emit fire and smoke based on the HP of this unit
 	[SerializeField]
-	private Effect_Engine engineEffects;
+	private Effect_Engine engineEffects; // Engine particle effects which are constantly emitted
 
 	[Header("Audio")]
 	[SerializeField]
-	private AudioEffect_Loop fireAudioLoopPrefab;
+	private AudioEffect_Loop fireAudioLoopPrefab; // Played when the unit is affected by critical health burn
 	private AudioEffect_Loop fireAudioLoop;
 
 	[Header("Identification")]
-	public int team = 0;
+	public int team = 0; // What team does this unit belong to
 	[HideInInspector]
-	public int buildIndex = -1;
-	private UnitSelectable selectable;
+	public int buildIndex = -1; // What buildable unit should be refunded when this unit dies
+	private UnitSelectable selectable; // What selection group does this unit belong to
 
 	[Header("Health Pool")]
 	[SerializeField]
@@ -41,17 +46,17 @@ public class Unit : Entity, ITargetable
 	[SerializeField]
 	private float maxHealth = 100;
 	[SerializeField]
-	public bool alwaysBurnImmune = false;
+	public bool alwaysBurnImmune = false; // Should this unit ignore critical health burn
 	private bool isBurning = false;
-	private float curBurnTimer;
+	private float curBurnTimer; // When should the next tick of burn damage occur
 
 	[SerializeField]
 	private float curFragileHealth = 0;
-	private float curFragileTimer;
+	private float curFragileTimer; // When should fragile health start converting into health
 
 	[SerializeField]
 	private float curIons = 0;
-	private float curIonTimer;
+	private float curIonTimer; // When should ions start decaying
 
 	[SerializeField]
 	private GameObject deathClone; // Object to spawn on death
@@ -61,8 +66,8 @@ public class Unit : Entity, ITargetable
 	[SerializeField]
 	private Turret[] turrets;
 	[SerializeField]
-	private MeshRenderer[] hideableExtras; // To hide/show
-	private Unit target;
+	private MeshRenderer[] hideableExtras; // To hide/show based on FOW
+	private Unit target; // What unit did we manually target
 
 	[Header("Abilities")]
 	[SerializeField]
@@ -72,19 +77,12 @@ public class Unit : Entity, ITargetable
 
 	[Header("Movement")]
 	[SerializeField]
-	private UnitMovement movement;
-
-	private bool selected;
-
-	[System.NonSerialized]
-	public UI_HPBar hpBar; // Should be accessible by ability scripts
-	private Vector2 hpBarOffset;
+	private UnitMovement movement; // Handles position and rotation
 
 	// State //
 	private List<Status> statuses;
 	private List<VelocityMod> velocityMods;
 	private List<ShieldMod> shieldMods;
-	//private List<Unit> damageTaken; // Units that assisted in this unit's death
 	private List<FighterGroup> enemySwarms;
 
 	void Awake()
@@ -106,12 +104,15 @@ public class Unit : Entity, ITargetable
 	{
 		base.Start(); // Init Entity base class
 
-		selCircleSpeed = movement.GetRotationSpeed(); // Make the circle better reflect the unit's scale and mobility
+		// Init movement
 		movement.Init(this);
+		selCircleSpeed = movement.GetRotationSpeed(); // Make the circle better reflect the unit's scale and mobility
 
+		// Compatability with selection groups
 		selectable = new UnitSelectable(this, 0);
 		gameManager.GetCommander(team).AddSelectableUnit(selectable); // Make sure commander knows what units can be selected
 
+		// Setting up HP
 		if (gameRules.useTestValues)
 		{
 			curHealth = curHealth * gameRules.TEST_initHPMult + gameRules.TEST_initHPAdd;
@@ -121,15 +122,17 @@ public class Unit : Entity, ITargetable
 		curFragileTimer = gameRules.ABLY_healFieldConvertDelay;
 		curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
 
+		// Setting up UI
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
-		 //hpBar = Instantiate(hpBarPrefab);
+		//hpBar = Instantiate(hpBarPrefab);
 		hpBar.transform.SetParent(uiManager.Canvas.transform, false);
 		hpBarOffset = uiManager.UIRules.HPBoffset;
 		UpdateHPBarPosAndVis(); // Make sure healthbar is hidden until the unit is first selected
 		UpdateHPBarVal(true);
 		UpdateHPBarValIon();
 
-		foreach (Turret tur in turrets) // Init turrets
+		// Init turrets
+		foreach (Turret tur in turrets)
 		{
 			tur.SetParentUnit(this);
 
@@ -145,7 +148,9 @@ public class Unit : Entity, ITargetable
 				tur.gameObject.SetActive(false);
 		}
 
+		// Effects and audio
 		engineEffects.SetEngineActive(true);
+		//hpEffects.UpdateHealthEffects(curHealth / maxHealth); // Not necessary
 		if (fireAudioLoopPrefab)
 		{
 			fireAudioLoop = Instantiate(fireAudioLoopPrefab, transform.position, Quaternion.identity);
@@ -170,11 +175,14 @@ public class Unit : Entity, ITargetable
 		foreach (MeshRenderer r in hideableExtras)
 			r.material.SetFloat("_Opacity", localOpacity);
 
-		UpdateStatuses();
-		movement.Tick();
-
+		// Update HPBar if its being shown
 		if (isSelected || isHovered)
 			UpdateHPBarPosAndVis();
+
+		// Tick statuses
+		UpdateStatuses();
+		// Tick movement
+		movement.Tick();
 
 		// Burning
 		if (!alwaysBurnImmune)
@@ -196,6 +204,7 @@ public class Unit : Entity, ITargetable
 			}
 		}
 
+		// Handle modifiers
 		if (curFragileHealth > 0)
 		{
 			curFragileTimer -= Time.deltaTime;
@@ -290,7 +299,7 @@ public class Unit : Entity, ITargetable
 		}
 
 		// Position bar
-		Vector3 barPosition = new Vector3(transform.position.x + hpBarOffset.x, swarmTarget.position.y + hpBarOffset.y, transform.position.z + hpBarOffset.x);
+		Vector3 barPosition = new Vector3(transform.position.x + hpBarOffset.x, transform.position.y + hpBarHeight + hpBarOffset.y, transform.position.z + hpBarOffset.x);
 		Vector3 screenPoint = Camera.main.WorldToScreenPoint(barPosition);
 
 		// Is the bar behind us, should it be hidden?

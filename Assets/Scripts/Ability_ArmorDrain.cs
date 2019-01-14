@@ -52,6 +52,7 @@ public class Ability_ArmorDrain : Ability
 	public override void End()
 	{
 		pointEffect.End();
+		audioLoop.End();
 	}
 
 	new void Update()

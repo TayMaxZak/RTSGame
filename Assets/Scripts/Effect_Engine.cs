@@ -5,7 +5,7 @@ using UnityEngine;
 public class Effect_Engine : MonoBehaviour, IHideable
 {
 	//private AudioSource audioSource;
-	private float fireThresh = 0.334f; // Overwritten by GameRules
+	//private float fireThresh = 0.334f; // Overwritten by GameRules
 	[SerializeField]
 	private ParticleSystem enginePrefab;
 	[SerializeField]
@@ -20,7 +20,7 @@ public class Effect_Engine : MonoBehaviour, IHideable
 	void Awake()
 	{
 		//audioSource = GetComponent<AudioSource>();
-		fireThresh = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules.HLTH_burnThresh;
+		//fireThresh = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules.HLTH_burnThresh;
 
 		enginePSystems = new List<ParticleSystem>();
 

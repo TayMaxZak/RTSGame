@@ -802,7 +802,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1025386178585290}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -11, y: 0, z: -65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4198420506338300}
@@ -1537,9 +1537,10 @@ MonoBehaviour:
   objectiveWeight: 2
   hpBarPrefab: {fileID: 114477666003345976, guid: c3b28b4f6a7a9fb4db418ee97ac67eb0,
     type: 2}
+  hpBarHeight: 2
   hpEffects: {fileID: 114613675032481870}
   engineEffects: {fileID: 114740014082729160}
-  audioLoopPrefab: {fileID: 114609254506899492, guid: 3a1c3146576773945ab528372ee28b5a,
+  fireAudioLoopPrefab: {fileID: 114609254506899492, guid: 3a1c3146576773945ab528372ee28b5a,
     type: 2}
   team: 0
   buildIndex: -1

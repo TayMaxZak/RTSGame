@@ -152,6 +152,7 @@ public class Ability_ShieldProject : Ability
 			ClearTarget();
 		lineEffect.End();
 		pointEffect.End();
+		audioLoop.End();
 	}
 
 	new void Update()

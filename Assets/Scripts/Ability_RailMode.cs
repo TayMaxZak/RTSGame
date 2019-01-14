@@ -129,6 +129,8 @@ public class Ability_RailMode : Ability
 
 		Destroy(ampPos.gameObject, duration);
 		Destroy(gameObject, duration);
+
+		//audioLoop.End();
 	}
 
 	new void Update()

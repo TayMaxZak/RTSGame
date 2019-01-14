@@ -57,6 +57,7 @@ public class Ability_HealField : Ability
 			resDelay.GiveResAfterDelay(gameRules.ABLY_healFieldResCost, gameRules.WRCK_lifetime, team);
 		}
 		pointEffect.End();
+		audioLoop.End();
 	}
 
 	new void Update()

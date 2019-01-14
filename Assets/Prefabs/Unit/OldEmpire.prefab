@@ -3645,9 +3645,10 @@ MonoBehaviour:
   objectiveWeight: 2
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
+  hpBarHeight: 2
   hpEffects: {fileID: 114715266144132572}
   engineEffects: {fileID: 114260064164963448}
-  audioLoopPrefab: {fileID: 114609254506899492, guid: 3a1c3146576773945ab528372ee28b5a,
+  fireAudioLoopPrefab: {fileID: 114609254506899492, guid: 3a1c3146576773945ab528372ee28b5a,
     type: 2}
   team: 0
   buildIndex: -1

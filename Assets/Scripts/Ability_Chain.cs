@@ -101,6 +101,7 @@ public class Ability_Chain : Ability
 		lineEffect.End();
 		chainEndsEffect[0].End();
 		chainEndsEffect[1].End();
+		audioLoop.End();
 	}
 
 	new void Update()

@@ -46,6 +46,7 @@ public class Ability_NoReload : Ability
 	public override void End()
 	{
 		pointEffect.End();
+		//audioLoop.End();
 	}
 
 	new void Update()

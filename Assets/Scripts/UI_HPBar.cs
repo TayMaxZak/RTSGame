@@ -53,7 +53,7 @@ public class UI_HPBar : UI_Bar
 	[SerializeField]
 	private Image ionFill;
 	private float ionCur = 0;
-	private float ionTarg = 1;
+	private float ionTarg = 0; // TODO: Why is this not 0 for fragile health
 	private float ionT = 0;
 	private Color ionFlashCur = Color.cyan;
 	private float ionFlashT = 0;
