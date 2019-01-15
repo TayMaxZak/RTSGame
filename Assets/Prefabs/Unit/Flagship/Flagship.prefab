@@ -3810,8 +3810,10 @@ MonoBehaviour:
   objectiveWeight: 20
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
+  hpBarHeight: 6
   hpEffects: {fileID: 114924701086557700}
   engineEffects: {fileID: 114351665326567240}
+  fireAudioLoopPrefab: {fileID: 0}
   team: 0
   buildIndex: -1
   curArmor: 800
@@ -3827,7 +3829,9 @@ MonoBehaviour:
   - {fileID: 114305867512397226}
   - {fileID: 114577796822289746}
   - {fileID: 114025658439238626}
+  hideableExtras: []
   abilities: []
+  recievingAbilities: []
   movement:
     audioLoopPrefab: {fileID: 0}
     MS: 4

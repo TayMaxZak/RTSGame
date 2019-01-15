@@ -74,10 +74,10 @@ public class Effect_Line : MonoBehaviour
 
 	public void SetVisible(bool visible)
 	{
-		lineMain.gameObject.SetActive(visible ? mainOn : false);
+		lineMain.gameObject.SetActive(visible);
 		if (lineSecondary)
 		{
-			lineSecondary.gameObject.SetActive(visible ? secOn : false);
+			lineSecondary.gameObject.SetActive(visible);
 		}
 	}
 }
