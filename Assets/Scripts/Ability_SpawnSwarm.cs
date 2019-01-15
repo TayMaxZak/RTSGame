@@ -50,7 +50,7 @@ public class Ability_SpawnSwarm : Ability
 
 	private Vector3 graveyardPosition = new Vector3(9999, 9999, 9999);
 
-	private float timeError = 0.05f;
+	private float emissionTimeError = 0.05f; // Unity's particle systems have do not consistently emit particles so we have to give it some leeway when it comes to timing
 
 	private bool readyToSpawnNextSwarm = true;
 
@@ -73,7 +73,7 @@ public class Ability_SpawnSwarm : Ability
 		ParticleSystem.EmissionModule emission = pS.emission;
 		emission.rateOverTime = new ParticleSystem.MinMaxCurve(swarmSize / deployTime);
 		ParticleSystem.MainModule main = pS.main;
-		main.duration = deployTime + timeError;
+		main.duration = deployTime + emissionTimeError;
 
 		randomVectors = new Vector4[pS.main.maxParticles];
 		randomDistribution.Normalize();
@@ -137,6 +137,8 @@ public class Ability_SpawnSwarm : Ability
 		//swarmMover.SetTargetUnit(targetUnit);
 		if (unit != parentUnit)
 			checkIfDead = true;
+		else
+			checkIfDead = false;
 	}
 
 	bool SpawnSwarm()
@@ -194,7 +196,7 @@ public class Ability_SpawnSwarm : Ability
 	// Assign particle data to fighter group
 	IEnumerator FinishSpawnCoroutine()
 	{
-		yield return new WaitForSeconds(deployTime + timeError);
+		yield return new WaitForSeconds(deployTime + emissionTimeError);
 		int first = (fighterGroups.Count - 1) * swarmSize;
 		List<int> list = new List<int>();
 		for (int i = 0; i < swarmSize; i++)
@@ -256,7 +258,18 @@ public class Ability_SpawnSwarm : Ability
 				MoveSwarm(parentUnit);
 			}
 			else
+			{
+				Debug.Log("It happened");
 				return;
+			}
+		}
+		else // TODO: How does this interact with swarms giving vision?
+		{
+			if (!targetUnit.VisibleBy(team))
+			{
+				targetUnit = null;
+				MoveSwarm(parentUnit);
+			}
 		}
 		
 		Vector3 targPos = targetUnit.GetSwarmTarget().position;
@@ -280,16 +293,16 @@ public class Ability_SpawnSwarm : Ability
 			if (particlesRemoved.Contains(i))
 			{
 				// Just added
-				//if (particlesJustRemoved.Contains(i))
-				//{
-				//	particles[i].velocity = Vector3.zero;
-				//	particles[i].position = graveyardPosition; // Move offscreen
-				//	particlesJustRemoved.Remove(i);
-				//}
+				if (particlesJustRemoved.Contains(i))
+				{
+					particles[i].velocity = Vector3.zero;
+					particles[i].position = graveyardPosition; // Move offscreen
+					particlesJustRemoved.Remove(i);
+				}
 				// Accelerate it downwards
 				// TODO: Add this behaviour to a managed VFX
-				particles[i].velocity = new Vector3(particles[i].velocity.x, Mathf.Clamp(particles[i].velocity.y + Time.deltaTime * Physics.gravity.y, -5, 5), particles[i].velocity.z);
-				particles[i].velocity += Vector3.up * Time.deltaTime * Physics.gravity.y;
+				//particles[i].velocity = new Vector3(particles[i].velocity.x, Mathf.Clamp(particles[i].velocity.y + Time.deltaTime * Physics.gravity.y, -5, 5), particles[i].velocity.z);
+				//particles[i].velocity += Vector3.up * Time.deltaTime * Physics.gravity.y;
 				continue;
 			}
 

@@ -19,6 +19,8 @@ public class Turret : MonoBehaviour
 	private float range = 25;
 	[SerializeField]
 	private bool riskFFAgainstFighters = false;
+	[SerializeField]
+	private bool ignoreNonPreferrential = false;
 
 	[Header("Sound")]
 	[SerializeField]
@@ -146,7 +148,7 @@ public class Turret : MonoBehaviour
 			else // We haven't assigned one yet, it died, or it's become invalid
 			{
 				// Collect a list of all valid targets
-				List<ITargetable> autoTargets = ScanForTargets();
+				List<ITargetable> autoTargets = ScanForTargets(ignoreNonPreferrential);
 				// Pick best one
 				target = autoTargets.Count > 0 ? autoTargets[0] : null;
 
@@ -178,12 +180,7 @@ public class Turret : MonoBehaviour
 			Rotate();
 		}
 	}
-
-	List<ITargetable> ScanForTargets()
-	{
-		return ScanForTargets(false);
-	}
-
+	// ignoreNonPreferrential
 	// In a sphere with the radius of range, find all enemy units and pick one to target
 	List<ITargetable> ScanForTargets(bool ignoreNonPreferred)
 	{

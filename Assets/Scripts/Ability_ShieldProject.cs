@@ -217,8 +217,10 @@ public class Ability_ShieldProject : Ability
 		audioLoop.transform.position = targetUnit.transform.position;
 	}
 
+	// TODO: Limit just how negative the shield pool can go? Can get ridiculous and unintuitive if the negative pool exceeds what's displayed in the ability bar
 	public void OnDamage()
 	{
+		shieldMod.shieldPercent = Mathf.Clamp(shieldMod.shieldPercent, -1, 1);
 		if (targetUnit)
 			activeRegenTimer = gameRules.ABLY_shieldProjectOnGPSDelay;
 		UpdateAbilityBar();

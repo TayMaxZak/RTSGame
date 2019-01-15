@@ -31,10 +31,10 @@ public class UnitMovement
 	private float curVMSRatio = 0;
 
 	[Header("Turning")]
-	[SerializeField]
-	private Transform model;
-	private Quaternion lookRotation;
-	private Vector3 direction;
+	//[SerializeField]
+	//private Transform model;
+	//private Quaternion lookRotation;
+	//private Vector3 direction;
 	[SerializeField]
 	private float RS = 90;
 	[SerializeField]

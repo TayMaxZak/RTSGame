@@ -3923,7 +3923,6 @@ MonoBehaviour:
     MSVMult: 0.6
     MSAccel: 2
     MSDeccel: 1
-    model: {fileID: 4071519899239004}
     RS: 30
     RSAccel: 1
     allowMoveThresh: 0.4

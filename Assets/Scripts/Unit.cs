@@ -81,6 +81,8 @@ public class Unit : Entity, ITargetable
 
 	// State //
 	private List<Status> statuses;
+	//private int statusTickRate = 5;
+	private float curStatusTimer; // When should statuses be updated next
 	private List<VelocityMod> velocityMods;
 	private List<ShieldMod> shieldMods;
 	private List<FighterGroup> enemySwarms;
@@ -119,6 +121,7 @@ public class Unit : Entity, ITargetable
 			curArmor = curArmor * gameRules.TEST_initHPMult + gameRules.TEST_initHPAdd;
 			//curFragileHealth = (maxHealth - curHealth) * gameRules.TESTinitHPMult;
 		}
+		curBurnTimer = 1;
 		curFragileTimer = gameRules.ABLY_healFieldConvertDelay;
 		curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
 
@@ -180,7 +183,14 @@ public class Unit : Entity, ITargetable
 			UpdateHPBarPosAndVis();
 
 		// Tick statuses
-		UpdateStatuses();
+		curStatusTimer -= Time.deltaTime;
+		if (curStatusTimer <= 0)
+		{
+			float delta = (1f / gameRules.TIK_statusRate);
+			curStatusTimer = delta;
+			UpdateStatuses(delta);
+		}
+		
 		// Tick movement
 		movement.Tick();
 
@@ -195,10 +205,10 @@ public class Unit : Entity, ITargetable
 
 			if (isBurning)
 			{
-				curBurnTimer += Time.deltaTime;
-				if (curBurnTimer >= 1)
+				curBurnTimer -= Time.deltaTime;
+				if (curBurnTimer <= 0)
 				{
-					curBurnTimer = 0;
+					curBurnTimer = 1;
 					DamageSimple(Mathf.RoundToInt(Random.Range(gameRules.HLTH_burnMin, gameRules.HLTH_burnMax)), 0);
 				}
 			}
@@ -415,7 +425,7 @@ public class Unit : Entity, ITargetable
 		return statuses;
 	}
 
-	void UpdateStatuses()
+	void UpdateStatuses(float deltaTime)
 	{
 		string output = "Current statuses are: ";
 		List<Status> toRemove = new List<Status>();
@@ -432,7 +442,7 @@ public class Unit : Entity, ITargetable
 			// Damage over time
 			if (s.statusType == StatusType.ArmorMelt)
 			{
-				Damage(gameRules.STAT_armorMeltDPS * Time.deltaTime, 0, DamageType.Chemical);
+				Damage(gameRules.STAT_armorMeltDPS * deltaTime, 0, DamageType.Chemical);
 			}
 
 			// Keep track of how many suspending statuses we have
@@ -448,7 +458,7 @@ public class Unit : Entity, ITargetable
 			}
 
 			if (StatusUtils.ShouldCountDownDuration(s.statusType))
-				if (!s.UpdateTimeLeft(Time.deltaTime))
+				if (!s.UpdateTimeLeft(deltaTime))
 					toRemove.Add(s);
 
 			output += s.statusType + " " + s.GetTimeLeft() + " ";
@@ -1009,6 +1019,8 @@ public class Unit : Entity, ITargetable
 				// Reset shield to a baseline pool value
 				//projShield.shieldPercent = 0;
 
+				projShield.from.GetComponent<Ability_ShieldProject>().OnDamage(); // TODO: Optimize
+
 				// Notify source that the shield was destroyed, no further action on our side needed
 				projShield.from.GetComponent<Ability_ShieldProject>().BreakShield(); // TODO: Optimize
 			}
@@ -1128,8 +1140,13 @@ public class Unit : Entity, ITargetable
 	{
 		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
 		curHealth = Mathf.Min(curHealth - healthDmg, maxHealth);
-		if (healthDmg > 0 && handleDamage)
-			RemoveFragileHealth();
+		if (handleDamage)
+		{
+			if (healthDmg > 0)
+				RemoveFragileHealth();
+			if (armorDmg > 0 && curIons > gameRules.ABLY_ionMissileDecayCutoff)
+				AddIons((armorDmg / maxArmor) * 100 * gameRules.ABLY_ionMissileArmorDmgToIons, false);
+		}
 		ClampFragileHealth(); // Fragile health cannot exceed the room left in the health bar
 		CheckIons();
 		UpdateHealth();

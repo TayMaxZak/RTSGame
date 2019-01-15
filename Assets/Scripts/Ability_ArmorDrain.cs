@@ -112,13 +112,13 @@ public class Ability_ArmorDrain : Ability
 					{
 						if (parentUnit.GetHP().z < parentUnit.GetHP().w) // Only damage allies if we have missing armor
 						{
-							units[i].DamageSimple(0, gameRules.ABLY_armorDrainDPSAlly * Time.deltaTime);
+							units[i].DamageSimple(0, gameRules.ABLY_armorDrainDPSAlly * Time.deltaTime, true);
 							allyCount++;
 						}
 					}
 					else // Enemy
 					{
-						units[i].DamageSimple(0, gameRules.ABLY_armorDrainDPSEnemy * Time.deltaTime);
+						units[i].DamageSimple(0, gameRules.ABLY_armorDrainDPSEnemy * Time.deltaTime, true);
 						if (hasSuperlaser)
 						{
 							Status markStatus = new Status(gameObject, StatusType.SuperlaserMark); // TODO: Optimize?
@@ -130,8 +130,8 @@ public class Ability_ArmorDrain : Ability
 				}
 
 				// Add armor to us based on number of units
-				parentUnit.DamageSimple(0, -(gameRules.ABLY_armorDrainGPSEnemy + gameRules.ABLY_armorDrainGPSBonusMult * enemyCount) * (enemyCount) * Time.deltaTime);
-				parentUnit.DamageSimple(0, -gameRules.ABLY_armorDrainGPSAlly * (allyCount) * Time.deltaTime);
+				parentUnit.DamageSimple(0, -(gameRules.ABLY_armorDrainGPSEnemy + gameRules.ABLY_armorDrainGPSBonusMult * enemyCount) * (enemyCount) * Time.deltaTime, true);
+				parentUnit.DamageSimple(0, -gameRules.ABLY_armorDrainGPSAlly * (allyCount) * Time.deltaTime, true);
 
 				if ((allyCount + enemyCount) == 0)
 					pointEffect.SetEffectActive(true, false);

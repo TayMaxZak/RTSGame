@@ -3497,6 +3497,7 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4254305162043562}
   maxAmmo: 0
@@ -3602,6 +3603,7 @@ MonoBehaviour:
   preferredTargetType: 1
   range: 25
   riskFFAgainstFighters: 1
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: 9b32f5287c500dd47beef62df7f1fd40, type: 3}
   firePos: {fileID: 4439424789102846}
   maxAmmo: 5
@@ -3640,6 +3642,7 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4032315553326632}
   maxAmmo: 0
@@ -3677,6 +3680,7 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4368639819086978}
   maxAmmo: 0
@@ -3714,6 +3718,7 @@ MonoBehaviour:
   preferredTargetType: 1
   range: 25
   riskFFAgainstFighters: 1
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: 9b32f5287c500dd47beef62df7f1fd40, type: 3}
   firePos: {fileID: 4761075872646922}
   maxAmmo: 5
@@ -3793,7 +3798,6 @@ MonoBehaviour:
     MSVMult: 0.4
     MSAccel: 3
     MSDeccel: 2
-    model: {fileID: 4704118935808928}
     RS: 15
     RSAccel: 1
     allowMoveThresh: 0.1
@@ -3813,6 +3817,7 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4477732155532048}
   maxAmmo: 0
@@ -3850,6 +3855,7 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 60
   riskFFAgainstFighters: 0
+  ignoreNonPreferrential: 1
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4365003288196042}
   maxAmmo: 2

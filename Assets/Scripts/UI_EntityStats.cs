@@ -130,7 +130,6 @@ public class UI_EntityStats : MonoBehaviour
 		healthTooltip.SetText(!burnPossible ? "Burn Immune\nEven if this unit's health is below the burn threshold, it will not take burn damage over time." : 
 			string.Format("Burn threshold: {0:0}\nIf health drops below this threshold, it will start taking {1:0} damage over every 10 seconds.", healthMax * gameRules.HLTH_burnThresh, (gameRules.HLTH_burnMin + gameRules.HLTH_burnMax) * 5));
 
-
 		float armorRatio = armorCur / (Mathf.RoundToInt(armorMax) != 0 ? armorMax : 1);
 		armorFill.rectTransform.sizeDelta = new Vector2((1 - armorRatio) * -rootWidth, armorFill.rectTransform.sizeDelta.y);
 
@@ -313,7 +312,8 @@ public class UI_EntityStats : MonoBehaviour
 
 	string StringFromFloat(float number)
 	{
-		int val = Mathf.CeilToInt(number);
+		//int val = Mathf.CeilToInt(number);
+		int val = Mathf.RoundToInt(number);
 		return val.ToString();
 	}
 

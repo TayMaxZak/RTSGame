@@ -3836,9 +3836,8 @@ MonoBehaviour:
     audioLoopPrefab: {fileID: 0}
     MS: 4
     MSVMult: 0.4
-    MSAccel: 3
-    MSDeccel: 2
-    model: {fileID: 4574792625493794}
+    MSAccel: 4
+    MSDeccel: 3
     RS: 5
     RSAccel: 3
     allowMoveThresh: 0.3

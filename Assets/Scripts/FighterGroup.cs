@@ -6,14 +6,17 @@ using Particle = UnityEngine.ParticleSystem.Particle;
 public class FighterGroup : MonoBehaviour, ITargetable
 {
 	private Ability_SpawnSwarm parentAbility;
+	private int team = 0;
+
 	private Unit targetUnit;
+	//private int interactTickRate = 5; // How often does a swarm damage its target
+	private float curInteractTimer; // When should damge be dealt next
 
 	private int[] indices;
 	private ParticleSystem pS;
 	private bool isActive;
 	private int currentIndex = 0;
-	private int team = 0;
-
+	
 	private float[] hp; // TODO: Add passive health repair over time
 
 	private Particle[] particles;
@@ -73,6 +76,19 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		if (!isActive)
 			return;
 
+		curInteractTimer -= Time.deltaTime;
+		if (curInteractTimer <= 0)
+		{
+			float delta = (1f / gameRules.TIK_fighterInteractRate);
+			curInteractTimer = delta;
+			Interact(delta);
+		}
+
+
+	}
+
+	void Interact(float delta)
+	{
 		if (targetUnit)
 		{
 			if (Vector3.SqrMagnitude(transform.position - targetUnit.GetSwarmTarget().position) < gameRules.ABLY_swarmInteractRadius * gameRules.ABLY_swarmInteractRadius)
@@ -80,19 +96,22 @@ public class FighterGroup : MonoBehaviour, ITargetable
 				if (targetUnit.team != team) // If target is an enemy unit, damage it
 				{
 					targetUnit.AddEnemySwarm(this);
-					targetUnit.Damage(gameRules.ABLY_swarmDPS * Time.deltaTime, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
+					targetUnit.Damage(gameRules.ABLY_swarmDPS * delta, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect
 				}
 				else // Ally unit
 				{
 					// Protect ally unit
 					targetUnit.AddStatus(new Status(gameObject, StatusType.SwarmResist));
+					Debug.Log(targetUnit + " " + Time.frameCount + " " + name);
 					// Engage enemy swarms
 					List<FighterGroup> enemySwarms = targetUnit.GetEnemySwarms();
+					int stack = Mathf.Min(enemySwarms.Count, gameRules.STATswarmResistMaxStacks);
+					int index = (int)(Random.value * stack);
 					if (enemySwarms.Count > 0)
 					{
-						if (!IsNull(enemySwarms[0]))
+						if (!IsNull(enemySwarms[index]))
 						{
-							enemySwarms[0].Damage(gameRules.ABLY_swarmDPS * Time.deltaTime, 0, DamageType.Swarm);
+							enemySwarms[index].Damage(gameRules.ABLY_swarmDPS * delta, 0, DamageType.Swarm);
 						}
 					} // enemy swarms present
 				} // ally unit
