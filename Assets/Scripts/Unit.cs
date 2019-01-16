@@ -53,10 +53,12 @@ public class Unit : Entity, ITargetable
 	[SerializeField]
 	private float curFragileHealth = 0;
 	private float curFragileTimer; // When should fragile health start converting into health
+	private float curFragileTickTimer; // When should next tick of fragile health convert into health
 
 	[SerializeField]
 	private float curIons = 0;
 	private float curIonTimer; // When should ions start decaying
+	private float curIonTickTimer; // When should next tick of ions decay
 
 	[SerializeField]
 	private GameObject deathClone; // Object to spawn on death
@@ -82,7 +84,7 @@ public class Unit : Entity, ITargetable
 	// State //
 	private List<Status> statuses;
 	//private int statusTickRate = 5;
-	private float curStatusTimer; // When should statuses be updated next
+	private float curStatusTickTimer; // When should statuses be updated next
 	private List<VelocityMod> velocityMods;
 	private List<ShieldMod> shieldMods;
 	private List<FighterGroup> enemySwarms;
@@ -187,12 +189,12 @@ public class Unit : Entity, ITargetable
 			UpdateHPBarPosAndVis();
 
 		// Tick statuses
-		curStatusTimer -= Time.deltaTime;
-		if (curStatusTimer <= 0)
+		curStatusTickTimer -= Time.deltaTime;
+		if (curStatusTickTimer <= 0)
 		{
 			float delta = (1f / gameRules.TIK_statusRate);
-			curStatusTimer = delta;
-			UpdateStatuses(delta);
+			curStatusTickTimer = delta;
+			TickStatuses(delta);
 		}
 		
 		// Tick movement
@@ -224,12 +226,13 @@ public class Unit : Entity, ITargetable
 			curFragileTimer -= Time.deltaTime;
 			if (curFragileTimer <= 0)
 			{
-				float amount = gameRules.ABLY_healFieldConvertGPS + gameRules.ABLY_healFieldAllyGPSBonusMult * maxHealth;
-				AddFragileHealth(-amount * Time.deltaTime);
-				DamageSimple(-amount * Time.deltaTime, 0);
-
-				if (curFragileHealth <= 0)
-					curFragileTimer = gameRules.ABLY_healFieldConvertDelay;
+				curFragileTickTimer -= Time.deltaTime;
+				if (curFragileTickTimer <= 0)
+				{
+					float delta = (1f / gameRules.TIK_fragileHealthConvertRate);
+					curFragileTickTimer = delta;
+					TickFragileHealth(delta);
+				}
 			}
 		}
 
@@ -240,11 +243,13 @@ public class Unit : Entity, ITargetable
 			curIonTimer -= Time.deltaTime;
 			if (curIonTimer <= 0)
 			{
-				float amount = gameRules.ABLY_ionMissileDecayLPS;
-				AddIons(-amount * Time.deltaTime, false);
-
-				if (curIons <= 0)
-					curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
+				curIonTickTimer -= Time.deltaTime;
+				if (curIonTickTimer <= 0)
+				{
+					float delta = (1f / gameRules.TIK_ionDecayRate);
+					curIonTickTimer = delta;
+					TickIons(delta);
+				}
 			}
 		}
 
@@ -429,7 +434,7 @@ public class Unit : Entity, ITargetable
 		return statuses;
 	}
 
-	void UpdateStatuses(float deltaTime)
+	void TickStatuses(float deltaTime)
 	{
 		string output = "Current statuses are: ";
 		List<Status> toRemove = new List<Status>();
@@ -808,6 +813,16 @@ public class Unit : Entity, ITargetable
 		curFragileTimer = gameRules.ABLY_healFieldConvertDelay;
 	}
 
+	public void TickFragileHealth(float delta)
+	{
+		float amount = gameRules.ABLY_healFieldConvertGPS + gameRules.ABLY_healFieldAllyGPSBonusMult * maxHealth;
+		AddFragileHealth(-amount * delta);
+		DamageSimple(-amount * delta, 0);
+
+		if (curFragileHealth <= 0)
+			curFragileTimer = gameRules.ABLY_healFieldConvertDelay;
+	}
+
 	public void AddIons(float ionsToAdd, bool ionSeed)
 	{
 		if (ionsToAdd > 0)
@@ -860,6 +875,15 @@ public class Unit : Entity, ITargetable
 	void RefreshIonDecay()
 	{
 		curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
+	}
+
+	void TickIons(float delta)
+	{
+		float amount = gameRules.ABLY_ionMissileDecayLPS;
+		AddIons(-amount * delta, false);
+
+		if (curIons <= 0)
+			curIonTimer = gameRules.ABLY_ionMissileDecayDelay;
 	}
 
 	void IonStun()
@@ -942,7 +966,7 @@ public class Unit : Entity, ITargetable
 		}
 		else
 		{
-			if (curIons > gameRules.ABLY_ionMissileDecayCutoff)
+			if (curIons > gameRules.ABLY_ionMissileDecayCutoff && dmgType != DamageType.IonMissile) // The minsicule actual damage from an ion missile should not create any ions
 				AddIons((dmgToArmor / maxArmor) * 100 * gameRules.ABLY_ionMissileArmorDmgToIons, false);
 		}
 		curArmor = Mathf.Max(curArmor, 0);

@@ -276,7 +276,7 @@ MonoBehaviour:
   FOWtickRate: 0.5
   GameRules:
     useTestValues: 1
-    TEST_timeMultCooldown: 0.2
+    TEST_timeMultCooldown: 1
     TEST_timeMultBuild: 0.2
     TEST_initHPAdd: 0
     TEST_initHPMult: 1
@@ -327,6 +327,10 @@ MonoBehaviour:
     MOV_abilityAimingRSMult: 1
     MOV_heightCount: 10
     MOV_heightSpacing: 5
+    TIK_statusRate: 5
+    TIK_fighterInteractRate: 3
+    TIK_fragileHealthConvertRate: 5
+    TIK_ionDecayRate: 5
     ABLY_armorDrainRange: 20
     ABLY_armorDrainDPSEnemy: 9
     ABLY_armorDrainDPSAlly: 3
@@ -362,7 +366,7 @@ MonoBehaviour:
     ABLY_superlaserCancelCDMult: 0.5
     ABLY_superlaserCancelTime: 1
     ABLY_superlaserDelay: 3.5
-    ABLY_superlaserInitStacks: 1
+    ABLY_superlaserInitStacks: 0
     ABLY_superlaserStackDmgReq: 0.6
     ABLY_superlaserDmgBase: 200
     ABLY_superlaserDmgByStacks:
