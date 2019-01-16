@@ -87,6 +87,8 @@ public class Unit : Entity, ITargetable
 	private List<ShieldMod> shieldMods;
 	private List<FighterGroup> enemySwarms;
 
+	private Manager_VFX vfx;
+
 	void Awake()
 	{
 		hpBar = Instantiate(hpBarPrefab);
@@ -94,6 +96,8 @@ public class Unit : Entity, ITargetable
 		velocityMods = new List<VelocityMod>();
 		shieldMods = new List<ShieldMod>();
 		enemySwarms = new List<FighterGroup>();
+
+		vfx = GameObject.FindGameObjectWithTag("VFXManager").GetComponent<Manager_VFX>();
 	}
 
 	//public void SetHeightCurrent(int cur)
@@ -1123,10 +1127,12 @@ public class Unit : Entity, ITargetable
 		if (stack > 0)
 		{
 			// Transfer absorbed damage to the swarms
-			int index = dmgType == DamageType.Swarm ? 0 : (int)(Random.value * stack); 
+			//int index = dmgType == DamageType.Swarm ? 0 : (int)(Random.value * stack);
+			int index = (int)(Random.value * stack);
 			if (allySwarms[index].from)
 			{
 				FighterGroup swarm = allySwarms[index].from.GetComponent<FighterGroup>();
+				vfx.SpawnEffect(VFXType.Hit_Near, swarm.GetPosition());
 				swarm.Damage(swarmAbsorbedDamage * gameRules.STATswarmResistTransferMult, 0, dmgType);
 			}
 			

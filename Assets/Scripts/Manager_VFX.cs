@@ -41,7 +41,7 @@ public class Manager_VFX : MonoBehaviour
 			case VFXType.Hit_Near:
 				return 2;
 			case VFXType.Fighter_Die_Explode:
-				return 0;
+				return 3;
 			default:
 				return 0;
 		}

@@ -26,6 +26,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 	private Collider collision;
 
 	private GameRules gameRules;
+	private Manager_VFX vfx;
 
 	void Awake()
 	{
@@ -33,6 +34,8 @@ public class FighterGroup : MonoBehaviour, ITargetable
 
 		collision = GetComponent<Collider>();
 		collision.enabled = false;
+
+		vfx = GameObject.FindGameObjectWithTag("VFXManager").GetComponent<Manager_VFX>();
 	}
 
 	public void SetParticles(ParticleSystem system, int[] ind)
@@ -60,7 +63,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 
 	public void SetTarget(Unit targ)
 	{
-		if (targetUnit)
+		if (targetUnit) // Have a previous target
 			targetUnit.RemoveEnemySwarm(this); // No longer attacking previous target
 		targetUnit = targ;
 	}
@@ -102,15 +105,16 @@ public class FighterGroup : MonoBehaviour, ITargetable
 				{
 					// Protect ally unit
 					targetUnit.AddStatus(new Status(gameObject, StatusType.SwarmResist));
-					Debug.Log(targetUnit + " " + Time.frameCount + " " + name);
 					// Engage enemy swarms
 					List<FighterGroup> enemySwarms = targetUnit.GetEnemySwarms();
 					int stack = Mathf.Min(enemySwarms.Count, gameRules.STATswarmResistMaxStacks);
 					int index = (int)(Random.value * stack);
+					
 					if (enemySwarms.Count > 0)
 					{
 						if (!IsNull(enemySwarms[index]))
 						{
+							vfx.SpawnEffect(VFXType.Hit_Near, enemySwarms[index].GetPosition());
 							enemySwarms[index].Damage(gameRules.ABLY_swarmDPS * delta, 0, DamageType.Swarm);
 						}
 					} // enemy swarms present
@@ -203,6 +207,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		if (hp[currentIndex] <= 0)
 		{
 			// Kill fighter
+			vfx.SpawnEffect(VFXType.Fighter_Die_Explode, GetPosition());
 			parentAbility.RemoveFighter(indices[currentIndex]); // Mark a fighter to not be simulated anymore
 
 			if (currentIndex < hp.Length - 1) // More fighters left

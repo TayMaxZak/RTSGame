@@ -173,8 +173,10 @@ public class Ability_SpawnSwarm : Ability
 				swarmsCenter = Instantiate(swarmsCenterPrefab, transform.position, Quaternion.identity);
 
 			GameObject go = Instantiate(swarmCenterPrefab.gameObject, transform.position, Quaternion.identity);
+			//go.name = "Fighter Group " + fighterGroups.Count;
 			FighterGroup group = go.GetComponent<FighterGroup>();
 			group.SetTeam(team);
+			group.SetTarget(targetUnit);
 			fighterGroups.Add(group);
 			livingFighterGroups++;
 			// Initialize fighter count for this group
