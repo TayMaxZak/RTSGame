@@ -23,8 +23,9 @@ public class AudioEffect_Loop : MonoBehaviour, IHideable
 		if (state)
 		{
 			if (!audioSource.isPlaying)
-			{	
-				audioSource.Play();
+			{
+				if (audioSource.isActiveAndEnabled)
+					audioSource.Play();
 				audioPreviouslyPlaying = true;
 			}
 		}
@@ -32,7 +33,8 @@ public class AudioEffect_Loop : MonoBehaviour, IHideable
 		{
 			if (audioSource.isPlaying)
 			{
-				audioSource.Stop();
+				if (audioSource.isActiveAndEnabled)
+					audioSource.Stop();
 				audioPreviouslyPlaying = false;
 			}
 		}
