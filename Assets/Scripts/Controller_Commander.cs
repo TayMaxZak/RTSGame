@@ -722,7 +722,7 @@ public class Controller_Commander : MonoBehaviour
 		// Switch teams when a key is pressed
 		if (allowTeamSwaps)
 		{
-			if (Input.GetKeyDown("tab"))
+			if (Input.GetKeyDown("."))
 			{
 				if (team == 0)
 					SetTeam(1);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 [System.Serializable]
 public class UnitMovement
@@ -67,6 +68,11 @@ public class UnitMovement
 	protected GameRules gameRules;
 	private Manager_Pathfinding pathManager;
 
+	private Multiplayer_Manager multManager;
+	private NetworkIdentity ourId;
+	
+	private float curSyncTimer;
+
 	// Use this for initialization
 	public void Init(Unit parent)
 	{
@@ -90,6 +96,9 @@ public class UnitMovement
 		vGoalCur = Mathf.RoundToInt(transform.position.y);
 
 		curRSRatio = 0;
+
+		multManager = GameObject.FindGameObjectWithTag("MultiplayerManager").GetComponent<Multiplayer_Manager>(); // Grab copy of Game Rules
+		ourId = parentUnit.GetComponent<NetworkIdentity>();
 	}
 
 	//public void SetVCurrent(int cur)
@@ -106,7 +115,25 @@ public class UnitMovement
 	{
 		//transform.Rotate(0, 180 * Time.deltaTime, 0);
 
-		UpdateMovement();
+		// We want a full simulation if this unit is on the server
+		if (parentUnit.isServer)
+		{
+			UpdateMovement();
+
+			curSyncTimer -= Time.deltaTime;
+			if (curSyncTimer <= 0)
+			{
+				curSyncTimer = (1f / multManager.syncRate_movement);
+
+				// Send our position, velocity, rotation, and rotation speed
+				//if (velocity != Vector3.zero) // TODO: OPTIMIZATION LATER
+				multManager.CmdSyncUnitPosition(ourId, transform.position, velocity);
+			}
+		}
+		else // We want to rely entirely on position, velocity, etc. set by the server externally
+		{
+			ApplyVelocity();
+		}
 	}
 
 	void UpdateMovement()
@@ -136,11 +163,28 @@ public class UnitMovement
 		Vector4 chainVel = CalcChainVel(ourVel.magnitude);
 		// Apply the maximum speed, as determined in CalcChainVel, as an upper limit to velocity magnitude
 		velocity = Vector3.ClampMagnitude(ourVel + new Vector3(chainVel.x, chainVel.y, chainVel.z), chainVel.w);
+		
 		// Finally apply velocity to unit's position
+		// This step happens on clients as well as on the server
+		ApplyVelocity();
+	}
+
+	void ApplyVelocity()
+	{
 		transform.position += velocity * Time.deltaTime;
 
 		if (audioLoop)
 			audioLoop.GetAudioSource().pitch = 1 + (velocity.magnitude / MS) * gameRules.AUD_enginePitchVariance;
+	}
+
+	public void SyncPosAndVel(Vector3 pos, Vector3 vel)
+	{
+		//Debug.Log("transform is " + (transform == null ? "null" : "good"));
+		if (transform == null)
+			return;
+		//Debug.Log("My position got synced");
+		transform.position = pos;
+		velocity = vel;
 	}
 
 	float UpdateRotation(Vector3 dir, bool ignoreHGoal)

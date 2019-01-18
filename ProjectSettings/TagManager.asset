@@ -10,6 +10,10 @@ TagManager:
   - HitscanManager
   - VFXManager
   - PathManager
+  - CommanderController
+  - CameraController
+  - NetworkManager
+  - MultiplayerManager
   layers:
   - Default
   - TransparentFX

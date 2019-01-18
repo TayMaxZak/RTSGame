@@ -55,6 +55,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4888680709255202}
+  - component: {fileID: 114039106582558150}
   - component: {fileID: 114305229649543536}
   - component: {fileID: 114511447420377598}
   - component: {fileID: 114939869380698900}
@@ -1516,6 +1517,38 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &114039106582558150
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1025386178585290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 183
+    i1: 152
+    i2: 89
+    i3: 138
+    i4: 204
+    i5: 70
+    i6: 99
+    i7: 244
+    i8: 201
+    i9: 174
+    i10: 73
+    i11: 61
+    i12: 135
+    i13: 109
+    i14: 252
+    i15: 91
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114305229649543536
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1587,6 +1620,7 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4663811804393870}
   maxAmmo: 3
@@ -1624,6 +1658,7 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
   firePos: {fileID: 4221274989616668}
   maxAmmo: 2

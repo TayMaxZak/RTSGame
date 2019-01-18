@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public enum EntityType
 {
@@ -15,7 +16,7 @@ public enum EntityType
 	HybridFrigate
 }
 
-public class Entity : MonoBehaviour
+public class Entity : NetworkBehaviour
 {
 	public bool printInfo = false;
 

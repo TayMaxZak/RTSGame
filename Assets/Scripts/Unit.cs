@@ -1305,6 +1305,11 @@ public class Unit : Entity, ITargetable
 		return swarmTarget;
 	}
 
+	public UnitMovement GetMovement()
+	{
+		return movement;
+	}
+
 	public override void OnHover(bool hovered)
 	{
 		base.OnHover(hovered);
