@@ -17,7 +17,6 @@ public class Multiplayer_Player : NetworkBehaviour
 			return;
 		}
 
-		Debug.Log("Spawning my flagship");
 		CmdSpawnMyFlagship();
 	}
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using UnityEngine.Networking;
 
 public class Unit : Entity, ITargetable
 {
@@ -1305,6 +1306,7 @@ public class Unit : Entity, ITargetable
 		return swarmTarget;
 	}
 
+	// Used by Multiplayer_Manager
 	public UnitMovement GetMovement()
 	{
 		return movement;

@@ -14,6 +14,14 @@ TagManager:
   - CameraController
   - NetworkManager
   - MultiplayerManager
+  - ConCom_EntityStats
+  - ConCom_CommandWheel
+  - ConCom_ResCounter
+  - ConCom_BuildButtons
+  - ConCom_BoxSelect
+  - ConCom_Grid
+  - ConCom_Line1
+  - ConCom_Line2
   layers:
   - Default
   - TransparentFX

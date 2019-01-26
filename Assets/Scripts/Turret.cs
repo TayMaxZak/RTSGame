@@ -423,7 +423,7 @@ public class Turret : MonoBehaviour
 		return true;
 	}
 
-	// TODO: Consolidate conditions which appear in both attempt shot and attempt start shooting
+	// TODO: Consolidate conditions which appear in both attempt shot and attempt start shooting e.g. aimed at target
 	void AttemptStartShooting()
 	{
 		if (isShooting) // Don't start shooting if we are already shooting
@@ -444,6 +444,7 @@ public class Turret : MonoBehaviour
 		}
 
 		// Are we pointed at the target?
+		// TODO: Make threshold distance-based and not angle-based
 		Vector3 forward = GetForward();
 		float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
 		if (dot < 1 - allowShootThressh)
@@ -525,6 +526,7 @@ public class Turret : MonoBehaviour
 		}
 
 		// Are we pointed at the target?
+		// TODO: Make threshold distance-based and not angle-based
 		Vector3 forward = GetForward();
 		float dot = Mathf.Max(Vector3.Dot(direction, forward), 0);
 

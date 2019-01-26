@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 
-public class Controller_Commander : MonoBehaviour
+public class Controller_Commander : NetworkBehaviour
 {
 	public bool allowTeamSwaps = false;
 	public int team;
@@ -75,6 +76,24 @@ public class Controller_Commander : MonoBehaviour
 	private Manager_Game gameManager;
 	private GameRules gameRules;
 
+	void Awake()
+	{
+		FindReferences();
+	}
+
+	void FindReferences()
+	{
+		entityStats = GameObject.FindGameObjectWithTag("ConCom_EntityStats").GetComponent<UI_EntityStats>();
+		commandWheel = GameObject.FindGameObjectWithTag("ConCom_CommandWheel").GetComponent<UI_CommandWheel>();
+		resPointsCounter = GameObject.FindGameObjectWithTag("ConCom_ResCounter").GetComponent<UI_ResCounter>();
+		buildButtonsRoot = GameObject.FindGameObjectWithTag("ConCom_BuildButtons");
+		cam = Camera.main;
+		marquee = GameObject.FindGameObjectWithTag("ConCom_BoxSelect").GetComponent<Image>();
+		movementGrid = GameObject.FindGameObjectWithTag("ConCom_Grid");
+		lineMouse = GameObject.FindGameObjectWithTag("ConCom_Line1").GetComponent<Effect_Line>();
+		lineVert = GameObject.FindGameObjectWithTag("ConCom_Line2").GetComponent<Effect_Line>();
+	}
+
 	// Use this for initialization
 	void Start()
 	{
@@ -97,6 +116,8 @@ public class Controller_Commander : MonoBehaviour
 		commandWheel.SetController(this);
 		SetCommandWheelActive(false);
 	}
+
+
 
 	void SetCommander(Commander newCommander)
 	{
@@ -285,7 +306,7 @@ public class Controller_Commander : MonoBehaviour
 			{
 				Vector3 newVec = u.transform.position + dif;
 				newVec.y = u.transform.position.y;
-				u.OrderMove(newVec, units.Count > 1);
+				CmdOrderMove(u.GetComponent<NetworkIdentity>(), newVec, units.Count > 1);
 			}
 
 			AudioUtils.PlayClipAt(soundMove, transform.position, audioSource);
@@ -338,6 +359,10 @@ public class Controller_Commander : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		// Only recieve input from the local player
+		if (!isLocalPlayer)
+			return;
+
 		UpdateMovementGrid();
 		UpdateInput();
 	}
@@ -1103,5 +1128,14 @@ public class Controller_Commander : MonoBehaviour
 	public Commander GetCommander()
 	{
 		return commander;
+	}
+
+
+	// Tell the server to move its copy of this unit
+	[Command]
+	void CmdOrderMove(NetworkIdentity id, Vector3 newVec, bool group)
+	{
+		Unit u = id.GetComponent<Unit>();
+		u.OrderMove(newVec, group);
 	}
 }
