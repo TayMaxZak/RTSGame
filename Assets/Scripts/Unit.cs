@@ -1440,6 +1440,13 @@ public class Unit : Entity, ITargetable
 	}
 
 
+	// When the server un-spawns this object, we need to clean up after it
+	public void OnDestroy()
+	{
+		if (!dead) // Make sure this Destroy() didn't happen because of calling Die() previously
+			Die(DamageType.Internal);
+	}
+
 	public void OnDrawGizmos()
 	{
 		movement.OnDrawGizmos();
