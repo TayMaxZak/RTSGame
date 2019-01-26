@@ -500,7 +500,7 @@ public class Controller_Commander : NetworkBehaviour
 					{
 						for (int i = 0; i < units.Count; i++)
 						{
-							units[i].OrderChangeHeight(newGridHeight);
+							CmdOrderChangeHeight(units[i].GetComponent<NetworkIdentity>(), newGridHeight);
 						}
 						HeightCancel(); // Finish height change
 					}
@@ -1133,7 +1133,7 @@ public class Controller_Commander : NetworkBehaviour
 
 	void OnDestroy()
 	{
-
+		
 	}
 
 	// Tell the server to move its copy of this unit
@@ -1142,5 +1142,13 @@ public class Controller_Commander : NetworkBehaviour
 	{
 		Unit u = id.GetComponent<Unit>();
 		u.OrderMove(newVec, group);
+	}
+
+	// Tell the server to move its copy of this unit
+	[Command]
+	void CmdOrderChangeHeight(NetworkIdentity id, int newGridHeight)
+	{
+		Unit u = id.GetComponent<Unit>();
+		u.OrderChangeHeight(newGridHeight);
 	}
 }
