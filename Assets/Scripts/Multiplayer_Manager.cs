@@ -26,4 +26,19 @@ public class Multiplayer_Manager : NetworkBehaviour
 		UnitMovement um = mover.GetComponent<Unit>().GetMovement();
 		um.SyncPosAndVel(newPos, newVel);
 	}
+
+	[Command]
+	public void CmdSyncUnitRotation(NetworkIdentity mover, Quaternion newRot, float newRotVel)
+	{
+		//Debug.Log("Command to sync " + mover.name);
+		RpcSyncUnitRotation(mover, newRot, newRotVel);
+	}
+
+	[ClientRpc]
+	void RpcSyncUnitRotation(NetworkIdentity mover, Quaternion newRot, float newRotVel)
+	{
+		//Debug.Log("Synced " + mover.name);
+		UnitMovement um = mover.GetComponent<Unit>().GetMovement();
+		um.SyncRotAndRotVel(newRot, newRotVel);
+	}
 }

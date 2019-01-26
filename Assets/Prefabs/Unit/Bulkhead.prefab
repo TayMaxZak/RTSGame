@@ -283,6 +283,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4254661421833070}
+  - component: {fileID: 114912533851498426}
   - component: {fileID: 114133806779069504}
   - component: {fileID: 114177749130366244}
   - component: {fileID: 114011204531075516}
@@ -3283,7 +3284,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4790768866316710}
   maxAmmo: 2
   reloadCooldown: 1
@@ -3320,7 +3322,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4878535154471696}
   maxAmmo: 2
   reloadCooldown: 1
@@ -3431,7 +3434,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4867935008702602}
   maxAmmo: 2
   reloadCooldown: 1
@@ -3468,7 +3472,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4487736759716026}
   maxAmmo: 2
   reloadCooldown: 1
@@ -3505,7 +3510,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4817259448784356}
   maxAmmo: 2
   reloadCooldown: 1
@@ -3542,7 +3548,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4376580267898420}
   maxAmmo: 2
   reloadCooldown: 1
@@ -3582,3 +3589,35 @@ MonoBehaviour:
   firePrefab: {fileID: 198022385667786420, guid: fd91e909f6b4bd14a9fc7078ae535ecb,
     type: 2}
   firePos: {fileID: 4203976260617506}
+--- !u!114 &114912533851498426
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1302791793192360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 114
+    i1: 209
+    i2: 192
+    i3: 84
+    i4: 31
+    i5: 34
+    i6: 253
+    i7: 196
+    i8: 184
+    i9: 156
+    i10: 185
+    i11: 69
+    i12: 205
+    i13: 94
+    i14: 234
+    i15: 170
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0

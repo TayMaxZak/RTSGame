@@ -153,6 +153,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4073420170976810}
+  - component: {fileID: 114206846853476462}
   - component: {fileID: 114793434201877688}
   - component: {fileID: 114414820332703200}
   - component: {fileID: 114437644942323818}
@@ -3482,6 +3483,38 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &114206846853476462
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1216876717439498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 9
+    i1: 16
+    i2: 67
+    i3: 90
+    i4: 211
+    i5: 128
+    i6: 37
+    i7: 52
+    i8: 216
+    i9: 236
+    i10: 187
+    i11: 30
+    i12: 243
+    i13: 86
+    i14: 66
+    i15: 213
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114266750467713690
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3498,7 +3531,7 @@ MonoBehaviour:
   range: 40
   riskFFAgainstFighters: 0
   ignoreNonPreferrential: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4254305162043562}
   maxAmmo: 0
   reloadCooldown: 2
@@ -3643,7 +3676,7 @@ MonoBehaviour:
   range: 40
   riskFFAgainstFighters: 0
   ignoreNonPreferrential: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4032315553326632}
   maxAmmo: 0
   reloadCooldown: 2
@@ -3681,7 +3714,7 @@ MonoBehaviour:
   range: 40
   riskFFAgainstFighters: 0
   ignoreNonPreferrential: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4368639819086978}
   maxAmmo: 0
   reloadCooldown: 2
@@ -3818,7 +3851,7 @@ MonoBehaviour:
   range: 40
   riskFFAgainstFighters: 0
   ignoreNonPreferrential: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4477732155532048}
   maxAmmo: 0
   reloadCooldown: 2

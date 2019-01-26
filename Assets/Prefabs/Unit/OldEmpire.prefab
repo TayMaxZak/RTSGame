@@ -329,6 +329,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4530294252010464}
+  - component: {fileID: 114072760893109014}
   - component: {fileID: 114948360384437774}
   - component: {fileID: 114176062931564522}
   - component: {fileID: 114119223304552648}
@@ -3168,7 +3169,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4797420541161286}
   maxAmmo: 2
   reloadCooldown: 2
@@ -3190,6 +3192,38 @@ MonoBehaviour:
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
   accuracy: 0.1
+--- !u!114 &114072760893109014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1317704183684128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 90
+    i1: 4
+    i2: 19
+    i3: 233
+    i4: 250
+    i5: 236
+    i6: 67
+    i7: 180
+    i8: 42
+    i9: 175
+    i10: 230
+    i11: 162
+    i12: 143
+    i13: 213
+    i14: 181
+    i15: 195
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114088435275087768
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3205,7 +3239,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4046894159933466}
   maxAmmo: 5
   reloadCooldown: 4
@@ -3242,6 +3277,7 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4243905669122736}
   maxAmmo: 1
@@ -3323,7 +3359,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4124936815597224}
   maxAmmo: 5
   reloadCooldown: 4
@@ -3360,6 +3397,7 @@ MonoBehaviour:
   preferredTargetType: 1
   range: 25
   riskFFAgainstFighters: 1
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: 9b32f5287c500dd47beef62df7f1fd40, type: 3}
   firePos: {fileID: 4545684951489360}
   maxAmmo: 3
@@ -3398,6 +3436,7 @@ MonoBehaviour:
   preferredTargetType: 1
   range: 25
   riskFFAgainstFighters: 1
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: 9b32f5287c500dd47beef62df7f1fd40, type: 3}
   firePos: {fileID: 4973273976119354}
   maxAmmo: 3
@@ -3436,7 +3475,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4797039136077352}
   maxAmmo: 6
   reloadCooldown: 3
@@ -3473,7 +3513,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4014172769338668}
   maxAmmo: 2
   reloadCooldown: 2
@@ -3510,7 +3551,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4223491208674986}
   maxAmmo: 6
   reloadCooldown: 3
@@ -3565,6 +3607,7 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: c382347c8fe93be42baf8e4bb4b32f1d, type: 3}
   firePos: {fileID: 4136594193375280}
   maxAmmo: 1
@@ -3602,7 +3645,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4533396477131962}
   maxAmmo: 2
   reloadCooldown: 2
@@ -3696,7 +3740,8 @@ MonoBehaviour:
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  ignoreNonPreferrential: 0
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4693729049725204}
   maxAmmo: 2
   reloadCooldown: 2

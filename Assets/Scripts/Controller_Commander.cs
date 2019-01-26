@@ -1131,6 +1131,11 @@ public class Controller_Commander : NetworkBehaviour
 	}
 
 
+	void OnDestroy()
+	{
+
+	}
+
 	// Tell the server to move its copy of this unit
 	[Command]
 	void CmdOrderMove(NetworkIdentity id, Vector3 newVec, bool group)

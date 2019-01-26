@@ -117,6 +117,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4974165406158294}
+  - component: {fileID: 114674432141280014}
   - component: {fileID: 114088720234087204}
   - component: {fileID: 114431768053762592}
   - component: {fileID: 114165545472820334}
@@ -1731,6 +1732,38 @@ MonoBehaviour:
     type: 2}
   pointEffectBreakPrefab: {fileID: 1020491657332010, guid: b5976377b2a39b8459da76dcbd234c97,
     type: 2}
+--- !u!114 &114674432141280014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1245470892901488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 217
+    i1: 117
+    i2: 30
+    i3: 109
+    i4: 104
+    i5: 24
+    i6: 220
+    i7: 228
+    i8: 216
+    i9: 40
+    i10: 156
+    i11: 111
+    i12: 209
+    i13: 18
+    i14: 208
+    i15: 152
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114804360984428284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1746,6 +1779,7 @@ MonoBehaviour:
   preferredTargetType: 1
   range: 25
   riskFFAgainstFighters: 1
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: 13c45b4f30054584681d50011b1d12f0, type: 3}
   firePos: {fileID: 4071539184535878}
   maxAmmo: 20
@@ -1784,6 +1818,7 @@ MonoBehaviour:
   preferredTargetType: 1
   range: 25
   riskFFAgainstFighters: 1
+  ignoreNonPreferrential: 0
   soundShoot: {fileID: 8300000, guid: 13c45b4f30054584681d50011b1d12f0, type: 3}
   firePos: {fileID: 4702964862281888}
   maxAmmo: 20

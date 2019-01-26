@@ -1621,7 +1621,7 @@ MonoBehaviour:
   range: 40
   riskFFAgainstFighters: 0
   ignoreNonPreferrential: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4663811804393870}
   maxAmmo: 3
   reloadCooldown: 2
@@ -1659,7 +1659,7 @@ MonoBehaviour:
   range: 40
   riskFFAgainstFighters: 0
   ignoreNonPreferrential: 0
-  soundShoot: {fileID: 8300000, guid: d65e3fcb6ce0ab6479a43d61ba8f3c01, type: 3}
+  soundShoot: {fileID: 8300000, guid: 9f746bc333cd31841a76b382726abfb0, type: 3}
   firePos: {fileID: 4221274989616668}
   maxAmmo: 2
   reloadCooldown: 5

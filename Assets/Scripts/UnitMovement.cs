@@ -128,10 +128,12 @@ public class UnitMovement
 				// Send our position, velocity, rotation, and rotation speed
 				//if (velocity != Vector3.zero) // TODO: OPTIMIZATION LATER
 				multManager.CmdSyncUnitPosition(ourId, transform.position, velocity);
+				multManager.CmdSyncUnitRotation(ourId, transform.rotation, curRSRatio);
 			}
 		}
 		else // We want to rely entirely on position, velocity, etc. set by the server externally
 		{
+			ApplyRotVelocity();
 			ApplyVelocity();
 		}
 	}
@@ -177,14 +179,30 @@ public class UnitMovement
 			audioLoop.GetAudioSource().pitch = 1 + (velocity.magnitude / MS) * gameRules.AUD_enginePitchVariance;
 	}
 
+	void ApplyRotVelocity()
+	{
+		//Quaternion origRotate = transform.rotation;
+		//float speed = abilityGoal == null ? RS : RS * gameRules.MOV_abilityAimingRSMult;
+		float speed = RS;
+		transform.Rotate(0, speed * curRSRatio * Time.deltaTime, 0);
+	}
+
 	public void SyncPosAndVel(Vector3 pos, Vector3 vel)
 	{
-		//Debug.Log("transform is " + (transform == null ? "null" : "good"));
 		if (transform == null)
 			return;
 		//Debug.Log("My position got synced");
 		transform.position = pos;
 		velocity = vel;
+	}
+
+	public void SyncRotAndRotVel(Quaternion rot, float rotVel)
+	{
+		if (transform == null)
+			return;
+		//Debug.Log("My rotation got synced");
+		transform.rotation = rot;
+		curRSRatio = rotVel;
 	}
 
 	float UpdateRotation(Vector3 dir, bool ignoreHGoal)
@@ -213,10 +231,8 @@ public class UnitMovement
 			CurRS(0);
 		}
 
-		//Quaternion origRotate = transform.rotation;
-		float speed = abilityGoal == null ? RS : RS * gameRules.MOV_abilityAimingRSMult;
-
-		transform.Rotate(0, speed * curRSRatio * Time.deltaTime, 0);
+		//transform.Rotate(0, speed * curRSRatio * Time.deltaTime, 0);
+		ApplyRotVelocity();
 
 		return RdirectionOrg;
 	}
