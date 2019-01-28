@@ -92,6 +92,7 @@ public class Unit : Entity, ITargetable
 	private List<FighterGroup> enemySwarms;
 
 	private Manager_VFX vfx;
+	private Multiplayer_Manager multManager;
 
 	void Awake()
 	{
@@ -102,6 +103,8 @@ public class Unit : Entity, ITargetable
 		enemySwarms = new List<FighterGroup>();
 
 		vfx = GameObject.FindGameObjectWithTag("VFXManager").GetComponent<Manager_VFX>();
+
+		multManager = GameObject.FindGameObjectWithTag("MultiplayerManager").GetComponent<Multiplayer_Manager>(); // For multiplayer
 	}
 
 	//public void SetHeightCurrent(int cur)
@@ -977,7 +980,11 @@ public class Unit : Entity, ITargetable
 
 		if (curHealth <= 0)
 		{
-			Die(dmgType);
+			if (isServer) // Only actually die from damage on the server
+			{
+				multManager.CmdKillUnit(GetComponent<NetworkIdentity>(), dmgType);
+				Die(dmgType);
+			}
 			return new DamageResult(true);
 		}
 		else
@@ -1185,7 +1192,11 @@ public class Unit : Entity, ITargetable
 
 		if (curHealth <= 0)
 		{
-			Die(DamageType.Normal);
+			if (isServer) // Only actually die from damage on the server
+			{
+				multManager.CmdKillUnit(GetComponent<NetworkIdentity>(), DamageType.Normal);
+				Die(DamageType.Normal);
+			}
 		}
 	}
 
@@ -1264,6 +1275,13 @@ public class Unit : Entity, ITargetable
 		Destroy(hpBar.gameObject);
 		Destroy(selCircle);
 		Destroy(gameObject);
+	}
+
+	public void ClientDie(DamageType damageType)
+	{
+		if (isServer) // This is for clients only
+			return;
+		Die(damageType);
 	}
 
 	public int GetObjectiveWeight()

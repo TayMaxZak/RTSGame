@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using Particle = UnityEngine.ParticleSystem.Particle;
 using MainModule = UnityEngine.ParticleSystem.MainModule;
 using EmitParams = UnityEngine.ParticleSystem.EmitParams;
 
-public class Manager_Projectiles : MonoBehaviour
+public class Manager_Projectiles : NetworkBehaviour
 {
 	[SerializeField]
 	public List<Projectile> projectiles;
@@ -68,22 +69,25 @@ public class Manager_Projectiles : MonoBehaviour
 					{
 						if (unit != proj.GetFrom()) // If we hit a unit and its not us, damage it
 						{
-							Status status = proj.GetStatus();
-							if (status != null)
+							if (isServer) // Only deal damage on the server
 							{
-								if (status.statusType == StatusType.SuperlaserMark)
-									status.SetTimeLeft(proj.GetDamage() < gameRules.ABLY_superlaserDmgByStacks[1] ? proj.GetDamage() * SL_turretMult : proj.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
+								Status status = proj.GetStatus();
+								if (status != null)
+								{
+									if (status.statusType == StatusType.SuperlaserMark)
+										status.SetTimeLeft(proj.GetDamage() < gameRules.ABLY_superlaserDmgByStacks[1] ? proj.GetDamage() * SL_turretMult : proj.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
 
-								unit.AddStatus(status);
+									unit.AddStatus(status);
+								}
+
+								// If we hit an ally, do reduced damage because it was an accidental hit
+								bool doFullDamage = DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam;
+
+								DamageResult result = unit.Damage(doFullDamage ? proj.GetDamage() : proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
+
+								if (result.lastHit && proj.GetFrom())
+									proj.GetFrom().AddKill(unit);
 							}
-
-							// If we hit an ally, do reduced damage because it was an accidental hit
-							bool doFullDamage = DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam;
-
-							DamageResult result = unit.Damage(doFullDamage ? proj.GetDamage() : proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
-
-							if (result.lastHit && proj.GetFrom())
-								proj.GetFrom().AddKill(unit);
 						}
 						else
 						{

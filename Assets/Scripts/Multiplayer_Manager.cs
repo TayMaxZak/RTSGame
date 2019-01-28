@@ -58,4 +58,19 @@ public class Multiplayer_Manager : NetworkBehaviour
 		Unit u = parentUnit.GetComponent<Unit>();
 		u.GetTurrets()[turretId].ClientFire();
 	}
+
+	[Command]
+	public void CmdKillUnit(NetworkIdentity target, DamageType damageType)
+	{
+		//Debug.Log("Command to sync killing " + target.name);
+		RpcKillUnit(target, damageType);
+	}
+
+	[ClientRpc]
+	public void RpcKillUnit(NetworkIdentity target, DamageType damageType)
+	{
+		//Debug.Log("Synced killing " + target.name);
+		Unit u = target.GetComponent<Unit>();
+		u.ClientDie(damageType);
+	}
 }

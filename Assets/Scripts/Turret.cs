@@ -102,7 +102,7 @@ public class Turret : MonoBehaviour
 
 		rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
 
-		multManager = GameObject.FindGameObjectWithTag("MultiplayerManager").GetComponent<Multiplayer_Manager>(); // Grab copy of Game Rules
+		multManager = GameObject.FindGameObjectWithTag("MultiplayerManager").GetComponent<Multiplayer_Manager>(); // For multiplayer
 	}
 
 	public void SetParentUnit(Unit unit, int id)
