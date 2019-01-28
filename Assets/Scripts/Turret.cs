@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class Turret : MonoBehaviour
 {
 	public int team = 0;
 	protected Unit parentUnit;
+	private int turretId = -1;
 
 	protected Status onHitStatus;
 
@@ -83,6 +85,9 @@ public class Turret : MonoBehaviour
 	private AudioSource audioSource;
 	private GameRules gameRules;
 
+	private Multiplayer_Manager multManager;
+	//private NetworkIdentity ourId;
+
 	// Use this for initialization
 	protected void Awake()
 	{
@@ -96,12 +101,15 @@ public class Turret : MonoBehaviour
 		shootOffset = shootCooldown * shootOffsetRatio;
 
 		rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
+
+		multManager = GameObject.FindGameObjectWithTag("MultiplayerManager").GetComponent<Multiplayer_Manager>(); // Grab copy of Game Rules
 	}
 
-	public void SetParentUnit(Unit unit)
+	public void SetParentUnit(Unit unit, int id)
 	{
 		parentUnit = unit;
 		team = parentUnit.team;
+		turretId = id;
 	}
 
 	public void SetOnHitStatus(Status status)
@@ -143,7 +151,10 @@ public class Turret : MonoBehaviour
 				CalcTargetLookRotation();
 				Rotate();
 				// Shoot if possible
-				AttemptStartShooting();
+				if (parentUnit.isServer) // Only server actually shoots, it's faked on clients
+				{
+					AttemptStartShooting();
+				}
 			}
 			else // We haven't assigned one yet, it died, or it's become invalid
 			{
@@ -162,7 +173,10 @@ public class Turret : MonoBehaviour
 					CalcTargetLookRotation();
 					Rotate();
 					// Shoot if possible
-					AttemptStartShooting();
+					if (parentUnit.isServer) // Only server actually shoots, it's faked on clients
+					{
+						AttemptStartShooting();
+					}
 				}
 				else // Failed to find a valid target
 				{
@@ -616,7 +630,19 @@ public class Turret : MonoBehaviour
 
 	protected virtual void Fire()
 	{
-		curAmmo--;
+		if (parentUnit.isServer)
+		{
+			curAmmo--;
+
+			multManager.RpcFireTurret(parentUnit.GetComponent<NetworkIdentity>(), turretId);
+		}
+	}
+
+	public void ClientFire()
+	{
+		if (parentUnit.isServer) // This is for clients only
+			return;
+		Fire(); // Pretend to fire turret, not worrying about reloading, ammo, or actually dealing damage
 	}
 
 	// Called by parentUnit to give this turret an idea of what to shoot at

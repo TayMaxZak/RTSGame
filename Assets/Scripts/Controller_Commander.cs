@@ -14,7 +14,7 @@ public class Controller_Commander : NetworkBehaviour
 	[Header("Start")]
 	[SerializeField]
 	private GameObject flagshipPrefab;
-	private Vector3 offset = new Vector3(0, 0, 50);
+	private Vector3 offset = new Vector3(0, 0, 30);
 
 	[Header("GUI")]
 	[SerializeField]

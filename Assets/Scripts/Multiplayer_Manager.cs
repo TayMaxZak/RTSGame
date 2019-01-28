@@ -7,10 +7,12 @@ public class Multiplayer_Manager : NetworkBehaviour
 {
 	public int syncRate_movement = 8;
 
-	void Start()
-	{
+	//private Manager_Projectiles projs;
 
-	}
+	//void Awake()
+	//{
+	//	projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab reference to Projectiles Manager);
+	//}
 
 	[Command]
 	public void CmdSyncUnitPosition(NetworkIdentity mover, Vector3 newPos, Vector3 newVel)
@@ -40,5 +42,20 @@ public class Multiplayer_Manager : NetworkBehaviour
 		//Debug.Log("Synced " + mover.name);
 		UnitMovement um = mover.GetComponent<Unit>().GetMovement();
 		um.SyncRotAndRotVel(newRot, newRotVel);
+	}
+
+	[Command]
+	public void CmdFireTurret(NetworkIdentity parentUnit, int turretId)
+	{
+		//Debug.Log("Command to sync shooting from " + parentUnit.name + "'s turret " + turretId);
+		RpcFireTurret(parentUnit, turretId);
+	}
+
+	[ClientRpc]
+	public void RpcFireTurret(NetworkIdentity parentUnit, int turretId)
+	{
+		//Debug.Log("Synced shooting from " + parentUnit.name + "'s turret " + turretId);
+		Unit u = parentUnit.GetComponent<Unit>();
+		u.GetTurrets()[turretId].ClientFire();
 	}
 }

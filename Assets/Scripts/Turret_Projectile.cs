@@ -52,7 +52,7 @@ public class Turret_Projectile : Turret
 
 	protected override void Fire()
 	{
-		curAmmo--;
+		base.Fire();
 
 		Vector3 forward = GetForward();
 		// Projectile

@@ -23,7 +23,7 @@ public class Turret_Hitscan : Turret
 
 	protected override void Fire()
 	{
-		curAmmo--;
+		base.Fire();
 
 		Vector3 forward = GetForward();
 		// Projectile

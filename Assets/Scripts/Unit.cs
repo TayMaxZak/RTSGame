@@ -143,9 +143,9 @@ public class Unit : Entity, ITargetable
 		UpdateHPBarValIon();
 
 		// Init turrets
-		foreach (Turret tur in turrets)
+		for (int i = 0; i < turrets.Length; i++)
 		{
-			tur.SetParentUnit(this);
+			turrets[i].SetParentUnit(this, i);
 
 			// Make sure weapon damage counts for Superlaser marks
 			bool hasSuperlaser = false;
@@ -153,10 +153,10 @@ public class Unit : Entity, ITargetable
 				if (a.GetAbilityType() == AbilityType.Superlaser)
 					hasSuperlaser = true;
 			if (hasSuperlaser)
-				tur.SetOnHitStatus(new Status(gameObject, StatusType.SuperlaserMark));
+				turrets[i].SetOnHitStatus(new Status(gameObject, StatusType.SuperlaserMark));
 
 			if (disableTurrets)
-				tur.gameObject.SetActive(false);
+				turrets[i].gameObject.SetActive(false);
 		}
 
 		// Effects and audio
