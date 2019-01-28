@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using UnityEngine.Networking;
+using UnityEngine.Networking;
 
 public class Unit : Entity, ITargetable
 {
@@ -32,6 +32,7 @@ public class Unit : Entity, ITargetable
 	private AudioEffect_Loop fireAudioLoop;
 
 	[Header("Identification")]
+	[SyncVar] // We want to sync the teams of all units when a player joins
 	public int team = 0; // What team does this unit belong to
 	[HideInInspector]
 	public int buildIndex = -1; // What buildable unit should be refunded when this unit dies

@@ -35,6 +35,11 @@ public class Manager_Game : MonoBehaviour
 	//	//UpdateVisibilityForCommander(true);
 	//}
 
+	public void SetController(Controller_Commander conCom)
+	{
+		commanderController = conCom;
+	}
+
 	public Controller_Commander GetController()
 	{
 		return commanderController;

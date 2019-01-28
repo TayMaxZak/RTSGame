@@ -11,6 +11,11 @@ public class Controller_Commander : NetworkBehaviour
 	public int team;
 	private Commander commander;
 
+	[Header("Start")]
+	[SerializeField]
+	private GameObject flagshipPrefab;
+	private Vector3 offset = new Vector3(0, 0, 50);
+
 	[Header("GUI")]
 	[SerializeField]
 	private UI_EntityStats entityStats;
@@ -74,6 +79,7 @@ public class Controller_Commander : NetworkBehaviour
 	private AudioSource audioSource;
 
 	private Manager_Game gameManager;
+	private Multiplayer_Manager multManager;
 	private GameRules gameRules;
 
 	void Awake()
@@ -98,10 +104,23 @@ public class Controller_Commander : NetworkBehaviour
 	void Start()
 	{
 		//Time.timeScale = 3;
+		
+		// Local setup stuff
+		if (!isLocalPlayer)
+		{
+			return;
+		}
+
+		multManager = GameObject.FindGameObjectWithTag("MultiplayerManager").GetComponent<Multiplayer_Manager>();
+		team = GetCurTeam();
+		CmdSpawnMyFlagship(team);
+		CmdIncrementCurTeam();
+		
 
 		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
 		gameRules = gameManager.GameRules; // Grab copy of Game Rules
 		SetCommander(gameManager.GetCommander(team));
+		gameManager.SetController(this);
 
 		selection = new List<Entity>();
 		Select(null, false);
@@ -117,7 +136,32 @@ public class Controller_Commander : NetworkBehaviour
 		SetCommandWheelActive(false);
 	}
 
+	public int GetCurTeam()
+	{
+		Multiplayer_Server wahoo = GameObject.FindGameObjectWithTag("Server").GetComponent<Multiplayer_Server>();
+		int toReturn = wahoo.currentTeam;
+		return toReturn;
+	}
 
+	[Command]
+	public void CmdIncrementCurTeam()
+	{
+		Multiplayer_Server wahoo = GameObject.FindGameObjectWithTag("Server").GetComponent<Multiplayer_Server>();
+		wahoo.currentTeam++;
+	}
+
+	[Command]
+	void CmdSpawnMyFlagship(int myTeam)
+	{
+		// Create the flagship on all instances
+		//GameObject go = Instantiate(flagshipPrefab, offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 10, Quaternion.identity);
+		GameObject go = Instantiate(flagshipPrefab);
+		go.transform.position = offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 10;
+		//go.transform.localEulerAngles = new Vector3(0, Random.Range(-45f, 45f), 0);
+		Unit u = go.GetComponent<Unit>();
+		u.team = myTeam;
+		NetworkServer.Spawn(go);
+	}
 
 	void SetCommander(Commander newCommander)
 	{
@@ -362,6 +406,7 @@ public class Controller_Commander : NetworkBehaviour
 		// Only recieve input from the local player
 		if (!isLocalPlayer)
 			return;
+
 
 		UpdateMovementGrid();
 		UpdateInput();

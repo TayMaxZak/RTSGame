@@ -134,8 +134,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74a2d44d496c1cb4c817ff468476089e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowTeamSwaps: 0
+  allowTeamSwaps: 1
   team: 0
+  flagshipPrefab: {fileID: 1025386178585290, guid: b798598acc4663f4c9ae493d876dfc5b,
+    type: 2}
   entityStats: {fileID: 0}
   commandWheel: {fileID: 0}
   resPointsCounter: {fileID: 0}
@@ -163,8 +165,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60a8fe240b71c6c4283567ad07f7f875, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flagshipPrefab: {fileID: 1025386178585290, guid: b798598acc4663f4c9ae493d876dfc5b,
-    type: 2}
 --- !u!114 &114814061465936044
 MonoBehaviour:
   m_ObjectHideFlags: 1

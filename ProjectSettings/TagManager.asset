@@ -22,6 +22,7 @@ TagManager:
   - ConCom_Grid
   - ConCom_Line1
   - ConCom_Line2
+  - Server
   layers:
   - Default
   - TransparentFX
