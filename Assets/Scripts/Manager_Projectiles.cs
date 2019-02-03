@@ -69,25 +69,22 @@ public class Manager_Projectiles : NetworkBehaviour
 					{
 						if (unit != proj.GetFrom()) // If we hit a unit and its not us, damage it
 						{
-							if (isServer) // Only deal damage on the server
+							Status status = proj.GetStatus();
+							if (status != null)
 							{
-								Status status = proj.GetStatus();
-								if (status != null)
-								{
-									if (status.statusType == StatusType.SuperlaserMark)
-										status.SetTimeLeft(proj.GetDamage() < gameRules.ABLY_superlaserDmgByStacks[1] ? proj.GetDamage() * SL_turretMult : proj.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
+								if (status.statusType == StatusType.SuperlaserMark)
+									status.SetTimeLeft(proj.GetDamage() < gameRules.ABLY_superlaserDmgByStacks[1] ? proj.GetDamage() * SL_turretMult : proj.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
 
-									unit.AddStatus(status);
-								}
-
-								// If we hit an ally, do reduced damage because it was an accidental hit
-								bool doFullDamage = DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam;
-
-								DamageResult result = unit.Damage(doFullDamage ? proj.GetDamage() : proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
-
-								if (result.lastHit && proj.GetFrom())
-									proj.GetFrom().AddKill(unit);
+								unit.AddStatus(status);
 							}
+
+							// If we hit an ally, do reduced damage because it was an accidental hit
+							bool doFullDamage = DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam;
+
+							DamageResult result = unit.Damage(doFullDamage ? proj.GetDamage() : proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
+
+							if (result.lastHit && proj.GetFrom())
+								proj.GetFrom().AddKill(unit);
 						}
 						else
 						{

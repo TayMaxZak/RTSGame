@@ -136,7 +136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowTeamSwaps: 1
   team: 0
-  flagshipPrefab: {fileID: 1025386178585290, guid: b798598acc4663f4c9ae493d876dfc5b,
+  flagshipPrefab: {fileID: 1025386178585290, guid: fff08ceb6bee545459352ed06e168767,
     type: 2}
   entityStats: {fileID: 0}
   commandWheel: {fileID: 0}

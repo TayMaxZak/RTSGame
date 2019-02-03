@@ -9,10 +9,10 @@ public class Multiplayer_Manager : NetworkBehaviour
 
 	//private Manager_Projectiles projs;
 
-	//void Awake()
-	//{
-	//	projs = GameObject.FindGameObjectWithTag("ProjsManager").GetComponent<Manager_Projectiles>(); // Grab reference to Projectiles Manager);
-	//}
+	void Awake()
+	{
+		Random.InitState(0);
+	}
 
 	[Command]
 	public void CmdSyncUnitPosition(NetworkIdentity mover, Vector3 newPos, Vector3 newVel)
@@ -24,6 +24,12 @@ public class Multiplayer_Manager : NetworkBehaviour
 	[ClientRpc]
 	void RpcSyncUnitPosition(NetworkIdentity mover, Vector3 newPos, Vector3 newVel)
 	{
+		if (mover == null)
+		{
+			Debug.LogWarning("[SyncUnitPosition] Can't find unit which was supposed to move to " + newPos);
+			return;
+		}
+
 		//Debug.Log("Synced " + mover.name);
 		UnitMovement um = mover.GetComponent<Unit>().GetMovement();
 		um.SyncPosAndVel(newPos, newVel);
@@ -32,6 +38,12 @@ public class Multiplayer_Manager : NetworkBehaviour
 	[Command]
 	public void CmdSyncUnitRotation(NetworkIdentity mover, Quaternion newRot, float newRotVel)
 	{
+		if (mover == null)
+		{
+			Debug.LogWarning("[SyncUnitRotation] Can't find unit which was supposed to rotate.");
+			return;
+		}
+
 		//Debug.Log("Command to sync " + mover.name);
 		RpcSyncUnitRotation(mover, newRot, newRotVel);
 	}
@@ -44,6 +56,7 @@ public class Multiplayer_Manager : NetworkBehaviour
 		um.SyncRotAndRotVel(newRot, newRotVel);
 	}
 
+	// TODO: Sync random deviation
 	[Command]
 	public void CmdFireTurret(NetworkIdentity parentUnit, int turretId)
 	{
@@ -51,6 +64,7 @@ public class Multiplayer_Manager : NetworkBehaviour
 		RpcFireTurret(parentUnit, turretId);
 	}
 
+	// TODO: Sync random deviation
 	[ClientRpc]
 	public void RpcFireTurret(NetworkIdentity parentUnit, int turretId)
 	{
@@ -62,15 +76,45 @@ public class Multiplayer_Manager : NetworkBehaviour
 	[Command]
 	public void CmdKillUnit(NetworkIdentity target, DamageType damageType)
 	{
-		//Debug.Log("Command to sync killing " + target.name);
+		Debug.Log("Command to sync killing " + target.name);
 		RpcKillUnit(target, damageType);
 	}
 
+	// TODO: Make sure the unit isn't deleted before we tell it to die
 	[ClientRpc]
 	public void RpcKillUnit(NetworkIdentity target, DamageType damageType)
 	{
-		//Debug.Log("Synced killing " + target.name);
+		if (target == null)
+		{
+			Debug.LogWarning("[KillUnit] Can't find unit which was supposed to die from " + damageType + " damage.");
+			return;
+		}
+
+		Debug.Log("Synced killing " + target.name);
 		Unit u = target.GetComponent<Unit>();
 		u.ClientDie(damageType);
+	}
+
+	[Command]
+	public void CmdDmgUnit(NetworkIdentity target, float healthDmg, float armorDmg)
+	{
+		Debug.Log("Command to sync damaging " + target.name + " by " + (int)healthDmg + " health and " + (int)armorDmg + " armor.");
+		RpcDmgUnit(target, healthDmg, armorDmg);
+	}
+
+	// TODO: Make sure the unit isn't deleted before we tell it to take damage
+	[ClientRpc]
+	public void RpcDmgUnit(NetworkIdentity target, float healthDmg, float armorDmg)
+	{
+		if (target == null)
+		{
+			Debug.LogWarning("[DmgUnit] Can't find unit which was supposed to take " + (int)healthDmg + " health and " + (int)armorDmg + " armor damage.");
+			return;
+		}
+			
+
+		Debug.Log("Synced damaging " + target.name + " by " + (int)healthDmg + " health and " + (int)armorDmg + " armor.");
+		Unit u = target.GetComponent<Unit>();
+		u.ClientDamage(healthDmg, armorDmg);
 	}
 }

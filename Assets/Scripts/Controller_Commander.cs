@@ -82,11 +82,6 @@ public class Controller_Commander : NetworkBehaviour
 	private Multiplayer_Manager multManager;
 	private GameRules gameRules;
 
-	void Awake()
-	{
-		FindReferences();
-	}
-
 	void FindReferences()
 	{
 		entityStats = GameObject.FindGameObjectWithTag("ConCom_EntityStats").GetComponent<UI_EntityStats>();
@@ -103,13 +98,13 @@ public class Controller_Commander : NetworkBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		//Time.timeScale = 3;
-		
 		// Local setup stuff
 		if (!isLocalPlayer)
 		{
 			return;
 		}
+
+		FindReferences();
 
 		multManager = GameObject.FindGameObjectWithTag("MultiplayerManager").GetComponent<Multiplayer_Manager>();
 		team = GetCurTeam();
@@ -153,14 +148,17 @@ public class Controller_Commander : NetworkBehaviour
 	[Command]
 	void CmdSpawnMyFlagship(int myTeam)
 	{
-		// Create the flagship on all instances
-		//GameObject go = Instantiate(flagshipPrefab, offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 10, Quaternion.identity);
-		GameObject go = Instantiate(flagshipPrefab);
-		go.transform.position = offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 10;
-		//go.transform.localEulerAngles = new Vector3(0, Random.Range(-45f, 45f), 0);
-		Unit u = go.GetComponent<Unit>();
-		u.team = myTeam;
-		NetworkServer.Spawn(go);
+		for (int i = 0; i < 2; i++)
+		{
+			// Create the flagship on all instances
+			//GameObject go = Instantiate(flagshipPrefab, offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 10, Quaternion.identity);
+			GameObject go = Instantiate(flagshipPrefab);
+			go.transform.position = offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 15;
+			//go.transform.localEulerAngles = new Vector3(0, Random.Range(-45f, 45f), 0);
+			Unit u = go.GetComponent<Unit>();
+			u.team = myTeam;
+			NetworkServer.Spawn(go);
+		}
 	}
 
 	void SetCommander(Commander newCommander)

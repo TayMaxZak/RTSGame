@@ -903,6 +903,11 @@ public class Unit : Entity, ITargetable
 
 	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
 	{
+		if (!isServer) // Client hits always fail
+		{
+			return new DamageResult(false);
+		}
+
 		OnDamage();
 
 		float dmg = damageBase;
@@ -969,14 +974,16 @@ public class Unit : Entity, ITargetable
 			RefreshIonDecay();
 			CheckIons();
 		}
-		else
-		{
+		//else
+		//{
 			if (curIons > gameRules.ABLY_ionMissileDecayCutoff && dmgType != DamageType.IonMissile) // The minsicule actual damage from an ion missile should not create any ions
 				AddIons((dmgToArmor / maxArmor) * 100 * gameRules.ABLY_ionMissileArmorDmgToIons, false);
-		}
+		//}
 		curArmor = Mathf.Max(curArmor, 0);
 		
 		UpdateHealth();
+
+		ServerDamage(-healthChange, dmgToArmor);
 
 		if (curHealth <= 0)
 		{
@@ -989,6 +996,19 @@ public class Unit : Entity, ITargetable
 		}
 		else
 			return new DamageResult(false);
+	}
+
+	void ServerDamage(float healthDmg, float armorDmg)
+	{
+		multManager.CmdDmgUnit(GetComponent<NetworkIdentity>(), healthDmg, armorDmg);
+	}
+
+	public void ClientDamage(float healthDmg, float armorDmg)
+	{
+		if (isServer) // For clients only
+			return;
+
+		SubtractHealth(healthDmg, armorDmg);
 	}
 
 	protected virtual void OnDamage()
@@ -1177,6 +1197,24 @@ public class Unit : Entity, ITargetable
 	// Treats health and armor seperately, and ignores shields, resitances, and statuses
 	public void DamageSimple(float healthDmg, float armorDmg, bool handleDamage)
 	{
+		if (!isServer)
+		{
+			return;
+		}
+
+		ServerDamage(healthDmg, armorDmg);
+
+		SubtractHealth(healthDmg, armorDmg);
+	}
+
+	public void DamageSimple(float healthDmg, float armorDmg)
+	{
+		DamageSimple(healthDmg, armorDmg, false);
+	}
+
+	void SubtractHealth(float healthDmg, float armorDmg)
+	{
+		bool handleDamage = true;
 		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
 		curHealth = Mathf.Min(curHealth - healthDmg, maxHealth);
 		if (handleDamage)
@@ -1198,11 +1236,6 @@ public class Unit : Entity, ITargetable
 				Die(DamageType.Normal);
 			}
 		}
-	}
-
-	public void DamageSimple(float healthDmg, float armorDmg)
-	{
-		DamageSimple(healthDmg, armorDmg, false);
 	}
 
 	public virtual void Die(DamageType damageType)

@@ -88,26 +88,23 @@ public class Manager_Hitscan : NetworkBehaviour
 				{
 					if (unit != scan.GetFrom()) // If we hit a unit and its not us, damage it
 					{
-						if (isServer)
+						Status status = scan.GetStatus();
+						if (status != null)
 						{
-							Status status = scan.GetStatus();
-							if (status != null)
-							{
-								if (status.statusType == StatusType.SuperlaserMark)
-									status.SetTimeLeft(scan.GetDamage() < gameRules.ABLY_superlaserDmgByStacks[1] ? scan.GetDamage() * SL_turretMult : scan.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
+							if (status.statusType == StatusType.SuperlaserMark)
+								status.SetTimeLeft(scan.GetDamage() < gameRules.ABLY_superlaserDmgByStacks[1] ? scan.GetDamage() * SL_turretMult : scan.GetDamage() * SL_superlaserMult); // Store damage in timeLeft field of status
 
-								unit.AddStatus(status);
-							}
-
-							float actualRange = (hit.point - scan.startPosition).magnitude;
-							// If we hit an ally, do reduced damage because it was an accidental hit
-							bool doFullDamage = DamageUtils.IgnoresFriendlyFire(scan.GetDamageType()) || unit.team != scanTeam;
-
-							DamageResult result = unit.Damage(doFullDamage ? scan.GetDamage() : scan.GetDamage() * gameRules.DMG_ffDamageMult, actualRange, scan.GetDamageType());
-
-							if (result.lastHit && scan.GetFrom())
-								scan.GetFrom().AddKill(unit);
+							unit.AddStatus(status);
 						}
+
+						float actualRange = (hit.point - scan.startPosition).magnitude;
+						// If we hit an ally, do reduced damage because it was an accidental hit
+						bool doFullDamage = DamageUtils.IgnoresFriendlyFire(scan.GetDamageType()) || unit.team != scanTeam;
+
+						DamageResult result = unit.Damage(doFullDamage ? scan.GetDamage() : scan.GetDamage() * gameRules.DMG_ffDamageMult, actualRange, scan.GetDamageType());
+
+						if (result.lastHit && scan.GetFrom())
+							scan.GetFrom().AddKill(unit);
 					}
 					else
 					{
