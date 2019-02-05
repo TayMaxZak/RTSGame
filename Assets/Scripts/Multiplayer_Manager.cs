@@ -14,6 +14,8 @@ public class Multiplayer_Manager : NetworkBehaviour
 		Random.InitState(0);
 	}
 
+	//---------------------------------------- MOVEMENT ----------------------------------------//
+
 	[Command]
 	public void CmdSyncUnitPosition(NetworkIdentity mover, Vector3 newPos, Vector3 newVel)
 	{
@@ -56,6 +58,8 @@ public class Multiplayer_Manager : NetworkBehaviour
 		um.SyncRotAndRotVel(newRot, newRotVel);
 	}
 
+	//---------------------------------------- TURRETS ----------------------------------------//
+
 	// TODO: Sync random deviation
 	[Command]
 	public void CmdFireTurret(NetworkIdentity parentUnit, int turretId)
@@ -72,6 +76,23 @@ public class Multiplayer_Manager : NetworkBehaviour
 		Unit u = parentUnit.GetComponent<Unit>();
 		u.GetTurrets()[turretId].ClientFire();
 	}
+
+	[Command]
+	public void CmdSyncTarget(NetworkIdentity parentUnit, int turretId, NetworkIdentity target, bool manual)
+	{
+		//Debug.Log("Command to sync shooting from " + parentUnit.name + "'s turret " + turretId);
+		RpcSyncTarget(parentUnit, turretId, target, manual);
+	}
+
+	[ClientRpc]
+	public void RpcSyncTarget(NetworkIdentity parentUnit, int turretId, NetworkIdentity target, bool manual)
+	{
+		//Debug.Log("Synced shooting from " + parentUnit.name + "'s turret " + turretId);
+		Unit u = parentUnit.GetComponent<Unit>();
+		u.GetTurrets()[turretId].ClientUpdateTarget(target, manual);
+	}
+
+	//---------------------------------------- DAMAGE ----------------------------------------//
 
 	[Command]
 	public void CmdKillUnit(NetworkIdentity target, DamageType damageType)

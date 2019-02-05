@@ -197,6 +197,11 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		return true;
 	}
 
+	public GameObject GetGameObject()
+	{
+		return gameObject;
+	}
+
 	public DamageResult Damage(float damageBase, float range, DamageType dmgType)
 	{
 		bool die = false;

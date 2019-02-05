@@ -346,9 +346,9 @@ public class Controller_Commander : NetworkBehaviour
 			// Relative goal
 			foreach (Unit u in units)
 			{
-				Vector3 newVec = u.transform.position + dif;
-				newVec.y = u.transform.position.y;
-				CmdOrderMove(u.GetComponent<NetworkIdentity>(), newVec, units.Count > 1);
+				Vector3 newVector = u.transform.position + dif;
+				newVector.y = u.transform.position.y;
+				CmdOrderMove(u.GetComponent<NetworkIdentity>(), newVector, units.Count > 1);
 			}
 
 			AudioUtils.PlayClipAt(soundMove, transform.position, audioSource);
@@ -356,16 +356,18 @@ public class Controller_Commander : NetworkBehaviour
 		}
 	}
 
-	public void Target(Entity newTarg)
+	public void Attack(Entity newTarg)
 	{
 		if (HasSelection())
 		{
 			foreach (Entity e in selection)
 			{
 				if (newTarg && IsUnit(newTarg) && IsUnit(e) && ((Unit)newTarg).team != team)
-				//if (newTarg && IsUnit(newTarg) && newTarg != e && IsUnit(e))
-					((Unit)e).OrderAttack((Unit)newTarg);
-			}
+				{
+					//if (newTarg && IsUnit(newTarg) && newTarg != e && IsUnit(e))
+					CmdOrderAttack(e.GetComponent<NetworkIdentity>(), newTarg.GetComponent<NetworkIdentity>());
+				}
+			} // foreach
 		}
 	}
 
@@ -466,6 +468,7 @@ public class Controller_Commander : NetworkBehaviour
 				RaycastHit hit = RaycastFromCursor(0);
 				Entity ent = GetEntityFromHit(hit);
 				// Treat invisible entities as if they don't exist
+				// TODO: Is it visible ON THE SERVER?
 				if (ent)
 					ent = ent.VisibleBy(team) ? ent : null;
 				// Hovering an entity
@@ -721,12 +724,13 @@ public class Controller_Commander : NetworkBehaviour
 					RaycastHit hit = RaycastFromCursor(2);
 					Entity ent = GetEntityFromHit(hit);
 					// Treat invisible entities as if they don't exist
+					// TODO: Is it visible ON THE SERVER?
 					if (ent)
 						ent = ent.VisibleBy(team) ? ent : null;
 					if (ent)
 					{
 						if (IsUnit(ent))
-							Target(ent);
+							Attack(ent);
 					}
 					else if (hit.collider)
 						Move(hit.point);
@@ -736,7 +740,7 @@ public class Controller_Commander : NetworkBehaviour
 
 		if (Input.GetKeyDown("1"))
 		{
-			SelectSquadron(1, control);
+			SelectGroup(1, control);
 		}
 
 		// Abilities
@@ -800,7 +804,7 @@ public class Controller_Commander : NetworkBehaviour
 		}
 	}
 
-	void SelectSquadron(int index, bool additive)
+	void SelectGroup(int index, bool additive)
 	{
 		List<UnitSelectable> selectable = commander.GetSelectableUnits();
 		if (!additive)
@@ -808,7 +812,7 @@ public class Controller_Commander : NetworkBehaviour
 		for (int i = 0; i < selectable.Count; i++)
 		{
 			// For each selectable unit, check if its index matched our target index
-			if (selectable[i].squadronId == index)
+			if (selectable[i].groupId == index)
 			{
 				Select(selectable[i].unit, true);
 			}
@@ -890,6 +894,7 @@ public class Controller_Commander : NetworkBehaviour
 				{
 					Entity ent = GetEntityFromHit(RaycastFromCursor(0));
 					// Treat invisible entities as if they don't exist
+					// TODO: Is it visible ON THE SERVER?
 					if (ent)
 						ent = ent.VisibleBy(team) ? ent : null;
 					if (ent && IsUnit(ent))
@@ -1194,4 +1199,13 @@ public class Controller_Commander : NetworkBehaviour
 		Unit u = id.GetComponent<Unit>();
 		u.OrderChangeHeight(newGridHeight);
 	}
+	// Tell the server to move its copy of this unit
+	[Command]
+	void CmdOrderAttack(NetworkIdentity id, NetworkIdentity target)
+	{
+		Unit u = id.GetComponent<Unit>();
+		Unit targ = target.GetComponent<Unit>();
+		u.OrderAttack(targ);
+	}
+
 }

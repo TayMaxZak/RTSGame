@@ -120,7 +120,25 @@ public class Turret : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		UpdateTargeting();
+		// Only the server looks for targets every frame
+		if (parentUnit.isServer)
+		{
+			UpdateTargeting();
+		}
+		else
+		{ // Rotate appropriately based on target set by server
+			if (!IsNull(target))
+			{
+				CalcTargetLookRotation();
+				Rotate();
+			}
+			else
+			{
+				direction = transform.forward;
+				lookRotation = CalcLookRotation(direction);
+				Rotate();
+			}
+		}
 	}
 
 	void UpdateTargeting()
@@ -648,6 +666,8 @@ public class Turret : MonoBehaviour
 	// Called by parentUnit to give this turret an idea of what to shoot at
 	public void SetManualTarget(Unit newTarg)
 	{
+		if (!parentUnit.isServer) // Target can only be set on server
+			return;
 		target = newTarg;
 		UpdateTarget(true);
 	}
@@ -665,9 +685,23 @@ public class Turret : MonoBehaviour
 
 	private void UpdateTarget(bool manual)
 	{
+		if (parentUnit.isServer)
+		{
+			multManager.CmdSyncTarget(parentUnit.GetComponent<NetworkIdentity>(), turretId, target.GetGameObject().GetComponent<NetworkIdentity>(), manual);
+		}
 		resetRotFrame = Time.frameCount;
 		hasManualTarget = manual;
-		//Debug.Log("Turret aiming at " + (target ? target.DisplayName : "null"));
+		//Debug.Log("Turret aiming at " + (!IsNull(target) ? target.GetTargetType().ToString() : "null"));
+	}
+
+	public void ClientUpdateTarget(NetworkIdentity targetIdentity, bool manual)
+	{
+		if (parentUnit.isServer) // This is for clients only
+			return;
+		target = GetITargetableFromNetworkIdentity(targetIdentity);
+		Debug.Log("Client turret aiming at " + (!IsNull(target) ? target.GetTargetType().ToString() : "null"));
+		UpdateTarget(manual);
+		
 	}
 
 	ITargetable GetITargetableFromCol(Collider col)
@@ -691,23 +725,28 @@ public class Turret : MonoBehaviour
 				return null;
 		}
 	}
-	/*
-	Unit GetUnitFromCol(Collider col)
+
+	ITargetable GetITargetableFromNetworkIdentity(NetworkIdentity identity)
 	{
-		Entity ent = col.GetComponentInParent<Entity>();
+		Entity ent = identity.GetComponent<Entity>();
 		if (ent)
 		{
 			if (ent.GetType() == typeof(Unit) || ent.GetType().IsSubclassOf(typeof(Unit)))
+			{
 				return (Unit)ent;
+			}
 			else
 				return null;
 		}
 		else
 		{
-			return null;
+			ITargetable it = identity.GetComponent<FighterGroup>(); // TODO: Generalize for all non-unit targetables
+			if (!IsNull(it))
+				return it;
+			else
+				return null;
 		}
 	}
-	*/
 
 	void CancelReload()
 	{
@@ -748,6 +787,7 @@ public interface ITargetable
 	TargetType GetTargetType();
 	DamageResult Damage(float damageBase, float range, DamageType dmgType);
 	bool GetVisibleTo(int team); // Can the given team see this target
+	GameObject GetGameObject();
 }
 
 public enum TargetType

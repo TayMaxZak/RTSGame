@@ -5,11 +5,11 @@ using UnityEngine;
 public class UnitSelectable
 {
 	public Unit unit;
-	public int squadronId;
+	public int groupId;
 
 	public UnitSelectable(Unit u, int squad)
 	{
 		unit = u;
-		squadronId = squad;
+		groupId = squad;
 	}
 }

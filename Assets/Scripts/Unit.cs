@@ -1424,7 +1424,7 @@ public class Unit : Entity, ITargetable
 		if (i == 1) // Set Squadron
 		{
 			if (Type != EntityType.Flagship)
-				selectable.squadronId = 1;
+				selectable.groupId = 1;
 		}
 		else if (i == 3) // Clear Manual Target
 		{
@@ -1489,6 +1489,11 @@ public class Unit : Entity, ITargetable
 	public bool GetVisibleTo(int team)
 	{
 		return VisibleBy(team);
+	}
+
+	public GameObject GetGameObject()
+	{
+		return gameObject;
 	}
 
 
