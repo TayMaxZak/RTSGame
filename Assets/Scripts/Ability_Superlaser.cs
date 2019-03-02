@@ -278,7 +278,6 @@ public class Ability_Superlaser : Ability
 			Vector3 pos = cannon.transform.position + transform.forward * dist;
 			pos.y = targetUnit.transform.position.y;
 			// Rotate superlaser vertically
-			Debug.DrawLine(cannon.transform.position, pos, Color.blue);
 			Rotate((pos - cannon.transform.position).normalized);
 		}
 		else
@@ -311,8 +310,6 @@ public class Ability_Superlaser : Ability
 		Quaternion resetRot = Quaternion.identity;
 
 		// Rotate towards the desired look rotation
-		// TODO: Sometimes super slow
-		Debug.DrawRay(cannon.transform.position, direction, Color.red);
 		Quaternion newRotation = Quaternion.RotateTowards(cannon.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
 
 		// Limit rotation

@@ -148,17 +148,17 @@ public class Controller_Commander : NetworkBehaviour
 	[Command]
 	void CmdSpawnMyFlagship(int myTeam)
 	{
-		for (int i = 0; i < 2; i++)
-		{
-			// Create the flagship on all instances
-			//GameObject go = Instantiate(flagshipPrefab, offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 10, Quaternion.identity);
-			GameObject go = Instantiate(flagshipPrefab);
-			go.transform.position = offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 15;
-			//go.transform.localEulerAngles = new Vector3(0, Random.Range(-45f, 45f), 0);
-			Unit u = go.GetComponent<Unit>();
-			u.team = myTeam;
-			NetworkServer.Spawn(go);
-		}
+		//for (int i = 0; i < 2; i++)
+		//{
+		// Create the flagship on all instances
+		//GameObject go = Instantiate(flagshipPrefab, offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 10, Quaternion.identity);
+		GameObject go = Instantiate(flagshipPrefab);
+		go.transform.position = offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 15;
+		//go.transform.localEulerAngles = new Vector3(0, Random.Range(-45f, 45f), 0);
+		Unit u = go.GetComponent<Unit>();
+		u.team = myTeam;
+		NetworkServer.Spawn(go);
+		//}
 	}
 
 	void SetCommander(Commander newCommander)
@@ -849,6 +849,8 @@ public class Controller_Commander : NetworkBehaviour
 
 	void UseAbility(int index)
 	{
+		return;
+
 		if (!HasSelection())
 			return;
 
@@ -995,8 +997,8 @@ public class Controller_Commander : NetworkBehaviour
 
 	void BuildCancel()
 	{
-		commander.GiveResources(commander.GetBuildUnit(buildUnitIndex).cost);
 		buildState = 0;
+		commander.GiveResources(commander.GetBuildUnit(buildUnitIndex).cost);
 		Destroy(buildPreview);
 	}
 
@@ -1004,9 +1006,11 @@ public class Controller_Commander : NetworkBehaviour
 	{
 		buildState = 0;
 
-		Clone_Build pendingBuild = buildPreview.GetComponent<Clone_Build>();
-		pendingBuild.buildUnit = commander.GetBuildUnit(buildUnitIndex);
-		pendingBuild.Build(buildUnitIndex, team);
+		// Spawn incoming build on server (distributing to clients automatically)
+		CmdSpawnIncoming(buildPreview.transform.position, buildPreview.transform.rotation, buildUnitIndex, team);
+
+		// Remove preview object from client
+		Destroy(buildPreview);
 
 		// Resources should already be subtracted at this point
 		commander.IncrementUnitCounter(buildUnitIndex);
@@ -1207,5 +1211,25 @@ public class Controller_Commander : NetworkBehaviour
 		Unit targ = target.GetComponent<Unit>();
 		u.OrderAttack(targ);
 	}
-
+	[Command]
+	void CmdSpawnIncoming(Vector3 pos, Quaternion rot, int bIndex, int bTeam)
+	{
+		Commander bCommander = commander;
+		if (!bCommander)
+		{
+			gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
+			bCommander = gameManager.GetCommander(bTeam);
+		}
+		if (bCommander == null)
+			Debug.LogWarning("No commander found");
+		if (bCommander.GetBuildUnit(bIndex) == null)
+			Debug.LogWarning("No matching build unit found");
+		if (bCommander.GetBuildUnit(bIndex).incomingObject == null)
+			Debug.LogWarning("No matching incoming object found");
+		GameObject go = Instantiate(bCommander.GetBuildUnit(bIndex).incomingObject, pos, rot);
+		Build_Incoming incoming = go.GetComponent<Build_Incoming>(); // TODO: Anything past position, rotation, and SyncVars wont affect the network-spawned object
+		//incoming.buildUnit = bCommander.GetBuildUnit(bIndex);
+		incoming.Init(bIndex, bTeam);
+		NetworkServer.Spawn(go);
+	}
 }

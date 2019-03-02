@@ -54,6 +54,8 @@ MonoBehaviour:
   type: 2
   previewObject: {fileID: 1718537276440054, guid: 3f7dddf2f1c7ade47bb8193bbe8ad63e,
     type: 2}
+  incomingObject: {fileID: 1718537276440054, guid: 2745c76ecb9c4cb479f6199014a65d9f,
+    type: 2}
   spawnObject: {fileID: 1245470892901488, guid: d9751e6d6818dce4d8289c6fd112d098,
     type: 2}
   cost: 2

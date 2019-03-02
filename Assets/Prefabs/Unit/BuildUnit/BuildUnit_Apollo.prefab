@@ -54,6 +54,8 @@ MonoBehaviour:
   type: 5
   previewObject: {fileID: 1191156931698570, guid: 38b26211f07bd6b40bf07e7fc8756e67,
     type: 2}
+  incomingObject: {fileID: 1191156931698570, guid: 002589806e4c01846b759cb09184f230,
+    type: 2}
   spawnObject: {fileID: 1025386178585290, guid: b798598acc4663f4c9ae493d876dfc5b,
     type: 2}
   cost: 3

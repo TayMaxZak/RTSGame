@@ -7,11 +7,11 @@ public class GameRules
 {
 	[Header("Testing")]
 	public bool useTestValues = false;
-	public float TEST_timeMultCooldown = 1f;
+	public float TEST_timeMultCooldown = 1;
 	public float TEST_timeMultBuild = 0.2f;
 	public float TEST_initHPAdd = 0;
-	public float TEST_initHPMult = 1f;
-	public float TEST_spawnRangeMult = 3f;
+	public float TEST_initHPMult = 1;
+	public float TEST_spawnRangeMult = 3;
 
 	[Header("Layer Masks")]
 	public LayerMask entityLayerMask;
@@ -22,8 +22,8 @@ public class GameRules
 	[Header("Armor")]
 	public float ARM_absorbFlat = 5; // How much armor absorb is guaranteed
 	public float ARM_absorbScaling = 15; // How much armor absorb is added based on current percentage of armor
-	public float ARM_rangeMin = 30f; // Range past which armor range resist begins
-	public float ARM_rangeMax = 60f; // Range past which armor range resist is at full effect
+	public float ARM_rangeMin = 30; // Range past which armor range resist begins
+	public float ARM_rangeMax = 60; // Range past which armor range resist is at full effect
 	public float ARM_rangeMult = 0.8f; // Overall range resist multiplier
 
 	[Header("Health")]
@@ -49,7 +49,7 @@ public class GameRules
 	public float OBJV_captureRange = 25; // Range around objective which counts toward capture
 	public float OBJV_captureTime = 20; // Time to go from neutral state to fully controlled state, given a contribution of 1
 	public float OBJV_captureAddPerUnitMult = 1; // How much each unit contributes,
-	public float OBJV_captureAddMax = 3; // total capped by this amount
+	public float OBJV_captureAddMax = 3; // Total capped by this amount
 
 	[Header("Resources")]
 	public float RES_reclaimTime = 5; // How long it takes to convert a raw material point into a resource point
@@ -62,9 +62,9 @@ public class GameRules
 	public float AUD_enginePitchVariance = 0.05f; // By how much engine pitch goes up from moving faster
 
 	[Header("Projectiles")]
-	public float PRJ_maxTimeAlive = 4f; // How long each projectile lives
+	public float PRJ_maxTimeAlive = 4; // How long each projectile lives
 	public float PRJ_hitOffset = 0.1f; // When hitting an object, a projectile always detonates this back far from the hit point
-	public float PRJ_friendlyFireCheckRangeMult = 1.0f; // When testing for the potential of friendly fire, how far ahead do we want to check? This is a multiplier on the turret's base range
+	public float PRJ_friendlyFireCheckRangeMult = 1; // When testing for the potential of friendly fire, how far ahead do we want to check? This is a multiplier on the turret's base range
 
 	[Header("Damage")]
 	public float DMG_ffDamageMult = 0.5f; // If we do hit an ally, do reduced damage because it was an accidental glancing hit
@@ -131,7 +131,7 @@ public class GameRules
 	[Header("Superlaser")]
 	public float ABLY_superlaserRangeTargeting = 60; // Max distance for cast and distance which the target must stay in during Superlaser targeting state
 	public float ABLY_superlaserCancelCDMult = 0.5f; // What ratio of cooldown is refunded if the target leaves the targeting range or the ability is cancelled manually
-	public float ABLY_superlaserCancelTime = 1f; // How long after initial cast do you have to wait before you can re-cast to cancel targeting
+	public float ABLY_superlaserCancelTime = 1; // How long after initial cast do you have to wait before you can re-cast to cancel targeting
 	public float ABLY_superlaserDelay = 3.5f; // Delay before damage is dealt during ability can be interupted or range-cancelled
 	public int ABLY_superlaserInitStacks = 0; // Stacks the ability starts with
 	public float ABLY_superlaserStackDmgReq = 0.6f; // How much damage (by percentage of max health + max armor) has to be done to a unit to earn a stack from its death
@@ -156,16 +156,16 @@ public class GameRules
 
 	[Header("Ion Missile")]
 	public float ABLY_ionMissileRangeUse = 40; // Max distance for cast
-	public float ABLY_ionMissileCancelTime = 1f; // How long after initial cast do you have to wait before you can re-cast to cancel targeting
+	public float ABLY_ionMissileCancelTime = 1; // How long after initial cast do you have to wait before you can re-cast to cancel targeting
 	public float ABLY_ionMissileRangeMissile = 80; // Max distance for before missile detonates
 	public float ABLY_ionMissileMaxLifetime = 10; // How long the missile can exist before detonating
 	public float ABLY_ionMissileDamage = 10; // Flat damage dealt on impact
-	public float ABLY_ionMissileDamageBonusMult = 20f; // Damage multiplier against shields
-	public float ABLY_ionMissileDamageBonusMultFlagship = 10f; // Damage multiplier reduced against flagship shields
-	public float ABLY_ionMissileIonsFirst = 20f; // How many ions are added to a unit with no ions
-	public float ABLY_ionMissileIonsNext = 20f; // How many ions are added to a unit with ions
+	public float ABLY_ionMissileDamageBonusMult = 20; // Damage multiplier against shields
+	public float ABLY_ionMissileDamageBonusMultFlagship = 10; // Damage multiplier reduced against flagship shields
+	public float ABLY_ionMissileIonsFirst = 20; // How many ions are added to a unit with no ions
+	public float ABLY_ionMissileIonsNext = 20; // How many ions are added to a unit with ions
 	public float ABLY_ionMissileArmorDmgToIons = 0.5f; // At what rate is damage dealt to armor converted to ions (percent to percent with this multiplier)
-	public float ABLY_ionMissileDecayDelay = 10f; // Time after last taking damage before ions begin to decay
+	public float ABLY_ionMissileDecayDelay = 10; // Time after last taking damage before ions begin to decay
 	public float ABLY_ionMissileDecayLPS = 4; // How many ions are decayed per second
 	public float ABLY_ionMissileDecayCutoff = 5; // If ion count drops below this number, it is rounded down to zero
 	public int ABLY_ionMissileMaxAmmo = 2; // How many missiles are stored at once
@@ -181,9 +181,9 @@ public class GameRules
 
 	[Header("Statuses")]
 	public float STATswarmResistMult = 0.1f; // How much of all incoming damage does each swarm protecting an ally absorb
-	public float STATswarmResistMultSwarm = 1.0f; // (against enemy swarm damage)
+	public float STATswarmResistMultSwarm = 1; // (against enemy swarm damage)
 	public int STATswarmResistMaxStacks = 3; // How many times can this damage absorption stack
-	public float STATswarmResistTransferMult = 1.0f; // What ratio of absorbed damage is transferred to the absorbing ally swarms. The total damage is split between each of the absorbing swarms
+	public float STATswarmResistTransferMult = 1; // What ratio of absorbed damage is transferred to the absorbing ally swarms. The total damage is split between each of the absorbing swarms
 
 	public float STAT_armorMeltDPS = 3; // Damage per second
 	public float STAT_armorMeltAbsorbFlat = 1; // This replaces the constant part of the armor absorption limit formula

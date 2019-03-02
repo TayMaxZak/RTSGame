@@ -696,6 +696,11 @@ public class Turret : MonoBehaviour
 
 	public void ClientUpdateTarget(NetworkIdentity targetIdentity, bool manual)
 	{
+		if (!parentUnit)
+		{
+			Debug.LogWarning("Can't find parent unit");
+			return;
+		}
 		if (parentUnit.isServer) // This is for clients only
 			return;
 		target = GetITargetableFromNetworkIdentity(targetIdentity);

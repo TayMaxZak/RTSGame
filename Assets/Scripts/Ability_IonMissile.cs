@@ -271,7 +271,6 @@ public class Ability_IonMissile : Ability
 			Vector3 pos = launcher.transform.position + transform.forward * dist;
 			pos.y = targetUnit.transform.position.y;
 			// Rotate launcher vertically
-			Debug.DrawLine(launcher.transform.position, pos, Color.blue);
 			Rotate((pos - launcher.transform.position).normalized);
 		}
 		else
@@ -369,8 +368,6 @@ public class Ability_IonMissile : Ability
 		Quaternion resetRot = Quaternion.identity;
 
 		// Rotate towards the desired look rotation
-		// TODO: Sometimes super slow
-		Debug.DrawRay(launcher.transform.position, direction, Color.red);
 		Quaternion newRotation = Quaternion.RotateTowards(launcher.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
 
 		// Limit rotation

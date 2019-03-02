@@ -11,7 +11,8 @@ public class Multiplayer_Manager : NetworkBehaviour
 
 	void Awake()
 	{
-		Random.InitState(0);
+		// Set random seed
+		//Random.InitState(0);
 	}
 
 	//---------------------------------------- MOVEMENT ----------------------------------------//
@@ -40,12 +41,6 @@ public class Multiplayer_Manager : NetworkBehaviour
 	[Command]
 	public void CmdSyncUnitRotation(NetworkIdentity mover, Quaternion newRot, float newRotVel)
 	{
-		if (mover == null)
-		{
-			Debug.LogWarning("[SyncUnitRotation] Can't find unit which was supposed to rotate.");
-			return;
-		}
-
 		//Debug.Log("Command to sync " + mover.name);
 		RpcSyncUnitRotation(mover, newRot, newRotVel);
 	}
@@ -53,6 +48,12 @@ public class Multiplayer_Manager : NetworkBehaviour
 	[ClientRpc]
 	void RpcSyncUnitRotation(NetworkIdentity mover, Quaternion newRot, float newRotVel)
 	{
+		if (mover == null)
+		{
+			Debug.LogWarning("[SyncUnitRotation] Can't find unit which was supposed to rotate.");
+			return;
+		}
+
 		//Debug.Log("Synced " + mover.name);
 		UnitMovement um = mover.GetComponent<Unit>().GetMovement();
 		um.SyncRotAndRotVel(newRot, newRotVel);
@@ -87,6 +88,17 @@ public class Multiplayer_Manager : NetworkBehaviour
 	[ClientRpc]
 	public void RpcSyncTarget(NetworkIdentity parentUnit, int turretId, NetworkIdentity target, bool manual)
 	{
+		if (target == null)
+		{
+			Debug.LogWarning("[SyncTarget] Can't find unit which was supposed to be targeted.");
+			return;
+		}
+		if (parentUnit == null)
+		{
+			Debug.LogWarning("[SyncTarget] Can't find unit which was supposed to have a new target set.");
+			return;
+		}
+
 		//Debug.Log("Synced shooting from " + parentUnit.name + "'s turret " + turretId);
 		Unit u = parentUnit.GetComponent<Unit>();
 		u.GetTurrets()[turretId].ClientUpdateTarget(target, manual);
@@ -138,4 +150,13 @@ public class Multiplayer_Manager : NetworkBehaviour
 		Unit u = target.GetComponent<Unit>();
 		u.ClientDamage(healthDmg, armorDmg);
 	}
+
+	//---------------------------------------- UNIT SPAWNING ----------------------------------------//
+
+	//[Command]
+	//public void CmdSpawnUnit(NetworkIdentity toSpawm, float healthDmg, float armorDmg)
+	//{
+	//	Debug.Log("Command to sync damaging " + target.name + " by " + (int)healthDmg + " health and " + (int)armorDmg + " armor.");
+	//	RpcDmgUnit(target, healthDmg, armorDmg);
+	//}
 }
