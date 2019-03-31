@@ -685,11 +685,19 @@ public class Turret : MonoBehaviour
 
 	private void UpdateTarget(bool manual)
 	{
+		// TODO: What if target is intentionally null?
 		if (parentUnit.isServer)
 		{
 			multManager.CmdSyncTarget(parentUnit.GetComponent<NetworkIdentity>(), turretId, target.GetGameObject().GetComponent<NetworkIdentity>(), manual);
 		}
 		resetRotFrame = Time.frameCount;
+
+		if (target.GetGameObject() == parentUnit.GetGameObject())
+		{
+			Debug.Log("Reset target");
+			manual = false;
+			target = null;
+		}
 		hasManualTarget = manual;
 		//Debug.Log("Turret aiming at " + (!IsNull(target) ? target.GetTargetType().ToString() : "null"));
 	}
@@ -703,7 +711,8 @@ public class Turret : MonoBehaviour
 		}
 		if (parentUnit.isServer) // This is for clients only
 			return;
-		target = GetITargetableFromNetworkIdentity(targetIdentity);
+		ITargetable potentialTarget = GetITargetableFromNetworkIdentity(targetIdentity);
+		target = potentialTarget;
 		Debug.Log("Client turret aiming at " + (!IsNull(target) ? target.GetTargetType().ToString() : "null"));
 		UpdateTarget(manual);
 		

@@ -1421,15 +1421,15 @@ public class Unit : Entity, ITargetable
 
 	public void OrderCommandWheel(int i, AbilityTarget targ)
 	{
-		if (i == 1) // Set Squadron
+		if (i == 1) // Set Group
 		{
 			if (Type != EntityType.Flagship)
 				selectable.groupId = 1;
 		}
-		else if (i == 3) // Clear Manual Target
+		else if (i == 3) // Reset Target
 		{
 			foreach (Turret tur in turrets)
-				tur.SetManualTarget(null);
+				tur.SetManualTarget(this);
 		}
 	}
 

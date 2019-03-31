@@ -22,7 +22,7 @@ public class GameRules
 	[Header("Armor")]
 	public float ARM_absorbFlat = 5; // How much armor absorb is guaranteed
 	public float ARM_absorbScaling = 15; // How much armor absorb is added based on current percentage of armor
-	public float ARM_rangeMin = 30; // Range past which armor range resist begins
+	public float ARM_rangeMin = 20; // Range past which armor range resist begins
 	public float ARM_rangeMax = 60; // Range past which armor range resist is at full effect
 	public float ARM_rangeMult = 0.8f; // Overall range resist multiplier
 

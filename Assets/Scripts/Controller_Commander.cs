@@ -153,7 +153,7 @@ public class Controller_Commander : NetworkBehaviour
 		// Create the flagship on all instances
 		//GameObject go = Instantiate(flagshipPrefab, offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 10, Quaternion.identity);
 		GameObject go = Instantiate(flagshipPrefab);
-		go.transform.position = offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 15;
+		go.transform.position = offset * (-1 + myTeam * 2);
 		//go.transform.localEulerAngles = new Vector3(0, Random.Range(-45f, 45f), 0);
 		Unit u = go.GetComponent<Unit>();
 		u.team = myTeam;
