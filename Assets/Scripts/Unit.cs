@@ -105,6 +105,23 @@ public class Unit : Entity, ITargetable
 		vfx = GameObject.FindGameObjectWithTag("VFXManager").GetComponent<Manager_VFX>();
 
 		multManager = GameObject.FindGameObjectWithTag("MultiplayerManager").GetComponent<Multiplayer_Manager>(); // For multiplayer
+
+		// Init turrets
+		for (int i = 0; i < turrets.Length; i++)
+		{
+			turrets[i].SetParentUnit(this, i);
+
+			// Make sure weapon damage counts for Superlaser marks
+			bool hasSuperlaser = false;
+			foreach (Ability a in abilities)
+				if (a.GetAbilityType() == AbilityType.Superlaser)
+					hasSuperlaser = true;
+			if (hasSuperlaser)
+				turrets[i].SetOnHitStatus(new Status(gameObject, StatusType.SuperlaserMark));
+
+			if (disableTurrets)
+				turrets[i].gameObject.SetActive(false);
+		}
 	}
 
 	//public void SetHeightCurrent(int cur)
@@ -145,22 +162,7 @@ public class Unit : Entity, ITargetable
 		UpdateHPBarVal(true);
 		UpdateHPBarValIon();
 
-		// Init turrets
-		for (int i = 0; i < turrets.Length; i++)
-		{
-			turrets[i].SetParentUnit(this, i);
 
-			// Make sure weapon damage counts for Superlaser marks
-			bool hasSuperlaser = false;
-			foreach (Ability a in abilities)
-				if (a.GetAbilityType() == AbilityType.Superlaser)
-					hasSuperlaser = true;
-			if (hasSuperlaser)
-				turrets[i].SetOnHitStatus(new Status(gameObject, StatusType.SuperlaserMark));
-
-			if (disableTurrets)
-				turrets[i].gameObject.SetActive(false);
-		}
 
 		// Effects and audio
 		engineEffects.SetEngineActive(true);

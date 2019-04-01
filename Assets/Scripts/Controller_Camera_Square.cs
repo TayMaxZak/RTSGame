@@ -37,40 +37,49 @@ public class Controller_Camera_Square : MonoBehaviour
 
 		cam.transform.position = camRoot.transform.position;
 
+		Vector3 velocityVectorArrows = Vector3.zero;
+
+		if (true)
+		{
+			velocityVectorArrows.x = Input.GetAxis("Horizontal");
+			velocityVectorArrows.z = Input.GetAxis("Vertical");
+		}
+
+		Vector3 velocityVectorMouse = Vector3.zero;
+
+		// Edge of screen movement
 		Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
 		if (!EventSystem.current.IsPointerOverGameObject() && (offscreenMovement || screenRect.Contains(Input.mousePosition)))
 		{
-			Vector3 velocityVector = Vector3.zero;
-
 			if (Input.mousePosition.x < screenBorderSize)
 			{
 				float mult = (screenBorderSize - Input.mousePosition.x) / screenBorderSize;
 				mult = Mathf.Clamp01(mult);
-				velocityVector.x = -Time.deltaTime * mult;
+				velocityVectorMouse.x = -mult;
 			}
 			else if (Input.mousePosition.x > Screen.width - screenBorderSize)
 			{
 				float mult = (Input.mousePosition.x - (Screen.width - screenBorderSize) + 1) / screenBorderSize;
 				mult = Mathf.Clamp01(mult);
-				velocityVector.x = Time.deltaTime * mult;
+				velocityVectorMouse.x = mult;
 			}
 
 			if (Input.mousePosition.y < screenBorderSize)
 			{
 				float mult = (screenBorderSize - Input.mousePosition.y) / screenBorderSize;
 				mult = Mathf.Clamp01(mult);
-				velocityVector.z = -Time.deltaTime * mult;
+				velocityVectorMouse.z = -mult;
 			}
 			else if (Input.mousePosition.y > Screen.height - screenBorderSize)
 			{
 				float mult = (Input.mousePosition.y - (Screen.height - screenBorderSize) + 1) / screenBorderSize;
 				mult = Mathf.Clamp01(mult);
-				velocityVector.z = Time.deltaTime * mult;
+				velocityVectorMouse.z = mult;
 			}
-
-			velocityVector = Vector3.ClampMagnitude(velocityVector, 1) * speed;
-			camRoot.transform.Translate(velocityVector, Space.Self);
 		}
+
+		Vector3 velocityVector = Vector3.ClampMagnitude(velocityVectorArrows + velocityVectorMouse, 1) * speed;
+		camRoot.transform.Translate((velocityVector) * Time.deltaTime, Space.Self);
 
 		/*// TODO: Zooming
 		float zoom = Input.GetAxis("Zoom");

@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class Turret : MonoBehaviour
 {
-	public int team = 0;
+	//public int team = 0;
 	protected Unit parentUnit;
 	private int turretId = -1;
 
@@ -107,8 +107,9 @@ public class Turret : MonoBehaviour
 
 	public void SetParentUnit(Unit unit, int id)
 	{
+		Debug.Log("SetParentUnit " + Time.frameCount);
 		parentUnit = unit;
-		team = parentUnit.team;
+		//team = parentUnit.team;
 		turretId = id;
 	}
 
@@ -184,6 +185,7 @@ public class Turret : MonoBehaviour
 				// Found a valid target
 				if (!IsNull(target))
 				{
+					Debug.Log("my parent team is " + parentUnit.GetTeam() + " targets team is " + target.GetTeam());
 					// Update resetRotFrame
 					UpdateTarget(false);
 
@@ -229,10 +231,10 @@ public class Turret : MonoBehaviour
 			if (targs.Contains(targ)) // Ignore multiple colliders for one targetable
 				continue;
 
-			if (targ.GetTeam() == team) // Can't target allies
+			if (targ.GetTeam() == parentUnit.GetTeam()) // Can't target allies
 				continue;
 
-			if (!targ.GetVisibleTo(team)) // Must be visible to this team
+			if (!targ.GetVisibleTo(parentUnit.GetTeam())) // Must be visible to this team
 				continue;
 
 			// Can ignore non-preferred targets altogether (used when searching for a better target)
@@ -273,7 +275,7 @@ public class Turret : MonoBehaviour
 
 		bool valid = false;
 		// Have target, its in range, the look rotation is within limits, it is visible to our team
-		if (!IsNull(potentialTarget) && sqrDistance <= range * range && ValidRotationHorizontal(CalcLookRotation(dir)) && potentialTarget.GetVisibleTo(team))
+		if (!IsNull(potentialTarget) && sqrDistance <= range * range && ValidRotationHorizontal(CalcLookRotation(dir)) && potentialTarget.GetVisibleTo(parentUnit.GetTeam()))
 		{
 			valid = true;
 		}
@@ -398,7 +400,7 @@ public class Turret : MonoBehaviour
 			Unit unit = parent ? parent.GetComponent<Unit>() : null;
 			if (unit)
 			{
-				if (unit.team == team)
+				if (unit.team == parentUnit.GetTeam())
 				{
 					// If we hit a non-parent teammate, immediately return false.
 					if (unit != parentUnit)
@@ -420,7 +422,7 @@ public class Turret : MonoBehaviour
 								unit = parent ? parent.GetComponent<Unit>() : null;
 								if (unit)
 								{
-									if (unit.team == team)
+									if (unit.team == parentUnit.GetTeam())
 									{
 										// If we hit a non-parent teammate, immediately return false.
 										if (unit != parentUnit)
@@ -706,7 +708,7 @@ public class Turret : MonoBehaviour
 	{
 		if (!parentUnit)
 		{
-			Debug.LogWarning("Can't find parent unit");
+			Debug.LogWarning("Can't find parent unit " + Time.frameCount);
 			return;
 		}
 		if (parentUnit.isServer) // This is for clients only

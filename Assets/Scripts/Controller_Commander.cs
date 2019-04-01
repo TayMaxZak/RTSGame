@@ -14,7 +14,7 @@ public class Controller_Commander : NetworkBehaviour
 	[Header("Start")]
 	[SerializeField]
 	private GameObject flagshipPrefab;
-	private Vector3 offset = new Vector3(0, 0, 30);
+	private Vector3 offset = new Vector3(50, 0, 50);
 
 	[Header("GUI")]
 	[SerializeField]
@@ -154,7 +154,7 @@ public class Controller_Commander : NetworkBehaviour
 		//GameObject go = Instantiate(flagshipPrefab, offset * (-1 + myTeam * 2) + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 10, Quaternion.identity);
 		GameObject go = Instantiate(flagshipPrefab);
 		go.transform.position = offset * (-1 + myTeam * 2);
-		//go.transform.localEulerAngles = new Vector3(0, Random.Range(-45f, 45f), 0);
+		go.transform.Rotate(0, (-1 + myTeam * 2) * 90 + 45, 0);
 		Unit u = go.GetComponent<Unit>();
 		u.team = myTeam;
 		NetworkServer.Spawn(go);
