@@ -53,6 +53,10 @@ public class Manager_Game : MonoBehaviour
 	// Mark
 	void FOWTick()
 	{
+		// TODO: Better way of knowing if game is going on or not
+		if (!commanderController)
+			return;
+
 		//int t = 0;
 		// Initialize visibility for all units
 		for (int i = 0; i < commanders.Length; i++)
