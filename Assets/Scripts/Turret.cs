@@ -107,7 +107,6 @@ public class Turret : MonoBehaviour
 
 	public void SetParentUnit(Unit unit, int id)
 	{
-		Debug.Log("SetParentUnit " + Time.frameCount);
 		parentUnit = unit;
 		//team = parentUnit.team;
 		turretId = id;

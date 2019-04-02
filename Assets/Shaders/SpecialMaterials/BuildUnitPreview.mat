@@ -40,6 +40,7 @@ Material:
     - _NoiseSteps: 16
     - _NoiseStretch: 1
     - _NoiseSubSteps: 50
+    - _Opacity: 0.5
     - _SSSStrength: 1
     - _Thickness: 1
     m_Colors:
