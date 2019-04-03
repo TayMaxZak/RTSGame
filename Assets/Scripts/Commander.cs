@@ -37,7 +37,7 @@ public class Commander : MonoBehaviour
 		selectableUnits = new List<UnitSelectable>();
 
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules; // Grab copy of Game Rules
-		resPoints = gameRules.RES_startingResources;
+		resPoints = gameRules.RES_startingResPoints;
 
 		buildUnitCounters = new int[buildUnits.Length]; // All BuildUnit counters start at 0
 		reclaimTimer = gameRules.RES_reclaimTime; // Don't start at 0. This way the first reclaimPoint will take time to reclaim

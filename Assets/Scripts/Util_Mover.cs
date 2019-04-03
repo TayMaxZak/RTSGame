@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Util_Mover : MonoBehaviour
 {
+	[SerializeField]
 	private Vector3 velocity;
 
 	public void SetVelocity(Vector3 vel)

@@ -2,9 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ObjectiveType
+{
+	MinorRelay,
+	MajorRelay
+}
+
 public class Entity_Objective : Entity
 {
 	private float captureProgress; // Ranges from -1 to 1; -1 is for the first team, 1 is for the second team, 0 is neutral
+
+	[SerializeField]
+	private ObjectiveType objType;
+
+	[SerializeField]
+	private GameObject effect;
 
 	[SerializeField]
 	private UI_ProgBar progBarPrefab;
@@ -34,6 +46,9 @@ public class Entity_Objective : Entity
 		captureProgress = 0;
 
 		UpdateUI();
+
+		if (effect)
+			Instantiate(effect, transform.position, transform.rotation);
 	}
 
 	// Update is called once per frame
@@ -98,6 +113,25 @@ public class Entity_Objective : Entity
 
 		if (progBar)
 			UpdateUI();
+	}
+
+	int ResourceAmount()
+	{
+		switch (objType)
+		{
+			case ObjectiveType.MinorRelay:
+				{
+					return gameRules.RES_objMinorResPoints;
+				}
+			case ObjectiveType.MajorRelay:
+				{
+					return gameRules.RES_objMajorResPoints;
+				}
+			default:
+				{
+					return -1;
+				}
+		}
 	}
 
 	void UpdateUI()
