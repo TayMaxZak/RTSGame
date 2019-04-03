@@ -13,6 +13,8 @@ public class UIRules
 	public float HPBionBlinkTime = 0.1f;
 	[Header("Build Progress Bar")]
 	public Vector2 BPBoffset = new Vector2(0, 3);
+	[Header("Capture Progress Bar")]
+	public Vector2 CPBoffset = new Vector2(0, 5);
 	[Header("Selection Indicator")]
 	public float SELrotateSpeed = 30;
 

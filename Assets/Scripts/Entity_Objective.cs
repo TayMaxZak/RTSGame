@@ -41,7 +41,7 @@ public class Entity_Objective : Entity
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
 		progBar = Instantiate(progBarPrefab);
 		progBar.transform.SetParent(uiManager.Canvas.transform, false);
-		progBarOffset = uiManager.UIRules.BPBoffset;
+		progBarOffset = uiManager.UIRules.CPBoffset;
 
 		captureProgress = 0;
 
@@ -105,10 +105,10 @@ public class Entity_Objective : Entity
 		{
 			if (recipient) // Take resources from previous recipient
 			{
-				recipient.TakeResources(5, true);
+				recipient.TakeResources(ResourceAmount(), true);
 			}
 			recipient = newRecipient;
-			recipient.GiveResources(5); // Add resources to new recipient
+			recipient.GiveResources(ResourceAmount()); // Add resources to new recipient
 		}
 
 		if (progBar)
