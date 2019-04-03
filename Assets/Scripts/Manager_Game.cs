@@ -37,6 +37,7 @@ public class Manager_Game : MonoBehaviour
 
 	public void SetController(Controller_Commander conCom)
 	{
+		Debug.Log("SET CONTROLLER");
 		commanderController = conCom;
 	}
 

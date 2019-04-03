@@ -275,7 +275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FOWtickRate: 0.5
   GameRules:
-    useTestValues: 1
+    useTestValues: 0
     TEST_timeMultCooldown: 1
     TEST_timeMultBuild: 0.2
     TEST_initHPAdd: 0
@@ -308,7 +308,7 @@ MonoBehaviour:
     WRCK_massArmorMult: 0.5
     WRCK_initialVelMult: 0.5
     WRCK_collisionSpeedPenalty: 0.8
-    FLAG_shieldMaxPool: 300
+    FLAG_shieldMaxPool: 1000
     FLAG_shieldRegenDelay: 10
     FLAG_shieldRegenGPS: 5
     OBJV_captureRange: 25
@@ -434,7 +434,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38f0d512cda1c774e86520a49c66bb05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 1
   controller: {fileID: 0}
   buildUnits:
   - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
@@ -446,7 +445,7 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
-  resPoints: 30
+  resPoints: 0
   reclaimPoints: 0
   flagship: {fileID: 0}
 --- !u!114 &114578553437470668
@@ -460,7 +459,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38f0d512cda1c774e86520a49c66bb05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 1
   controller: {fileID: 0}
   buildUnits:
   - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
@@ -472,6 +470,6 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 1ea7fe2905dd15f488af9c94816f2f66, type: 2}
   - {fileID: 114214795380621988, guid: 1362e00bd3c5ca34c8146062ec192e5c, type: 2}
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
-  resPoints: 30
+  resPoints: 0
   reclaimPoints: 0
   flagship: {fileID: 0}

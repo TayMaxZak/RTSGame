@@ -52,6 +52,7 @@ public class GameRules
 	public float OBJV_captureAddMax = 3; // Total capped by this amount
 
 	[Header("Resources")]
+	public int RES_startingResources = 20; // What does each commander start with
 	public float RES_reclaimTime = 5; // How long it takes to convert a raw material point into a resource point
 
 	[Header("Spawning")]
