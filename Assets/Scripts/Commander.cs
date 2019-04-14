@@ -25,13 +25,16 @@ public class Commander : MonoBehaviour
 	private float reclaimTimer; // Progress turning a reclaimPoint into a resPoint
 
 	[Header("Win Conditions")]
-	public Unit flagship;
+	//[SerializeField]
+	private Unit_Flagship flagship;
 
 	private List<UnitSelectable> selectableUnits;
 
 	private GameRules gameRules;
 
-	// Use this for initialization
+
+	// INITIALIZATION ////////////////////////////////////////////////////////////////////////////////
+
 	void Awake()
 	{
 		selectableUnits = new List<UnitSelectable>();
@@ -55,6 +58,9 @@ public class Commander : MonoBehaviour
 		Controller_UpdateResourceTime(true); // Initualize UI through our controller
 	}
 
+
+	// RESOURCES ////////////////////////////////////////////////////////////////////////////////
+
 	// Update is called once per frame
 	void Update()
 	{
@@ -67,6 +73,7 @@ public class Commander : MonoBehaviour
 		if (reclaimPoints > 0)
 		{
 			reclaimTimer -= Time.deltaTime;
+
 			Controller_UpdateResourceTime(false);
 			Controller_UpdateResourceAudio(reclaimTimer);
 
@@ -75,11 +82,14 @@ public class Commander : MonoBehaviour
 				reclaimTimer = gameRules.RES_reclaimTime;
 				reclaimPoints--;
 				resPoints++;
+
 				Controller_UpdateResourceAmounts();
 			}
 		}
 	}
 
+
+	// CONTROLLER ////////////////////////////////////////////////////////////////////////////////
 
 	// Pass updated information to our controller
 	void Controller_UpdateResourceAmounts()
@@ -94,15 +104,19 @@ public class Commander : MonoBehaviour
 	// Pass updated information to our controller
 	void Controller_UpdateResourceTime(bool init)
 	{
-		if (controller)
-			controller.UpdateResourceTime(init ? 0 : reclaimTimer);
+		if (!controller)
+			return;
+
+		controller.UpdateResourceTime(init ? 0 : reclaimTimer);
 	}
 
 	// Play audio through our controller
 	void Controller_UpdateResourceAudio(float timer)
 	{
-		if (controller)
-			controller.UpdateResourceAudio(timer);
+		if (!controller)
+			return;
+
+		controller.UpdateResourceAudio(timer);
 	}
 
 	// Initialize building UI according to this Commander
@@ -115,10 +129,15 @@ public class Commander : MonoBehaviour
 	}
 
 
+	// BUILDING ////////////////////////////////////////////////////////////////////////////////
+
 	public BuildUnit GetBuildUnit(int id)
 	{
 		return buildUnits[id];
 	}
+
+
+	// RESOURCES ////////////////////////////////////////////////////////////////////////////////
 
 	public float GetResources()
 	{
@@ -179,12 +198,16 @@ public class Commander : MonoBehaviour
 	{
 		resPoints = resPoints + amount;
 		Controller_UpdateResourceAmounts();
+
+
 	}
 
 	private void AddReclaimPoints(int amount)
 	{
 		reclaimPoints = reclaimPoints + amount;
 		Controller_UpdateResourceAmounts();
+
+
 	}
 
 	private bool SubtractResPoints(int amount, bool goNegative)
@@ -204,6 +227,9 @@ public class Commander : MonoBehaviour
 			return false;
 		}
 	}
+
+
+	// BUILDING ////////////////////////////////////////////////////////////////////////////////
 
 	private void SubtractBuildUnitCounter(int index)
 	{
@@ -230,6 +256,19 @@ public class Commander : MonoBehaviour
 		}
 	}
 
+	public Unit_Flagship GetFlagship()
+	{
+		return flagship;
+	}
+
+	public void SetFlagship(Unit_Flagship flag)
+	{
+		flagship = flag;
+		Debug.Log(flagship);
+	}
+
+
+	// SELECTABLE UNITS ////////////////////////////////////////////////////////////////////////////////
 
 	// Add unit to the list of selectable units for this commander
 	public void AddSelectableUnit(UnitSelectable selUnit)

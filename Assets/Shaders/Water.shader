@@ -63,19 +63,30 @@
 
 	float4 screenPos;
 
-	half3 ac(SurfaceOutputCustom s, half NdotL, half NdotV, half LdotV)
+	half3 ambientLight(SurfaceOutputCustom s, half NdotL, half NdotV, half LdotV, half atten)
 	{
-		half3 ac = 1;
+		half3 ambientL = 1;
+		half3 ambientD = 0;
 		//half height = clamp(dot(s.Normal, float3(0, 1, 0)) + 1, 0, 1) * 0.5 + clamp(dot(s.Normal, float3(0, 1, 0)) * 0.5, 0, 1);
-		half height = clamp((NdotL + NdotV) / 2, 0, 1);
-		ac = height > 0.5 ? lerp(unity_AmbientEquator, unity_AmbientSky, abs(height - 0.5) * 2) : lerp(unity_AmbientEquator, unity_AmbientGround, abs(height - 0.5) * 2);
+		half heightL = clamp((NdotL + NdotV) / 2, 0, 1);
+		//half heightD = clamp((NdotL + 1 - NdotV) / 2, 0, 1);
+		half heightD = clamp((NdotL + NdotV) / 2, 0, 1) * 0.5f;
+		ambientL = heightL > 0.5 ? lerp(unity_AmbientEquator, unity_AmbientSky, abs(heightL - 0.5) * 2) : lerp(unity_AmbientEquator, unity_AmbientGround, abs(heightL - 0.5) * 2);
+		ambientD = heightD > 0.5 ? lerp(unity_AmbientEquator, unity_AmbientSky, abs(heightD - 0.5) * 2) : lerp(unity_AmbientEquator, unity_AmbientGround, abs(heightD - 0.5) * 2);
+
+		half attenStrength = 0.8f;
+		half attenModded = (1 - (1 - atten) * attenStrength);
+		half shadow = clamp((attenModded * NdotL) * 2, 0, 1);
+		//half shadow = 1;
+
+		half3 ambientLight = lerp(ambientD, ambientL, shadow);
 
 		//half acMult = (clamp(1 - NdotL * _AmbientFallL, 0, 1) + clamp(1 - -NdotL * _AmbientFallD, 0, 1) - 1);
 		//half acMult = (clamp(1 - LdotV * _AmbientFallL, 0, 1) + clamp(1 - -LdotV * _AmbientFallD, 0, 1) - 1);
-		half acMult = 1;
+		half ambientLightMult = 1;
 
-		ac *= acMult;
-		return clamp(ac * _AmbientMult * 0.5, 0, _AmbientMult);
+		ambientLight *= ambientLightMult;
+		return clamp(ambientLight * _AmbientMult * 0.5, 0, _AmbientMult);
 	}
 
 	half3 mod(half3 a, half3 b)
@@ -90,21 +101,13 @@
 		half4 c;
 
 		half light = NdotL * atten;
-		half lightMod = 0.5;
-		//half minLight = 0;
-		//half steps = 5;
-		//half stepBlend = 0.0;
-		
 
-		//half3 shadeStepped = _LightColor0.rgb * ceil(clamp(light, 0, 1) * steps) / steps;
-		//half3 shadeStepped = _LightColor0.rgb * mod(clamp(light, 0, 1) * steps, steps);
-		//half3 shadeSmooth = _LightColor0.rgb * clamp(light, 0, 1);
-		//half3 shade = shadeStepped * stepBlend + shadeSmooth * (1 - stepBlend);
-		//half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
+		//half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
+		half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
 
-		half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
-
-		c.rgb = ac(s, NdotL, NdotV, LdotV) * (s.Albedo + 1) * 0.5;
+		half ambAlbedoMix = 0.5f;
+		// Ambient light is mixed in with the albedo
+		c.rgb = ambientLight(s, NdotL, NdotV, LdotV, atten) * (s.Albedo * ambAlbedoMix + 1 * (1 - ambAlbedoMix));
 
 		/*
 		half missingAlpha = ((1 - s.Alpha));

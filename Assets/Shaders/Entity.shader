@@ -10,16 +10,16 @@
 		_SSSColor("SSS Color", Color) = (1,1,1,1)
 		
 		_AOTex("AO Map", 2D) = "white" {}
-		_AmbientMult("Ambient Multiplier", Range(0,4)) = 1
-		_AmbientFallL("Ambient Falloff Light", Range(0,1)) = 0.5
-		_AmbientFallD("Ambient Falloff Dark", Range(0,1)) = 0
+		//_AmbientMult("Ambient Multiplier", Range(0,4)) = 1
+		//_AmbientFallL("Ambient Falloff Light", Range(0,1)) = 0.5
+		//_AmbientFallD("Ambient Falloff Dark", Range(0,1)) = 0
 	}
-		SubShader{
-		Tags{ "RenderType" = "Opaque" }
-		CGPROGRAM
-#pragma surface surf Custom noambient
-//#pragma target 3.0
-//#pragma debug
+	SubShader{
+	Tags{ "RenderType" = "Opaque" }
+	CGPROGRAM
+	#pragma surface surf Custom noambient
+	//#pragma target 3.0
+	//#pragma debug
 	sampler2D _MainTex;
 	fixed4 _Color;
 	half _Opacity;
@@ -29,9 +29,9 @@
 	half _SSSStrength;
 
 	sampler2D _AOTex;
-	half _AmbientMult;
-	half _AmbientFallL;
-	half _AmbientFallD;
+	//half _AmbientMult = 1;
+	//half _AmbientFallL = 0.75f;
+	//half _AmbientFallD = 0f;
 
 
 	float rand(half2 co)
@@ -72,16 +72,39 @@
 
 	float4 screenPos;
 
-	half3 ac(SurfaceOutputCustom s, half NdotL)
+	half3 ambientLight(SurfaceOutputCustom s, half NdotL)
 	{
-		half3 ac = 0;
+		// Ambient light settings
+		half _AmbientMultL = 0.9f; // How bright is the AL in direct light?
+		half _AmbientMultD = 1.1f; // How bright is the AL in darkness?
+		half _AmbientFallL = 0.75f; // How much diffuse color is retained based on how head-on the direct light is (in the light)?
+		half _AmbientFallD = 0.0f; // How much diffuse color is retained based on how head-on the direct light is (in the dark)?
+		half _EnvMult = 0.6f; // How much does the environment color affect the color of ambient lighting? How much should the SSS color factor in instead?
+
+		// Sample color of the environment
 		half height = clamp(dot(s.Normal, float3(0, 1, 0)) + 1, 0, 1) * 0.5 + clamp(dot(s.Normal, float3(0, 1, 0)) * 0.5, 0, 1);
-		ac = height > 0.5 ? lerp(unity_AmbientEquator, unity_AmbientSky, abs(height - 0.5) * 2) : lerp(unity_AmbientEquator, unity_AmbientGround, abs(height - 0.5) * 2);
+		half3 env = height > 0.5 ? lerp(unity_AmbientEquator, unity_AmbientSky, abs(height - 0.5) * 2) : lerp(unity_AmbientEquator, unity_AmbientGround, abs(height - 0.5) * 2);
 
-		half acMult = (clamp(1 - NdotL * _AmbientFallL, 0, 1) + clamp(1 - -NdotL * _AmbientFallD, 0, 1) - 1);
+		// Environment color in the dark should bias towards the sky (highest) color
+		half3 envLightL = (env);
+		half eldA = 0.7;
+		half3 envLightD = (env * eldA + unity_AmbientSky * (1 - eldA)) ;
 
-		ac *= acMult;
-		return clamp(ac * _AmbientMult * 0.5, 0, _AmbientMult);
+		// Environment color is mixed with the SSS color
+		half3 baseLight = _SSSColor;
+
+		// Light/dark affects color choice
+		half directionalMult = (clamp(1 - NdotL * _AmbientFallL, 0, 1) + clamp(1 - -NdotL * _AmbientFallD, 0, 1) - 1);
+		half3 envLight = lerp(envLightL, envLightD, directionalMult);
+
+		half3 ambientLight = (envLight * _EnvMult + baseLight * (1 - _EnvMult));
+		half ambientMult = lerp(_AmbientMultL, _AmbientMultD, directionalMult); // TODO: Should this be reversed?
+
+		// Final color
+		ambientLight *= directionalMult;
+
+		//ambientLight = 1;
+		return clamp(ambientLight * ambientMult * 0.5, 0, ambientMult);
 	}
 
 	half3 mod(half3 a, half3 b)
@@ -95,29 +118,24 @@
 		half LdotV = dot(lightDir, s.viewDir);
 		half4 c;
 
+		// SSS is calculated based on how close the view angle is to the light angle
 		half sssDot = LdotV;
 		half sssRange = (clamp(sssDot + 1, 0, 1) * 0.5 + clamp(sssDot * 0.677, 0, 1));
-		half sssMult = 2 * clamp(1 - (sssRange + 0.5), 0, 1) + 0 * clamp(sssRange - 0.5, 0, 1);		
+		half sssMult = 2 * clamp(1 - (sssRange + 0.5), 0, 1) + 0 * clamp(sssRange - 0.5, 0, 1);
 		half3 sss = sssMult * s.SSS * _SSSColor * _LightColor0.rgb * _SSSStrength;
 
 		half light = NdotL * atten;
-		half lightMod = 0.5;
-		//half minLight = 0;
-		//half steps = 5;
-		//half stepBlend = 0.0;
-		
 
-		//half3 shadeStepped = _LightColor0.rgb * ceil(clamp(light, 0, 1) * steps) / steps;
-		//half3 shadeStepped = _LightColor0.rgb * mod(clamp(light, 0, 1) * steps, steps);
-		//half3 shadeSmooth = _LightColor0.rgb * clamp(light, 0, 1);
-		//half3 shade = shadeStepped * stepBlend + shadeSmooth * (1 - stepBlend);
-		//half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
+		//half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
+		half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
 
-		half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
+		//c.rgb = clamp((s.AmbientOcclusion), 0, 1) * (shade * s.Albedo + ambientLight(s, light) * (s.Albedo + 1) * 0.5) + sss;
 
-		c.rgb = clamp((s.AmbientOcclusion), 0, 1) * (shade * s.Albedo + ac(s, NdotL) * (s.Albedo + 1) * 0.5) + sss;
-		//c.rgb = s.AmbientOcclusion * (shade * s.Albedo + ac(s, NdotL)) + sss;
-		//c.rgb += (1 - s.AmbientOcclusion) * _SSSColor * _SSSStrength;
+		half ambAlbedoMix = 0.6f;
+		// Ambient light is mixed in with the albedo
+		half3 amb = ambientLight(s, light) * (s.Albedo * ambAlbedoMix + 1 * (1 - ambAlbedoMix));
+
+		c.rgb = clamp((s.AmbientOcclusion), 0, 1) * (shade * s.Albedo + amb) + sss;
 
 		/*
 		half missingAlpha = ((1 - s.Alpha));

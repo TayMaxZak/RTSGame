@@ -6,15 +6,15 @@ using UnityEngine.SceneManagement;
 public class Util_SceneRestart: MonoBehaviour
 {
 	[SerializeField]
-	private int sceneID;
+	private int sceneID = -1;
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		//if (Input.GetKeyDown("backspace"))
-		//{
-		//	SceneManager.LoadScene(sceneID);
-		//}
+		if (sceneID >= 0 && Input.GetKeyDown("backspace"))
+		{
+			SceneManager.LoadScene(sceneID);
+		}
 
 		if (Input.GetKeyDown("escape"))
 		{

@@ -15,6 +15,8 @@ public class Unit_Flagship : Unit
 		gameRules = gameManager.GameRules; // Grab copy of Game Rules
 		base.Start(); // Init Unit base class
 
+		gameManager.GetCommander(team).SetFlagship(this);
+
 		shieldMod = new ShieldMod(this, 1, ShieldModType.Flagship);
 		AddShieldMod(shieldMod); // Apply flagship shield to self
 		UpdateHPBarVal(true); // Update with new shield

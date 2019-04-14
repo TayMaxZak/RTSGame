@@ -185,11 +185,21 @@ public class Unit : Entity, ITargetable
 			foreach (MeshRenderer r in t.transform.GetComponentsInChildren<MeshRenderer>())
 			{
 				r.material.SetFloat("_Opacity", localOpacity);
+				if (localOpacity < 0.01f)
+					r.enabled = false;
+				else
+					r.enabled = true;
 			}
 		}
 		// Hide/show extra models associated with abilities
 		foreach (MeshRenderer r in hideableExtras)
+		{
 			r.material.SetFloat("_Opacity", localOpacity);
+			if (localOpacity < 0.01f)
+				r.enabled = false;
+			else
+				r.enabled = true;
+		}
 
 		// Update HPBar if its being shown
 		if (isSelected || isHovered)
@@ -1246,20 +1256,6 @@ public class Unit : Entity, ITargetable
 			return;
 		dead = true; // Prevents multiple deaths
 
-		// Superlaser stacks
-		foreach (Status s in statuses)
-		{
-			// Check if sufficient damage was dealt to grant a Superlaser stack
-			if (s.statusType == StatusType.SuperlaserMark)
-			{
-				float ratio = s.GetTimeLeft() / (maxHealth + maxArmor);
-
-				if (ratio >= gameRules.ABLY_superlaserStackDmgReq)
-					if (s.from) // Potentially the recipient of the stack does not exist anymore
-						s.from.GetComponent<Ability_Superlaser>().GiveStack(this);
-			}
-		}
-
 		foreach (Ability ab in abilities)
 		{
 			ab.End();
@@ -1271,41 +1267,63 @@ public class Unit : Entity, ITargetable
 		if (engineEffects)
 			engineEffects.End();
 
-		// Death clone
-		if (deathClone)
+		if (isServer)
 		{
-			if (damageType == DamageType.Superlaser || damageType == DamageType.Internal)
+			Debug.Log("Server die called");
+
+			// Death clone
+			if (deathClone)
 			{
-				// No wreck
-			}
-			else
-			{
-				// Spawn wreck
-				GameObject go = Instantiate(deathClone, transform.position, transform.rotation);
-				Clone_Wreck wreck = go.GetComponent<Clone_Wreck>();
-				if (wreck)
+				if (damageType == DamageType.Superlaser || damageType == DamageType.Internal)
 				{
-					wreck.SetMass(maxHealth, maxArmor);
-					wreck.SetHVelocity(movement.GetVelocity());
+					// No wreck
+				}
+				else
+				{
+					// Spawn wreck, though it will only actually do anything gameplay related on the server
+					GameObject go = Instantiate(deathClone, transform.position, transform.rotation);
+					Clone_Wreck wreck = go.GetComponent<Clone_Wreck>();
+					if (wreck)
+					{
+						wreck.SetMass(maxHealth, maxArmor);
+						wreck.SetHVelocity(movement.GetVelocity());
+					}
+				}
+			}
+
+			// Grant superlaser stacks
+			foreach (Status s in statuses)
+			{
+				// Check if sufficient damage was dealt to grant a Superlaser stack
+				if (s.statusType == StatusType.SuperlaserMark)
+				{
+					float ratio = s.GetTimeLeft() / (maxHealth + maxArmor);
+
+					if (ratio >= gameRules.ABLY_superlaserStackDmgReq)
+						if (s.from) // The recipient of the stack potentially does not exist anymore
+							s.from.GetComponent<Ability_Superlaser>().GiveStack(this);
+				}
+			}
+
+			// Refund resources and unit counter
+			Commander comm = gameManager.GetCommander(team);
+			if (comm)
+			{
+				comm.RemoveSelectableUnit(selectable);
+				comm.RefundUnitCounter(buildIndex);
+
+				// Refund resources if build index is initialized
+				if (buildIndex >= 0)
+				{
+					GameObject go2 = new GameObject();
+					Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
+
+					resDelay.GiveRecAfterDelay(comm.GetBuildUnit(buildIndex).cost, gameRules.WRCK_lifetime, team);
 				}
 			}
 		}
-
-		Commander comm = gameManager.GetCommander(team);
-		if (comm)
-		{
-			comm.RemoveSelectableUnit(selectable);
-			comm.RefundUnitCounter(buildIndex);
-
-			// Refund resources if build index is initialized
-			if (buildIndex >= 0)
-			{
-				GameObject go2 = new GameObject();
-				Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
-
-				resDelay.GiveRecAfterDelay(comm.GetBuildUnit(buildIndex).cost, gameRules.WRCK_lifetime, team);
-			}
-		}
+		else
+			Debug.Log("Client die called");
 
 		Destroy(hpBar.gameObject);
 		Destroy(selCircle);

@@ -60,6 +60,7 @@ public class Controller_Commander : NetworkBehaviour
 	[Header("Heights")]
 	[SerializeField]
 	private GameObject movementGrid;
+	private Vector3 initGridPos;
 	[SerializeField]
 	private int heightSpacing = 10;
 	[SerializeField]
@@ -91,6 +92,7 @@ public class Controller_Commander : NetworkBehaviour
 		cam = Camera.main;
 		marquee = GameObject.FindGameObjectWithTag("ConCom_BoxSelect").GetComponent<Image>();
 		movementGrid = GameObject.FindGameObjectWithTag("ConCom_Grid");
+		initGridPos = movementGrid.transform.position;
 		lineMouse = GameObject.FindGameObjectWithTag("ConCom_Line1").GetComponent<Effect_Line>();
 		lineVert = GameObject.FindGameObjectWithTag("ConCom_Line2").GetComponent<Effect_Line>();
 	}
@@ -280,14 +282,14 @@ public class Controller_Commander : NetworkBehaviour
 			if (unitCount > 0)
 			{
 				pos /= unitCount;
-				movementGrid.transform.position = new Vector3(0, pos, 0); // TODO: Should grid be centered somewhere other than the origin?
+				movementGrid.transform.position = new Vector3(0, pos, 0);
 			}
 			else
-				movementGrid.transform.position = Vector3.zero;
+				movementGrid.transform.position = initGridPos;
 		}
 		else
 		{
-			movementGrid.transform.position = new Vector3(0, buildPreview.transform.position.y, 0); // TODO: Should grid be centered somewhere other than the origin?
+			movementGrid.transform.position = new Vector3(0, buildPreview.transform.position.y, 0);
 		}
 	}
 
@@ -596,7 +598,7 @@ public class Controller_Commander : NetworkBehaviour
 				if (Vector3.SqrMagnitude(buildPreview.transform.position - point) > turnRadius * turnRadius)
 					buildPreview.transform.LookAt(point);
 				else
-					buildPreview.transform.rotation = commander.flagship.transform.rotation;
+					buildPreview.transform.rotation = commander.GetFlagship().transform.rotation;
 			}
 		}
 
@@ -849,7 +851,7 @@ public class Controller_Commander : NetworkBehaviour
 
 	void UseAbility(int index)
 	{
-		return;
+		//return;
 
 		if (!HasSelection())
 			return;
@@ -986,7 +988,7 @@ public class Controller_Commander : NetworkBehaviour
 		commander.TakeResources(commander.GetBuildUnit(buildUnitIndex).cost);
 
 		buildState = 1;
-		buildPreview = Instantiate(commander.GetBuildUnit(buildUnitIndex).previewObject, Vector3.zero, commander.flagship.transform.rotation);
+		buildPreview = Instantiate(commander.GetBuildUnit(buildUnitIndex).previewObject, Vector3.zero, commander.GetFlagship().transform.rotation);
 		buildPreview.SetActive(false);
 	}
 

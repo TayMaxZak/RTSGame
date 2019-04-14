@@ -105,6 +105,10 @@ public class Entity : NetworkBehaviour
 
 		localOpacity = Mathf.Lerp(0, 1, localOpacityT);
 		localOpacityT = Mathf.Clamp01(localOpacityT + (localVisible ? 1 : -1) * Time.deltaTime * 4);
+		if (localOpacity < 0.01f)
+			meshRenderer.enabled = false;
+		else
+			meshRenderer.enabled = true;
 		meshRenderer.material.SetFloat("_Opacity", localOpacity);
 	}
 
