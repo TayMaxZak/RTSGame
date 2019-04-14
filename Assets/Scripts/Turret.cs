@@ -500,6 +500,7 @@ public class Turret : MonoBehaviour
 		ToggleFiringAudio(play);
 	}
 
+	// TODO: Looping fire audio does not work on clients!
 	void ToggleFiringAudio(bool play)
 	{
 		if (!audioSource.clip)

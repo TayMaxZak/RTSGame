@@ -1267,29 +1267,37 @@ public class Unit : Entity, ITargetable
 		if (engineEffects)
 			engineEffects.End();
 
+		// Selectable and visibility things can/should happen locally
+		Commander comm = gameManager.GetCommander(team);
+		if (comm)
+		{
+			comm.RemoveSelectableUnit(selectable);
+		}
+
+		// Death clone should happen locally
+		if (deathClone)
+		{
+			if (damageType == DamageType.Superlaser || damageType == DamageType.Internal)
+			{
+				// No wreck
+			}
+			else
+			{
+				// Spawn wreck, though it will only actually do anything gameplay related on the server
+				GameObject go = Instantiate(deathClone, transform.position, transform.rotation);
+				Clone_Wreck wreck = go.GetComponent<Clone_Wreck>();
+				if (wreck)
+				{
+					wreck.SetMass(maxHealth, maxArmor);
+					wreck.SetHVelocity(movement.GetVelocity());
+				}
+			}
+		}
+
+		// Gameplay sensitive things
 		if (isServer)
 		{
 			Debug.Log("Server die called");
-
-			// Death clone
-			if (deathClone)
-			{
-				if (damageType == DamageType.Superlaser || damageType == DamageType.Internal)
-				{
-					// No wreck
-				}
-				else
-				{
-					// Spawn wreck, though it will only actually do anything gameplay related on the server
-					GameObject go = Instantiate(deathClone, transform.position, transform.rotation);
-					Clone_Wreck wreck = go.GetComponent<Clone_Wreck>();
-					if (wreck)
-					{
-						wreck.SetMass(maxHealth, maxArmor);
-						wreck.SetHVelocity(movement.GetVelocity());
-					}
-				}
-			}
 
 			// Grant superlaser stacks
 			foreach (Status s in statuses)
@@ -1306,10 +1314,8 @@ public class Unit : Entity, ITargetable
 			}
 
 			// Refund resources and unit counter
-			Commander comm = gameManager.GetCommander(team);
 			if (comm)
 			{
-				comm.RemoveSelectableUnit(selectable);
 				comm.RefundUnitCounter(buildIndex);
 
 				// Refund resources if build index is initialized
@@ -1325,6 +1331,7 @@ public class Unit : Entity, ITargetable
 		else
 			Debug.Log("Client die called");
 
+		// Clean up
 		Destroy(hpBar.gameObject);
 		Destroy(selCircle);
 		Destroy(gameObject);

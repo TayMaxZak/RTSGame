@@ -239,7 +239,6 @@ GameObject:
   - component: {fileID: 114163351195888888}
   - component: {fileID: 82500898380851790}
   - component: {fileID: 33327500615488302}
-  - component: {fileID: 23041643720553298}
   m_Layer: 0
   m_Name: TurretR
   m_TagString: Untagged
@@ -535,7 +534,6 @@ GameObject:
   - component: {fileID: 114378958312314686}
   - component: {fileID: 82470388248558574}
   - component: {fileID: 33738903262339852}
-  - component: {fileID: 23171185573948572}
   m_Layer: 0
   m_Name: TurretL
   m_TagString: Untagged
@@ -1705,38 +1703,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!23 &23041643720553298
-MeshRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1399967316799484}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_Materials:
-  - {fileID: 2100000, guid: b7f59b6f2bc059a419d0a584a8d6d74b, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!23 &23046210006028858
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -1887,38 +1853,6 @@ MeshRenderer:
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 1
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!23 &23171185573948572
-MeshRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1634802265961600}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_Materials:
-  - {fileID: 2100000, guid: b7f59b6f2bc059a419d0a584a8d6d74b, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_SelectedEditorRenderState: 3
@@ -3762,7 +3696,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b25eda16504a6af4ea9a2c387b027740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
@@ -3800,7 +3733,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7f0e3274fa327440accaeb636851431, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
   preferredTargetType: 1
   range: 40
   riskFFAgainstFighters: 0
@@ -3839,7 +3771,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b25eda16504a6af4ea9a2c387b027740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
@@ -3877,7 +3808,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7f0e3274fa327440accaeb636851431, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
   preferredTargetType: 1
   range: 40
   riskFFAgainstFighters: 0
@@ -3975,7 +3905,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b25eda16504a6af4ea9a2c387b027740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
@@ -4027,7 +3956,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7f0e3274fa327440accaeb636851431, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
   preferredTargetType: 1
   range: 40
   riskFFAgainstFighters: 0
