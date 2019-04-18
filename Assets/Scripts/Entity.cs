@@ -104,7 +104,8 @@ public class Entity : NetworkBehaviour
 		//}
 
 		localOpacity = Mathf.Lerp(0, 1, localOpacityT);
-		localOpacityT = Mathf.Clamp01(localOpacityT + (localVisible ? 1 : -1) * Time.deltaTime * 4);
+		float time = 0.25f;
+		localOpacityT = Mathf.Clamp01(localOpacityT + (localVisible ? 1 : -1) * Time.deltaTime * (1/ time));
 		if (localOpacity < 0.01f)
 			meshRenderer.enabled = false;
 		else

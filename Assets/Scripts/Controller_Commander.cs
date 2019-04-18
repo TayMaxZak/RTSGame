@@ -274,7 +274,7 @@ public class Controller_Commander : NetworkBehaviour
 			{
 				if (IsUnit(e))
 				{
-					pos += e.transform.position.y;
+					pos += ((Unit)e).GetChangeHeight();
 					unitCount++;
 				}
 			}

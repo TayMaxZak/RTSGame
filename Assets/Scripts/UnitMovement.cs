@@ -473,6 +473,11 @@ public class UnitMovement
 		reachedVGoal = false;
 	}
 
+	public int GetVGoal()
+	{
+		return vGoalCur;
+	}
+
 	public Vector3 GetVelocity()
 	{
 		return velocity;

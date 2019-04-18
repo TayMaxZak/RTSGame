@@ -32,7 +32,8 @@ public class Util_KillBox : MonoBehaviour
 			}
 			unit.transform.position = newPos;
 
-			unit.Damage(mass, 0, DamageType.Wreck);
+			// TODO: Causes Multiplayer_Manager to not find the unit
+			//unit.Damage(mass, 0, DamageType.Wreck);
 		}
 	}
 }

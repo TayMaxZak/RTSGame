@@ -1434,6 +1434,11 @@ public class Unit : Entity, ITargetable
 		movement.SetVGoal(heightChange);
 	}
 
+	public int GetChangeHeight()
+	{
+		return movement.GetVGoal();
+	}
+
 	public void OrderAttack(Unit newTarg)
 	{
 		target = newTarg;

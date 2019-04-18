@@ -3,6 +3,8 @@
 		_MainTex("Diffuse Map", 2D) = "white" {}
 		_Color("Color", Color) = (1,1,1,1)
 		_Opacity("Opacity", Range(0, 1)) = 1
+		[MaterialToggle]
+		_StripedDissolve("Use Striped Dissolve", Float) = 0
 		//_NoiseSteps("Dissolve Resolution", Range(1, 1000)) = 200
 
 		_SSSTex("SSS Map", 2D) = "black" {}
@@ -23,6 +25,7 @@
 	sampler2D _MainTex;
 	fixed4 _Color;
 	half _Opacity;
+	float _StripedDissolve;
 
 	sampler2D _SSSTex;
 	fixed4 _SSSColor;
@@ -33,6 +36,23 @@
 	//half _AmbientFallL = 0.75f;
 	//half _AmbientFallD = 0f;
 
+
+	float stripe(half2 co, float rate)
+	{
+		float a = 1;
+		float b = 1;
+		float dxy = dot(co.xy, half2(a, b));
+		return frac(dxy * rate);
+	}
+
+	float checker(half2 co, float rate)
+	{
+		float a = 1;
+		float b = 22;
+		float dx = dot(co.x, half2(a, b));
+		float dy = dot(co.y, half2(a, b));
+		return clamp((round(frac(dx * rate * 2)) + round(frac(dy * rate))) / 2, 0, 1);
+	}
 
 	float rand(half2 co)
 	{
@@ -124,6 +144,16 @@
 		half sssMult = 2 * clamp(1 - (sssRange + 0.5), 0, 1) + 0 * clamp(sssRange - 0.5, 0, 1);
 		half3 sss = sssMult * s.SSS * _SSSColor * _LightColor0.rgb * _SSSStrength;
 
+
+		half dissolveAlpha = (1 - _Opacity);
+		//half dissolveNoise = rand(s.screenUV);
+		half dissolveNoise = _StripedDissolve ? stripe(s.screenUV, 100) : rand(s.screenUV);
+		half dissolve = dissolveAlpha + ceil(clamp(dissolveNoise - (1 - dissolveAlpha), 0, 1)) + 0.0001;
+		dissolve = (1 - dissolve);
+
+		//half attenNoise = checker(s.screenUV, 5);
+		//atten = clamp(atten + attenNoise * 0.2f, 0, 1);
+		//atten = clamp(atten + (1 - dissolve), 0, 1); // TODO: Wont work, still CASTS a shadow no matter what
 		half light = NdotL * atten;
 
 		//half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
@@ -137,19 +167,8 @@
 
 		c.rgb = clamp((s.AmbientOcclusion), 0, 1) * (shade * s.Albedo + amb) + sss;
 
-		/*
-		half missingAlpha = ((1 - s.Alpha));
-		half dissolve = rand(s.screenUV); // Random noise
-		clip(1 - (missingAlpha * clamp(dissolve, 0, 1) + missingAlpha));
-		*/
-		half dissolveAlpha = (1 - _Opacity);
-		half dissolveNoise = rand(s.screenUV);
-		half dissolve = dissolveAlpha + ceil(clamp(dissolveNoise - (1 - dissolveAlpha), 0, 1)) + 0.0001;
-		dissolve = (1 - dissolve);
-		c.a = dissolve;
-		clip(c.a);
 		c.a = clamp(dissolve, 0, 1);
-		
+		clip(dissolve);
 		return c;
 	}
 

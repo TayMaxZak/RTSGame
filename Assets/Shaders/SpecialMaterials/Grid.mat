@@ -71,7 +71,7 @@ Material:
     - _AlphaDistance2: 10.3
     - _AlphaFresnel: 0.23
     - _AlphaFresnel2: 0.62
-    - _BaseMult: 0
+    - _BaseMult: 0.04
     - _BumpScale: 1
     - _Cutoff: 1
     - _Cutoff1: 0
@@ -83,9 +83,9 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _InvFade: 0.99
-    - _MainAlphaOffset: -3.4
+    - _MainAlphaOffset: -0.4
     - _MainAlphaScale: 5.6
-    - _MainMult: 0.3
+    - _MainMult: 0.1
     - _Metallic: 0
     - _Mode: 2
     - _Mult: 1
