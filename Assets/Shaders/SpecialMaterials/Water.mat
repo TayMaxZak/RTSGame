@@ -26,6 +26,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DepthTex:
+        m_Texture: {fileID: 2800000, guid: 4ab2cdd3282a7e84389a8c2482a4ee0f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: -0.19, y: 0.85}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -62,10 +66,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _WaveTex:
+        m_Texture: {fileID: 2800000, guid: c75eb60142f84f948af462a07ad43c89, type: 3}
+        m_Scale: {x: 5, y: 5}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AmbientFallD: 0
     - _AmbientFallL: 0
-    - _AmbientMult: 4
+    - _AmbientMult: 2
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -81,6 +89,8 @@ Material:
     - _SSSStrength: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _SpeedX: 1
+    - _SpeedY: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1

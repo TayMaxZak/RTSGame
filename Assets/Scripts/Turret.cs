@@ -787,11 +787,13 @@ public class Turret : MonoBehaviour
 	}
 
 	// Visualize range of turrets in editor
+	/*
 	void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.white;
 		Gizmos.DrawWireSphere(transform.position, range);
 	}
+	*/
 }
 
 

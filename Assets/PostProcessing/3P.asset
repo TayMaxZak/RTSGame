@@ -42,13 +42,13 @@ MonoBehaviour:
   ambientOcclusion:
     m_Enabled: 0
     m_Settings:
-      intensity: 4
-      radius: 0.3
-      sampleCount: 10
+      intensity: 0.74
+      radius: 0.76
+      sampleCount: 3
       downsampling: 1
       forceForwardCompatibility: 0
       ambientOnly: 0
-      highPrecision: 0
+      highPrecision: 1
   screenSpaceReflection:
     m_Enabled: 0
     m_Settings:
@@ -113,12 +113,12 @@ MonoBehaviour:
     m_Settings:
       tonemapping:
         tonemapper: 2
-        neutralBlackIn: 0.02
-        neutralWhiteIn: 10
+        neutralBlackIn: 0.03
+        neutralWhiteIn: 15
         neutralBlackOut: 0
         neutralWhiteOut: 10
-        neutralWhiteLevel: 8
-        neutralWhiteClip: 7.9
+        neutralWhiteLevel: 5.3
+        neutralWhiteClip: 10
       basic:
         postExposure: 0
         temperature: 0
@@ -136,11 +136,11 @@ MonoBehaviour:
         log:
           slope: {r: 1, g: 1, b: 1, a: 0}
           power: {r: 1, g: 1, b: 1, a: 0}
-          offset: {r: 0.99177563, g: 0.9835528, b: 1, a: 0}
+          offset: {r: 1, g: 1, b: 1, a: 0}
         linear:
-          lift: {r: 1, g: 1, b: 1, a: 0}
-          gamma: {r: 1, g: 1, b: 1, a: 0}
-          gain: {r: 1, g: 1, b: 1, a: 0}
+          lift: {r: 0, g: 0, b: 0, a: 0}
+          gamma: {r: 0, g: 0, b: 0, a: 0}
+          gain: {r: 0, g: 0, b: 0, a: 0}
       curves:
         master:
           curve:
@@ -278,7 +278,7 @@ MonoBehaviour:
   userLut:
     m_Enabled: 0
     m_Settings:
-      lut: {fileID: 2800000, guid: 67b43a2af805dd349af587f2ce312714, type: 3}
+      lut: {fileID: 2800000, guid: 08b03e4b3cfb5a841a59b0482e7806ff, type: 3}
       contribution: 1
   chromaticAberration:
     m_Enabled: 1

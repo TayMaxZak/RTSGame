@@ -147,7 +147,7 @@
 
 		half dissolveAlpha = (1 - _Opacity);
 		//half dissolveNoise = rand(s.screenUV);
-		half dissolveNoise = _StripedDissolve ? stripe(s.screenUV, 100) : rand(s.screenUV);
+		half dissolveNoise = _StripedDissolve ? stripe(s.screenUV, 200) : rand(s.screenUV);
 		half dissolve = dissolveAlpha + ceil(clamp(dissolveNoise - (1 - dissolveAlpha), 0, 1)) + 0.0001;
 		dissolve = (1 - dissolve);
 

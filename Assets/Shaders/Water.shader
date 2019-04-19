@@ -1,14 +1,15 @@
 ﻿Shader "Custom/Water" {
 	Properties{
-		_MainTex("Diffuse Map", 2D) = "white" {}
+		_DepthTex("Depth Map", 2D) = "black" {}
+		_WaveTex("Wave Map", 2D) = "white" {}
+		_SpeedX("Speed X", Range(-8, 8)) = 1
+		_SpeedY("Speed Y", Range(-8, 8)) = 1
 		_Color("Color", Color) = (1,1,1,1)
 		_Opacity("Opacity", Range(0, 1)) = 1
 		//_NoiseSteps("Dissolve Resolution", Range(1, 1000)) = 200
 		
 		_AOTex("AO Map", 2D) = "white" {}
-		_AmbientMult("Ambient Multiplier", Range(0,4)) = 1
-		_AmbientFallL("Ambient Falloff Light", Range(0,1)) = 0.5
-		_AmbientFallD("Ambient Falloff Dark", Range(0,1)) = 0
+		//_AmbientMult("Ambient Multiplier", Range(0,4)) = 1
 	}
 		SubShader{
 		Tags{ "RenderType" = "Opaque" }
@@ -16,14 +17,16 @@
 #pragma surface surf Custom noambient
 //#pragma target 3.0
 //#pragma debug
-	sampler2D _MainTex;
+	sampler2D _DepthTex;
+	sampler2D _WaveTex;
+	half _SpeedX;
+	half _SpeedY;
+
 	fixed4 _Color;
 	half _Opacity;
 
 	sampler2D _AOTex;
-	half _AmbientMult;
-	half _AmbientFallL;
-	half _AmbientFallD;
+	//half _AmbientMult;
 
 
 	float rand(half2 co)
@@ -39,6 +42,8 @@
 	struct SurfaceOutputCustom
 	{
 		fixed3 Albedo;
+		fixed3 Wave;
+		fixed3 Depth;
 		fixed3 AmbientOcclusion;
 		fixed3 Normal;
 		fixed3 Emission;
@@ -52,8 +57,8 @@
 	};
 
 	struct Input {
-		float2 uv_MainTex;
-		//float2 uv_AOTex;
+		float2 uv_DepthTex;
+		float2 uv_WaveTex;
 		//float2 uv_SSSTex;
 		float4 screenPos;
 		float3 worldPos;
@@ -63,30 +68,43 @@
 
 	float4 screenPos;
 
-	half3 ambientLight(SurfaceOutputCustom s, half NdotL, half NdotV, half LdotV, half atten)
+	half3 gradient(SurfaceOutputCustom s, half NdotL, half NdotV, half LdotV, half atten)
 	{
-		half3 ambientL = 1;
-		half3 ambientD = 0;
-		//half height = clamp(dot(s.Normal, float3(0, 1, 0)) + 1, 0, 1) * 0.5 + clamp(dot(s.Normal, float3(0, 1, 0)) * 0.5, 0, 1);
-		half heightL = clamp((NdotL + NdotV) / 2, 0, 1);
-		//half heightD = clamp((NdotL + 1 - NdotV) / 2, 0, 1);
-		half heightD = clamp((NdotL + NdotV) / 2, 0, 1) * 0.5f;
-		ambientL = heightL > 0.5 ? lerp(unity_AmbientEquator, unity_AmbientSky, abs(heightL - 0.5) * 2) : lerp(unity_AmbientEquator, unity_AmbientGround, abs(heightL - 0.5) * 2);
-		ambientD = heightD > 0.5 ? lerp(unity_AmbientEquator, unity_AmbientSky, abs(heightD - 0.5) * 2) : lerp(unity_AmbientEquator, unity_AmbientGround, abs(heightD - 0.5) * 2);
+		half _AmbientMult = 2.0f;
+		half groundMix = 0.5f;
+		half ground = 1.0f;
 
-		half attenStrength = 0.8f;
+		half3 ambientL = 1;
+		half3 ambientD = 1;
+		//half height = clamp(dot(s.Normal, float3(0, 1, 0)) + 1, 0, 1) * 0.5 + clamp(dot(s.Normal, float3(0, 1, 0)) * 0.5, 0, 1);
+		half height = clamp(NdotV * (1 - groundMix) + ground * groundMix, 0, 1);
+		//half heightD = clamp((NdotL + 1 - NdotV) / 2, 0, 1);
+
+		half attenStrength = 0.5f;
 		half attenModded = (1 - (1 - atten) * attenStrength);
-		half shadow = clamp((attenModded * NdotL) * 2, 0, 1);
+		half shadow = clamp((attenModded * NdotL), 0, 1);
 		//half shadow = 1;
 
-		half3 ambientLight = lerp(ambientD, ambientL, shadow);
+		half3 ambientLight = lerp(0, 1, height);
 
 		//half acMult = (clamp(1 - NdotL * _AmbientFallL, 0, 1) + clamp(1 - -NdotL * _AmbientFallD, 0, 1) - 1);
 		//half acMult = (clamp(1 - LdotV * _AmbientFallL, 0, 1) + clamp(1 - -LdotV * _AmbientFallD, 0, 1) - 1);
-		half ambientLightMult = 1;
+		half ambientLightMult = shadow;
 
 		ambientLight *= ambientLightMult;
-		return clamp(ambientLight * _AmbientMult * 0.5, 0, _AmbientMult);
+		//ambientLight = ambientL;
+		return clamp(ambientLight * _AmbientMult, 0, _AmbientMult);
+	}
+
+	half3 ambientLight(half val)
+	{
+		val = clamp(val, 0, 1);
+		return val > 0.5 ? lerp(unity_AmbientEquator, unity_AmbientSky, abs(val - 0.5) * 2) : lerp(unity_AmbientEquator, unity_AmbientGround, abs(val - 0.5) * 2);
+	}
+
+	half3 ambientLight2(half val)
+	{
+		return lerp(unity_AmbientEquator, unity_AmbientSky, abs(val));
 	}
 
 	half3 mod(half3 a, half3 b)
@@ -105,10 +123,20 @@
 		//half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
 		half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
 
-		half ambAlbedoMix = 0.5f;
-		// Ambient light is mixed in with the albedo
-		c.rgb = ambientLight(s, NdotL, NdotV, LdotV, atten) * (s.Albedo * ambAlbedoMix + 1 * (1 - ambAlbedoMix));
+		half waveMix = 0.6f;
+		waveMix *= NdotV;
+		half depthMix = 0.5f;
 
+		half3 color = s.Albedo;
+
+		// Ambient light is mixed in with the albedo
+		//c.rgb = lerp(, color, s.Depth);
+		half grad = gradient(s, NdotL, NdotV, LdotV, atten);
+		//half val = grad * (1 * ambAlbedoMix + 1 * (1 - ambAlbedoMix)) * s.Depth;
+		half val = grad * (1 - waveMix) + (waveMix) * (0.4f + s.Wave * 0.9f);
+		half depth = s.Depth * light;
+		c.rgb = ambientLight(val * (1 - depthMix) + depth * (depthMix));
+		//c.rgb = val;
 		/*
 		half missingAlpha = ((1 - s.Alpha));
 		half dissolve = rand(s.screenUV); // Random noise
@@ -130,12 +158,31 @@
 
 
 	void surf(Input IN, inout SurfaceOutputCustom o) {
-		float2 uv = IN.uv_MainTex;
-		o.Albedo = tex2D(_MainTex, uv).rgb * _Color;
+		float2 uvDepth = IN.uv_DepthTex;
+		float2 uvWave = IN.uv_WaveTex;
+
+
+
+		o.Albedo = _Color;
+		o.Depth = tex2D(_DepthTex, uvDepth).rgb;
+		half blend = 0.5f;
+
+		float waveStages = 5;
+		//int iMax = pow(2, waveStages);
+
+		half2 offset = 0;
+		offset.x = _Time * _SpeedX / waveStages;
+		offset.y = _Time * _SpeedY / waveStages;
+
+		for (half i = 1; i <= waveStages; i++)
+		{
+			uint integ = round(i + 2);
+			o.Wave += tex2D(_WaveTex, (uvWave + ((integ % 2) ? -1.0f : 1.0f) * offset) * i) * (1 / waveStages) * 1.2f;
+		}
 		o.Alpha = _Color.a;
 		//uv = IN.uv_AOTex;
 		o.AmbientOcclusion = 1;
-		o.AmbientOcclusion = tex2D(_AOTex, uv).rgb;
+		o.AmbientOcclusion = tex2D(_AOTex, uvDepth).rgb;
 
 		o.viewDir = IN.viewDir;
 

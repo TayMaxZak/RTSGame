@@ -36,6 +36,7 @@ Material:
     - _AmbientMult: 1
     - _Opacity: 1
     - _SSSStrength: 0.5
+    - _StripedDissolve: 0
     m_Colors:
     - _Color: {r: 0.9558824, g: 0.9558824, b: 0.9558824, a: 1}
     - _SSSColor: {r: 1, g: 0.9696755, b: 0.9044118, a: 1}
