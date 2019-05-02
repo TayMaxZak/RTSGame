@@ -2,6 +2,7 @@
 	Properties{
 		_DepthTex("Depth Map", 2D) = "black" {}
 		_WaveTex("Wave Map", 2D) = "white" {}
+		_NormTex("Wave Normals", 2D) = "white" {}
 		_SpeedX("Speed X", Range(-8, 8)) = 1
 		_SpeedY("Speed Y", Range(-8, 8)) = 1
 		_Color("Color", Color) = (1,1,1,1)
@@ -19,6 +20,7 @@
 //#pragma debug
 	sampler2D _DepthTex;
 	sampler2D _WaveTex;
+	sampler2D _NormTex;
 	half _SpeedX;
 	half _SpeedY;
 
@@ -112,6 +114,14 @@
 		return clamp(2 * a - ceil(a * b) / b, 0, 1);
 	}
 
+	half getWave(half NdotV, half waveMix, half waveFadeMix)
+	{
+		half wave = (1 * NdotV) * waveFadeMix + 1 * (1 - waveFadeMix);
+		wave = (min(1, wave * 2.0f));
+		wave *= waveMix;
+		return wave;
+	}
+
 	half4 LightingCustom(SurfaceOutputCustom s, half3 lightDir, half atten) {
 		half NdotL = dot(s.Normal, lightDir);
 		half NdotV = dot(s.Normal, s.viewDir);
@@ -121,27 +131,51 @@
 		half light = NdotL * atten;
 
 		//half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
-		half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
+		half3 shade = _LightColor0.rgb * clamp(light, 0, 10);
 
-		half waveMix = 0.6f;
-		waveMix *= NdotV;
-		half depthMix = 0.5f;
+		half wave = getWave(NdotV, 0.2f, 1.0f);
+		half wave2 = getWave(NdotV, 1.0f, 0.0f);
+		
 
 		half3 color = s.Albedo;
 
 		// Ambient light is mixed in with the albedo
-		//c.rgb = lerp(, color, s.Depth);
 		half grad = gradient(s, NdotL, NdotV, LdotV, atten);
 		//half val = grad * (1 * ambAlbedoMix + 1 * (1 - ambAlbedoMix)) * s.Depth;
-		half val = grad * (1 - waveMix) + (waveMix) * (0.4f + s.Wave * 0.9f);
-		half depth = s.Depth * light;
-		c.rgb = ambientLight(val * (1 - depthMix) + depth * (depthMix));
-		//c.rgb = val;
+		half waveMap = 0.4f + s.Wave * 0.9f;
+		half val = grad * (1 - wave) + (wave) * (waveMap);
+		half3 base = s.Depth * light;
+		half baseMix = 0.5f;
+		half3 diffuse = ambientLight(val * (1 - baseMix) + base * (baseMix));
+
+		half val2 = grad * (1 - wave2) + (wave2) * (waveMap) * atten;
+		half3 base2 = 0;
+		half3 prespec = ambientLight(val2 * (1 - baseMix) + base2 * (baseMix));
+		//c.rgb = diffuse;
+		//c.rgb = prespec;
+
+
+
+
+
+		half3 reflect = normalize(2 * prespec * s.Normal - lightDir);
+		half3 specular = pow(saturate(dot(reflect, s.viewDir)), 20);
+		specular *= 0.2f;
+		//specular *= 1;
+		c.rgb = diffuse + specular;
+
+
+
+
 		/*
 		half missingAlpha = ((1 - s.Alpha));
 		half dissolve = rand(s.screenUV); // Random noise
 		clip(1 - (missingAlpha * clamp(dissolve, 0, 1) + missingAlpha));
 		*/
+
+
+
+
 		half dissolveAlpha = (1 - _Opacity);
 		half dissolveNoise = rand(s.screenUV);
 		half dissolve = dissolveAlpha + ceil(clamp(dissolveNoise - (1 - dissolveAlpha), 0, 1)) + 0.0001;
@@ -150,6 +184,9 @@
 		clip(c.a);
 		c.a = clamp(dissolve, 0, 1);
 		
+
+
+
 		return c;
 	}
 
@@ -179,6 +216,15 @@
 			uint integ = round(i + 2);
 			o.Wave += tex2D(_WaveTex, (uvWave + ((integ % 2) ? -1.0f : 1.0f) * offset) * i) * (1 / waveStages) * 1.2f;
 		}
+
+		//for (half j = 1; j <= waveStages; j++)
+		//{
+		//	uint integ = round(j + 2);
+		//	o.Normal += tex2D(_NormTex, (uvWave + ((integ % 2) ? -1.0f : 1.0f) * offset) * j) * (1 / waveStages) * 1.2f;
+		//}
+		//o.Normal = tex2D(_NormTex, uvWave);
+
+
 		o.Alpha = _Color.a;
 		//uv = IN.uv_AOTex;
 		o.AmbientOcclusion = 1;

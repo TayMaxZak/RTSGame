@@ -67,6 +67,7 @@ Material:
     - _AmbientFallL: 0.75
     - _AmbientMult: 1
     - _BumpScale: 1
+    - _ComicShading: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0

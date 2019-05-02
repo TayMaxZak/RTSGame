@@ -851,7 +851,7 @@ public class Controller_Commander : NetworkBehaviour
 
 	void UseAbility(int index)
 	{
-		return;
+		//return;
 
 		if (!HasSelection())
 			return;

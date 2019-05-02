@@ -4,8 +4,9 @@
 		_Color("Color", Color) = (1,1,1,1)
 		_Opacity("Opacity", Range(0, 1)) = 1
 		[MaterialToggle]
+		_ComicShading("Use Comic Shading", Float) = 1
+		[MaterialToggle]
 		_StripedDissolve("Use Striped Dissolve", Float) = 0
-		//_NoiseSteps("Dissolve Resolution", Range(1, 1000)) = 200
 
 		_SSSTex("SSS Map", 2D) = "black" {}
 		_SSSStrength("SSS Strength", Range(0, 4)) = 0.5
@@ -25,7 +26,8 @@
 	sampler2D _MainTex;
 	fixed4 _Color;
 	half _Opacity;
-	float _StripedDissolve;
+	half _ComicShading;
+	half _StripedDissolve;
 
 	sampler2D _SSSTex;
 	fixed4 _SSSColor;
@@ -35,7 +37,6 @@
 	//half _AmbientMult = 1;
 	//half _AmbientFallL = 0.75f;
 	//half _AmbientFallD = 0f;
-
 
 	float stripe(half2 co, float rate)
 	{
@@ -48,10 +49,12 @@
 	float checker(half2 co, float rate)
 	{
 		float a = 1;
-		float b = 22;
+		float b = 1;
 		float dx = dot(co.x, half2(a, b));
 		float dy = dot(co.y, half2(a, b));
-		return clamp((round(frac(dx * rate * 2)) + round(frac(dy * rate))) / 2, 0, 1);
+		rate *= 5;
+		float numberRaw = sin(dx * rate) + cos(dy * rate);
+		return clamp(((numberRaw + 4) * 0.125), 0, 1);
 	}
 
 	float rand(half2 co)
@@ -76,6 +79,7 @@
 		fixed Alpha;
 
 		float2 screenUV;
+		float2 mainUV;
 		float3 viewDir;
 		//half lightCounter;
 	};
@@ -132,6 +136,28 @@
 		return clamp(2 * a - ceil(a * b) / b, 0, 1);
 	}
 
+	half dissolveLight(half light, float2 uv, half mix)
+	{
+		half dissolveLight = (1 - light);
+		//half dissolveNoise = rand(s.screenUV);
+		half lightTile = 100;
+		half lightStripe = 0 ? stripe(uv, lightTile) : checker(uv, lightTile);
+		half lit = dissolveLight + ceil(clamp(lightStripe - (1 - dissolveLight), 0, 1)) + 0.0001;
+		lit = (1 - lit);
+		half litFactor = mix;
+		return (clamp(lit, 0, 1) * litFactor + light * (1 - litFactor));
+	}
+
+	half dissolveAlpha(float2 uv)
+	{
+		half dissolveAlpha = (1 - _Opacity);
+		half alphaTile = 100;
+		half dissolveNoise = _StripedDissolve ? stripe(uv, alphaTile) : rand(uv);
+		half dissolve = dissolveAlpha + ceil(clamp(dissolveNoise - (1 - dissolveAlpha), 0, 1)) + 0.0001;
+		dissolve = (1 - dissolve);
+		return dissolve;
+	}
+
 	half4 LightingCustom(SurfaceOutputCustom s, half3 lightDir, half atten) {
 		half NdotL = dot(s.Normal, lightDir);
 		half NdotV = dot(s.Normal, s.viewDir);
@@ -144,17 +170,10 @@
 		half sssMult = 2 * clamp(1 - (sssRange + 0.5), 0, 1) + 0 * clamp(sssRange - 0.5, 0, 1);
 		half3 sss = sssMult * s.SSS * _SSSColor * _LightColor0.rgb * _SSSStrength;
 
-
-		half dissolveAlpha = (1 - _Opacity);
-		//half dissolveNoise = rand(s.screenUV);
-		half dissolveNoise = _StripedDissolve ? stripe(s.screenUV, 200) : rand(s.screenUV);
-		half dissolve = dissolveAlpha + ceil(clamp(dissolveNoise - (1 - dissolveAlpha), 0, 1)) + 0.0001;
-		dissolve = (1 - dissolve);
-
-		//half attenNoise = checker(s.screenUV, 5);
-		//atten = clamp(atten + attenNoise * 0.2f, 0, 1);
-		//atten = clamp(atten + (1 - dissolve), 0, 1); // TODO: Wont work, still CASTS a shadow no matter what
 		half light = NdotL * atten;
+		half comicMix = 0.5f;
+		if (_ComicShading)
+			light = dissolveLight(light, s.mainUV, comicMix);
 
 		//half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
 		half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
@@ -165,10 +184,23 @@
 		// Ambient light is mixed in with the albedo
 		half3 amb = ambientLight(s, light) * (s.Albedo * ambAlbedoMix + 1 * (1 - ambAlbedoMix));
 
-		c.rgb = clamp((s.AmbientOcclusion), 0, 1) * (shade * s.Albedo + amb) + sss;
+		half occlusion = s.AmbientOcclusion;
+		if (_ComicShading)
+			occlusion = dissolveLight(occlusion, s.mainUV, comicMix);
+		c.rgb = clamp((occlusion), 0, 1) * (shade * s.Albedo + amb) + sss;
+		//c.rgb = lightStripe;
 
-		c.a = clamp(dissolve, 0, 1);
-		clip(dissolve);
+		/*
+		half missingAlpha = ((1 - s.Alpha));
+		half dissolve = rand(s.screenUV); // Random noise
+		clip(1 - (missingAlpha * clamp(dissolve, 0, 1) + missingAlpha));
+		*/
+		
+		c.a = dissolveAlpha(s.screenUV);
+
+		clip(c.a);
+		//c.a = clamp(c.a, 0, 1);
+		
 		return c;
 	}
 
@@ -192,6 +224,8 @@
 		o.screenUV = screenUV;
 		o.screenUV.x = floor(screenUV.x * screenParams.x) / screenParams.x;
 		o.screenUV.y = floor(screenUV.y * screenParams.y) / screenParams.y;
+
+		o.mainUV = uv;
 	}
 	ENDCG
 		}

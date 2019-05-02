@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Water
+  m_Name: Water2
   m_Shader: {fileID: 4800000, guid: 1b16e57d18bcfc74098bda555388492d, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -72,7 +72,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _WaveTex:
         m_Texture: {fileID: 2800000, guid: c75eb60142f84f948af462a07ad43c89, type: 3}
-        m_Scale: {x: 20, y: 20}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AmbientFallD: 0

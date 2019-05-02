@@ -13,7 +13,7 @@
 	SubShader
 	{
 		Tags { "RenderType"="Opaque" }
-		Cull Off
+		//Cull Off
 		Fog { Mode Off }
 		LOD 100
 
