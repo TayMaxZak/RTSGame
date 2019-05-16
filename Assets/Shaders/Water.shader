@@ -146,7 +146,7 @@
 		half val = grad * (1 - wave) + (wave) * (waveMap);
 		half3 base = s.Depth * light;
 		half baseMix = 0.5f;
-		half3 diffuse = ambientLight(val * (1 - baseMix) + base * (baseMix));
+		half3 diffuse = (ambientLight(val * (1 - baseMix) + base * (baseMix))) * _Color;
 
 		half val2 = grad * (1 - wave2) + (wave2) * (waveMap) * atten;
 		half3 base2 = 0;

@@ -3,8 +3,8 @@
 		_MainTex("Diffuse Map", 2D) = "white" {}
 		_Color("Color", Color) = (1,1,1,1)
 		_Opacity("Opacity", Range(0, 1)) = 1
-		[MaterialToggle]
-		_ComicShading("Use Comic Shading", Float) = 1
+		//[MaterialToggle]
+		//_ComicShading("Use Comic Shading", Float) = 1
 		[MaterialToggle]
 		_StripedDissolve("Use Striped Dissolve", Float) = 0
 
@@ -188,6 +188,7 @@
 		if (_ComicShading)
 			occlusion = dissolveLight(occlusion, s.mainUV, comicMix);
 		c.rgb = clamp((occlusion), 0, 1) * (shade * s.Albedo + amb) + sss;
+		//c.rgb = round((checker(s.mainUV, 100) + clamp(NdotL * atten, 0, 1)) / 2);
 		//c.rgb = lightStripe;
 
 		/*
