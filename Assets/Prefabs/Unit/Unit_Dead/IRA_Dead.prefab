@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 114442233987422222}
   - component: {fileID: 54088889216729734}
   m_Layer: 0
-  m_Name: StarLark_Dead
+  m_Name: IRA_Dead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98,7 +98,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1827003686925522}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.429, z: -0.178}
+  m_LocalPosition: {x: 0, y: -0.329, z: -0.129}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4503015096722840}
@@ -142,7 +142,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1796662562453436}
-  m_Mesh: {fileID: 4300000, guid: 1de3b5002f8a9a34a8e9ac09b874a8a3, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 101dfd14daf854c4fa40df618abe93f8, type: 3}
 --- !u!54 &54088889216729734
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -168,8 +168,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.45880157, y: 1.5849999, z: 1.1819999}
-  m_Center: {x: 0, y: 0.007499993, z: -0.07699996}
+  m_Size: {x: 1.027141, y: 1.39, z: 1.0271411}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114176263203680696
 MonoBehaviour:
   m_ObjectHideFlags: 1

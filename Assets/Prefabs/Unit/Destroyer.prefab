@@ -1559,7 +1559,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b25eda16504a6af4ea9a2c387b027740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0
@@ -1754,7 +1753,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b25eda16504a6af4ea9a2c387b027740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
   preferredTargetType: 2
   range: 40
   riskFFAgainstFighters: 0

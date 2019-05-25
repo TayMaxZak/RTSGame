@@ -822,7 +822,7 @@ GameObject:
   - component: {fileID: 222049342640789084}
   m_Layer: 5
   m_Name: BuildButtons
-  m_TagString: Untagged
+  m_TagString: ConCom_BuildButtons
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

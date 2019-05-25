@@ -13,7 +13,9 @@ public enum EntityType
 	Apollo,
 	Bulkhead,
 	OldEmpire,
-	HybridFrigate
+	HybridFrigate,
+	IRA,
+	Bomber
 }
 
 public class Entity : NetworkBehaviour
