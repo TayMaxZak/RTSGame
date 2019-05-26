@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33654190718972978}
   - component: {fileID: 23968102984420020}
   - component: {fileID: 114184608043896614}
-  m_Layer: 10
+  m_Layer: 2
   m_Name: StatusMissile_Cloud
   m_TagString: Untagged
   m_Icon: {fileID: 0}

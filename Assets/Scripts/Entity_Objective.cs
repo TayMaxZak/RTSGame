@@ -76,9 +76,9 @@ public class Entity_Objective : Entity
 		foreach (Unit u in units)
 		{
 			if (u.team == 0)
-				progressOffset -= u.GetObjectiveWeight() * gameRules.OBJV_captureAddPerUnitMult;
+				progressOffset -= EntityUtils.GetObjectiveWeightBySize(u.GetSize()) * gameRules.OBJV_captureAddPerUnitMult;
 			else if (u.team == 1)
-				progressOffset += u.GetObjectiveWeight() * gameRules.OBJV_captureAddPerUnitMult;
+				progressOffset += EntityUtils.GetObjectiveWeightBySize(u.GetSize()) * gameRules.OBJV_captureAddPerUnitMult;
 		}
 
 		UpdateProgress(Mathf.Clamp(progressOffset, -gameRules.OBJV_captureAddMax, gameRules.OBJV_captureAddMax) * Time.deltaTime);

@@ -691,6 +691,11 @@ public class Turret : MonoBehaviour
 		if (parentUnit.isServer)
 		{
 			multManager.CmdSyncTarget(parentUnit.GetComponent<NetworkIdentity>(), turretId, target.GetGameObject().GetComponent<NetworkIdentity>(), manual);
+			Debug.Log("parentUnit " + parentUnit);
+			Debug.Log("parentUnit.GetComponent<NetworkIdentity>() " + parentUnit.GetComponent<NetworkIdentity>());
+			Debug.Log("turretId " + turretId);
+			Debug.Log("target.GetGameObject() " + target.GetGameObject());
+			Debug.Log("target.GetGameObject().GetComponent<NetworkIdentity>() " + target.GetGameObject().GetComponent<NetworkIdentity>());
 		}
 		resetRotFrame = Time.frameCount;
 

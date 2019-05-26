@@ -184,7 +184,8 @@ public enum AbilityType
 	SelfDestruct,
 	IonMissile,
 	ShieldMode,
-	RailMode
+	RailMode,
+	Radar
 }
 
 public struct AbilityDisplayUpdateConfig

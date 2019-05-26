@@ -9,7 +9,8 @@ public class Unit : Entity, ITargetable
 
 	[Header("Objectives")]
 	[SerializeField]
-	private int objectiveWeight = 1; // How much this unit counts towards objective capture
+	private EntitySize sizeCategory = EntitySize.Default; // How much this unit counts towards objective capture / how big is it on enemy scanners
+	//private int objectiveWeight = 1; // How much this unit counts towards objective capture
 
 	[Header("Feedback")]
 	[SerializeField]
@@ -1344,9 +1345,9 @@ public class Unit : Entity, ITargetable
 		Die(damageType);
 	}
 
-	public int GetObjectiveWeight()
+	public EntitySize GetSize()
 	{
-		return objectiveWeight;
+		return sizeCategory;
 	}
 
 	public Vector3 GetVelocity()

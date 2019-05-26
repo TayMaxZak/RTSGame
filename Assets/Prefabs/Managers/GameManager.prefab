@@ -275,7 +275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FOWtickRate: 0.5
   GameRules:
-    useTestValues: 0
+    useTestValues: 1
     TEST_timeMultCooldown: 1
     TEST_timeMultBuild: 0.2
     TEST_initHPAdd: 0
@@ -315,6 +315,9 @@ MonoBehaviour:
     OBJV_captureTime: 20
     OBJV_captureAddPerUnitMult: 1
     OBJV_captureAddMax: 1
+    RES_startingResPoints: 20
+    RES_objMinorResPoints: 5
+    RES_objMajorResPoints: 10
     RES_reclaimTime: 5
     SPWN_flagshipRadius: 50
     AUD_randomPitchVariance: 0.05
@@ -325,7 +328,7 @@ MonoBehaviour:
     DMG_ffDamageMult: 0.5
     DMG_ffDamageMultSplash: 0.25
     MOV_abilityAimingRSMult: 1
-    MOV_heightCount: 10
+    MOV_heightCount: 20
     MOV_heightSpacing: 5
     TIK_statusRate: 5
     TIK_fighterInteractRate: 3
@@ -412,6 +415,9 @@ MonoBehaviour:
     - 5
     - 5
     - 5
+    ABLY_radarPeriod: 20
+    ABLY_radarPulseRange: 60
+    ABLY_radarPulseTime: 3
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3
@@ -436,9 +442,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
   buildUnits:
+  - {fileID: 114214795380621988, guid: 0f962d19a3d8cd344bcf7436f707ebbd, type: 2}
   - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
-  - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
-  - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
+  - {fileID: 114214795380621988, guid: 3a8f0bf15fbbd6040bc4621b154c904d, type: 2}
   - {fileID: 114214795380621988, guid: 8cc9506457f748847a9d34bd6755cddf, type: 2}
   - {fileID: 114214795380621988, guid: 2d4a613ca2fbd4e47a3581c32748146c, type: 2}
   - {fileID: 114214795380621988, guid: 54f4b3e7cb179aa4483ae56a3be785e3, type: 2}
@@ -447,7 +453,6 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
   resPoints: 0
   reclaimPoints: 0
-  flagship: {fileID: 0}
 --- !u!114 &114578553437470668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -461,9 +466,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
   buildUnits:
+  - {fileID: 114214795380621988, guid: 0f962d19a3d8cd344bcf7436f707ebbd, type: 2}
   - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
-  - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
-  - {fileID: 114214795380621988, guid: 47145d824bd82ed4da8d3dd28c1d92be, type: 2}
+  - {fileID: 114214795380621988, guid: 3a8f0bf15fbbd6040bc4621b154c904d, type: 2}
   - {fileID: 114214795380621988, guid: 8cc9506457f748847a9d34bd6755cddf, type: 2}
   - {fileID: 114214795380621988, guid: 2d4a613ca2fbd4e47a3581c32748146c, type: 2}
   - {fileID: 114214795380621988, guid: 54f4b3e7cb179aa4483ae56a3be785e3, type: 2}
@@ -472,4 +477,3 @@ MonoBehaviour:
   - {fileID: 114214795380621988, guid: 042f61d98a17c8b4e8f4b5ea4be31bd4, type: 2}
   resPoints: 0
   reclaimPoints: 0
-  flagship: {fileID: 0}

@@ -181,6 +181,11 @@ public class GameRules
 	public float ABLY_shieldModeRegenDelay = 0.25f; // Delay after taking damage before regen starts
 	public float[] ABLY_shieldModeRegenGPS = new float[] { 5, 10, 10, 5, 5, 5 }; // Based on shields missing: 20% -> 8ps / 40% -> 12ps / 60% -> 12ps / 80% -> 8ps / 100% -> 8ps / over 100& -> 4ps
 
+	[Header("Radar")]
+	public float ABLY_radarPeriod = 20; // Time between pulses
+	public float ABLY_radarPulseRange = 80; // How big the sphere gets
+	public float ABLY_radarPulseTime = 3; // How long it takes the sphere to get to its biggest size
+
 
 	[Header("Statuses")]
 	public float STATswarmResistMult = 0.1f; // How much of all incoming damage does each swarm protecting an ally absorb

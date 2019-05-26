@@ -1512,7 +1512,7 @@ MonoBehaviour:
   selCircleSize: 0.8
   visionRange: 40
   disableTurrets: 0
-  objectiveWeight: 1
+  sizeCategory: 1
   hpBarPrefab: {fileID: 114328092779895440, guid: 9b46cc32d1a3cb949a5b59df47180d73,
     type: 2}
   hpBarHeight: 1.5

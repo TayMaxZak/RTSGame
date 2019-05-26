@@ -18,6 +18,15 @@ public enum EntityType
 	Bomber
 }
 
+public enum EntitySize
+{
+	Default,
+	Corvette,
+	Frigate,
+	Cruiser,
+	Flagship
+}
+
 public class Entity : NetworkBehaviour
 {
 	public bool printInfo = false;
@@ -191,6 +200,33 @@ public class Entity : NetworkBehaviour
 
 public static class EntityUtils
 {
+	public static int GetObjectiveWeightBySize(EntitySize size)
+	{
+		switch (size)
+		{
+			default:
+				{
+					return 0;
+				}
+			case EntitySize.Corvette:
+				{
+					return 1;
+				}
+			case EntitySize.Frigate:
+				{
+					return 2;
+				}
+			case EntitySize.Cruiser:
+				{
+					return 3;
+				}
+			case EntitySize.Flagship:
+				{
+					return 20;
+				}
+		}
+	}
+
 	public static string GetDisplayName(EntityType type)
 	{
 		switch (type)
@@ -225,11 +261,19 @@ public static class EntityUtils
 				}
 			case EntityType.OldEmpire:
 				{
-					return "Old Empire Frigate";
+					return "Imperial Frigate";
 				}
 			case EntityType.HybridFrigate:
 				{
 					return "Boxcar";
+				}
+			case EntityType.IRA:
+				{
+					return "I.R.A. Corvette";
+				}
+			case EntityType.Bomber:
+				{
+					return "B-9 Ghast";
 				}
 		}
 	}
@@ -273,6 +317,14 @@ public static class EntityUtils
 			case EntityType.HybridFrigate:
 				{
 					return "A hybrid frigate which fills many roles. Has a low-power defensive shield and variable weapons.";
+				}
+			case EntityType.IRA:
+				{
+					return "Scans for enemy units and interferes with enemy intel.";
+				}
+			case EntityType.Bomber:
+				{
+					return "A high-risk assault unit which excels at demolishing tough targets and fending off fighters.";
 				}
 		}
 	}
