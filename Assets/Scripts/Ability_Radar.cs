@@ -372,16 +372,12 @@ public class Ability_Radar : Ability
 		Entity ent = col.GetComponentInParent<Entity>();
 		if (ent)
 		{
-			Debug.Log("1");
 			if (ent.GetType() == typeof(Unit) || ent.GetType().IsSubclassOf(typeof(Unit)))
 			{
-				if (ent.GetType() != typeof(Unit) && ent.GetType().IsSubclassOf(typeof(Unit)))
-					Debug.Log("2");
 				return (Unit)ent;
 			}
 			else
 			{
-				Debug.Log("2 bad");
 				return null;
 			}
 		}

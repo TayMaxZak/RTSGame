@@ -264,7 +264,6 @@ public class Commander : MonoBehaviour
 	public void SetFlagship(Unit_Flagship flag)
 	{
 		flagship = flag;
-		Debug.Log(flagship);
 	}
 
 
