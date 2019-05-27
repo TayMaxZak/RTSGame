@@ -1257,14 +1257,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1315403726550974}
-  m_LocalRotation: {x: -0, y: 0, z: -1, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 2.671842, y: 0.2752756, z: 2.3799803}
   m_Children:
   - {fileID: 4567061863181758}
   m_Father: {fileID: 4237624538071222}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -180, y: -180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4439424789102846
 Transform:
   m_ObjectHideFlags: 1
@@ -1312,13 +1312,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1869203791680328}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.34, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.34, z: 0}
   m_LocalScale: {x: 1.1601198, y: 0.78700924, z: 1.1601337}
   m_Children: []
   m_Father: {fileID: 4438622188597630}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -180, y: -180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4570607824207378
 Transform:
   m_ObjectHideFlags: 1
@@ -3866,7 +3866,7 @@ MonoBehaviour:
   engineEffects: {fileID: 114347823518688834}
   fireAudioLoopPrefab: {fileID: 114609254506899492, guid: 3a1c3146576773945ab528372ee28b5a,
     type: 2}
-  team: 0
+  team: 1
   buildIndex: -1
   curArmor: 350
   maxArmor: 350

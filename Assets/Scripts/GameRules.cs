@@ -83,6 +83,7 @@ public class GameRules
 	public int TIK_fighterInteractRate = 5; // How many times per second should fighters interact with their target
 	public int TIK_fragileHealthConvertRate = 5; // How many times per second should fragile health transform into normal health
 	public int TIK_ionDecayRate = 5; // How many times per second should ions decay
+	public int TIK_radarOverlapRate = 5; // How many times per second should radar update
 
 	//[Header("Vision")]
 	//public float VIS_lol = 25;

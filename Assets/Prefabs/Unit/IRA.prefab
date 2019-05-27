@@ -82,7 +82,7 @@ GameObject:
   - component: {fileID: 4832905655757786}
   - component: {fileID: 33643555902163766}
   - component: {fileID: 23249019741071360}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -355,7 +355,7 @@ Transform:
   m_GameObject: {fileID: 1168800090016408}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 120, y: 120, z: 120}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4329311987518754}
   m_RootOrder: 5
@@ -503,7 +503,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: f90d4cf36834a214bbbbaffc288c0d63, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.18
   m_Pitch: 0.9
@@ -745,6 +745,8 @@ MonoBehaviour:
     type: 2}
   ghostCruiser: {fileID: 1997262063977494, guid: c380bc69160cfdf48a28fb2ddbb16b1a,
     type: 2}
+  ghostFlagship: {fileID: 1414865005705972, guid: 1ed6d973c4367d442bfcf8ed8e5405e2,
+    type: 2}
   pulseSound: {fileID: 82978470288982874}
   scanningSphere: {fileID: 1168800090016408}
   audioLoopPrefab: {fileID: 0}
@@ -827,7 +829,7 @@ MonoBehaviour:
   range: 25
   riskFFAgainstFighters: 1
   ignoreNonPreferrential: 0
-  soundShoot: {fileID: 8300000, guid: 13c45b4f30054584681d50011b1d12f0, type: 3}
+  soundShoot: {fileID: 8300000, guid: 9b32f5287c500dd47beef62df7f1fd40, type: 3}
   firePos: {fileID: 4410846519571478}
   maxAmmo: 3
   reloadCooldown: 2
@@ -849,7 +851,7 @@ MonoBehaviour:
     startPosition: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: 0}
   pelletCount: 1
-  accuracy: 0.3
+  accuracy: 0.05
 --- !u!136 &136254935362618684
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: RadarGhost_Cruiser
+  m_Name: RadarGhost_Flagship
   m_Shader: {fileID: 4800000, guid: 285b62d96f0df99409f53b6b53254162, type: 3}
   m_ShaderKeywords: _ALPHABLEND_ON
   m_LightmapFlags: 0
@@ -19,7 +19,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AOTex:
-        m_Texture: {fileID: 2800000, guid: de209cf88000d714aa8ae2a95acf3163, type: 3}
+        m_Texture: {fileID: 2800000, guid: e7c00e52dfcbc1b458756bef07e9e414, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ForegroundMask:

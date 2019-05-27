@@ -103,6 +103,8 @@ public class Turret : MonoBehaviour
 		rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
 
 		multManager = GameObject.FindGameObjectWithTag("MultiplayerManager").GetComponent<Multiplayer_Manager>(); // For multiplayer
+		if (multManager == null)
+			Debug.LogError("no multmanager found");
 	}
 
 	public void SetParentUnit(Unit unit, int id)
@@ -124,6 +126,14 @@ public class Turret : MonoBehaviour
 		if (parentUnit.isServer)
 		{
 			UpdateTargeting();
+
+			if (parentUnit.printInfo)
+			{
+				if (multManager == null)
+					Debug.LogError("lost multmanager in update");
+				else
+					Debug.Log("we still have multManager");
+			}
 		}
 		else
 		{ // Rotate appropriately based on target set by server
@@ -654,6 +664,11 @@ public class Turret : MonoBehaviour
 		{
 			curAmmo--;
 
+			if (parentUnit.printInfo)
+			{
+				if (multManager == null)
+					Debug.LogError("lost multmanager 1");
+			}
 			multManager.RpcFireTurret(parentUnit.GetComponent<NetworkIdentity>(), turretId);
 		}
 	}
@@ -690,12 +705,16 @@ public class Turret : MonoBehaviour
 		// TODO: What if target is intentionally null?
 		if (parentUnit.isServer)
 		{
-			multManager.CmdSyncTarget(parentUnit.GetComponent<NetworkIdentity>(), turretId, target.GetGameObject().GetComponent<NetworkIdentity>(), manual);
-			Debug.Log("parentUnit " + parentUnit);
-			Debug.Log("parentUnit.GetComponent<NetworkIdentity>() " + parentUnit.GetComponent<NetworkIdentity>());
-			Debug.Log("turretId " + turretId);
-			Debug.Log("target.GetGameObject() " + target.GetGameObject());
-			Debug.Log("target.GetGameObject().GetComponent<NetworkIdentity>() " + target.GetGameObject().GetComponent<NetworkIdentity>());
+			if (parentUnit.printInfo)
+			{
+				if (multManager == null)
+					Debug.LogError("lost multmanager 2");
+				Debug.Log("RUN COMMAND ");
+			}
+			if (multManager != null)
+			{
+				multManager.CmdSyncTarget(parentUnit.GetComponent<NetworkIdentity>(), turretId, target.GetGameObject().GetComponent<NetworkIdentity>(), manual);
+			}
 		}
 		resetRotFrame = Time.frameCount;
 
@@ -708,6 +727,48 @@ public class Turret : MonoBehaviour
 		hasManualTarget = manual;
 		//Debug.Log("Turret aiming at " + (!IsNull(target) ? target.GetTargetType().ToString() : "null"));
 	}
+
+	/*
+	private void UpdateTarget(bool manual)
+	{
+		// TODO: What if target is intentionally null?
+		if (parentUnit.isServer)
+		{
+			if (parentUnit.printInfo)
+			{
+				if (multManager == null)
+					Debug.LogError("lost multmanager 2");
+			}
+			Debug.Log("RUN COMMAND ");
+			try
+			{
+				multManager.CmdSyncTarget(parentUnit.GetComponent<NetworkIdentity>(), turretId, target.GetGameObject().GetComponent<NetworkIdentity>(), manual);
+			}
+			catch(System.NullReferenceException e)
+			{
+				Debug.LogError("null exception, " + e.Message);
+				Debug.Log("START TRACE ");
+				Debug.Log("multManager " + multManager);
+				Debug.Log("parentUnit " + parentUnit);
+				Debug.Log("parentUnit.GetComponent<NetworkIdentity>() " + parentUnit.GetComponent<NetworkIdentity>());
+				Debug.Log("turretId " + turretId);
+				Debug.Log("target.GetGameObject() " + target.GetGameObject());
+				Debug.Log("target.GetGameObject().GetComponent<NetworkIdentity>() " + target.GetGameObject().GetComponent<NetworkIdentity>());
+				Debug.Log("END TRACE ");
+			}
+		}
+		resetRotFrame = Time.frameCount;
+
+		if (target.GetGameObject() == parentUnit.GetGameObject())
+		{
+			Debug.Log("Reset target");
+			manual = false;
+			target = null;
+		}
+		hasManualTarget = manual;
+		//Debug.Log("Turret aiming at " + (!IsNull(target) ? target.GetTargetType().ToString() : "null"));
+	}
+	*/
 
 	public void ClientUpdateTarget(NetworkIdentity targetIdentity, bool manual)
 	{

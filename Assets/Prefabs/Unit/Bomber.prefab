@@ -274,7 +274,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &1465201106147878
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
@@ -282,7 +282,7 @@ GameObject:
   - component: {fileID: 4348146685385494}
   - component: {fileID: 119251495226025976}
   m_Layer: 0
-  m_Name: BlobLightProjector
+  m_Name: ReticuleProjector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -331,7 +331,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4390076973081432}
   m_Layer: 0
-  m_Name: ChainStart
+  m_Name: BombStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -575,7 +575,7 @@ Transform:
   - {fileID: 4899512776664396}
   - {fileID: 4185134147453152}
   m_Father: {fileID: 4192269732631796}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
 --- !u!4 &4113449555094494
 Transform:
@@ -644,7 +644,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4192269732631796}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
 --- !u!4 &4185134147453152
 Transform:
@@ -671,11 +671,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1106845099107680}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.26, y: 3.033, z: -43.815}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4424602657944702}
   - {fileID: 4134326031233452}
+  - {fileID: 4348146685385494}
   - {fileID: 4390076973081432}
   - {fileID: 4748230266518138}
   - {fileID: 4103023036170234}
@@ -716,12 +717,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1465201106147878}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: -0.25600004, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4390076973081432}
-  m_RootOrder: 0
+  m_Father: {fileID: 4192269732631796}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4390076973081432
 Transform:
@@ -732,10 +733,9 @@ Transform:
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: -0.256, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4348146685385494}
+  m_Children: []
   m_Father: {fileID: 4192269732631796}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!4 &4424602657944702
 Transform:
@@ -908,7 +908,7 @@ Transform:
   - {fileID: 4341971994360980}
   - {fileID: 4768801319505310}
   m_Father: {fileID: 4192269732631796}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: 0}
 --- !u!4 &4768801319505310
 Transform:
@@ -1601,7 +1601,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: f90d4cf36834a214bbbbaffc288c0d63, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.18
   m_Pitch: 1
@@ -1699,7 +1699,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: f90d4cf36834a214bbbbaffc288c0d63, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.18
   m_Pitch: 1
@@ -1846,7 +1846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   printInfo: 0
-  type: 2
+  type: 10
   model: {fileID: 1604123075280672}
   swarmTarget: {fileID: 4134326031233452}
   selCircleSize: 0.75
@@ -1903,11 +1903,11 @@ MonoBehaviour:
   range: 25
   riskFFAgainstFighters: 1
   ignoreNonPreferrential: 0
-  soundShoot: {fileID: 8300000, guid: 13c45b4f30054584681d50011b1d12f0, type: 3}
+  soundShoot: {fileID: 8300000, guid: 730a20a86f9e90b47abfb2172855205a, type: 3}
   firePos: {fileID: 4341971994360980}
-  maxAmmo: 3
+  maxAmmo: 0
   reloadCooldown: 4
-  rateOfFire: 180
+  rateOfFire: 70
   shootOffsetRatio: 0
   RS: 180
   baseRotatesOnY: 0
@@ -1961,11 +1961,11 @@ MonoBehaviour:
   range: 25
   riskFFAgainstFighters: 1
   ignoreNonPreferrential: 0
-  soundShoot: {fileID: 8300000, guid: 13c45b4f30054584681d50011b1d12f0, type: 3}
+  soundShoot: {fileID: 8300000, guid: 730a20a86f9e90b47abfb2172855205a, type: 3}
   firePos: {fileID: 4899512776664396}
-  maxAmmo: 3
+  maxAmmo: 0
   reloadCooldown: 4
-  rateOfFire: 180
+  rateOfFire: 70
   shootOffsetRatio: 0.5
   RS: 180
   baseRotatesOnY: 0
@@ -2019,4 +2019,4 @@ Projector:
   m_Material: {fileID: 2100000, guid: c8c80c5b03f5c7e40b07eb2170e667e5, type: 2}
   m_IgnoreLayers:
     serializedVersion: 2
-    m_Bits: 258
+    m_Bits: 4354

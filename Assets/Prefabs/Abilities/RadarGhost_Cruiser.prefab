@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4046220828367224}
   - component: {fileID: 33102653243399478}
   - component: {fileID: 23584694891910548}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4195027023819768}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: RadarGhost_Cruiser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49,13 +49,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1643681611891766}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.4, y: 2, z: 1.4}
+  m_LocalScale: {x: 2.6, y: 3, z: 10}
   m_Children: []
   m_Father: {fileID: 4195027023819768}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4195027023819768
 Transform:
   m_ObjectHideFlags: 1
@@ -63,7 +63,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1997262063977494}
   m_LocalRotation: {x: -0, y: 0.0000014603136, z: -0, w: 1}
-  m_LocalPosition: {x: -29.41, y: -0.025310278, z: -17.75}
+  m_LocalPosition: {x: 29.625, y: 0, z: -35.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4046220828367224}
@@ -108,4 +108,4 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1643681611891766}
-  m_Mesh: {fileID: 4300000, guid: 306ff9622b9717345916a2c0abd21fab, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 101dfd14daf854c4fa40df618abe93f8, type: 3}

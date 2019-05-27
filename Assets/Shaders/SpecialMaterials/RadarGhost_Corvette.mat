@@ -19,7 +19,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AOTex:
-        m_Texture: {fileID: 2800000, guid: 4c2e16aba7b290049ad7b1eabbdee71c, type: 3}
+        m_Texture: {fileID: 2800000, guid: de209cf88000d714aa8ae2a95acf3163, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ForegroundMask:
@@ -35,7 +35,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _AOOpacity: 0.3
+    - _AOOpacity: 0.8
     - _AmbientFallD: 0.375
     - _AmbientFallL: 1
     - _AmbientMult: 1

@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4538575370817728}
   - component: {fileID: 33898215179506800}
   - component: {fileID: 23025039644546312}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SelectionCircleWhite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -10,6 +10,9 @@ public class Ability_Radar : Ability
 	private float remainingPulseTime = -1;
 	private float currentRadius;
 
+	private float remainingPulseCooldown = -1;
+	private float curOverlapTickTimer;
+
 	[Header("Effects")]
 	[SerializeField]
 	private Effect_Point pointEffectPrefab;
@@ -22,6 +25,8 @@ public class Ability_Radar : Ability
 	private GameObject ghostFrigate;
 	[SerializeField]
 	private GameObject ghostCruiser;
+	[SerializeField]
+	private GameObject ghostFlagship;
 
 	[Header("Pulse")]
 	[SerializeField]
@@ -80,81 +85,127 @@ public class Ability_Radar : Ability
 	{
 		base.Update();
 
+		remainingPulseCooldown -= Time.deltaTime;
+		if (remainingPulseCooldown < 0)
+		{
+			Pulse();
+		}
+
+
 		if (remainingPulseTime > 0)
 		{
 			if (!scanningSphere.activeSelf)
 				scanningSphere.SetActive(true);
 
-			//scanningSphere.transform.position = transform.position;
 			currentRadius = (gameRules.ABLY_radarPulseTime - remainingPulseTime) * gameRules.ABLY_radarPulseRange / gameRules.ABLY_radarPulseTime;
-			Debug.Log(currentRadius);
-
+			// Update visual
 			scanningSphere.transform.localScale = currentRadius * Vector3.one * 2;
-			Collider[] cols = Physics.OverlapSphere(scanningSphere.transform.position, Mathf.RoundToInt(currentRadius), gameRules.entityLayerMask);
 
-			List<Unit> units = new List<Unit>();
-			for (int i = 0; i < cols.Length; i++)
+			curOverlapTickTimer -= Time.deltaTime;
+			if (curOverlapTickTimer <= 0)
 			{
-				Unit unit = GetUnitFromCol(cols[i]);
+				float delta = (1f / gameRules.TIK_radarOverlapRate);
+				curOverlapTickTimer = delta;
 
-				if (!unit) // Only works on units
-					continue;
 
-				if (units.Contains(unit)) // Ignore multiple colliders for one unit
-					continue;
 
-				if (unit == parentUnit) // Don't add ourselves
-					continue;
 
-				if (unit.team == team) // They must be enemies
-					continue;
 
-				bool hasRadar = false; // Can't detect another radar-capable unit
-				foreach (Ability a in unit.abilities)
-					if (a.GetAbilityType() == AbilityType.Radar)
-						hasRadar = true;
-				if (hasRadar)
-					continue;
 
-				if (unitsThisPulse.Contains(unit))
-					continue;
 
-				//Debug.Log("team " + unit.team);
-				units.Add(unit);
-				unitsThisPulse.Add(unit);
-			}
 
-			for (int i = 0; i < units.Count; i++) // For each unit, subtract armor
-			{
-				//units[i].Damage(1, 0, DamageType.Internal);
-				Instantiate(detectEffect, units[i].transform.position, units[i].transform.rotation);
-				if (!units[i].VisibleBy(team)) // Don't add a ghost for units we can see
+
+
+
+
+
+
+
+
+
+
+				// Overlap colliders
+				Collider[] cols = Physics.OverlapSphere(scanningSphere.transform.position, Mathf.RoundToInt(currentRadius), gameRules.entityLayerMask);
+
+				//Debug.Log(currentRadius);
+
+
+				List<Unit> units = new List<Unit>();
+				// Process overlapped colliders
+				for (int i = 0; i < cols.Length; i++)
 				{
-					if (units[i].GetSize() == EntitySize.Corvette)
+					Unit unit = GetUnitFromCol(cols[i]);
+
+					if (!unit) // Only works on units
+						continue;
+
+					if (units.Contains(unit)) // Ignore multiple colliders for one unit
+						continue;
+
+					//if (unit == parentUnit) // Don't add ourselves
+					//	continue;
+
+					if (unit.team == team) // They must be enemies
+						continue;
+
+					//bool hasRadar = false; // Can't detect another radar-capable unit
+					//foreach (Ability a in unit.abilities)
+					//	if (a.GetAbilityType() == AbilityType.Radar)
+					//		hasRadar = true;
+					//if (hasRadar)
+					//	continue;
+
+					if (unit.Type == EntityType.Bomber) // Can't detect units with radar stealth (bombers)
+						continue;
+
+					if (unitsThisPulse.Contains(unit)) // Already detected this unit
+						continue;
+
+					units.Add(unit);
+					unitsThisPulse.Add(unit);
+				}
+
+				// Loop through the new units we found this tick
+				for (int i = 0; i < units.Count; i++)
+				{
+					//units[i].Damage(1, 0, DamageType.Internal);
+
+					Instantiate(detectEffect, units[i].transform.position, units[i].transform.rotation);
+
+					if (!units[i].VisibleBy(team)) // Don't add a ghost for units we can see
 					{
-						GameObject ghost = Instantiate(ghostCorvette, units[i].transform.position, units[i].transform.rotation);
-						ghostsThisPulse.Add(ghost);
-					}
-					else if (units[i].GetSize() == EntitySize.Frigate)
-					{
-						GameObject ghost = Instantiate(ghostFrigate, units[i].transform.position, units[i].transform.rotation);
-						ghostsThisPulse.Add(ghost);
-					}
-					else if (units[i].GetSize() == EntitySize.Cruiser)
-					{
-						GameObject ghost = Instantiate(ghostCruiser, units[i].transform.position, units[i].transform.rotation);
-						ghostsThisPulse.Add(ghost);
+						// Different sized ghost for each unit size
+						if (units[i].GetSize() == EntitySize.Corvette)
+						{
+							GameObject ghost = Instantiate(ghostCorvette, units[i].transform.position, units[i].transform.rotation);
+							ghostsThisPulse.Add(ghost);
+						}
+						else if (units[i].GetSize() == EntitySize.Frigate)
+						{
+							GameObject ghost = Instantiate(ghostFrigate, units[i].transform.position, units[i].transform.rotation);
+							ghostsThisPulse.Add(ghost);
+						}
+						else if (units[i].GetSize() == EntitySize.Cruiser)
+						{
+							GameObject ghost = Instantiate(ghostCruiser, units[i].transform.position, units[i].transform.rotation);
+							ghostsThisPulse.Add(ghost);
+						}
+						else if (units[i].GetSize() == EntitySize.Flagship)
+						{
+							GameObject ghost = Instantiate(ghostFlagship, units[i].transform.position, units[i].transform.rotation);
+							ghostsThisPulse.Add(ghost);
+						}
 					}
 				}
-				//if (hasSuperlaser)
-				//{
-				//	Status markStatus = new Status(gameObject, StatusType.SuperlaserMark); // TODO: Optimize?
-				//	markStatus.SetTimeLeft(gameRules.ABLY_armorDrainDPSEnemy * Time.deltaTime);
-				//	units[i].AddStatus(markStatus);
-				//}
+
+
+
 			}
 
-			remainingPulseTime -= Time.deltaTime; // This is after to ensure we don't go past the range
+
+
+			// Update pulse progress
+			remainingPulseTime -= Time.deltaTime; // This is after the overlap to ensure we don't go past the range
 			if (remainingPulseTime < 0)
 				scanningSphere.SetActive(false);
 		}
@@ -266,6 +317,7 @@ public class Ability_Radar : Ability
 		//{
 		//	Destroy(del);
 		//}
+		remainingPulseCooldown = gameRules.ABLY_radarPeriod;
 	}
 
 	public override void UseAbility(AbilityTarget target)
@@ -320,10 +372,18 @@ public class Ability_Radar : Ability
 		Entity ent = col.GetComponentInParent<Entity>();
 		if (ent)
 		{
+			Debug.Log("1");
 			if (ent.GetType() == typeof(Unit) || ent.GetType().IsSubclassOf(typeof(Unit)))
+			{
+				if (ent.GetType() != typeof(Unit) && ent.GetType().IsSubclassOf(typeof(Unit)))
+					Debug.Log("2");
 				return (Unit)ent;
+			}
 			else
+			{
+				Debug.Log("2 bad");
 				return null;
+			}
 		}
 		else
 		{
