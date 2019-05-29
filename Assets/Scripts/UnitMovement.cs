@@ -483,6 +483,16 @@ public class UnitMovement
 		return velocity;
 	}
 
+	public Vector3 GetHVelocity()
+	{
+		return new Vector3(velocity.x, 0, velocity.z);
+	}
+
+	public float GetMovementSpeed()
+	{
+		return MS;
+	}
+
 	public void SetAbilityGoal(AbilityTarget newGoal)
 	{
 		abilityGoal = newGoal;

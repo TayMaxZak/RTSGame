@@ -187,6 +187,14 @@ public class GameRules
 	public float ABLY_radarPulseRange = 80; // How big the sphere gets
 	public float ABLY_radarPulseTime = 3; // How long it takes the sphere to get to its biggest size
 
+	[Header("Radar")]
+	public float ABLY_bombsLockOnTime = 1.5f; // How long it takes to lock on
+	public float ABLY_bombsKeepTargetTime = 1.5f; // How long it takes to lock on
+	public int ABLY_bombsStacks = 3; // How many bombing runs total
+	public int ABLY_bombsCount = 6; // How many bombs dropped per use
+	public float ABLY_bombsDamage = 30; // How big the sphere gets
+	public float ABLY_bombsDamageBonusMult = 0.05f; // How long it takes the sphere to get to its biggest size
+
 
 	[Header("Statuses")]
 	public float STATswarmResistMult = 0.1f; // How much of all incoming damage does each swarm protecting an ally absorb

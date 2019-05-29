@@ -42,7 +42,8 @@
 	{
 		float a = 1;
 		float b = 1;
-		float dxy = dot(co.xy, half2(a, b));
+		float aspectRatio = _ScreenParams.x / _ScreenParams.y;
+		float dxy = dot(half2(co.x, co.y / aspectRatio), half2(a, b));
 		return frac(dxy * rate);
 	}
 
@@ -50,8 +51,9 @@
 	{
 		float a = 1;
 		float b = 1;
+		float aspectRatio = _ScreenParams.x / _ScreenParams.y;
 		float dx = dot(co.x, half2(a, b));
-		float dy = dot(co.y, half2(a, b));
+		float dy = dot(co.y / aspectRatio, half2(a, b));
 		rate *= 5;
 		float numberRaw = sin(dx * rate) + cos(dy * rate);
 		return clamp(((numberRaw + 4) * 0.125), 0, 1);
@@ -164,6 +166,8 @@
 		half LdotV = dot(lightDir, s.viewDir);
 		half4 c;
 
+		//_ComicShading = 1;
+
 		// SSS is calculated based on how close the view angle is to the light angle
 		half sssDot = LdotV;
 		half sssRange = (clamp(sssDot + 1, 0, 1) * 0.5 + clamp(sssDot * 0.677, 0, 1));
@@ -173,7 +177,7 @@
 		half light = NdotL * atten;
 		half comicMix = 0.5f;
 		if (_ComicShading)
-			light = dissolveLight(light, s.mainUV, comicMix);
+			light = dissolveLight(light, s.screenUV, comicMix);
 
 		//half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
 		half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
@@ -186,7 +190,7 @@
 
 		half occlusion = s.AmbientOcclusion;
 		if (_ComicShading)
-			occlusion = dissolveLight(occlusion, s.mainUV, comicMix);
+			occlusion = dissolveLight(occlusion, s.screenUV, comicMix);
 		c.rgb = clamp((occlusion), 0, 1) * (shade * s.Albedo + amb) + sss;
 		//c.rgb = round((checker(s.mainUV, 100) + clamp(NdotL * atten, 0, 1)) / 2);
 		//c.rgb = lightStripe;

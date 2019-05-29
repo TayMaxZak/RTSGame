@@ -185,7 +185,8 @@ public enum AbilityType
 	IonMissile,
 	ShieldMode,
 	RailMode,
-	Radar
+	Radar,
+	Bombs
 }
 
 public struct AbilityDisplayUpdateConfig
@@ -230,6 +231,10 @@ public static class AbilityUtils
 			case AbilityType.ShieldMode:
 				return GetDeltaOf(new Vector3(10, 0, 0));
 			case AbilityType.RailMode:
+				return GetDeltaOf(new Vector3(10, 0, 0));
+			case AbilityType.Radar:
+				return GetDeltaOf(new Vector3(2, 0, 0));
+			case AbilityType.Bombs:
 				return GetDeltaOf(new Vector3(10, 0, 0));
 			default:
 				return GetDeltaOf(new Vector3());
@@ -305,6 +310,10 @@ public static class AbilityUtils
 				return "Mode: Tech Shield";
 			case AbilityType.RailMode:
 				return "Mode: Rail Amp";
+			case AbilityType.Radar:
+				return "Jamming Mode";
+			case AbilityType.Bombs:
+				return "Bombing Run";
 			default:
 				return "default";
 		}
@@ -341,6 +350,10 @@ public static class AbilityUtils
 				return "A low-strength but quickly- regenerating defensive shield. Disables Rail Mode.";
 			case AbilityType.RailMode:
 				return "Switches turrets to high-velocity mode, letting them hit enemy fighters. Disables Shield Mode.";
+			case AbilityType.Radar:
+				return "Toggle between long-range scanning and jamming enemy scanners.";
+			case AbilityType.Bombs:
+				return "When locked-on to an enemy unit, drops a series of devastating bombs.";
 			default:
 				return "default";
 		}

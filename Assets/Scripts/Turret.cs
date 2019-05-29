@@ -126,14 +126,6 @@ public class Turret : MonoBehaviour
 		if (parentUnit.isServer)
 		{
 			UpdateTargeting();
-
-			if (parentUnit.printInfo)
-			{
-				if (multManager == null)
-					Debug.LogError("lost multmanager in update");
-				else
-					Debug.Log("we still have multManager");
-			}
 		}
 		else
 		{ // Rotate appropriately based on target set by server

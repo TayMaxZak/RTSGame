@@ -334,6 +334,7 @@ MonoBehaviour:
     TIK_fighterInteractRate: 3
     TIK_fragileHealthConvertRate: 5
     TIK_ionDecayRate: 5
+    TIK_radarOverlapRate: 8
     ABLY_armorDrainRange: 20
     ABLY_armorDrainDPSEnemy: 9
     ABLY_armorDrainDPSAlly: 3
@@ -415,9 +416,14 @@ MonoBehaviour:
     - 5
     - 5
     - 5
-    ABLY_radarPeriod: 20
-    ABLY_radarPulseRange: 60
+    ABLY_radarPeriod: 10
+    ABLY_radarPulseRange: 80
     ABLY_radarPulseTime: 3
+    ABLY_bombsLockOnTime: 1.5
+    ABLY_bombsStacks: 3
+    ABLY_bombsCount: 6
+    ABLY_bombsDamage: 30
+    ABLY_bombsDamageBonusMult: 0.05
     STATswarmResistMult: 0.1
     STATswarmResistMultSwarm: 1
     STATswarmResistMaxStacks: 3

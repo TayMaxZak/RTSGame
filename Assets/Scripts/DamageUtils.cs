@@ -10,7 +10,8 @@ public enum DamageType
 	Superlaser,
 	Chemical,
 	Internal,
-	IonMissile
+	IonMissile,
+	Bomb
 }
 
 public struct DamageResult
@@ -33,6 +34,8 @@ public static class DamageUtils
 				return true;
 			case DamageType.IonMissile:
 				return true;
+			case DamageType.Bomb:
+				return true;
 			default:
 				return false;
 		}
@@ -43,6 +46,8 @@ public static class DamageUtils
 		switch (dmgType)
 		{
 			case DamageType.Superlaser:
+				return true;
+			case DamageType.Bomb:
 				return true;
 			default:
 				return false;
@@ -56,6 +61,8 @@ public static class DamageUtils
 			case DamageType.Wreck:
 				return true;
 			case DamageType.Chemical:
+				return true;
+			case DamageType.Bomb:
 				return true;
 			default:
 				return false;

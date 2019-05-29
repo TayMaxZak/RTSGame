@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[SelectionBase]
 public class Unit : Entity, ITargetable
 {
 	public bool disableTurrets = false; // Should this unit spawn with the turret GameObjects inactive

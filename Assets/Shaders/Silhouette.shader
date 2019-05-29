@@ -39,7 +39,7 @@
 		float a = 1;
 		float b = 1;
 		float aspectRatio = _ScreenParams.x / _ScreenParams.y;
-		float dxy = dot(float2(co.x, co.y / aspectRatio), half2(a, b));
+		float dxy = dot(half2(co.x, co.y / aspectRatio), half2(a, b));
 		return frac(dxy * rate);
 	}
 
