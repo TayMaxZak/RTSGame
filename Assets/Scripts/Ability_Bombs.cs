@@ -64,6 +64,9 @@ public class Ability_Bombs : Ability
 	[SerializeField]
 	private float leanMult = 0.5f;
 
+	private int bombsLeft;
+	private float timeUntilNextBomb;
+
 
 	private float parentUnitMS;
 
@@ -145,14 +148,8 @@ public class Ability_Bombs : Ability
 			//{
 			base.UseAbility(target);
 
-			targetUnit.Damage(gameRules.ABLY_bombsCount * (gameRules.ABLY_bombsDamage + gameRules.ABLY_bombsDamageBonusMult * targetUnit.GetHP().y), 0, DamageType.Bomb);
-			
-
-			Instantiate(bombPrefab, startPosition[startIndexCur].position, lockRayPosition.rotation);
-			Instantiate(explosionPrefab, targetUnit.transform.position + Vector3.up * 0.5f, Quaternion.identity);
-
-			ResetKeepTarget();
-			ResetLockOn();
+			//Boom();
+			DropBombs();
 
 			stacks--;
 			DisplayStacks();
@@ -163,370 +160,190 @@ public class Ability_Bombs : Ability
 		// While a missile is already active, a new target for the current missile can be selected
 	}
 
-	void BeginTargeting(Unit unit)
+	void DetonateBomb()
 	{
-		if (unit.team == team) // Cannot target allies
-			return;
+		targetUnit.Damage((gameRules.ABLY_bombsDamage + gameRules.ABLY_bombsDamageBonusMult * targetUnit.GetHP().y), 0, DamageType.Bomb);
 
-		state = 1; // Targeting state
+		Instantiate(explosionPrefab, targetUnit.transform.position + new Vector3(RandomValue(), 0.5f, RandomValue()), Quaternion.identity);
 
-		targetUnit = unit; // Set new target
-		checkIfDead = true; // Our target may become null
+		bombsLeft--;
+
+		// Last bomb dropped, reset everything
+		if (bombsLeft <= 0)
+		{
+			ResetKeepTarget();
+			ResetLockOn();
+		}
 	}
 
-	void SwitchTargets(Unit unit)
+	void DropBombs()
 	{
-		if (unit.team == team) // Cannot target allies
-			return;
-
-		targetUnit = unit; // Set new target
-		checkIfDead = true; // Our target may become null
+		bombsLeft = gameRules.ABLY_bombsCount;
+		timeUntilNextBomb = gameRules.ABLY_bombsDropTime / gameRules.ABLY_bombsCount;
+		Instantiate(bombPrefab, startPosition[startIndexCur].position, lockRayPosition.rotation);
 	}
-
-	//void SpawnMissile()
-	//{
-	//	state = 2; // Missile in the air state
-
-	//	missile.transform.position = startPosition[startIndexCur].position;
-	//	missile.transform.rotation = startPosition[startIndexCur].rotation;
-
-	//	// Lifetime cannot exceed cooldown time or time to cross ability cast range
-	//	missileLifetime = Mathf.Min(gameRules.ABLY_ionMissileMaxLifetime, 1 / cooldownDelta);
-
-	//	missile.SetEffectActive(true);
-	//	missileActive = true;
-
-	//	// Rotate at a speed to just barely reach the correct orientation above the target position
-	//	//RS = Mathf.Min(2 * (90 - initAngle) / ((targetPosition - targetUnit.transform.position).magnitude / MS), maxRS);
-	//	//RS = maxRS;
-
-	//	// Change firing position
-	//	startIndexCur++;
-	//	if (startIndexCur > startPosition.Length - 1)
-	//		startIndexCur = 0;
-	//}
 
 	new void Update()
 	{
 		base.Update();
 
-		// Lose lock
-		if (keepTargetRemaining > 0 && lockOnRemaining > 0)
+		if (checkIfDead && targetUnit == null)
 		{
-			keepTargetRemaining -= Time.deltaTime;
-			if (keepTargetRemaining <= 0)
-			{
-				ResetKeepTarget();
-				ResetLockOn();
-			}
+			bombsLeft = 0;
+
+			ResetKeepTarget();
+			ResetLockOn();
 		}
 
-		lockRayPosition.transform.forward = Vector3.down + leanMult * parentUnit.transform.forward * parentUnit.GetMovement().GetHVelocity().magnitude / parentUnitMS;
-
-		// Lock on behaviour
-		int raysConnected = 0;
-		if (offCooldown && lockOnRemaining > 0)
+		if (bombsLeft > 0)
 		{
-			Unit newTargetUnit = null;
-
-			for (int i = 0; i < 5; i++)
+			timeUntilNextBomb -= Time.deltaTime;
+			if (timeUntilNextBomb <= 0)
 			{
-				// Raycast connects, too far from parent unit, or out of lifetime
+				timeUntilNextBomb = gameRules.ABLY_bombsDropTime / gameRules.ABLY_bombsCount;
 
-				Vector3 noAngle = lockRayPosition.forward;
-				Vector3 newVector = new Vector3();
-				if (i == 0)
-					newVector = noAngle;
-				else if(i == 1)
-					newVector = Quaternion.AngleAxis(0 + 45, -lockRayPosition.forward) * Quaternion.AngleAxis(lockRayAngle, lockRayPosition.up) * noAngle;
-				else if (i == 2)
-					newVector = Quaternion.AngleAxis(90 + 45, -lockRayPosition.forward) * Quaternion.AngleAxis(lockRayAngle, lockRayPosition.up) * noAngle;
-				else if (i == 3)
-					newVector = Quaternion.AngleAxis(180 + 45, -lockRayPosition.forward) * Quaternion.AngleAxis(lockRayAngle, lockRayPosition.up) * noAngle;
-				else if (i == 4)
-					newVector = Quaternion.AngleAxis(270 + 45, -lockRayPosition.forward) * Quaternion.AngleAxis(lockRayAngle, lockRayPosition.up) * noAngle;
-
-				RaycastHit hit;
-				Ray rayCharles = new Ray(lockRayPosition.position, newVector);
-
-				
-
-				if (parentUnit.printInfo)
-					Debug.DrawLine(rayCharles.origin, rayCharles.origin + rayCharles.direction * lockRayDistance, Color.red);
-				//bool hitSelf = false;
-				if (Physics.Raycast(rayCharles, out hit, lockRayDistance, mask))
+				DetonateBomb();
+			}
+		}
+		else
+		{
+			// Lose lock over time
+			if (keepTargetRemaining > 0 && lockOnRemaining > 0)
+			{
+				keepTargetRemaining -= Time.deltaTime;
+				if (keepTargetRemaining <= 0)
 				{
-					Unit unit = null;
-					if (hit.collider.transform.parent) // Is this a unit?
+					ResetKeepTarget();
+					ResetLockOn();
+				}
+			}
+
+			lockRayPosition.transform.forward = Vector3.down + leanMult * parentUnit.transform.forward * parentUnit.GetMovement().GetHVelocity().magnitude / parentUnitMS;
+
+			// Lock on behaviour
+			int raysConnected = 0;
+			if (offCooldown && lockOnRemaining > 0)
+			{
+				Unit newTargetUnit = null;
+
+				for (int i = 0; i < 5; i++)
+				{
+					// Raycast connects, too far from parent unit, or out of lifetime
+
+					Vector3 noAngle = lockRayPosition.forward;
+					Vector3 newVector = new Vector3();
+					if (i == 0)
+						newVector = noAngle;
+					else if (i == 1)
+						newVector = Quaternion.AngleAxis(0 + 45, -lockRayPosition.forward) * Quaternion.AngleAxis(lockRayAngle, lockRayPosition.up) * noAngle;
+					else if (i == 2)
+						newVector = Quaternion.AngleAxis(90 + 45, -lockRayPosition.forward) * Quaternion.AngleAxis(lockRayAngle, lockRayPosition.up) * noAngle;
+					else if (i == 3)
+						newVector = Quaternion.AngleAxis(180 + 45, -lockRayPosition.forward) * Quaternion.AngleAxis(lockRayAngle, lockRayPosition.up) * noAngle;
+					else if (i == 4)
+						newVector = Quaternion.AngleAxis(270 + 45, -lockRayPosition.forward) * Quaternion.AngleAxis(lockRayAngle, lockRayPosition.up) * noAngle;
+
+					RaycastHit hit;
+					Ray rayCharles = new Ray(lockRayPosition.position, newVector);
+
+
+
+					if (parentUnit.printInfo)
+						Debug.DrawLine(rayCharles.origin, rayCharles.origin + rayCharles.direction * lockRayDistance, Color.red);
+					//bool hitSelf = false;
+					if (Physics.Raycast(rayCharles, out hit, lockRayDistance, mask))
 					{
-						unit = hit.collider.transform.parent.GetComponent<Unit>();
-						if (unit) // Is this a unit?
+						Unit unit = null;
+						if (hit.collider.transform.parent) // Is this a unit?
 						{
-							if (unit != parentUnit && unit.team != team) // If we hit a unit and its not us, damage it
+							unit = hit.collider.transform.parent.GetComponent<Unit>();
+							if (unit) // Is this a unit?
 							{
-								if (newTargetUnit == null)
-									newTargetUnit = unit;
-								else
+								if (unit != parentUnit && unit.team != team) // If we hit a unit and its not us, damage it
 								{
-									if (unit == newTargetUnit)
+									if (newTargetUnit == null)
 									{
-										if (i == 4)
+										newTargetUnit = unit;
+
+										if (i == 0)
 											raysConnected += 10;
 										else
 											raysConnected++;
 									}
-									else if (parentUnit.printInfo)
-										Debug.Log(i + " not target unit");
-									// else doesn't matter
-								}
-							}
-							else if (parentUnit.printInfo)
-								Debug.Log(i + " its us or its an ally");
-						} // if unit
-						else if (parentUnit.printInfo)
-							Debug.Log(i + " not a unit");
-					} // if has parent
-					else if (parentUnit.printInfo)
-						Debug.Log(i + " no parent");
-				} // if raycast
-				else if (parentUnit.printInfo)
-					Debug.Log(i + " missed ray");
-			} // for
-
-			targetUnit = newTargetUnit;
-
-			if (parentUnit.printInfo)
-				Debug.Log(raysConnected);
-
-			// At least 1 ray have to connect for lock-on to continue
-			if (raysConnected >= 1)
-			{
-				lockOnRemaining -= Time.deltaTime;
-			}
-			else
-			{
-				ResetLockOn();
-			}
-
-			// Locking on
-			if (lockOnRemaining < gameRules.ABLY_bombsLockOnTime)
-			{
-				Debug.Log("AAAAAAAA " + lockOnRemaining);
-				if (!lockOnSound.isPlaying)
-				{
-					lockOnSound.Play();
-				}
-
-				if (lockOnRemaining < 0)
-				{
-					SucceedLockOn();
-				}
-			}
-
-			/*
-			if (!hit.collider || hitSelf)
-			{
-				if ((startPosition[startIndexCur].position - missile.transform.position).sqrMagnitude > gameRules.ABLY_ionMissileRangeMissile * gameRules.ABLY_ionMissileRangeMissile || missileLifetime <= 0)
-				{
-					Explode(false);
-				}
-				else
-				{
-					missileLifetime -= Time.deltaTime;
-
-					missile.transform.rotation = Quaternion.RotateTowards(missile.transform.rotation, Quaternion.LookRotation(targetPosition - missile.transform.position), RS * Time.deltaTime);
-					missile.transform.position += missile.transform.forward * MS * Time.deltaTime;
-				}
-			} // if failed raycast
-			*/
-		} // if missileActive
-
-
-
-
-
-
-
-
-
-
-
-
-
-		/*
-		// Targeting
-		if (state == 1)
-		{
-			if (targetUnit) // We have something to aim at
-			{
-				CalculateTargetPosition();
-				if (InRange(targetUnit.transform)) // In range
-				{
-					if (targetUnit.VisibleBy(team))
-					{
-						if (Time.frameCount > attemptShotWhen) // Should be checking for aim
-						{
-							if (Vector3.Dot(launcher.transform.forward, (targetPosition - launcher.transform.position).normalized) > 1 - aimThreshold) // Aimed close enoughs
-							{
-								stacks--;
-								DisplayStacks();
-
-								// Start countdown once we are properly aimed
-								SpawnMissile();
-								StartCoroutine(ClearAbilityGoalCoroutine());
-
-								StartCooldown();
-							}
-						}
-					}
-					else
-					{
-						Reset();
-						// No cooldown
-					} // visible
-				}
-				else
-				{
-					Reset();
-					// No cooldown
-				} // in range
-			}
-			else // Target died early
-			{
-				if (checkIfDead)
-				{
-					Reset();
-					// No cooldown
-				}
-			} // target alive
-
-		} // if state 1
-		else if (state == 2) // missile in the air
-		{
-			if (targetUnit)
-			{
-				CalculateTargetPosition();
-			}
-			else
-			{
-				if (checkingForDead)
-				{
-					// Clear target but don't reset
-					targetUnit = null;
-					checkingForDead = false;
-				}
-			}
-		}
-
-		if (state == 1 && targetUnit)
-		{
-			// Do rotation stuff
-			// Construct an imaginary target that only differs from the launcher's current orientation by the Y-axis
-			float dist = new Vector2(launcher.transform.position.x - targetUnit.transform.position.x, launcher.transform.position.z - targetUnit.transform.position.z).magnitude;
-			Vector3 pos = launcher.transform.position + transform.forward * dist;
-			pos.y = targetUnit.transform.position.y;
-			// Rotate launcher vertically
-			Rotate((pos - launcher.transform.position).normalized);
-		}
-		else
-		{
-			Rotate(transform.forward);
-		}
-		*/
-
-
-
-
-
-
-
-
-
-
-
-		/*
-		// Missile behavior
-		if (missileActive)
-		{
-			// Raycast connects, too far from parent unit, or out of lifetime
-			RaycastHit hit;
-			bool hitSelf = false;
-			if (Physics.Raycast(missile.transform.position, missile.transform.forward, out hit, MS * Time.deltaTime, mask))
-			{
-				Unit unit = null;
-				if (hit.collider.transform.parent) // Is this a unit?
-				{
-					unit = hit.collider.transform.parent.GetComponent<Unit>();
-					if (unit) // Is this a unit?
-					{
-						if (unit != parentUnit) // If we hit a unit and its not us, damage it
-						{
-							//DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage + gameRules.ABLY_ionMissileDamageBonusMult * curShields + gameRules.ABLY_ionMissileDamageBonusMult * maxShields, (startPosition[startIndexCur].position - hit.point).magnitude, DamageType.IonMissile);
-							DamageResult result = unit.Damage(gameRules.ABLY_ionMissileDamage, (startPosition[startIndexCur].position - hit.point).magnitude, DamageType.IonMissile);
-
-							// Is the unit still alive?
-							if (!result.lastHit)
-							{
-								// Don't do anything else if shields are still up
-								if (unit.GetShields().x <= 0)
-								{
-									unit.AddStatus(new Status(parentUnit.gameObject, StatusType.IonSuppressed));
-
-									if (unit.GetIons() <= gameRules.ABLY_ionMissileDecayCutoff)
-										unit.AddIons(gameRules.ABLY_ionMissileIonsFirst, true);
 									else
-										unit.AddIons(gameRules.ABLY_ionMissileIonsNext, true);
+									{
+										if (unit == newTargetUnit)
+										{
+											if (i == 0)
+												raysConnected += 10;
+											else
+												raysConnected++;
+										}
+										else if (parentUnit.printInfo)
+											Debug.Log(i + " not target unit");
+										// else doesn't matter
+									}
 								}
-								else
-								{
-									// TODO: Add ions to shield source? Damage shield source?
-								}
-							}
-						}
-						else
-						{
-							// Ignore this collision
-							hitSelf = true;
-						}
+								else if (parentUnit.printInfo)
+									Debug.Log(i + " its us or its an ally");
+							} // if unit
+							else if (parentUnit.printInfo)
+								Debug.Log(i + " not a unit");
+						} // if has parent
+						else if (parentUnit.printInfo)
+							Debug.Log(i + " no parent");
+					} // if raycast
+					else if (parentUnit.printInfo)
+						Debug.Log(i + " missed ray");
+				} // for
+
+				//if (newTargetUnit != null)
+				SetTargetUnit(newTargetUnit);
+
+				if (parentUnit.printInfo)
+					Debug.Log(raysConnected);
+
+				// At least 1 ray have to connect for lock-on to continue
+				if (raysConnected >= 1)
+				{
+					lockOnRemaining -= Time.deltaTime;
+				}
+				else
+				{
+					ResetLockOn();
+				}
+
+				// Locking on
+				if (lockOnRemaining < gameRules.ABLY_bombsLockOnTime)
+				{
+					Debug.Log("AAAAAAAA " + lockOnRemaining);
+					if (!lockOnSound.isPlaying)
+					{
+						lockOnSound.Play();
 					}
 
-					if (!hitSelf)
-						Explode(true, hit);
-				} // if unit
-				else
-					Explode(true, hit);
-			} // if raycast
-
-			if (!hit.collider || hitSelf)
-			{
-				if ((startPosition[startIndexCur].position - missile.transform.position).sqrMagnitude > gameRules.ABLY_ionMissileRangeMissile * gameRules.ABLY_ionMissileRangeMissile || missileLifetime <= 0)
-				{
-					Explode(false);
+					if (lockOnRemaining < 0)
+					{
+						SucceedLockOn();
+					}
 				}
-				else
-				{
-					missileLifetime -= Time.deltaTime;
+			} // if missileActive
 
-					missile.transform.rotation = Quaternion.RotateTowards(missile.transform.rotation, Quaternion.LookRotation(targetPosition - missile.transform.position), RS * Time.deltaTime);
-					missile.transform.position += missile.transform.forward * MS * Time.deltaTime;
-				}
-			} // if failed raycast
-		} // if missileActive
-		*/
-		// Reload
-		if (stacks < gameRules.ABLY_ionMissileMaxAmmo)
-		{
-			reloadTimer += deltaDurations.y * Time.deltaTime;
-
-			DisplayFill(reloadTimer);
-
-			if (reloadTimer >= 1)
+			// Reload
+			if (stacks < gameRules.ABLY_ionMissileMaxAmmo)
 			{
-				stacks++;
-				DisplayStacks();
-				reloadTimer = 0;
+				reloadTimer += deltaDurations.y * Time.deltaTime;
+
+				DisplayFill(reloadTimer);
+
+				if (reloadTimer >= 1)
+				{
+					stacks++;
+					DisplayStacks();
+					reloadTimer = 0;
+				}
 			}
-		}
+		} // bombsLeft <= 0
 	}
 
 	// Reset targetUnit
@@ -549,47 +366,11 @@ public class Ability_Bombs : Ability
 		keepTargetRemaining = gameRules.ABLY_bombsKeepTargetTime;
 	}
 
-	void Rotate(Vector3 direction)
+	void SetTargetUnit(Unit newTargetUnit)
 	{
-		// Fixes strange RotateTowards bug
-		Quaternion resetRot = Quaternion.identity;
-
-		// Rotate towards the desired look rotation
-		Quaternion newRotation = Quaternion.RotateTowards(launcher.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * verticalRS);
-
-		// Limit rotation
-		newRotation = LimitVerticalRotation(newRotation, rotation);
-		rotation = newRotation;
-
-		// Fixes strange RotateTowards bug
-		if (Time.frameCount == attemptShotWhen + 1)
-			newRotation = resetRot;
-
-		// Apply to cannon
-		//cannon.transform.localRotation = Quaternion.Euler(new Vector3(rotation.eulerAngles.x, 0, 0));
-		launcher.transform.rotation = rotation;
-	}
-
-	Quaternion LimitVerticalRotation(Quaternion rot, Quaternion oldRot)
-	{
-		Vector3 components = rot.eulerAngles;
-		Vector3 componentsOld = oldRot.eulerAngles;
-		Vector3 vComponentFwd = Quaternion.LookRotation(transform.up).eulerAngles;
-
-		float angleV = Vector3.Angle(transform.up, rot * Vector3.forward);
-
-		// Vertical extremes
-		// Don't have to do anything besides ignoring bad rotations because units will never rotate on their Z or X axes
-		if (angleV > maxV)
-		{
-			components.x = componentsOld.x;
-		}
-		else if (angleV < minV)
-		{
-			components.x = componentsOld.x;
-		}
-
-		return Quaternion.Euler(components);
+		targetUnit = newTargetUnit;
+		if (targetUnit != null)
+			checkIfDead = true;
 	}
 
 	//void Explode(bool intentional)
@@ -612,16 +393,6 @@ public class Ability_Bombs : Ability
 	//	Reset();
 	//}
 
-	void Reset()
-	{
-		state = 0; // Back to standby state
-
-		targetUnit = null;
-		checkingForDead = false;
-
-		parentUnit.ClearAbilityGoal();
-	}
-
 	IEnumerator ClearAbilityGoalCoroutine()
 	{
 		yield return new WaitForSeconds(0.2f);
@@ -641,5 +412,11 @@ public class Ability_Bombs : Ability
 			return true;
 		else
 			return false;
+	}
+
+	float RandomValue()
+	{
+		return Random.value * 2 - 1;
+		//return 1;
 	}
 }
