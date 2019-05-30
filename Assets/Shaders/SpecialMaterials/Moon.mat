@@ -41,7 +41,7 @@ Material:
     - _Cutoff1: 0
     - _Cutoff2: 0
     - _LightSteps: 8
-    - _Mult: 1.5
+    - _Mult: 1
     - _NoiseAmount: 1
     - _NoiseSteps: 16
     - _NoiseStretch: 1

@@ -190,7 +190,8 @@ public class GameRules
 	[Header("Radar")]
 	public float ABLY_bombsLockOnTime = 1.5f; // How long it takes to lock on
 	public float ABLY_bombsKeepTargetTime = 1.5f; // How long it takes to lock on
-	public int ABLY_bombsStacks = 3; // How many bombing runs total
+	public int ABLY_bombsMaxAmmo = 5; // How many bombing runs total
+	public int ABLY_bombsAmmoTickRange = 20; // How close to flagship in order to get ammo ticks
 	public int ABLY_bombsCount = 6; // How many bombs dropped per use
 	public float ABLY_bombsDropTime = 1.5f; // How long does it take to drop all the bombs
 	public float ABLY_bombsDamage = 30; // How big the sphere gets

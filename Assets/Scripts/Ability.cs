@@ -235,7 +235,7 @@ public static class AbilityUtils
 			case AbilityType.Radar:
 				return GetDeltaOf(new Vector3(2, 0, 0));
 			case AbilityType.Bombs:
-				return GetDeltaOf(new Vector3(10, 0, 0));
+				return GetDeltaOf(new Vector3(10, 5, 0));
 			default:
 				return GetDeltaOf(new Vector3());
 		}

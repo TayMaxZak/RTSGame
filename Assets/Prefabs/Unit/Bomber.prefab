@@ -2019,7 +2019,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lockRayPosition: {fileID: 4348146685385494}
-  lockRayDistance: 35
+  lockRayDistance: 50
   lockRayAngle: 15
   startPosition:
   - {fileID: 4390076973081432}

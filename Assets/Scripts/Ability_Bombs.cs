@@ -75,14 +75,18 @@ public class Ability_Bombs : Ability
 
 	private LayerMask mask;
 
+	private Manager_Game gameManager;
+
 	new void Awake()
 	{
 		base.Awake();
 
+		gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>();
+
 		abilityType = AbilityType.Bombs;
 		InitCooldown();
 
-		stacks = gameRules.ABLY_bombsStacks;
+		stacks = gameRules.ABLY_bombsMaxAmmo;
 		deltaDurations = AbilityUtils.GetDeltaDurations(abilityType);
 
 		lockOnRemaining = gameRules.ABLY_bombsLockOnTime;
@@ -90,17 +94,21 @@ public class Ability_Bombs : Ability
 		mask = gameRules.collisionLayerMask;
 
 		displayInfo.stacks = stacks;
+		if (stacks <= 0)
+			displayInfo.displayInactive = true;
+		else
+			displayInfo.displayInactive = false;
+
 		displayInfo.displayStacks = true;
-		//displayInfo.displayFill = true;
 	}
 
 	void DisplayStacks()
 	{
 		displayInfo.stacks = stacks;
-		//if (stacks <= 0)
-		//	displayInfo.displayInactive = true;
-		//else
-		//	displayInfo.displayInactive = false;
+		if (stacks <= 0)
+			displayInfo.displayInactive = true;
+		else
+			displayInfo.displayInactive = false;
 		UpdateDisplay(abilityIndex, true);
 	}
 
@@ -195,6 +203,7 @@ public class Ability_Bombs : Ability
 			ResetLockOn();
 		}
 
+		// Already dropping bombs onto a locked-on target
 		if (bombsLeft > 0)
 		{
 			timeUntilNextBomb -= Time.deltaTime;
@@ -205,7 +214,7 @@ public class Ability_Bombs : Ability
 				DetonateBomb();
 			}
 		}
-		else
+		else if (stacks > 0) // Not currently dropping bombs
 		{
 			// Lose lock over time
 			if (keepTargetRemaining > 0 && lockOnRemaining > 0)
@@ -218,6 +227,7 @@ public class Ability_Bombs : Ability
 				}
 			}
 
+			// Lean based on velocity
 			lockRayPosition.transform.forward = Vector3.down + leanMult * parentUnit.transform.forward * parentUnit.GetMovement().GetHVelocity().magnitude / parentUnitMS;
 
 			// Lock on behaviour
@@ -316,7 +326,6 @@ public class Ability_Bombs : Ability
 				// Locking on
 				if (lockOnRemaining < gameRules.ABLY_bombsLockOnTime)
 				{
-					Debug.Log("AAAAAAAA " + lockOnRemaining);
 					if (!lockOnSound.isPlaying)
 					{
 						lockOnSound.Play();
@@ -329,19 +338,29 @@ public class Ability_Bombs : Ability
 				}
 			} // if missileActive
 
-			// Reload
-			if (stacks < gameRules.ABLY_ionMissileMaxAmmo)
+
+			Unit flagship = gameManager.GetCommander(team).GetFlagship();
+			if (stacks < gameRules.ABLY_bombsMaxAmmo && flagship)
 			{
-				reloadTimer += deltaDurations.y * Time.deltaTime;
-
-				DisplayFill(reloadTimer);
-
-				if (reloadTimer >= 1)
+				// Missing ammo and near enough to flagship
+				float distSqr = Vector2.SqrMagnitude(new Vector2(flagship.transform.position.x, flagship.transform.position.z) - new Vector2(transform.position.x, transform.position.z));
+				Debug.Log(Mathf.Sqrt(distSqr));
+				if (distSqr < gameRules.ABLY_bombsAmmoTickRange * gameRules.ABLY_bombsAmmoTickRange)
 				{
-					stacks++;
-					DisplayStacks();
-					reloadTimer = 0;
+					reloadTimer += deltaDurations.y * Time.deltaTime;
+
+					DisplayFill(reloadTimer);
+
+					if (reloadTimer >= 1)
+					{
+						stacks++;
+						DisplayStacks();
+
+						reloadTimer = 0;
+					}
 				}
+				else
+					reloadTimer = 0;
 			}
 		} // bombsLeft <= 0
 	}
