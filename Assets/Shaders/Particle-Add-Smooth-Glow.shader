@@ -3,6 +3,7 @@
 Shader "Particles/Additive (Glow)" {
 Properties {
 	_MainTex ("Particle Texture", 2D) = "white" {}
+	_Color("Color", Color) = (1,1,1,1)
 	_Glow ("Glow Multiplier", Range(-1, 11)) = 1
 }
 
@@ -26,7 +27,7 @@ Category {
 			#include "UnityCG.cginc"
 
 			sampler2D _MainTex;
-			fixed4 _TintColor;
+			fixed4 _Color;
 			half _Glow;
 
 			struct appdata_t {
@@ -71,7 +72,7 @@ Category {
 			fixed4 frag (v2f i) : SV_Target
 			{
 				half4 col = i.color * tex2D(_MainTex, i.texcoord);
-				col.rgb += col.rgb * _Glow;
+				col.rgb = col.rgb * _Glow * _Color;
 				col.rgb *= col.a;
 				UNITY_APPLY_FOG_COLOR(i.fogCoord, col, fixed4(0,0,0,0)); // fog towards black due to our blend mode
 				return col;

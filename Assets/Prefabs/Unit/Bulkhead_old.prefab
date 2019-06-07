@@ -3379,6 +3379,8 @@ MonoBehaviour:
   curFragileHealth: 0
   curIons: 0
   deathClone: {fileID: 1796662562453436, guid: 0ab5eb26f10e3a34fa89f2371c77dcd4, type: 2}
+  deathCloneTotaled: {fileID: 1585526066841278, guid: 9f9a09fae4267d94eb96442b6c03262b,
+    type: 2}
   turrets:
   - {fileID: 114095846976579942}
   - {fileID: 114106593535018686}
@@ -3413,6 +3415,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e2ba5c4929752f4e91878fa2a09703c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spinner: {fileID: 0}
+  spinnerSpeed: 30
   pointEffectPrefab: {fileID: 114194687130139358, guid: 4753d448a666a184ba79c89141c84f9a,
     type: 2}
   audioLoopPrefab: {fileID: 114609254506899492, guid: a4e9065af6afa89498aedcd5a6ecb412,

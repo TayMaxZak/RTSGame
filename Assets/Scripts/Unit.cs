@@ -66,6 +66,8 @@ public class Unit : Entity, ITargetable
 
 	[SerializeField]
 	private GameObject deathClone; // Object to spawn on death
+	[SerializeField] 
+	private GameObject deathCloneTotaled; // Object to spawn on death by total obliteration (e.g. superlaser)
 	private bool dead;
 
 	[Header("Combat")]
@@ -1282,6 +1284,8 @@ public class Unit : Entity, ITargetable
 			if (damageType == DamageType.Superlaser || damageType == DamageType.Internal)
 			{
 				// No wreck
+				if (deathCloneTotaled)
+					Instantiate(deathCloneTotaled, transform.position, transform.rotation);
 			}
 			else
 			{

@@ -1615,6 +1615,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shotTemplate:
+    hitscanType: 2
     dmgType: 3
     range: 60
     damage: 0
@@ -1628,7 +1629,7 @@ MonoBehaviour:
   cannon: {fileID: 1164726264179942}
   verticalRS: 5
   minV: 50
-  maxV: 170
+  maxV: 130
   laserEffectPrefab: {fileID: 114738217270647106, guid: 11ba9ae43494961478e565f7e3b13f12,
     type: 2}
   startEffectPrefab: {fileID: 114387442305719452, guid: b7f8474a713ea714491163a99587d313,
@@ -1676,6 +1677,8 @@ MonoBehaviour:
   curFragileHealth: 0
   curIons: 0
   deathClone: {fileID: 1796662562453436, guid: 60e7666e1b928184a82e6f22436ce2d9, type: 2}
+  deathCloneTotaled: {fileID: 1585526066841278, guid: 9f9a09fae4267d94eb96442b6c03262b,
+    type: 2}
   turrets:
   - {fileID: 114961553349981566}
   - {fileID: 114200766482715334}

@@ -6,6 +6,8 @@ using UnityEngine;
 public class Hitscan
 {
 	[SerializeField]
+	private HitscanType hitscanType = HitscanType.Arcannon;
+	[SerializeField]
 	private DamageType dmgType = DamageType.Normal;
 	[SerializeField]
 	private float range = 0;
@@ -24,12 +26,18 @@ public class Hitscan
 
 	public Hitscan(Hitscan copy)
 	{
+		hitscanType = copy.hitscanType;
 		dmgType = copy.dmgType;
 		range = copy.range;
 		damage = copy.damage;
 		lifetime = copy.lifetime;
 		startPosition = copy.startPosition;
 		direction = copy.direction;
+	}
+
+	public HitscanType GetHitscanType()
+	{
+		return hitscanType;
 	}
 
 	public DamageType GetDamageType()

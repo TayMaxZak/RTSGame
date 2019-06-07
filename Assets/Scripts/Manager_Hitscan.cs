@@ -10,10 +10,10 @@ public class Manager_Hitscan : NetworkBehaviour
 {
 	private LayerMask mask;
 	[SerializeField]
-	private ParticleSystem pS;
+	private ParticleSystem[] pS;
 	//private MainModule main;
 
-	private float width = 0.1f;
+	//private float width = 0.1f;
 	private float directionMult = 0.01f;
 
 	private int newProjectilesThisFrame;
@@ -27,8 +27,6 @@ public class Manager_Hitscan : NetworkBehaviour
 	{
 		gameRules = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Manager_Game>().GameRules;
 		mask = gameRules.collisionLayerMask;
-
-		width = pS.main.startSizeX.constant;
 
 		vfx = GameObject.FindGameObjectWithTag("VFXManager").GetComponent<Manager_VFX>();
 	}
@@ -46,6 +44,7 @@ public class Manager_Hitscan : NetworkBehaviour
 		scan.SetFrom(from);
 		scan.SetStatus(onHit);
 		//hitscans.Add(scan);
+		int index = IndexFromHitscanType(temp.GetHitscanType());
 
 		bool noGoal = IsNull(goal);
 
@@ -58,7 +57,7 @@ public class Manager_Hitscan : NetworkBehaviour
 			vfx.SpawnEffect(VFXType.Hit_Near, position + direction * length, direction, scan.GetFrom().GetTeam());
 		}
 
-		Vector3 size = new Vector3(width, length, 1);
+		Vector3 size = new Vector3(pS[index].main.startSizeX.constant, length, 1);
 
 		EmitParams param = new EmitParams()
 		{
@@ -68,7 +67,20 @@ public class Manager_Hitscan : NetworkBehaviour
 			//startColor = Random.value * Color.red + Random.value * Color.green + Random.value * Color.blue,
 			startLifetime = scan.GetLifetime() // 2x just in case. Particles dying prematurely is the worst thing that could happen to this system
 		};
-		pS.Emit(param, 1);
+		pS[index].Emit(param, 1);
+	}
+
+	int IndexFromHitscanType(HitscanType hitscanType)
+	{
+		switch (hitscanType)
+		{
+			case HitscanType.Arcannon:
+				return 0;
+			case HitscanType.Superlaser:
+				return 1;
+			default:
+				return 0;
+		}
 	}
 
 	// Called immediately after a hitscan is spawned
@@ -141,4 +153,11 @@ public class Manager_Hitscan : NetworkBehaviour
 		else
 			return false;
 	}
+}
+
+public enum HitscanType
+{
+	Default, // Test VFX
+	Arcannon, // Standard hitscan
+	Superlaser // Superlaser ability
 }

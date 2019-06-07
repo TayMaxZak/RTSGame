@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Superlaser
-  m_Shader: {fileID: 4800000, guid: 757b826453006414abaa9d97f4ada591, type: 3}
+  m_Name: SuperlaserBeam
+  m_Shader: {fileID: 4800000, guid: d4e3f6d94729a0c419af1295f43a3890, type: 3}
   m_ShaderKeywords: _ALPHABLEND_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
@@ -40,13 +40,14 @@ Material:
     - _AmbientMult: 1
     - _Cutoff1: 0
     - _Cutoff2: 0
+    - _Glow: 2
     - _LightSteps: 8
-    - _Mult: 1.4
+    - _Mult: 3
     - _NoiseAmount: 1
     - _NoiseSteps: 16
     - _NoiseStretch: 1
     - _NoiseSubSteps: 50
     - _SSSStrength: 1
     m_Colors:
-    - _Color: {r: 1, g: 0.26896548, b: 0, a: 1}
+    - _Color: {r: 0, g: 1, b: 0.25517225, a: 1}
     - _SSSColor: {r: 1, g: 1, b: 1, a: 1}

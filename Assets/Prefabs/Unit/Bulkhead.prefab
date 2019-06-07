@@ -3542,6 +3542,8 @@ MonoBehaviour:
   curFragileHealth: 0
   curIons: 0
   deathClone: {fileID: 1796662562453436, guid: 0ab5eb26f10e3a34fa89f2371c77dcd4, type: 2}
+  deathCloneTotaled: {fileID: 1585526066841278, guid: 9f9a09fae4267d94eb96442b6c03262b,
+    type: 2}
   turrets:
   - {fileID: 114095846976579942}
   - {fileID: 114106593535018686}

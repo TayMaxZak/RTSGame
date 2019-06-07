@@ -1530,6 +1530,8 @@ MonoBehaviour:
   curFragileHealth: 0
   curIons: 0
   deathClone: {fileID: 1796662562453436, guid: 92a8ad440104d3b4fa9c1b30e2acd5da, type: 2}
+  deathCloneTotaled: {fileID: 1585526066841278, guid: 9f9a09fae4267d94eb96442b6c03262b,
+    type: 2}
   turrets:
   - {fileID: 114962401244220950}
   - {fileID: 114804360984428284}
@@ -1662,6 +1664,7 @@ MonoBehaviour:
   minV: 0
   maxV: 180
   scanTemplate:
+    hitscanType: 1
     dmgType: 0
     range: 40
     damage: 1
@@ -1700,6 +1703,7 @@ MonoBehaviour:
   minV: 0
   maxV: 180
   scanTemplate:
+    hitscanType: 1
     dmgType: 0
     range: 40
     damage: 1
