@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class Ability_HealField : Ability
 {
+	[Header("Spinner")]
+	[SerializeField]
+	private GameObject spinner;
+	[SerializeField]
+	private float spinnerSpeed = 30;
+
 	//private AbilityOld ability;
 	[Header("Effects")]
 	[SerializeField]
@@ -41,7 +47,7 @@ public class Ability_HealField : Ability
 
 		command = gameManager.GetCommander(team);
 
-		pointEffect = Instantiate(pointEffectPrefab, transform.position, Quaternion.identity);
+		pointEffect = Instantiate(pointEffectPrefab, spinner.transform.position, Quaternion.identity);
 		pointEffect.SetEffectActive(isActive);
 
 		audioLoop = Instantiate(audioLoopPrefab, transform.position, Quaternion.identity);
@@ -64,10 +70,12 @@ public class Ability_HealField : Ability
 	{
 		base.Update();
 
-		pointEffect.transform.position = transform.position; // Move effect to center of user
+		pointEffect.transform.position = spinner.transform.position; // Move effect to center of user
 
 		if (isActive)
 		{
+			spinner.transform.Rotate(0, Time.deltaTime * spinnerSpeed, 0);
+
 			Collider[] cols = Physics.OverlapSphere(transform.position, gameRules.ABLY_healFieldRange, gameRules.entityLayerMask);
 			List<Unit> units = new List<Unit>();
 			for (int i = 0; i < cols.Length; i++)
