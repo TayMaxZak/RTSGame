@@ -40,7 +40,7 @@ Material:
     - _AmbientMult: 1
     - _Cutoff1: 0
     - _Cutoff2: 0
-    - _Glow: 2
+    - _Glow: 1.6
     - _LightSteps: 8
     - _Mult: 3
     - _NoiseAmount: 1

@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4448883479484868}
   - component: {fileID: 114396989558299118}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Destroyer_Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4635579959783476}
   - component: {fileID: 33582906473349130}
   - component: {fileID: 23450623575232508}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}

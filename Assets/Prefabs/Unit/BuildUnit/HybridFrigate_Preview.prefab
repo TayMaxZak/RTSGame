@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4922132422842554}
   - component: {fileID: 114783729156445184}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: HybridFrigate_Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4294568681549316}
   - component: {fileID: 33405072478005308}
   - component: {fileID: 23069350074031228}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}

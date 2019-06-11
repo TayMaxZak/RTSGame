@@ -1024,7 +1024,7 @@ public class Unit : Entity, ITargetable
 		if (isServer) // For clients only
 			return;
 
-		SubtractHealth(healthDmg, armorDmg);
+		SubtractHealth(healthDmg, armorDmg, false);
 	}
 
 	protected virtual void OnDamage()
@@ -1220,7 +1220,7 @@ public class Unit : Entity, ITargetable
 
 		ServerDamage(healthDmg, armorDmg);
 
-		SubtractHealth(healthDmg, armorDmg);
+		SubtractHealth(healthDmg, armorDmg, handleDamage);
 	}
 
 	public void DamageSimple(float healthDmg, float armorDmg)
@@ -1228,9 +1228,9 @@ public class Unit : Entity, ITargetable
 		DamageSimple(healthDmg, armorDmg, false);
 	}
 
-	void SubtractHealth(float healthDmg, float armorDmg)
+	void SubtractHealth(float healthDmg, float armorDmg, bool handleDamage)
 	{
-		bool handleDamage = true;
+		//bool handleDamage = true;
 		curArmor = Mathf.Clamp(curArmor - armorDmg, 0, maxArmor);
 		curHealth = Mathf.Min(curHealth - healthDmg, maxHealth);
 		if (handleDamage)

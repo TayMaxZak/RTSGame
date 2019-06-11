@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4445483449411066}
   - component: {fileID: 114310450574105136}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Apollo_Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4101191286949968}
   - component: {fileID: 33109789025615986}
   - component: {fileID: 23472804202350376}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}

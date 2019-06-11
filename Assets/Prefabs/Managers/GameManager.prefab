@@ -276,7 +276,7 @@ MonoBehaviour:
   FOWtickRate: 0.5
   GameRules:
     useTestValues: 1
-    TEST_timeMultCooldown: 1
+    TEST_timeMultCooldown: 0.2
     TEST_timeMultBuild: 0.2
     TEST_initHPAdd: 0
     TEST_initHPMult: 1
@@ -315,7 +315,7 @@ MonoBehaviour:
     OBJV_captureTime: 20
     OBJV_captureAddPerUnitMult: 1
     OBJV_captureAddMax: 1
-    RES_startingResPoints: 20
+    RES_startingResPoints: 30
     RES_objMinorResPoints: 5
     RES_objMajorResPoints: 10
     RES_reclaimTime: 5
@@ -370,7 +370,7 @@ MonoBehaviour:
     ABLY_superlaserCancelCDMult: 0.5
     ABLY_superlaserCancelTime: 1
     ABLY_superlaserDelay: 3.5
-    ABLY_superlaserInitStacks: 0
+    ABLY_superlaserInitStacks: 2
     ABLY_superlaserStackDmgReq: 0.6
     ABLY_superlaserDmgBase: 200
     ABLY_superlaserDmgByStacks:
@@ -420,8 +420,11 @@ MonoBehaviour:
     ABLY_radarPulseRange: 80
     ABLY_radarPulseTime: 3
     ABLY_bombsLockOnTime: 1.5
-    ABLY_bombsStacks: 3
+    ABLY_bombsKeepTargetTime: 1.5
+    ABLY_bombsMaxAmmo: 5
+    ABLY_bombsAmmoTickRange: 20
     ABLY_bombsCount: 6
+    ABLY_bombsDropTime: 1.5
     ABLY_bombsDamage: 30
     ABLY_bombsDamageBonusMult: 0.05
     STATswarmResistMult: 0.1

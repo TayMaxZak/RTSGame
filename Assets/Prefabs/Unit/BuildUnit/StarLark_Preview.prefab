@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4532113039305860}
   - component: {fileID: 33886017030749832}
   - component: {fileID: 23688197004684010}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4602195678232954}
   - component: {fileID: 114516831411329448}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: StarLark_Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}

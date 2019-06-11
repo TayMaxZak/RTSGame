@@ -61,7 +61,7 @@ public class Ability_SelfDestruct : Ability
 				Display(1 - energy);
 
 				// Deal damage over time
-				parentUnit.DamageSimple(gameRules.ABLY_selfDestructDPSSelf * Time.deltaTime, 0);
+				parentUnit.DamageSimple(gameRules.ABLY_selfDestructDPSSelf * Time.deltaTime, 0, false);
 				parentUnit.AddFragileHealth(gameRules.ABLY_selfDestructDPSSelf * Time.deltaTime);
 
 				// Getting closer to detonation

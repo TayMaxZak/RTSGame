@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4652486213342456}
   - component: {fileID: 33671551783222134}
   - component: {fileID: 23062494056853008}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4764474916297584}
   - component: {fileID: 114238186917235122}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Bulkhead_Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}

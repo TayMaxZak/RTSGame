@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4268026415902124}
   - component: {fileID: 114481382704488930}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Bomber_Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4563903301899054}
   - component: {fileID: 33065269733775510}
   - component: {fileID: 23812253798166938}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}

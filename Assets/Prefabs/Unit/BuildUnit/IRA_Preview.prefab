@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4077579747653750}
   - component: {fileID: 33547260033201862}
   - component: {fileID: 23339960537646340}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4308202796597748}
   - component: {fileID: 114672321136091290}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: IRA_Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
