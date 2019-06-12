@@ -6,6 +6,9 @@
     <e p="D:\Projects\Unity\RTSGame" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets\NuGet" t="Include">
+        <e p="LICENSE.txt" t="Include" />
+      </e>
       <e p="Assets\PostProcessing" t="Include">
         <e p="Editor" t="Include">
           <e p="Attributes" t="Include">
@@ -187,6 +190,9 @@
         <e p="Ability_StatusMissile_Cloud.cs" t="Include" />
         <e p="Ability_Superlaser.cs" t="Include" />
         <e p="AbilityTarget.cs" t="Include" />
+        <e p="AI" t="Include">
+          <e p="AI_ShipCaptain.cs" t="Include" />
+        </e>
         <e p="AudioEffect_Loop.cs" t="Include" />
         <e p="AudioUtils.cs" t="Include" />
         <e p="Build_Incoming.cs" t="Include" />
