@@ -172,6 +172,11 @@ public class Entity_Objective : Entity
 		}
 	}
 
+	public float GetCapturedProgress()
+	{
+		return captureProgress;
+	}
+
 	// Visualize range of turrets in editor
 	void OnDrawGizmosSelected()
 	{

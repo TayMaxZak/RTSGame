@@ -35,7 +35,7 @@ public class Commander : MonoBehaviour
 
 	// INITIALIZATION ////////////////////////////////////////////////////////////////////////////////
 
-	void Awake()
+	protected void Awake()
 	{
 		selectableUnits = new List<UnitSelectable>();
 
@@ -62,7 +62,7 @@ public class Commander : MonoBehaviour
 	// RESOURCES ////////////////////////////////////////////////////////////////////////////////
 
 	// Update is called once per frame
-	void Update()
+	protected void Update()
 	{
 		UpdateReclaiming();
 	}
@@ -127,7 +127,15 @@ public class Commander : MonoBehaviour
 
 		controller.InitBuildButtons(buildUnitCounters);
 	}
-
+	
+	/*  Added this get function, this looked like the best place for it
+	 * 	- Cole
+	 */
+	
+	protected Controller_Commander GetController()
+	{
+		return controller;
+	}
 
 	// BUILDING ////////////////////////////////////////////////////////////////////////////////
 

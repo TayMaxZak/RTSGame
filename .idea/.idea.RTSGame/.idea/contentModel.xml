@@ -191,6 +191,7 @@
         <e p="Ability_Superlaser.cs" t="Include" />
         <e p="AbilityTarget.cs" t="Include" />
         <e p="AI" t="Include">
+          <e p="AI_GrandAdmiral.cs" t="Include" />
           <e p="AI_ShipCaptain.cs" t="Include" />
         </e>
         <e p="AudioEffect_Loop.cs" t="Include" />
