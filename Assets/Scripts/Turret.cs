@@ -401,7 +401,7 @@ public class Turret : MonoBehaviour
 			Unit unit = parent ? parent.GetComponent<Unit>() : null;
 			if (unit)
 			{
-				if (unit.team == parentUnit.GetTeam())
+				if (unit.Team == parentUnit.GetTeam())
 				{
 					// If we hit a non-parent teammate, immediately return false.
 					if (unit != parentUnit)
@@ -423,7 +423,7 @@ public class Turret : MonoBehaviour
 								unit = parent ? parent.GetComponent<Unit>() : null;
 								if (unit)
 								{
-									if (unit.team == parentUnit.GetTeam())
+									if (unit.Team == parentUnit.GetTeam())
 									{
 										// If we hit a non-parent teammate, immediately return false.
 										if (unit != parentUnit)

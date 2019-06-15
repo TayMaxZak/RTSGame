@@ -59,7 +59,7 @@ public class Manager_Projectiles : NetworkBehaviour
 			RaycastHit hit;
 			if (Physics.Raycast(proj.position, proj.direction, out hit, proj.GetSpeed() * Time.deltaTime, mask))
 			{
-				int projTeam = proj.GetFrom().team;
+				int projTeam = proj.GetFrom().Team;
 				Unit unit = null;
 				bool hitSelf = false;
 				if (hit.collider.transform.parent) // Is this a unit?
@@ -79,7 +79,7 @@ public class Manager_Projectiles : NetworkBehaviour
 							}
 
 							// If we hit an ally, do reduced damage because it was an accidental hit
-							bool doFullDamage = DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.team != projTeam;
+							bool doFullDamage = DamageUtils.IgnoresFriendlyFire(proj.GetDamageType()) || unit.Team != projTeam;
 
 							DamageResult result = unit.Damage(doFullDamage ? proj.GetDamage() : proj.GetDamage() * gameRules.DMG_ffDamageMult, proj.CalcRange(), proj.GetDamageType());
 

@@ -140,7 +140,7 @@ public class Ability_Superlaser : Ability
 		if (stacks <= 0) // At least one stack is required to activate this ability
 			return;
 
-		if (unit.team == team) // Cannot target allies
+		if (unit.Team == team) // Cannot target allies
 			return;
 
 		if (InRange(unit.transform, gameRules.ABLY_superlaserRangeTargeting)) // In range

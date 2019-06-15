@@ -151,7 +151,7 @@ public class Ability_IonMissile : Ability
 
 	void BeginTargeting(Unit unit)
 	{
-		if (unit.team == team) // Cannot target allies
+		if (unit.Team == team) // Cannot target allies
 			return;
 
 		state = 1; // Targeting state
@@ -165,7 +165,7 @@ public class Ability_IonMissile : Ability
 
 	void SwitchTargets(Unit unit)
 	{
-		if (unit.team == team) // Cannot target allies
+		if (unit.Team == team) // Cannot target allies
 			return;
 
 		targetUnit = unit; // Set new target

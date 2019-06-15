@@ -15,7 +15,7 @@ public class Unit_Flagship : Unit
 		gameRules = gameManager.GameRules; // Grab copy of Game Rules
 		base.Start(); // Init Unit base class
 
-		gameManager.GetCommander(team).SetFlagship(this);
+		gameManager.GetCommander(Team).SetFlagship(this);
 
 		shieldMod = new ShieldMod(this, 1, ShieldModType.Flagship);
 		AddShieldMod(shieldMod); // Apply flagship shield to self
@@ -52,6 +52,6 @@ public class Unit_Flagship : Unit
 	{
 		base.Die(damageType);
 
-		gameManager.Defeat(team);
+		gameManager.Defeat(Team);
 	}
 }

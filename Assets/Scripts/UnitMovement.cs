@@ -365,7 +365,7 @@ public class UnitMovement
 
 			float curMult = dot;
 
-			if (velocityMods[i].from.team == parentUnit.team)
+			if (velocityMods[i].from.Team == parentUnit.Team)
 			{
 				curMult *= gameRules.ABLY_chainAllyMult;
 			}

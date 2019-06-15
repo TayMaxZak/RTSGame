@@ -158,7 +158,7 @@ public class Controller_Commander : NetworkBehaviour
 		go.transform.position = offset * (-1 + myTeam * 2);
 		go.transform.Rotate(0, (-1 + myTeam * 2) * 90 + 45, 0);
 		Unit u = go.GetComponent<Unit>();
-		u.team = myTeam;
+		u.Team = myTeam;
 		NetworkServer.Spawn(go);
 		//}
 	}
@@ -188,7 +188,7 @@ public class Controller_Commander : NetworkBehaviour
 
 		// If we try to select a unit which does not belong to our team, return
 		if (newSelIsUnit)
-			if (((Unit)newSel).team != team)
+			if (((Unit)newSel).Team != team)
 				return;
 
 		if (add) // Multi-select mode
@@ -364,7 +364,7 @@ public class Controller_Commander : NetworkBehaviour
 		{
 			foreach (Entity e in selection)
 			{
-				if (newTarg && IsUnit(newTarg) && IsUnit(e) && ((Unit)newTarg).team != team)
+				if (newTarg && IsUnit(newTarg) && IsUnit(e) && ((Unit)newTarg).Team != team)
 				{
 					//if (newTarg && IsUnit(newTarg) && newTarg != e && IsUnit(e))
 					CmdOrderAttack(e.GetComponent<NetworkIdentity>(), newTarg.GetComponent<NetworkIdentity>());

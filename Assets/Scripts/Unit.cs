@@ -35,7 +35,7 @@ public class Unit : Entity, ITargetable
 
 	[Header("Identification")]
 	[SyncVar] // We want to sync the teams of all units when a player joins
-	public int team = 0; // What team does this unit belong to
+	private int team = 0; // What team does this unit belong to
 	[HideInInspector]
 	public int buildIndex = -1; // What buildable unit should be refunded when this unit dies
 	private UnitSelectable selectable; // What selection group does this unit belong to
@@ -98,6 +98,20 @@ public class Unit : Entity, ITargetable
 	private Manager_VFX vfx;
 	private Multiplayer_Manager multManager;
 
+	public int Team
+	{
+		get
+		{
+			return team;
+		}
+
+		set
+		{
+			team = value;
+			model.GetComponent<MeshRenderer>().material.SetFloat("_Team", team);
+		}
+	}
+
 	void Awake()
 	{
 		hpBar = Instantiate(hpBarPrefab);
@@ -144,7 +158,7 @@ public class Unit : Entity, ITargetable
 
 		// Compatability with selection groups
 		selectable = new UnitSelectable(this, 0);
-		gameManager.GetCommander(team).AddSelectableUnit(selectable); // Make sure commander knows what units can be selected
+		gameManager.GetCommander(Team).AddSelectableUnit(selectable); // Make sure commander knows what units can be selected
 
 		// Setting up HP
 		if (gameRules.useTestValues)
@@ -283,7 +297,7 @@ public class Unit : Entity, ITargetable
 	void ProxyAI()
 	{
 		// Attack a main enemy unit and use abilities
-		if (team != 0)
+		if (Team != 0)
 		{
 			GameObject go = GameObject.FindGameObjectWithTag("Player");
 			if (go)
@@ -395,7 +409,7 @@ public class Unit : Entity, ITargetable
 	void UpdateHPBarAlly()
 	{
 		// Check enemy/ally state
-		if (gameManager.GetController().team == team)
+		if (gameManager.GetController().team == Team)
 			hpBar.SetIsAlly(true);
 		else
 			hpBar.SetIsAlly(false);
@@ -1272,7 +1286,7 @@ public class Unit : Entity, ITargetable
 			engineEffects.End();
 
 		// Selectable and visibility things can/should happen locally
-		Commander comm = gameManager.GetCommander(team);
+		Commander comm = gameManager.GetCommander(Team);
 		if (comm)
 		{
 			comm.RemoveSelectableUnit(selectable);
@@ -1330,7 +1344,7 @@ public class Unit : Entity, ITargetable
 					GameObject go2 = new GameObject();
 					Util_ResDelay resDelay = go2.AddComponent<Util_ResDelay>();
 
-					resDelay.GiveRecAfterDelay(comm.GetBuildUnit(buildIndex).cost, gameRules.WRCK_lifetime, team);
+					resDelay.GiveRecAfterDelay(comm.GetBuildUnit(buildIndex).cost, gameRules.WRCK_lifetime, Team);
 				}
 			}
 		}
@@ -1479,7 +1493,7 @@ public class Unit : Entity, ITargetable
 		{
 			Entity ent = cols[i].GetComponentInParent<Entity>();
 			if (ent)
-				ent.SetTeamVisibility(team, true);
+				ent.SetTeamVisibility(Team, true);
 		}
 	}
 
@@ -1511,7 +1525,7 @@ public class Unit : Entity, ITargetable
 
 	public int GetTeam()
 	{
-		return team;
+		return Team;
 	}
 
 	public bool HasCollision()

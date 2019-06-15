@@ -64,7 +64,7 @@ public class Ability_StatusMissile : Ability
 		if (suspended)
 			return;
 
-		if (target.unit.team == team)
+		if (target.unit.Team == team)
 			return;
 
 		// TODO: TEST ALL POSSIBLE COOLDOWN RESETS

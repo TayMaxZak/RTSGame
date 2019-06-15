@@ -96,7 +96,7 @@ public class FighterGroup : MonoBehaviour, ITargetable
 		{
 			if (Vector3.SqrMagnitude(transform.position - targetUnit.GetSwarmTarget().position) < gameRules.ABLY_swarmInteractRadius * gameRules.ABLY_swarmInteractRadius)
 			{
-				if (targetUnit.team != team) // If target is an enemy unit, damage it
+				if (targetUnit.Team != team) // If target is an enemy unit, damage it
 				{
 					targetUnit.AddEnemySwarm(this);
 					targetUnit.Damage(gameRules.ABLY_swarmDPS * delta, 0, DamageType.Swarm); // 0 range = point blank, armor has no effect

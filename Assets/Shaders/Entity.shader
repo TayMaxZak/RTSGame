@@ -1,30 +1,34 @@
 ﻿Shader "Custom/Entity" {
 	Properties{
 		_MainTex("Diffuse Map", 2D) = "white" {}
-		_Color("Color", Color) = (1,1,1,1)
+	_PaintTex("Paint Map", 2D) = "black" {}
+	_Color("Color", Color) = (1,1,1,1)
+		_Team("Team", Float) = 0
 		_Opacity("Opacity", Range(0, 1)) = 1
 		//[MaterialToggle]
 		//_ComicShading("Use Comic Shading", Float) = 1
 		[MaterialToggle]
-		_StripedDissolve("Use Striped Dissolve", Float) = 0
+	_StripedDissolve("Use Striped Dissolve", Float) = 0
 
 		_SSSTex("SSS Map", 2D) = "black" {}
-		_SSSStrength("SSS Strength", Range(0, 4)) = 0.5
+	_SSSStrength("SSS Strength", Range(0, 4)) = 0.5
 		_SSSColor("SSS Color", Color) = (1,1,1,1)
-		
+
 		_AOTex("AO Map", 2D) = "white" {}
-		//_AmbientMult("Ambient Multiplier", Range(0,4)) = 1
-		//_AmbientFallL("Ambient Falloff Light", Range(0,1)) = 0.5
-		//_AmbientFallD("Ambient Falloff Dark", Range(0,1)) = 0
+	//_AmbientMult("Ambient Multiplier", Range(0,4)) = 1
+	//_AmbientFallL("Ambient Falloff Light", Range(0,1)) = 0.5
+	//_AmbientFallD("Ambient Falloff Dark", Range(0,1)) = 0
 	}
-	SubShader{
-	Tags{ "RenderType" = "Opaque" }
-	CGPROGRAM
-	#pragma surface surf Custom noambient
-	//#pragma target 3.0
-	//#pragma debug
-	sampler2D _MainTex;
+		SubShader{
+		Tags{ "RenderType" = "Opaque" }
+		CGPROGRAM
+#pragma surface surf Custom noambient
+		//#pragma target 3.0
+		//#pragma debug
+		sampler2D _MainTex;
+	sampler2D _PaintTex;
 	fixed4 _Color;
+	half _Team;
 	half _Opacity;
 	half _ComicShading;
 	half _StripedDissolve;
@@ -72,6 +76,7 @@
 	struct SurfaceOutputCustom
 	{
 		fixed3 Albedo;
+		fixed3 Paint;
 		fixed3 AmbientOcclusion;
 		fixed3 SSS;
 		fixed3 Normal;
@@ -107,14 +112,14 @@
 		half _AmbientFallD = 0.0f; // How much diffuse color is retained based on how head-on the direct light is (in the dark)?
 		half _EnvMult = 0.6f; // How much does the environment color affect the color of ambient lighting? How much should the SSS color factor in instead?
 
-		// Sample color of the environment
+							  // Sample color of the environment
 		half height = clamp(dot(s.Normal, float3(0, 1, 0)) + 1, 0, 1) * 0.5 + clamp(dot(s.Normal, float3(0, 1, 0)) * 0.5, 0, 1);
 		half3 env = height > 0.5 ? lerp(unity_AmbientEquator, unity_AmbientSky, abs(height - 0.5) * 2) : lerp(unity_AmbientEquator, unity_AmbientGround, abs(height - 0.5) * 2);
 
 		// Environment color in the dark should bias towards the sky (highest) color
 		half3 envLightL = (env);
 		half eldA = 0.7;
-		half3 envLightD = (env * eldA + unity_AmbientSky * (1 - eldA)) ;
+		half3 envLightD = (env * eldA + unity_AmbientSky * (1 - eldA));
 
 		// Environment color is mixed with the SSS color
 		half3 baseLight = _SSSColor;
@@ -126,7 +131,7 @@
 		half3 ambientLight = (envLight * _EnvMult + baseLight * (1 - _EnvMult));
 		half ambientMult = lerp(_AmbientMultL, _AmbientMultD, directionalMult); // TODO: Should this be reversed?
 
-		// Final color
+																				// Final color
 		ambientLight *= directionalMult;
 
 		//ambientLight = 1;
@@ -147,7 +152,7 @@
 		half lit = dissolveLight + ceil(clamp(lightStripe - (1 - dissolveLight), 0, 1)) + 0.0001;
 		lit = (1 - lit);
 		half litFactor = mix;
-		return (clamp(lit, 0, 1) * litFactor + light * (1 - litFactor));
+		return clamp(clamp(lit, 0, 1) * litFactor + light * (1 - litFactor), 0, 1);
 	}
 
 	half dissolveAlpha(float2 uv)
@@ -160,6 +165,19 @@
 		return dissolve;
 	}
 
+	half3 colorByTeam(int index) {
+		if (index == 0)
+			return half3(256 / 256.0, 109 / 256.0, 121 / 256.0);
+		else if (index == 1)
+			return half3(95 / 256.0, 126 / 256.0, 256 / 256.0);
+		else if (index == 2)
+			return half3(255 / 256.0, 191 / 256.0, 69 / 256.0);
+		else if (index == 3)
+			return half3(169 / 256.0, 223 / 256.0, 199 / 256.0);
+		else
+			return half3(255 / 256.0, 255 / 256.0, 255 / 256.0);
+	}
+
 	half4 LightingCustom(SurfaceOutputCustom s, half3 lightDir, half atten) {
 		half NdotL = dot(s.Normal, lightDir);
 		half NdotV = dot(s.Normal, s.viewDir);
@@ -167,6 +185,9 @@
 		half4 c;
 
 		//_ComicShading = 1;
+
+		half paintBlend = s.Paint.x;
+		half3 albedo = (colorByTeam(_Team) * paintBlend) + (s.Albedo * (1 - paintBlend));
 
 		// SSS is calculated based on how close the view angle is to the light angle
 		half sssDot = LdotV;
@@ -182,17 +203,21 @@
 		//half3 shade = _LightColor0.rgb * clamp((1 / (1 + lightMod)) * (light + lightMod), 0, 1);
 		half3 shade = _LightColor0.rgb * clamp(light, 0, 1);
 
-		//c.rgb = clamp((s.AmbientOcclusion), 0, 1) * (shade * s.Albedo + ambientLight(s, light) * (s.Albedo + 1) * 0.5) + sss;
+		//c.rgb = clamp((s.AmbientOcclusion), 0, 1) * (shade * albedo + ambientLight(s, light) * (albedo + 1) * 0.5) + sss;
 
-		half ambAlbedoMix = 0.6f;
-		// Ambient light is mixed in with the albedo
-		half3 amb = ambientLight(s, light) * (s.Albedo * ambAlbedoMix + 1 * (1 - ambAlbedoMix));
-
+		// Ambient light is affected by the albedo
+		half ambAlbedoMix = 0.64f;
+		half3 amb = ambientLight(s, light);
+		amb *= (albedo * ambAlbedoMix + 1 * (1 - ambAlbedoMix));
+		
+		// Occlusion makes really dark shadows that cut through ambient light
 		half occlusion = s.AmbientOcclusion;
 		if (_ComicShading)
 			occlusion = dissolveLight(occlusion, s.screenUV, comicMix);
-		c.rgb = clamp((occlusion), 0, 1) * (shade * s.Albedo + amb) + sss;
-		//c.rgb = round((checker(s.mainUV, 100) + clamp(NdotL * atten, 0, 1)) / 2);
+		
+		// Combine everything together in the right groupings
+		c.rgb = occlusion * (shade * albedo + amb) + sss;
+		//c.rgb = round((checker(s.screenUV, 100) + clamp(NdotL * atten, 0, 1)) / 2);
 		//c.rgb = lightStripe;
 
 		/*
@@ -211,11 +236,10 @@
 
 
 
-
-
 	void surf(Input IN, inout SurfaceOutputCustom o) {
 		float2 uv = IN.uv_MainTex;
 		o.Albedo = tex2D(_MainTex, uv).rgb * _Color;
+		o.Paint = tex2D(_PaintTex, uv).rgb;
 		o.Alpha = _Color.a;
 		//uv = IN.uv_AOTex;
 		o.AmbientOcclusion = 1;
@@ -234,5 +258,5 @@
 	}
 	ENDCG
 		}
-			Fallback "Diffuse"
+		Fallback "Diffuse"
 }

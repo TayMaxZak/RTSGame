@@ -35,7 +35,7 @@ public class Ability : MonoBehaviour
 	protected void Start()
 	{
 		parentUnit = GetComponent<Unit>();
-		team = parentUnit.team;
+		team = parentUnit.Team;
 		abilityIndex = parentUnit.abilities.IndexOf(this);
 	}
 

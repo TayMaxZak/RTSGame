@@ -154,7 +154,7 @@ public class Ability_SelfDestruct : Ability
 		for (int i = 0; i < units.Count; i++) // For each ally unit, deal damage
 		{
 			float flagMult = units[i].Type == EntityType.Flagship ? gameRules.ABLY_selfDestructDamageFlagMult : 1;
-			if (units[i].team != team)
+			if (units[i].Team != team)
 				units[i].Damage(gameRules.ABLY_selfDestructDamage * flagMult, (units[i].transform.position - transform.position).magnitude, DamageType.Wreck);
 			else
 				units[i].Damage(gameRules.ABLY_selfDestructDamage * gameRules.DMG_ffDamageMultSplash * flagMult, (units[i].transform.position - transform.position).magnitude, DamageType.Wreck);

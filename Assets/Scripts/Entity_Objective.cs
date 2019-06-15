@@ -75,9 +75,9 @@ public class Entity_Objective : Entity
 
 		foreach (Unit u in units)
 		{
-			if (u.team == 0)
+			if (u.Team == 0)
 				progressOffset -= EntityUtils.GetObjectiveWeightBySize(u.GetSize()) * gameRules.OBJV_captureAddPerUnitMult;
-			else if (u.team == 1)
+			else if (u.Team == 1)
 				progressOffset += EntityUtils.GetObjectiveWeightBySize(u.GetSize()) * gameRules.OBJV_captureAddPerUnitMult;
 		}
 

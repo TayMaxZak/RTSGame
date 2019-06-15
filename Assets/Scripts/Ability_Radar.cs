@@ -145,7 +145,7 @@ public class Ability_Radar : Ability
 					//if (unit == parentUnit) // Don't add ourselves
 					//	continue;
 
-					if (unit.team == team) // They must be enemies
+					if (unit.Team == team) // They must be enemies
 						continue;
 
 					//bool hasRadar = false; // Can't detect another radar-capable unit

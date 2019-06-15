@@ -169,7 +169,7 @@ public class Build_Incoming : NetworkBehaviour
 		GameObject go = Instantiate(buildUnit.spawnObject, transform.position, transform.rotation);
 		Unit unit = go.GetComponent<Unit>();
 		unit.buildIndex = buildUnitIndex;
-		unit.team = unitTeam;
+		unit.Team = unitTeam;
 		NetworkServer.Spawn(go);
 	}
 

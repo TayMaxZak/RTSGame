@@ -269,7 +269,7 @@ public class Ability_Bombs : Ability
 							unit = hit.collider.transform.parent.GetComponent<Unit>();
 							if (unit) // Is this a unit?
 							{
-								if (unit != parentUnit && unit.team != team) // If we hit a unit and its not us, damage it
+								if (unit != parentUnit && unit.Team != team) // If we hit a unit and its not us, damage it
 								{
 									if (newTargetUnit == null)
 									{

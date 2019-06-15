@@ -97,7 +97,7 @@ public class Ability_HealField : Ability
 				if (unit.Type == EntityType.Flagship) // Can't heal Flagships
 					continue;
 
-				if (unit.team != team) // Must be on our team
+				if (unit.Team != team) // Must be on our team
 					continue;
 
 				units.Add(unit);

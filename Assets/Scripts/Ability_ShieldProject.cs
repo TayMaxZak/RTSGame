@@ -92,7 +92,7 @@ public class Ability_ShieldProject : Ability
 					else
 						ResetCooldown();
 				}
-				else if (target.team == team)
+				else if (target.Team == team)
 				{
 					if (InRange(target.transform, gameRules.ABLY_shieldProjectRangeUse)) // Make sure target is in casting range
 					{

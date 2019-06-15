@@ -38,7 +38,7 @@ public class Ability_StatusMissile_Cloud : MonoBehaviour
 	public void SetParentUnit(Unit u)
 	{
 		parentUnit = u;
-		team = u.team;
+		team = u.Team;
 	}
 
 	void Update()
@@ -79,7 +79,7 @@ public class Ability_StatusMissile_Cloud : MonoBehaviour
 				Vector4 hp = u.GetHP();
 				// Scaling damage is ignored against Flagships
 				float dmg = u.Type != EntityType.Flagship ? gameRules.ABLY_statusMissileDamage + gameRules.ABLY_statusMissileDamageBonusMult * (hp.y + hp.w) : gameRules.ABLY_statusMissileDamage;
-				if (u.team != team)
+				if (u.Team != team)
 					u.Damage(dmg, 0, DamageType.Chemical);
 				else // Reduced damage to allies
 					u.Damage(dmg * gameRules.DMG_ffDamageMultSplash, 0, DamageType.Chemical);

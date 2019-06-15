@@ -90,7 +90,7 @@ public class Manager_Hitscan : NetworkBehaviour
 		RaycastHit hit;
 		if (Physics.Raycast(scan.startPosition, scan.direction, out hit, scan.GetRange(), mask))
 		{
-			int scanTeam = scan.GetFrom().team;
+			int scanTeam = scan.GetFrom().Team;
 			Unit unit = null;
 			bool hitSelf = false;
 			if (hit.collider.transform.parent) // Is this a unit?
@@ -111,7 +111,7 @@ public class Manager_Hitscan : NetworkBehaviour
 
 						float actualRange = (hit.point - scan.startPosition).magnitude;
 						// If we hit an ally, do reduced damage because it was an accidental hit
-						bool doFullDamage = DamageUtils.IgnoresFriendlyFire(scan.GetDamageType()) || unit.team != scanTeam;
+						bool doFullDamage = DamageUtils.IgnoresFriendlyFire(scan.GetDamageType()) || unit.Team != scanTeam;
 
 						DamageResult result = unit.Damage(doFullDamage ? scan.GetDamage() : scan.GetDamage() * gameRules.DMG_ffDamageMult, actualRange, scan.GetDamageType());
 

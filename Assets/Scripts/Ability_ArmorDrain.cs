@@ -108,7 +108,7 @@ public class Ability_ArmorDrain : Ability
 
 				for (int i = 0; i < units.Count && i < gameRules.ABLY_armorDrainMaxVictims; i++) // For each unit, subtract armor
 				{
-					if (units[i].team == parentUnit.team) // Ally
+					if (units[i].Team == parentUnit.Team) // Ally
 					{
 						if (parentUnit.GetHP().z < parentUnit.GetHP().w) // Only damage allies if we have missing armor
 						{

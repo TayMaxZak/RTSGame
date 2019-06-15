@@ -26,6 +26,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 3a9b4f8bf74ef8f46a2f3a42507978c1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _PaintTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SSSTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -41,6 +45,8 @@ Material:
     - _NoiseSubSteps: 50
     - _Opacity: 1
     - _SSSStrength: 0.5
+    - _StripedDissolve: 0
+    - _Team: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _SSSColor: {r: 1, g: 0.9696755, b: 0.9044118, a: 1}
