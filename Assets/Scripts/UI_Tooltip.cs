@@ -40,7 +40,7 @@ public class UI_Tooltip : MonoBehaviour
 
 	void Update()
 	{
-		if (timer > uiRules.TTappearTime)
+		if (timer > uiRules.TT_appearTime)
 		{
 			SetActive(true);
 			text.text = current.GetText();
@@ -75,7 +75,7 @@ public class UI_Tooltip : MonoBehaviour
 					else
 					{
 						timer = 0;
-						tooltipAudio.pitch = 1 + RandomValue() * uiRules.TTaudioPitchVariance;
+						tooltipAudio.pitch = 1 + RandomValue() * uiRules.TT_audioPitchVariance;
 						tooltipAudio.Play();
 						current = src;
 					}

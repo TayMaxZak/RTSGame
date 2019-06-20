@@ -76,7 +76,7 @@ public class UI_HPBar : UI_Bar
 	private Color armorBkgAllyColor = Color.black;
 	[SerializeField]
 	private Color armorBkgEnemyColor = Color.black;
-
+	
 	[SerializeField]
 	private Image shieldFill;
 	private float shieldCur = 0;
@@ -85,6 +85,11 @@ public class UI_HPBar : UI_Bar
 	[SerializeField]
 	private float shieldWidth = 98;
 	//private Color shieldOrigColor = Color.blue;
+
+	[SerializeField]
+	private GameObject healthTickRoot;
+	[SerializeField]
+	private GameObject armorTickRoot;
 
 	[SerializeField]
 	private Image borderFill;
@@ -106,14 +111,45 @@ public class UI_HPBar : UI_Bar
 		transform.SetSiblingIndex(0); // Draw behind other UI elements
 	}
 
+	public void InitTicks(int maxHealth, int maxArmor)
+	{
+		if (!healthTickRoot)
+			return;
+
+		int n = 0;
+		Image tick = healthTickRoot.GetComponentsInChildren<Image>()[1];
+		for (int i = uiRules.HPB_healthPerTick; i < maxHealth; i += uiRules.HPB_healthPerTick)
+		{
+			n++;
+			Image newTick = Instantiate(tick, healthTickRoot.transform);
+			int spacing = (int)(healthWidth / (maxHealth / (float)uiRules.HPB_healthPerTick));
+			newTick.rectTransform.localPosition = new Vector2(n * spacing, 0);
+		}
+		tick.gameObject.SetActive(false);
+
+		if (!armorTickRoot)
+			return;
+
+		n = 0;
+		tick = armorTickRoot.GetComponentsInChildren<Image>()[1];
+		for (int i = uiRules.HPB_armorPerTick; i < maxArmor; i += uiRules.HPB_armorPerTick)
+		{
+			n++;
+			Image newTick = Instantiate(tick, armorTickRoot.transform);
+			int spacing = (int)(armorWidth / (maxArmor / (float)uiRules.HPB_armorPerTick));
+			newTick.rectTransform.localPosition = new Vector2(n * spacing, 0);
+		}
+		tick.gameObject.SetActive(false);
+	}
+
 	void Update()
 	{
 		// Update times
-		healthT += Time.deltaTime / uiRules.HPBupdateTime;
-		armorT += Time.deltaTime / uiRules.HPBupdateTime;
-		shieldT += Time.deltaTime / uiRules.HPBupdateTime;
-		fragileT += Time.deltaTime / uiRules.HPBupdateTime;
-		ionT += Time.deltaTime / uiRules.HPBupdateTime;
+		healthT += Time.deltaTime / uiRules.HPB_updateTime;
+		armorT += Time.deltaTime / uiRules.HPB_updateTime;
+		shieldT += Time.deltaTime / uiRules.HPB_updateTime;
+		fragileT += Time.deltaTime / uiRules.HPB_updateTime;
+		ionT += Time.deltaTime / uiRules.HPB_updateTime;
 
 		UpdateDisplay();
 
@@ -147,7 +183,7 @@ public class UI_HPBar : UI_Bar
 				ionFill.rectTransform.position = new Vector2(healthWidth * healthCur + healthFill.rectTransform.position.x, ionFill.rectTransform.position.y);
 		}
 		// What color should the border be?
-		borderFill.color = armorTarg > uiRules.HPBbordColorThresh ? (enemy ? armorEnemyColor : armorAllyColor) : (enemy ? healthEnemyColor : healthAllyColor);
+		borderFill.color = armorTarg > uiRules.HPB_borderColorThresh ? (enemy ? armorEnemyColor : armorAllyColor) : (enemy ? healthEnemyColor : healthAllyColor);
 
 		// If we are burning,
 		if (burning)
@@ -155,14 +191,14 @@ public class UI_HPBar : UI_Bar
 			// animate healthbar color between 2 burn colors
 			if (burnUp)
 			{
-				burnT += Random.value * Time.deltaTime / uiRules.HPBblinkTime;
+				burnT += Random.value * Time.deltaTime / uiRules.HPB_blinkTime;
 				burnCur = Color.Lerp((enemy ? healthBurnEnemyColor : healthBurnAllyColor), (enemy ? healthEnemyColor : healthAllyColor), burnT);
 				if (burnT > 1)
 					burnUp = false;
 			}
 			else
 			{
-				burnT -= Random.value * Time.deltaTime / uiRules.HPBblinkTime;
+				burnT -= Random.value * Time.deltaTime / uiRules.HPB_blinkTime;
 				burnCur = Color.Lerp((enemy ? healthBurnEnemyColor : healthBurnAllyColor), (enemy ? healthEnemyColor : healthAllyColor), burnT);
 				if (burnT < 0)
 					burnUp = true;
@@ -178,14 +214,14 @@ public class UI_HPBar : UI_Bar
 			// animate ion color between 2 colors
 			if (ionFlashUp)
 			{
-				ionFlashT += Random.value * Time.deltaTime / uiRules.HPBionBlinkTime;
+				ionFlashT += Random.value * Time.deltaTime / uiRules.HPB_ionBlinkTime;
 				ionFlashCur = Color.Lerp(ionColor1, ionColor2, ionFlashT);
 				if (ionFlashT > 1)
 					ionFlashUp = false;
 			}
 			else
 			{
-				ionFlashT -= Random.value * Time.deltaTime / uiRules.HPBionBlinkTime;
+				ionFlashT -= Random.value * Time.deltaTime / uiRules.HPB_ionBlinkTime;
 				ionFlashCur = Color.Lerp(ionColor1, ionColor2, ionFlashT);
 				if (ionFlashT < 0)
 					ionFlashUp = true;

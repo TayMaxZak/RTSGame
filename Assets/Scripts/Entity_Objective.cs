@@ -41,7 +41,7 @@ public class Entity_Objective : Entity
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
 		progBar = Instantiate(progBarPrefab);
 		progBar.transform.SetParent(uiManager.Canvas.transform, false);
-		progBarOffset = uiManager.UIRules.CPBoffset;
+		progBarOffset = uiManager.UIRules.CPB_offset;
 
 		captureProgress = 0;
 

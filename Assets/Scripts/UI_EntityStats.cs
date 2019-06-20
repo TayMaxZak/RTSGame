@@ -91,17 +91,17 @@ public class UI_EntityStats : MonoBehaviour
 		if (ability1Bkg.gameObject.activeSelf)
 		{
 			if (ability1IconBstate == 1)
-				ability1IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ESiconBState1Speed);
+				ability1IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ES_iconBState1Speed);
 			else if (ability1IconBstate == 2)
-				ability1IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ESiconBState2Speed);
+				ability1IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ES_iconBState2Speed);
 		}
 		if (ability2Bkg.gameObject.activeSelf)
 		{
 			
 			if (ability2IconBstate == 1)
-				ability2IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ESiconBState1Speed);
+				ability2IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ES_iconBState1Speed);
 			else if (ability2IconBstate == 2)
-				ability2IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ESiconBState2Speed);
+				ability2IconB.transform.Rotate(-Vector3.forward * Time.deltaTime * uiRules.ES_iconBState2Speed);
 		}
 	}
 

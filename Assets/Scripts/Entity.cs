@@ -95,7 +95,7 @@ public class Entity : NetworkBehaviour
 		//selCircle.transform.SetParent(transform);
 		selCircle.SetActive(false);
 		selCircle.transform.localScale = new Vector3(selCircleSize, selCircleSize, selCircleSize);
-		selCircleSpeed = uiManager.UIRules.SELrotateSpeed;
+		selCircleSpeed = uiManager.UIRules.SEL_rotateSpeed;
 
 		meshRenderer = model.GetComponent<MeshRenderer>();
 		

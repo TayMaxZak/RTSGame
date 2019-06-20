@@ -83,7 +83,7 @@ public class Build_Incoming : NetworkBehaviour
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
 		progBar = Instantiate(progBarPrefab);
 		progBar.transform.SetParent(uiManager.Canvas.transform, false);
-		progBarOffset = uiManager.UIRules.BPBoffset;
+		progBarOffset = uiManager.UIRules.BPB_offset;
 
 		UpdateUI();
 	}

@@ -47,14 +47,14 @@ public class UI_AbilBar_Superlaser : UI_Bar
 			// animate healthbar color between 2 burn colors
 			if (critUp)
 			{
-				critT += Time.deltaTime / uiRules.AB_SPblinkTime;
+				critT += Time.deltaTime / uiRules.AB_SP_blinkTime;
 				critCur = Color.Lerp(critCur, markBlinkColor1, critT);
 				if (critT > 1)
 					critUp = false;
 			}
 			else
 			{
-				critT -= Time.deltaTime / uiRules.AB_SPblinkTime;
+				critT -= Time.deltaTime / uiRules.AB_SP_blinkTime;
 				critCur = Color.Lerp(critCur, markBlinkColor2, critT);
 				if (critT < 0)
 					critUp = true;
