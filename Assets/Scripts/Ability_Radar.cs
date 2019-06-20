@@ -192,7 +192,7 @@ public class Ability_Radar : Ability
 						}
 						else if (units[i].GetSize() == EntitySize.Flagship)
 						{
-							GameObject ghost = Instantiate(ghostFlagship, units[i].transform.position, units[i].transform.rotation);
+							GameObject ghost = Instantiate(ghostCruiser, units[i].transform.position, units[i].transform.rotation);
 							ghostsThisPulse.Add(ghost);
 						}
 					}

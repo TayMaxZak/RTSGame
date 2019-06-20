@@ -35,6 +35,7 @@ public class Unit : Entity, ITargetable
 
 	[Header("Identification")]
 	[SyncVar] // We want to sync the teams of all units when a player joins
+	[SerializeField]
 	private int team = 0; // What team does this unit belong to
 	[HideInInspector]
 	public int buildIndex = -1; // What buildable unit should be refunded when this unit dies
@@ -115,6 +116,7 @@ public class Unit : Entity, ITargetable
 	void Awake()
 	{
 		hpBar = Instantiate(hpBarPrefab);
+		hpBar.InitTicks((int)maxHealth, (int)maxArmor);
 		statuses = new List<Status>();
 		velocityMods = new List<VelocityMod>();
 		shieldMods = new List<ShieldMod>();
@@ -175,7 +177,7 @@ public class Unit : Entity, ITargetable
 		Manager_UI uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<Manager_UI>(); // Grab copy of UI Manager
 		//hpBar = Instantiate(hpBarPrefab);
 		hpBar.transform.SetParent(uiManager.Canvas.transform, false);
-		hpBarOffset = uiManager.UIRules.HPBoffset;
+		hpBarOffset = uiManager.UIRules.HPB_offset;
 		UpdateHPBarPosAndVis(); // Make sure healthbar is hidden until the unit is first selected
 		UpdateHPBarVal(true);
 		UpdateHPBarValIon();
